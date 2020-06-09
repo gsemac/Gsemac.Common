@@ -5,6 +5,8 @@ VisualStudioVersion = 16.0.29905.134
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gsemac.Collections", "Gsemac.Collections\Gsemac.Collections.csproj", "{636CC27A-FC0F-4B62-9F5D-E97BEA8D585D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gsemac.Native", "Gsemac.Native\Gsemac.Native.csproj", "{CC4291DA-1B50-4E9A-A0EC-41D9441DB887}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{636CC27A-FC0F-4B62-9F5D-E97BEA8D585D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{636CC27A-FC0F-4B62-9F5D-E97BEA8D585D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{636CC27A-FC0F-4B62-9F5D-E97BEA8D585D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CC4291DA-1B50-4E9A-A0EC-41D9441DB887}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CC4291DA-1B50-4E9A-A0EC-41D9441DB887}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CC4291DA-1B50-4E9A-A0EC-41D9441DB887}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CC4291DA-1B50-4E9A-A0EC-41D9441DB887}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
