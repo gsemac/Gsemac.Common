@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>netstandard2.0;net40</TargetFrameworks>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(TargetFramework)' == 'net40'">
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkProfile>Client</TargetFrameworkProfile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Gsemac.Collections\Gsemac.Collections.csproj" />
+    <ProjectReference Include="..\Gsemac.Utilities\Gsemac.Utilities.csproj" />
+  </ItemGroup>
+
+</Project>

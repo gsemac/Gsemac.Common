@@ -3,9 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29905.134
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gsemac.Collections", "Gsemac.Collections\Gsemac.Collections.csproj", "{636CC27A-FC0F-4B62-9F5D-E97BEA8D585D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Gsemac.Collections", "Gsemac.Collections\Gsemac.Collections.csproj", "{636CC27A-FC0F-4B62-9F5D-E97BEA8D585D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gsemac.Native", "Gsemac.Native\Gsemac.Native.csproj", "{CC4291DA-1B50-4E9A-A0EC-41D9441DB887}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Gsemac.Native", "Gsemac.Native\Gsemac.Native.csproj", "{CC4291DA-1B50-4E9A-A0EC-41D9441DB887}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gsemac.Logging", "Gsemac.Logging\Gsemac.Logging.csproj", "{3B0206EE-3DA7-45BD-9740-36D794AF475C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gsemac.Utilities", "Gsemac.Utilities\Gsemac.Utilities.csproj", "{46F3DE15-F452-4EAA-A886-C6BD1CBA7976}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +25,14 @@ Global
 		{CC4291DA-1B50-4E9A-A0EC-41D9441DB887}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CC4291DA-1B50-4E9A-A0EC-41D9441DB887}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CC4291DA-1B50-4E9A-A0EC-41D9441DB887}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3B0206EE-3DA7-45BD-9740-36D794AF475C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3B0206EE-3DA7-45BD-9740-36D794AF475C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3B0206EE-3DA7-45BD-9740-36D794AF475C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3B0206EE-3DA7-45BD-9740-36D794AF475C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{46F3DE15-F452-4EAA-A886-C6BD1CBA7976}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{46F3DE15-F452-4EAA-A886-C6BD1CBA7976}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{46F3DE15-F452-4EAA-A886-C6BD1CBA7976}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{46F3DE15-F452-4EAA-A886-C6BD1CBA7976}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
