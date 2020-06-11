@@ -8,7 +8,7 @@ namespace Gsemac.Logging {
 
         // Public members
 
-        public event LoggedEventhandler Logged;
+        public event EventHandler<LogEventArgs> Logged;
 
         public bool Enabled { get; set; } = true;
         public bool IgnoreExceptions { get; set; } = true;
@@ -51,7 +51,7 @@ namespace Gsemac.Logging {
 
         protected void OnLogged(ILogMessage message) {
 
-            Logged?.Invoke(this, message);
+            Logged?.Invoke(this, new LogEventArgs(message));
 
         }
 
