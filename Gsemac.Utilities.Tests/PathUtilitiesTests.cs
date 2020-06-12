@@ -7,6 +7,27 @@ namespace Gsemac.Utilities.Tests {
     public class PathUtilitiesTests {
 
         [TestMethod]
+        public void TestGetRelativePathWithRelativePath() {
+
+            string fullPath = @"\directory\subdirectory\file.txt";
+            string relativePath = @"\directory\subdirectory";
+            string result = PathUtilities.GetRelativePath(fullPath, relativePath);
+
+            Assert.AreEqual(@"file.txt", result);
+
+        }
+        [TestMethod]
+        public void TestGetRelativePathWithoutRelativePath() {
+
+            string fullPath = @"\directory\subdirectory\file.txt";
+            string relativePath = @"\directory\differentSubdirectroy";
+            string result = PathUtilities.GetRelativePath(fullPath, relativePath);
+
+            Assert.AreEqual(@"\directory\subdirectory\file.txt", result);
+
+        }
+
+        [TestMethod]
         public void TestAnonymizePathWithUserDirectory() {
 
             string userDirectory = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
