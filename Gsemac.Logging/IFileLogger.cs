@@ -5,7 +5,8 @@
 
         string Directory { get; set; }
         ILogFilenameFormatter FilenameFormatter { get; set; }
-        ILogRetentionPolicy RetentionPolicy { get; set; }
+
+        void SetLogRetentionPolicy(ILogRetentionPolicy retentionPolicy);
 
     }
 

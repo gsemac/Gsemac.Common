@@ -1,6 +1,6 @@
 ﻿namespace Gsemac.Logging {
 
-    public class KeepAllLogRetentionPolicy :
+    public class NeverDeleteLogRetentionPolicy :
         ILogRetentionPolicy {
 
         public void ExecutePolicy(string directoryPath, string searchPattern = "*") {

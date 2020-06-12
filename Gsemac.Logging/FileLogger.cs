@@ -9,8 +9,7 @@ namespace Gsemac.Logging {
         // Public members
 
         public string Directory { get; set; }
-        public ILogFilenameFormatter FilenameFormatter { get; set; } = new TimestampedLogFilenameFormatter();
-        public ILogRetentionPolicy RetentionPolicy { get; set; } = new KeepAllLogRetentionPolicy();
+        public ILogFilenameFormatter FilenameFormatter { get; set; } = new LogFilenameFormatter();
 
         public FileLogger() {
         }
@@ -20,6 +19,14 @@ namespace Gsemac.Logging {
                 throw new ArgumentNullException(nameof(directory));
 
             this.Directory = directory;
+
+        }
+
+        public void SetLogRetentionPolicy(ILogRetentionPolicy retentionPolicy) {
+
+            this.logRetentionPolicy = retentionPolicy;
+
+            ExecuteLogRetentionPolicy();
 
         }
 
@@ -42,6 +49,7 @@ namespace Gsemac.Logging {
         // Private members
 
         private string currentFilename = string.Empty;
+        private ILogRetentionPolicy logRetentionPolicy = new NeverDeleteLogRetentionPolicy();
 
         private void CreateDirectoryIfItDoesNotExist() {
 
@@ -57,18 +65,23 @@ namespace Gsemac.Logging {
 
                 // Execute the log file retention policy when creating a new file.
 
-                try {
+                ExecuteLogRetentionPolicy();
 
-                    if (RetentionPolicy != null)
-                        RetentionPolicy.ExecutePolicy(Directory, $"*{FilenameFormatter.FileExtension}");
+            }
 
-                }
-                catch (Exception ex) {
+        }
+        private void ExecuteLogRetentionPolicy() {
 
-                    if (!IgnoreExceptions)
-                        throw ex;
+            try {
 
-                }
+                if (Enabled && logRetentionPolicy != null)
+                    logRetentionPolicy.ExecutePolicy(Directory, $"*{FilenameFormatter.FileExtension}");
+
+            }
+            catch (Exception ex) {
+
+                if (!IgnoreExceptions)
+                    throw ex;
 
             }
 

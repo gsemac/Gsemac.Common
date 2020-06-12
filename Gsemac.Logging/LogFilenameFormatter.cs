@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Gsemac.Logging {
 
-    public class TimestampedLogFilenameFormatter :
+    public class LogFilenameFormatter :
         ILogFilenameFormatter {
 
         // Public members
