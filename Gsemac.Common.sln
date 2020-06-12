@@ -7,9 +7,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Gsemac.Collections", "Gsema
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Gsemac.Native", "Gsemac.Native\Gsemac.Native.csproj", "{CC4291DA-1B50-4E9A-A0EC-41D9441DB887}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gsemac.Logging", "Gsemac.Logging\Gsemac.Logging.csproj", "{3B0206EE-3DA7-45BD-9740-36D794AF475C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Gsemac.Logging", "Gsemac.Logging\Gsemac.Logging.csproj", "{3B0206EE-3DA7-45BD-9740-36D794AF475C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gsemac.Utilities", "Gsemac.Utilities\Gsemac.Utilities.csproj", "{46F3DE15-F452-4EAA-A886-C6BD1CBA7976}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Gsemac.Utilities", "Gsemac.Utilities\Gsemac.Utilities.csproj", "{46F3DE15-F452-4EAA-A886-C6BD1CBA7976}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "lib", "lib", "{7A3B483F-8E9D-495F-856D-3A753710E480}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -36,6 +38,12 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{636CC27A-FC0F-4B62-9F5D-E97BEA8D585D} = {7A3B483F-8E9D-495F-856D-3A753710E480}
+		{CC4291DA-1B50-4E9A-A0EC-41D9441DB887} = {7A3B483F-8E9D-495F-856D-3A753710E480}
+		{3B0206EE-3DA7-45BD-9740-36D794AF475C} = {7A3B483F-8E9D-495F-856D-3A753710E480}
+		{46F3DE15-F452-4EAA-A886-C6BD1CBA7976} = {7A3B483F-8E9D-495F-856D-3A753710E480}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {D040AD76-9C92-4D4E-99AD-45B26C068360}

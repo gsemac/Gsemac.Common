@@ -1,10 +1,10 @@
 ﻿using Gsemac.Collections;
+using Gsemac.Utilities;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Text;
 
 namespace Gsemac.Logging {
 
@@ -39,8 +39,8 @@ namespace Gsemac.Logging {
                 Add(LogHeaderKey.ClrVersion, () => Environment.Version.ToString());
                 Add(LogHeaderKey.OSVersion, () => Environment.OSVersion.ToString() + string.Format(" ({0})", Environment.Is64BitOperatingSystem ? "64-bit" : "32-bit"));
                 Add(LogHeaderKey.Locale, () => System.Globalization.CultureInfo.InstalledUICulture.Name);
-                Add(LogHeaderKey.Path, () => Assembly.GetEntryAssembly().Location);
-                Add(LogHeaderKey.WorkingDirectory, () => System.IO.Directory.GetCurrentDirectory());
+                Add(LogHeaderKey.Path, () => PathUtilities.AnonymizePath(Assembly.GetEntryAssembly().Location));
+                Add(LogHeaderKey.WorkingDirectory, () => PathUtilities.AnonymizePath(System.IO.Directory.GetCurrentDirectory()));
                 Add(LogHeaderKey.Timestamp, () => DateTime.Now.ToString());
 
             }
