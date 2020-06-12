@@ -10,7 +10,7 @@ namespace Gsemac.Logging {
 
         public string Directory { get; set; }
         public ILogFilenameFormatter FilenameFormatter { get; set; } = new TimestampedLogFilenameFormatter();
-        public ILogRetentionPolicy RetentionPolicy { get; set; } = new DeleteOldLogRetentionPolicy(TimeSpan.FromDays(3));
+        public ILogRetentionPolicy RetentionPolicy { get; set; } = new KeepAllLogRetentionPolicy();
 
         public FileLogger() {
         }
