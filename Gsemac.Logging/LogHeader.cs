@@ -1,4 +1,5 @@
 ﻿using Gsemac.Collections;
+using Gsemac.Logging.Extensions;
 using Gsemac.Utilities;
 using System;
 using System.Collections;
@@ -31,13 +32,13 @@ namespace Gsemac.Logging {
 
             if (addDefaultHeaders) {
 
-                Add(LogHeaderKey.ProductVersion, () => Assembly.GetEntryAssembly().GetName().Version.ToString());
-                Add(LogHeaderKey.ClrVersion, () => Environment.Version.ToString());
-                Add(LogHeaderKey.OSVersion, () => Environment.OSVersion.ToString() + string.Format(" ({0})", Environment.Is64BitOperatingSystem ? "64-bit" : "32-bit"));
-                Add(LogHeaderKey.Locale, () => System.Globalization.CultureInfo.InstalledUICulture.Name);
-                Add(LogHeaderKey.Path, () => PathUtilities.AnonymizePath(Assembly.GetEntryAssembly().Location));
-                Add(LogHeaderKey.WorkingDirectory, () => PathUtilities.AnonymizePath(System.IO.Directory.GetCurrentDirectory()));
-                Add(LogHeaderKey.Timestamp, () => DateTime.Now.ToString());
+                this.Add(LogHeaderKey.ProductVersion, () => Assembly.GetEntryAssembly().GetName().Version.ToString());
+                this.Add(LogHeaderKey.ClrVersion, () => Environment.Version.ToString());
+                this.Add(LogHeaderKey.OSVersion, () => Environment.OSVersion.ToString() + string.Format(" ({0})", Environment.Is64BitOperatingSystem ? "64-bit" : "32-bit"));
+                this.Add(LogHeaderKey.Locale, () => System.Globalization.CultureInfo.InstalledUICulture.Name);
+                this.Add(LogHeaderKey.Path, () => PathUtilities.AnonymizePath(Assembly.GetEntryAssembly().Location));
+                this.Add(LogHeaderKey.WorkingDirectory, () => PathUtilities.AnonymizePath(System.IO.Directory.GetCurrentDirectory()));
+                this.Add(LogHeaderKey.Timestamp, () => DateTime.Now.ToString());
 
             }
 
