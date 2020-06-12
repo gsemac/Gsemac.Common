@@ -61,6 +61,12 @@ namespace Gsemac.Logging.Extensions {
 
         }
 
+        public static EventHandler<LogEventArgs> CreateLogEventHandler(this ILogger logger) {
+
+            return (sender, e) => logger.Log(e.Message);
+
+        }
+
         // Private members
 
         private static string GetDefaultSource() {
