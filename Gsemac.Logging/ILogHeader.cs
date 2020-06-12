@@ -17,7 +17,6 @@ namespace Gsemac.Logging {
         IDictionary<string, string> {
 
         void Add(string key, Func<string> getter);
-        void Add(LogHeaderKey key, Func<string> getter);
 
     }
 

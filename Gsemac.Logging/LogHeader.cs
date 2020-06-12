@@ -17,10 +17,6 @@ namespace Gsemac.Logging {
             get => dict[key]();
             set => dict[key] = () => value;
         }
-        public string this[LogHeaderKey key] {
-            get => this[LogHeaderKeyToString(key)];
-            set => this[LogHeaderKeyToString(key)] = value;
-        }
 
         public ICollection<string> Keys => dict.Keys;
         public ICollection<string> Values => new LazyReadOnlyCollection<string>(dict.Values.Select(f => f()));
@@ -52,11 +48,6 @@ namespace Gsemac.Logging {
             dict[key] = getter;
 
         }
-        public void Add(LogHeaderKey key, Func<string> getter) {
-
-            Add(LogHeaderKeyToString(key), getter);
-
-        }
         public void Add(string key, string value) {
 
             Add(key, () => value);
@@ -65,11 +56,6 @@ namespace Gsemac.Logging {
         public void Add(KeyValuePair<string, string> item) {
 
             Add(item.Key, () => item.Value);
-
-        }
-        public void Add(LogHeaderKey key, string value) {
-
-            Add(key, () => value);
 
         }
 
@@ -90,11 +76,6 @@ namespace Gsemac.Logging {
             return dict.ContainsKey(key);
 
         }
-        public bool ContainsKey(LogHeaderKey key) {
-
-            return ContainsKey(LogHeaderKeyToString(key));
-
-        }
 
         public void CopyTo(KeyValuePair<string, string>[] array, int arrayIndex) => throw new NotImplementedException();
 
@@ -112,11 +93,6 @@ namespace Gsemac.Logging {
         public bool Remove(KeyValuePair<string, string> item) {
 
             return Remove(item.Key);
-
-        }
-        public bool Remove(LogHeaderKey key) {
-
-            return Remove(LogHeaderKeyToString(key));
 
         }
 
@@ -139,11 +115,6 @@ namespace Gsemac.Logging {
 
 
         }
-        public bool TryGetValue(LogHeaderKey key, out string value) {
-
-            return TryGetValue(LogHeaderKeyToString(key), out value);
-
-        }
 
         IEnumerator IEnumerable.GetEnumerator() {
 
@@ -156,38 +127,6 @@ namespace Gsemac.Logging {
         // Private members
 
         private readonly IDictionary<string, Func<string>> dict = new OrderedDictionary<string, Func<string>>();
-
-        private string LogHeaderKeyToString(LogHeaderKey key) {
-
-            switch (key) {
-
-                case LogHeaderKey.ProductVersion:
-                    return "Product Version";
-
-                case LogHeaderKey.ClrVersion:
-                    return "CLR Version";
-
-                case LogHeaderKey.OSVersion:
-                    return "OS Version";
-
-                case LogHeaderKey.Locale:
-                    return "Locale";
-
-                case LogHeaderKey.Path:
-                    return "Path";
-
-                case LogHeaderKey.WorkingDirectory:
-                    return "Working Directory";
-
-                case LogHeaderKey.Timestamp:
-                    return "Timestamp";
-
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(key));
-
-            }
-
-        }
 
     }
 
