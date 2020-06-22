@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using System;
+using System.Drawing;
 using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
@@ -101,11 +102,31 @@ namespace Gsemac.Forms.Utilities {
                 .Invoke(control, new object[] { styles });
 
         }
+        public static ControlStyles GetStyles(Control control) {
+
+            ControlStyles result = 0;
+
+            foreach (ControlStyles style in Enum.GetValues(typeof(ControlStyles)))
+                if (GetStyle(control, style))
+                    result |= style;
+
+            return result;
+
+        }
         public static void SetStyle(Control control, ControlStyles styles, bool value) {
 
             control.GetType()
                 .GetMethod("SetStyle", BindingFlags.Instance | BindingFlags.NonPublic)
                 .Invoke(control, new object[] { styles, value });
+
+        }
+        public static void SetStyles(Control control, ControlStyles styles) {
+
+            ClearStyles(control);
+
+            foreach (ControlStyles style in Enum.GetValues(typeof(ControlStyles)))
+                if (styles.HasFlag(style))
+                    SetStyle(control, style, true);
 
         }
 
@@ -114,6 +135,15 @@ namespace Gsemac.Forms.Utilities {
             control.GetType()
                 .GetProperty("DoubleBuffered", BindingFlags.Instance | BindingFlags.NonPublic)
                 .SetValue(control, value, null);
+
+        }
+
+        // Private members
+
+        private static void ClearStyles(Control control) {
+
+            foreach (ControlStyles style in Enum.GetValues(typeof(ControlStyles)))
+                SetStyle(control, style, false);
 
         }
 
