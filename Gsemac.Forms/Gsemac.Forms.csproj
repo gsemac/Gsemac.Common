@@ -42,6 +42,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ControlState.cs" />
+    <Compile Include="Extensions\ControlExtensions.cs" />
+    <Compile Include="IControlState.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utilities\ControlUtilities.cs" />
     <Compile Include="Utilities\DataGridViewUtilities.cs" />
