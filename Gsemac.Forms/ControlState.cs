@@ -81,6 +81,7 @@ namespace Gsemac.Forms {
                 TrySetDrawMode(control, visualState.DrawMode);
                 TrySetBorderStyle(control, visualState.BorderStyle);
                 TrySetFlatStyle(control, visualState.FlatStyle);
+                TrySetOwnerDraw(control, visualState.OwnerDraw);
                 TrySetUseVisualStyleBackColor(control, visualState.UseVisualStyleBackColor);
 
                 switch (control) {
@@ -270,6 +271,44 @@ namespace Gsemac.Forms {
             }
 
         }
+        protected static bool TryGetOwnerDraw(Control control, out bool value) {
+
+            PropertyInfo property = control.GetType().GetProperty("OwnerDraw", BindingFlags.Public | BindingFlags.Instance);
+
+            if (property != null) {
+
+                value = (bool)property.GetValue(control, null);
+
+                return true;
+
+            }
+            else {
+
+                value = false;
+
+                return false;
+
+            }
+
+        }
+        protected static bool TrySetOwnerDraw(Control control, bool value) {
+
+            PropertyInfo property = control.GetType().GetProperty("OwnerDraw", BindingFlags.Public | BindingFlags.Instance);
+
+            if (property != null) {
+
+                property.SetValue(control, value, null);
+
+                return true;
+
+            }
+            else {
+
+                return false;
+
+            }
+
+        }
         protected static bool TryGetUseVisualStyleBackColor(Control control, out bool value) {
 
             PropertyInfo property = control.GetType().GetProperty("UseVisualStyleBackColor", BindingFlags.Public | BindingFlags.Instance);
@@ -383,6 +422,9 @@ namespace Gsemac.Forms {
 
                 if (TryGetFlatStyle(control, out FlatStyle flatStyle))
                     visualState.FlatStyle = flatStyle;
+
+                if (TryGetOwnerDraw(control, out bool ownerDraw))
+                    visualState.OwnerDraw = ownerDraw;
 
                 // This property is important for restoring the visual style of controls like Buttons and TabPages.
 
