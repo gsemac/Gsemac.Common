@@ -105,6 +105,12 @@ namespace Gsemac.Forms {
 
                         break;
 
+                    case TreeView treeView:
+
+                        treeView.DrawMode = visualState.TreeViewDrawMode;
+
+                        break;
+
                 }
 
             }
@@ -374,6 +380,7 @@ namespace Gsemac.Forms {
             public bool ResizeRedraw { get; set; }
             public ControlStyles Styles { get; set; }
             public ToolStripRenderer ToolStripRenderer { get; set; }
+            public TreeViewDrawMode TreeViewDrawMode { get; set; }
             public bool UseVisualStyleBackColor { get; set; }
 
         }
@@ -449,6 +456,12 @@ namespace Gsemac.Forms {
                     case ToolStrip toolStrip:
 
                         visualState.ToolStripRenderer = toolStrip.Renderer;
+
+                        break;
+
+                    case TreeView treeView:
+
+                        visualState.TreeViewDrawMode = treeView.DrawMode;
 
                         break;
 
