@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
 using System.Reflection;
@@ -135,6 +137,26 @@ namespace Gsemac.Forms.Utilities {
             control.GetType()
                 .GetProperty("DoubleBuffered", BindingFlags.Instance | BindingFlags.NonPublic)
                 .SetValue(control, value, null);
+
+        }
+
+        public static IEnumerable<IComponent> GetComponents(Control control) {
+
+            // Returns components added via the designer (e.g. ToolTips).
+
+            FieldInfo fieldInfo = control.GetType()
+                .GetField("components", BindingFlags.Instance | BindingFlags.NonPublic);
+
+            if (fieldInfo != null && fieldInfo.GetValue(control) is IContainer container) {
+
+                return container.Components.OfType<IComponent>();
+
+            }
+            else {
+
+                return Enumerable.Empty<IComponent>();
+
+            }
 
         }
 
