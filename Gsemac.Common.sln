@@ -19,6 +19,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Gsemac.Utilities.Tests", "G
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gsemac.Forms", "Gsemac.Forms\Gsemac.Forms.csproj", "{E9B26DE4-5B88-40E9-AB7E-43048A965586}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gsemac.Assembly", "Gsemac.Assembly\Gsemac.Assembly.csproj", "{DD31A3B9-CCAB-45CC-AFBC-2E17F34FA65C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -49,6 +51,10 @@ Global
 		{E9B26DE4-5B88-40E9-AB7E-43048A965586}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E9B26DE4-5B88-40E9-AB7E-43048A965586}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E9B26DE4-5B88-40E9-AB7E-43048A965586}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DD31A3B9-CCAB-45CC-AFBC-2E17F34FA65C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DD31A3B9-CCAB-45CC-AFBC-2E17F34FA65C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DD31A3B9-CCAB-45CC-AFBC-2E17F34FA65C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DD31A3B9-CCAB-45CC-AFBC-2E17F34FA65C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -60,6 +66,7 @@ Global
 		{46F3DE15-F452-4EAA-A886-C6BD1CBA7976} = {7A3B483F-8E9D-495F-856D-3A753710E480}
 		{50EC3802-35C1-476C-8AD6-4C7A6AEA7079} = {DFF494FA-1250-4ACB-862C-DB4438FD2CF4}
 		{E9B26DE4-5B88-40E9-AB7E-43048A965586} = {7A3B483F-8E9D-495F-856D-3A753710E480}
+		{DD31A3B9-CCAB-45CC-AFBC-2E17F34FA65C} = {7A3B483F-8E9D-495F-856D-3A753710E480}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {D040AD76-9C92-4D4E-99AD-45B26C068360}
