@@ -1,52 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace Gsemac.Assembly {
+﻿namespace Gsemac.Assembly {
 
     public class FileSystemAssemblyResolver :
-        IAssemblyResolver {
+        FileSystemAssemblyResolverBase {
 
         // Public members
 
-        public bool AddExtension { get; set; } = true;
-        public ICollection<string> ProbingPaths { get; } = new List<string>();
-        public bool ProbeCurrentDirectory { get; set; } = true;
-        public bool Unsafe { get; set; } = false;
-
-        public System.Reflection.Assembly ResolveAssembly(string assemblyName) {
-
-            string assemblyPath = GetAssemblyPath(assemblyName);
-
-            if (!string.IsNullOrEmpty(assemblyPath)) {
-
-                if (Unsafe)
-                    return System.Reflection.Assembly.UnsafeLoadFrom(assemblyPath);
-                else
-                    return System.Reflection.Assembly.LoadFrom(assemblyPath);
-
-            }
-
-            return null;
-
-        }
-        public System.Reflection.Assembly ResolveAssembly(object sender, ResolveEventArgs e) {
-
-            return ResolveAssembly(new System.Reflection.AssemblyName(e.Name).Name);
-
-        }
-
-        public bool AssemblyExists(string assemblyName) {
-
-            return !string.IsNullOrEmpty(GetAssemblyPath(assemblyName));
-
-        }
-        public string GetAssemblyPath(string assemblyName) {
+        public override string GetAssemblyPath(string assemblyName) {
 
             string assemblyPath = string.Empty;
 
             // Attempt to find the assembly relative to one of the probing paths.
 
-            foreach (string probingPath in ProbingPaths) {
+            foreach (string probingPath in GetProbingPaths()) {
 
                 string candidatePath = probingPath;
 
