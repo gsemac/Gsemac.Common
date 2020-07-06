@@ -4,7 +4,7 @@ using System.IO;
 
 namespace Gsemac.Assembly {
 
-    public class ArchitectureDependentFileSystemAssemblyResolver :
+    public class AnyCpuFileSystemAssemblyResolver :
         FileSystemAssemblyResolver {
 
         // Protected members
