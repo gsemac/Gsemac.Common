@@ -28,14 +28,44 @@ namespace Gsemac.Utilities.Tests {
         }
 
         [TestMethod]
+        public void GetPathRelativeToRootWithRoot() {
+
+            Assert.AreEqual(@"Users\Username", PathUtilities.GetPathRelativeToRoot(@"\Users\Username"));
+
+        }
+        [TestMethod]
+        public void GetPathRelativeToRootWithDriveRoot() {
+
+            Assert.AreEqual(@"Users\Username", PathUtilities.GetPathRelativeToRoot(@"C:\Users\Username"));
+
+        }
+        [TestMethod]
+        public void GetPathRelativeToRootWithNetworkShare() {
+
+            Assert.AreEqual(@"Username", PathUtilities.GetPathRelativeToRoot(@"\\Share\Users\Username"));
+
+        }
+        [TestMethod]
+        public void GetPathRelativeToRootWithRelativePath() {
+
+            Assert.AreEqual(@"Users\Username", PathUtilities.GetPathRelativeToRoot(@"Users\Username"));
+
+        }
+        [TestMethod]
+        public void GetPathRelativeToRootWithEmptyString() {
+
+            Assert.AreEqual(string.Empty, PathUtilities.GetPathRelativeToRoot(string.Empty));
+
+        }
+
+        [TestMethod]
         public void TestAnonymizePathWithUserDirectory() {
 
             string userDirectory = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
-            string userDirectoryParentDirectory = System.IO.Path.GetDirectoryName(userDirectory);
             string path = System.IO.Path.Combine(userDirectory, "test");
             string anonymizedPath = PathUtilities.AnonymizePath(path);
 
-            Assert.AreEqual(System.IO.Path.Join(userDirectoryParentDirectory, "%USERNAME%", "test"), anonymizedPath);
+            Assert.AreEqual(@"%USERPROFILE%\test", anonymizedPath);
 
         }
 

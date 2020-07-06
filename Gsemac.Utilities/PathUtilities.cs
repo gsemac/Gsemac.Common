@@ -29,17 +29,40 @@ namespace Gsemac.Utilities {
 
         }
 
+        public static string GetPathRelativeToRoot(string path) {
+
+            string relativePath = path;
+
+            if (!string.IsNullOrWhiteSpace(relativePath)) {
+
+                relativePath = TrimDirectorySeparators(path.Substring(System.IO.Path.GetPathRoot(path).Length));
+
+            }
+
+            return relativePath;
+
+        }
+
         public static string AnonymizePath(string path) {
 
             // Remove the current user's username from the path (if the path is inside the user directory).
 
             string userDirectory = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
 
-            if (!string.IsNullOrWhiteSpace(userDirectory) && path.StartsWith(userDirectory)) {
+            if (!string.IsNullOrWhiteSpace(userDirectory) && !string.IsNullOrWhiteSpace(path)) {
 
-                string userDirectoryParentDirectory = System.IO.Path.GetDirectoryName(userDirectory);
+                // Make the paths relative to their root so that the path can be anonymized regardless of the drive it's on.
 
-                path = System.IO.Path.Combine(userDirectoryParentDirectory, "%USERNAME%", GetRelativePath(path, userDirectory));
+                userDirectory = GetPathRelativeToRoot(userDirectory);
+                path = GetPathRelativeToRoot(path);
+
+                if (path.StartsWith(userDirectory)) {
+
+                    // If the path is directly inside of %USERPROFILE%, make the path relative to that variable.
+
+                    path = System.IO.Path.Combine("%USERPROFILE%", GetRelativePath(path, userDirectory));
+
+                }
 
             }
 
