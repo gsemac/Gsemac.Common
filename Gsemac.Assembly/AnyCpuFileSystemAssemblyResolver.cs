@@ -15,7 +15,11 @@ namespace Gsemac.Assembly {
 
             foreach (string probingPath in base.GetProbingPaths()) {
 
-                yield return Path.Combine(probingPath, archPath);
+                // Only generate architecture-dependent paths if the current path is not already architecture-dependent.
+
+                if (!probingPath.EndsWith(Path.DirectorySeparatorChar + archPath) && !probingPath.EndsWith(Path.AltDirectorySeparatorChar + archPath))
+                    yield return Path.Combine(probingPath, archPath);
+
                 yield return probingPath;
 
             }
