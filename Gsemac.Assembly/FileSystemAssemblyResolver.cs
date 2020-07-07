@@ -41,17 +41,6 @@
 
             }
 
-            // Attempt to find the assembly next to the entry assembly.
-
-            if (ProbeCurrentDirectory) {
-
-                string candidatePath = System.IO.Path.Combine(new EntryAssemblyInfo().Directory, assemblyName);
-
-                if (System.IO.File.Exists(candidatePath))
-                    assemblyPath = candidatePath;
-
-            }
-
             return assemblyPath;
 
         }

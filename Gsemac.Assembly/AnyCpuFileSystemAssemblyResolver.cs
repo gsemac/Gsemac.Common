@@ -13,15 +13,12 @@ namespace Gsemac.Assembly {
 
             string archPath = Environment.Is64BitProcess ? "x64" : "x86";
 
-            foreach (string probingPath in ProbingPaths) {
+            foreach (string probingPath in base.GetProbingPaths()) {
 
                 yield return Path.Combine(probingPath, archPath);
                 yield return probingPath;
 
             }
-
-            if (ProbeCurrentDirectory)
-                yield return Path.Combine(new EntryAssemblyInfo().Directory, archPath);
 
         }
 

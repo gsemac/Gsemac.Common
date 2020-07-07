@@ -47,7 +47,14 @@ namespace Gsemac.Assembly {
 
         protected virtual IEnumerable<string> GetProbingPaths() {
 
-            return ProbingPaths;
+            foreach (string probingPath in ProbingPaths) {
+
+                yield return probingPath;
+
+            }
+
+            if (ProbeCurrentDirectory)
+                yield return new EntryAssemblyInfo().Directory;
 
         }
 
