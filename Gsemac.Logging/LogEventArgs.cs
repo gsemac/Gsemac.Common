@@ -17,6 +17,12 @@ namespace Gsemac.Logging {
 
         }
 
+        public override string ToString() {
+
+            return Message.ToString();
+
+        }
+
     }
 
 }
