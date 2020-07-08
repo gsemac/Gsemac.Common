@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Gsemac.Logging {
 
@@ -17,7 +15,11 @@ namespace Gsemac.Logging {
 
         public void ExecutePolicy(string directoryPath, string searchPattern = "*") {
 
-            if (System.IO.Directory.Exists(directoryPath)) {
+            TimeSpan timeSinceLastExecution = DateTimeOffset.Now - lastExecutionTime;
+
+            if (timeSinceLastExecution > deleteOlderThan && System.IO.Directory.Exists(directoryPath)) {
+
+                lastExecutionTime = DateTimeOffset.Now;
 
                 foreach (string filePath in System.IO.Directory.GetFiles(directoryPath, searchPattern)) {
 
@@ -35,6 +37,7 @@ namespace Gsemac.Logging {
         // Private members
 
         private readonly TimeSpan deleteOlderThan;
+        private DateTimeOffset lastExecutionTime = DateTimeOffset.MinValue;
 
     }
 

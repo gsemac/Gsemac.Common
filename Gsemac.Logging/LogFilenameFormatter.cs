@@ -12,6 +12,14 @@ namespace Gsemac.Logging {
         public string Name { get; set; } = "debug";
         public string FileExtension { get; set; } = ".log";
 
+        public LogFilenameFormatter() {
+        }
+        public LogFilenameFormatter(string name) {
+
+            this.Name = name;
+
+        }
+
         public string Format(DateTime timestamp) {
 
             StringBuilder sb = new StringBuilder();

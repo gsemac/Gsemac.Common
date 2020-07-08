@@ -34,8 +34,11 @@ namespace Gsemac.Logging {
 
         protected override void Log(ILogMessage logMessage, string formattedMessage) {
 
-            CreateDirectoryIfItDoesNotExist();
-            InitializeFileIfItIsNotInitialized();
+            CreateLogDirectory();
+
+            CreateLogFile();
+
+            ExecuteLogRetentionPolicy();
 
             string logFilePath = currentFilename;
 
@@ -51,23 +54,16 @@ namespace Gsemac.Logging {
         private string currentFilename = string.Empty;
         private ILogRetentionPolicy logRetentionPolicy = new NeverDeleteLogRetentionPolicy();
 
-        private void CreateDirectoryIfItDoesNotExist() {
+        private void CreateLogDirectory() {
 
             if (!string.IsNullOrWhiteSpace(Directory) && !System.IO.Directory.Exists(Directory))
                 System.IO.Directory.CreateDirectory(Directory);
 
         }
-        private void InitializeFileIfItIsNotInitialized() {
+        private void CreateLogFile() {
 
-            if (string.IsNullOrWhiteSpace(currentFilename)) {
-
+            if (string.IsNullOrWhiteSpace(currentFilename))
                 currentFilename = FilenameFormatter.Format(DateTime.Now);
-
-                // Execute the log file retention policy when creating a new file.
-
-                ExecuteLogRetentionPolicy();
-
-            }
 
         }
         private void ExecuteLogRetentionPolicy() {
