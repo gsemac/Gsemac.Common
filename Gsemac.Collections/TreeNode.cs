@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 
 namespace Gsemac.Collections {
 
-    class TreeNode<T> :
+    public class TreeNode<T> :
         ITreeNode<T> {
 
         // Public members
@@ -13,6 +11,9 @@ namespace Gsemac.Collections {
         public int Level => 0;
         public ICollection<ITreeNode<T>> Children { get; }
         public T Value { get; }
+
+        ITreeNode ITreeNode.Parent => Parent;
+        IEnumerable<ITreeNode> ITreeNode.Children => Children;
 
         public ITreeNode<T> GetUnderlyingNode() => null;
 

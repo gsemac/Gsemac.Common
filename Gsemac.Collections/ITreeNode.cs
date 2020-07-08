@@ -2,11 +2,19 @@
 
 namespace Gsemac.Collections {
 
-    public interface ITreeNode<T> {
+    public interface ITreeNode {
 
-        ITreeNode<T> Parent { get; }
+        ITreeNode Parent { get; }
         int Level { get; }
-        ICollection<ITreeNode<T>> Children { get; }
+        IEnumerable<ITreeNode> Children { get; }
+
+    }
+
+    public interface ITreeNode<T> :
+        ITreeNode {
+
+        new ITreeNode<T> Parent { get; }
+        new ICollection<ITreeNode<T>> Children { get; }
 
         T Value { get; }
 

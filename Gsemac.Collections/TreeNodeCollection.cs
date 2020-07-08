@@ -12,6 +12,8 @@ namespace Gsemac.Collections {
         public int Count => nodes.Count;
         public bool IsReadOnly => false;
 
+        public TreeNodeCollection() {
+        }
         public TreeNodeCollection(ITreeNode<T> parentNode) {
 
             this.parentNode = parentNode;
@@ -45,8 +47,14 @@ namespace Gsemac.Collections {
         }
         public IEnumerator<ITreeNode<T>> GetEnumerator() {
 
-            return nodes.Select(node => new NodeWrapper(node, parentNode))
-                .GetEnumerator();
+            IEnumerable<ITreeNode<T>> result;
+
+            if (parentNode != null)
+                result = nodes.Select(node => new NodeWrapper(node, parentNode));
+            else
+                result = nodes;
+
+            return nodes.GetEnumerator();
 
         }
         public bool Remove(ITreeNode<T> item) {
@@ -72,6 +80,9 @@ namespace Gsemac.Collections {
             public int Level { get; }
             public ICollection<ITreeNode<T>> Children => underlyingNode.Children;
             public T Value => underlyingNode.Value;
+
+            ITreeNode ITreeNode.Parent => Parent;
+            IEnumerable<ITreeNode> ITreeNode.Children => Children;
 
             public NodeWrapper(ITreeNode<T> underlyingNode, ITreeNode<T> parentNode) {
 

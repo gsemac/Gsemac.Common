@@ -69,6 +69,41 @@ namespace Gsemac.Collections.Extensions {
 
         }
 
+        public static ITreeNode<T> Find<T>(this ITreeNode<T> root, T value) {
+
+            return root.DepthFirstSearch(value);
+
+        }
+        public static ITreeNode<T> Find<T>(this ITreeNode<T> root, Func<ITreeNode<T>, bool> condition) {
+
+            return root.DepthFirstSearch(condition);
+
+        }
+
+        public static ITreeNode<T> DepthFirstSearch<T>(this ITreeNode<T> root, T value) {
+
+            return DepthFirstSearch(root, node => node.Value.Equals(value));
+
+        }
+        public static ITreeNode<T> DepthFirstSearch<T>(this ITreeNode<T> root, Func<ITreeNode<T>, bool> condition) {
+
+            ITreeNode<T> result = null;
+
+            root.DepthFirstTraversal(node => {
+
+                bool valueFound = condition(node);
+
+                if (valueFound)
+                    result = node;
+
+                return !valueFound;
+
+            });
+
+            return result;
+
+        }
+
     }
 
 }
