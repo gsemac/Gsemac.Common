@@ -5,7 +5,7 @@ using System.Linq;
 namespace Gsemac.Collections {
 
     public class TreeNodeCollection<T> :
-        ITreeNodeCollection<T> {
+        ICollection<ITreeNode<T>> {
 
         // Public members
 
@@ -70,7 +70,7 @@ namespace Gsemac.Collections {
 
             public ITreeNode<T> Parent { get; }
             public int Level { get; }
-            public ITreeNodeCollection<T> Children => underlyingNode.Children;
+            public ICollection<ITreeNode<T>> Children => underlyingNode.Children;
             public T Value => underlyingNode.Value;
 
             public NodeWrapper(ITreeNode<T> underlyingNode, ITreeNode<T> parentNode) {

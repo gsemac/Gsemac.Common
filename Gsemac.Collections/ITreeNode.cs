@@ -6,7 +6,7 @@ namespace Gsemac.Collections {
 
         ITreeNode<T> Parent { get; }
         int Level { get; }
-        ITreeNodeCollection<T> Children { get; }
+        ICollection<ITreeNode<T>> Children { get; }
 
         T Value { get; }
 

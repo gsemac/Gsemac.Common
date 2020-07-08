@@ -11,7 +11,7 @@ namespace Gsemac.Collections {
 
         public ITreeNode<T> Parent => null;
         public int Level => 0;
-        public ITreeNodeCollection<T> Children { get; }
+        public ICollection<ITreeNode<T>> Children { get; }
         public T Value { get; }
 
         public ITreeNode<T> GetUnderlyingNode() => null;
