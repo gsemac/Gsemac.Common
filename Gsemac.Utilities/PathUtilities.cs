@@ -104,6 +104,9 @@ namespace Gsemac.Utilities {
             if (isFilePath)
                 explorerArguments = $"/select, \"{path}\"";
 
+            if (isFilePath || System.IO.Directory.Exists(path))
+                path = System.IO.Path.GetFullPath(path);
+
             if (isFilePath || options.HasFlag(OpenPathOptions.NewWindow) || !System.IO.Directory.Exists(path)) {
 
                 // We choose this option if the path doesn't exist since it avoids an exception being thrown by Process.Start.
