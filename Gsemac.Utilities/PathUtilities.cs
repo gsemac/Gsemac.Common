@@ -90,7 +90,7 @@ namespace Gsemac.Utilities {
 
         }
 
-        public static void OpenPathInFileBrowser(string path, OpenPathOptions options = OpenPathOptions.None) {
+        public static void OpenPath(string path, OpenPathOptions options = OpenPathOptions.None) {
 
             const string explorerExe = "explorer.exe";
 
@@ -121,6 +121,14 @@ namespace Gsemac.Utilities {
                 });
 
             }
+
+        }
+        public static void OpenPathOrDefault(string path, string defaultPath, OpenPathOptions options = OpenPathOptions.None) {
+
+            if (System.IO.Directory.Exists(path) || System.IO.File.Exists(path))
+                OpenPath(path, options);
+            else
+                OpenPath(defaultPath, options);
 
         }
 
