@@ -1,8 +1,22 @@
 ﻿using System;
+using System.Diagnostics;
+using System.Linq;
 
 namespace Gsemac.Utilities {
 
+    [Flags]
+    public enum OpenPathOptions {
+        None,
+        Default = None,
+        /// <summary>
+        /// Open the path a new window even if it is already open.
+        /// </summary>
+        NewWindow
+    }
+
     public static class PathUtilities {
+
+        // Public members
 
         public static string GetRelativePath(string fullPath, string relativePath) {
 
@@ -23,12 +37,6 @@ namespace Gsemac.Utilities {
                 return fullPath;
 
         }
-        public static string TrimDirectorySeparators(string path) {
-
-            return path?.Trim(System.IO.Path.DirectorySeparatorChar, System.IO.Path.AltDirectorySeparatorChar);
-
-        }
-
         public static string GetPathRelativeToRoot(string path) {
 
             string relativePath = path;
@@ -42,7 +50,6 @@ namespace Gsemac.Utilities {
             return relativePath;
 
         }
-
         public static string AnonymizePath(string path) {
 
             // Remove the current user's username from the path (if the path is inside the user directory).
@@ -67,6 +74,53 @@ namespace Gsemac.Utilities {
             }
 
             return path;
+
+        }
+        public static string TrimDirectorySeparators(string path) {
+
+            return path?.Trim(System.IO.Path.DirectorySeparatorChar, System.IO.Path.AltDirectorySeparatorChar);
+
+        }
+        public static bool IsFilePath(string path) {
+
+            return path.Any() &&
+                path.Last() != System.IO.Path.DirectorySeparatorChar &&
+                path.Last() != System.IO.Path.AltDirectorySeparatorChar &&
+                System.IO.File.Exists(path);
+
+        }
+
+        public static void OpenPathInFileBrowser(string path, OpenPathOptions options = OpenPathOptions.None) {
+
+            const string explorerExe = "explorer.exe";
+
+            // The path provided may be a file or a directory.
+            // - If the path is a directory, we'll just open the directory.
+            // - If the path is a file, we'll open the directory and highlight the file.
+
+            string explorerArguments = $"\"{path}\"";
+            bool isFilePath = IsFilePath(path);
+
+            if (isFilePath)
+                explorerArguments = $"/select, \"{path}\"";
+
+            if (isFilePath || options.HasFlag(OpenPathOptions.NewWindow) || !System.IO.Directory.Exists(path)) {
+
+                // We choose this option if the path doesn't exist since it avoids an exception being thrown by Process.Start.
+                // It will simply open a default directory.
+
+                Process.Start(explorerExe, explorerArguments);
+
+            }
+            else {
+
+                Process.Start(new ProcessStartInfo() {
+                    FileName = path,
+                    UseShellExecute = true,
+                    Verb = "open"
+                });
+
+            }
 
         }
 
