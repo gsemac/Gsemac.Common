@@ -48,6 +48,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utilities\ControlUtilities.cs" />
     <Compile Include="Utilities\DataGridViewUtilities.cs" />
+    <Compile Include="Utilities\SplitContainerUtilities.cs" />
     <Compile Include="Utilities\TreeViewUtilities.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
