@@ -64,7 +64,7 @@ namespace Gsemac.Forms.Utilities {
 
             foreach (TreeNode node in GetVisibleNodes(treeView)) {
 
-                node.BackColor = even ? default : SystemColors.ControlLight;
+                node.BackColor = even ? default : SystemColors.Control;
 
                 even = !even;
 

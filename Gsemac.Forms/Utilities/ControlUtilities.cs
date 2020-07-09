@@ -26,6 +26,19 @@ namespace Gsemac.Forms.Utilities {
 
         }
 
+        public static bool ContainsText(Control control, string text, StringComparison comparisonType = StringComparison.CurrentCulture) {
+
+            if (control.Text.IndexOf(text, comparisonType) != -1)
+                return true;
+
+            foreach (Control childControl in control.Controls)
+                if (ContainsText(childControl, text, comparisonType))
+                    return true;
+
+            return false;
+
+        }
+
         public static TextFormatFlags GetTextFormatFlags(ContentAlignment contentAlignment) {
 
             TextFormatFlags flags = TextFormatFlags.Default;
