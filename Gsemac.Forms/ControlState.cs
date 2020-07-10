@@ -12,108 +12,11 @@ namespace Gsemac.Forms {
 
         public void Restore(Control control) {
 
-            if (layoutState != null) {
+            if (layoutState != null)
+                RestoreLayoutState(control);
 
-                control.Location = layoutState.Location;
-
-                if (layoutState.Dock == DockStyle.None && layoutState.BottomRightPadding.HasValue && control.Parent != null) {
-
-                    Point bottomRightPadding = layoutState.BottomRightPadding.Value;
-
-                    // Resize the control such that the original relative distances from the sides of its parent control are retained.
-
-                    if (layoutState.Anchor.HasFlag(AnchorStyles.Right)) {
-
-                        control.Width = control.Parent.Width - bottomRightPadding.X - layoutState.Location.X;
-
-                    }
-                    else
-                        control.Width = layoutState.Size.Width;
-
-                    if (layoutState.Anchor.HasFlag(AnchorStyles.Bottom)) {
-
-                        control.Height = control.Parent.Height - bottomRightPadding.Y - layoutState.Location.Y;
-
-                    }
-                    else
-                        control.Height = layoutState.Size.Height;
-
-                }
-                else if (layoutState.Dock == DockStyle.Left || layoutState.Dock == DockStyle.Right) {
-
-                    control.Width = layoutState.Size.Width;
-
-                }
-                else if (layoutState.Dock == DockStyle.Top || layoutState.Dock == DockStyle.Bottom) {
-
-                    control.Height = layoutState.Size.Height;
-
-                }
-                else {
-
-                    control.Size = layoutState.Size;
-
-                }
-
-                control.Anchor = layoutState.Anchor;
-                control.AutoSize = layoutState.AutoSize;
-                control.Dock = layoutState.Dock;
-
-            }
-
-            if (visualState != null) {
-
-                // Set the colors to their defaults before attempting to apply the stored colors.
-                // This is so we can avoid changing the colors if they are already the defaults, which makes sure the ToolStripRenderer appears correctly.
-
-                control.BackColor = default;
-                control.ForeColor = default;
-
-                if (visualState.BackColor != control.BackColor)
-                    control.BackColor = visualState.BackColor;
-
-                if (visualState.ForeColor != control.ForeColor)
-                    control.ForeColor = visualState.ForeColor;
-
-                ControlUtilities.SetStyles(control, visualState.Styles);
-
-                TrySetResizeRedraw(control, visualState.ResizeRedraw);
-                TrySetDrawMode(control, visualState.DrawMode);
-                TrySetBorderStyle(control, visualState.BorderStyle);
-                TrySetFlatStyle(control, visualState.FlatStyle);
-                TrySetOwnerDraw(control, visualState.OwnerDraw);
-                TrySetUseVisualStyleBackColor(control, visualState.UseVisualStyleBackColor);
-
-                switch (control) {
-
-                    case DataGridView dataGridView:
-
-                        dataGridView.BackgroundColor = visualState.BackColor;
-                        dataGridView.EnableHeadersVisualStyles = visualState.EnableHeadersVisualStyles;
-
-                        break;
-
-                    case ListView listView:
-
-                        listView.GridLines = visualState.GridLines;
-
-                        break;
-
-                    case ToolStrip toolStrip:
-
-                        toolStrip.Renderer = visualState.ToolStripRenderer;
-
-                        break;
-
-                    case TreeView treeView:
-
-                        treeView.DrawMode = visualState.TreeViewDrawMode;
-
-                        break;
-
-                }
-
-            }
+            if (visualState != null)
+                RestoreVisualState(control);
 
         }
 
@@ -466,6 +369,139 @@ namespace Gsemac.Forms {
                         break;
 
                 }
+
+            }
+
+        }
+
+        private void RestoreLayoutState(Control control) {
+
+            // Temporarily remove anchoring so it does not interfere with resizing/repositioning the control.
+
+            control.Anchor = AnchorStyles.None;
+
+            control.Location = layoutState.Location;
+            control.Size = layoutState.Size;
+
+            if (layoutState.Dock == DockStyle.None && layoutState.BottomRightPadding.HasValue && control.Parent != null) {
+
+                Point bottomRightPadding = layoutState.BottomRightPadding.Value;
+
+                // Resize the control such that the original relative distances from the sides of its parent control are retained.
+
+                if (!layoutState.Anchor.HasFlag(AnchorStyles.Left) && layoutState.Anchor.HasFlag(AnchorStyles.Right)) {
+
+                    // If the control is anchored to the right but not the left, we need to adjust its location so that it has the same relative position to the right side of its parent.
+                    // The size of the control should be equivalent to its original size.
+
+                    control.Location = new Point(control.Parent.Width - (control.Width + bottomRightPadding.X), control.Location.Y);
+
+                }
+                else if (layoutState.Anchor.HasFlag(AnchorStyles.Left) && layoutState.Anchor.HasFlag(AnchorStyles.Right)) {
+
+                    // If the control is anchored to both sides of its parent, we need to adjust its width to compensate for both its current position and its distance from the right side of the parent.
+
+                    control.Width = control.Parent.Width - control.Location.X - bottomRightPadding.X;
+
+                }
+                else {
+
+                    control.Width = layoutState.Size.Width;
+
+                }
+
+                if (!layoutState.Anchor.HasFlag(AnchorStyles.Top) && layoutState.Anchor.HasFlag(AnchorStyles.Bottom)) {
+
+                    // If the control is anchored to the bottom but not the top, we need to adjust its location so that it has the same relative position to the bottom side of its parent.
+                    // The size of the control should be equivalent to its original size.
+
+                    control.Location = new Point(control.Location.X, control.Parent.Height - (control.Height + bottomRightPadding.Y));
+
+                }
+                else if (layoutState.Anchor.HasFlag(AnchorStyles.Top) && layoutState.Anchor.HasFlag(AnchorStyles.Bottom)) {
+
+                    // If the control is anchored to both sides of its parent, we need to adjust its width to compensate for both its current position and its distance from the bottom side of the parent.
+
+                    control.Height = control.Parent.Height - control.Location.Y - bottomRightPadding.Y;
+
+                }
+                else {
+
+                    control.Height = layoutState.Size.Height;
+
+                }
+
+            }
+            else if (layoutState.Dock == DockStyle.Left || layoutState.Dock == DockStyle.Right) {
+
+                control.Width = layoutState.Size.Width;
+
+            }
+            else if (layoutState.Dock == DockStyle.Top || layoutState.Dock == DockStyle.Bottom) {
+
+                control.Height = layoutState.Size.Height;
+
+            }
+            else {
+
+                control.Size = layoutState.Size;
+
+            }
+
+            control.Anchor = layoutState.Anchor;
+            control.AutoSize = layoutState.AutoSize;
+            control.Dock = layoutState.Dock;
+
+        }
+        private void RestoreVisualState(Control control) {
+
+            // Set the colors to their defaults before attempting to apply the stored colors.
+            // This is so we can avoid changing the colors if they are already the defaults, which makes sure the ToolStripRenderer appears correctly.
+
+            control.BackColor = default;
+            control.ForeColor = default;
+
+            if (visualState.BackColor != control.BackColor)
+                control.BackColor = visualState.BackColor;
+
+            if (visualState.ForeColor != control.ForeColor)
+                control.ForeColor = visualState.ForeColor;
+
+            ControlUtilities.SetStyles(control, visualState.Styles);
+
+            TrySetResizeRedraw(control, visualState.ResizeRedraw);
+            TrySetDrawMode(control, visualState.DrawMode);
+            TrySetBorderStyle(control, visualState.BorderStyle);
+            TrySetFlatStyle(control, visualState.FlatStyle);
+            TrySetOwnerDraw(control, visualState.OwnerDraw);
+            TrySetUseVisualStyleBackColor(control, visualState.UseVisualStyleBackColor);
+
+            switch (control) {
+
+                case DataGridView dataGridView:
+
+                    dataGridView.BackgroundColor = visualState.BackColor;
+                    dataGridView.EnableHeadersVisualStyles = visualState.EnableHeadersVisualStyles;
+
+                    break;
+
+                case ListView listView:
+
+                    listView.GridLines = visualState.GridLines;
+
+                    break;
+
+                case ToolStrip toolStrip:
+
+                    toolStrip.Renderer = visualState.ToolStripRenderer;
+
+                    break;
+
+                case TreeView treeView:
+
+                    treeView.DrawMode = visualState.TreeViewDrawMode;
+
+                    break;
 
             }
 
