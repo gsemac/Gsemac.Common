@@ -1,8 +1,7 @@
-<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="MSBuild.Sdk.Extras/2.0.54">
 
   <PropertyGroup>
-    <TargetFramework>net40</TargetFramework>
-    <TargetFrameworkProfile>Client</TargetFrameworkProfile>
+    <TargetFrameworks>net40-client</TargetFrameworks>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)' == 'Release'">
