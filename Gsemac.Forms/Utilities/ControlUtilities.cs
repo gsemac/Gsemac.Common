@@ -79,7 +79,7 @@ namespace Gsemac.Forms.Utilities {
 
         }
 
-        public static ScrollBars GetVisibleScrollbars(ListBox control) {
+        public static ScrollBars GetVisibleScrollBars(ListBox control) {
 
             ScrollBars scrollBars = ScrollBars.None;
 
@@ -89,12 +89,12 @@ namespace Gsemac.Forms.Utilities {
             return scrollBars;
 
         }
-        public static ScrollBars GetVisibleScrollbars(TextBox control) {
+        public static ScrollBars GetVisibleScrollBars(TextBox control) {
 
             return control.ScrollBars;
 
         }
-        public static ScrollBars GetVisibleScrollbars(Control control) {
+        public static ScrollBars GetVisibleScrollBars(Control control) {
 
             ScrollBars scrollBars = ScrollBars.None;
 
