@@ -93,7 +93,7 @@ namespace Gsemac.Forms.Utilities {
 
             ScrollBars scrollBars = ScrollBars.None;
 
-            if (!control.Multiline) {
+            if (control.Multiline) {
 
                 scrollBars = control.ScrollBars;
 
