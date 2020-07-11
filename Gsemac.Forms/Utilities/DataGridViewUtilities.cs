@@ -106,6 +106,17 @@ namespace Gsemac.Forms.Utilities {
             return rowIndex < 0;
 
         }
+        public static DataGridViewCellStyle GetDefaultCellStyle(DataGridView dataGridView, int rowIndex, int columnIndex) {
+
+            if (IsColumnHeaderIndex(rowIndex))
+                return dataGridView.ColumnHeadersDefaultCellStyle;
+
+            if (IsRowHeaderIndex(columnIndex))
+                return dataGridView.RowHeadersDefaultCellStyle;
+
+            return dataGridView.DefaultCellStyle;
+
+        }
 
     }
 
