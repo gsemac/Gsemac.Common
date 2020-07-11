@@ -96,6 +96,17 @@ namespace Gsemac.Forms.Utilities {
 
         }
 
+        public static bool IsRowHeaderIndex(int columnIndex) {
+
+            return columnIndex < 0;
+
+        }
+        public static bool IsColumnHeaderIndex(int rowIndex) {
+
+            return rowIndex < 0;
+
+        }
+
     }
 
 }
