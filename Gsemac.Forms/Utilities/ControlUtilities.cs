@@ -91,7 +91,20 @@ namespace Gsemac.Forms.Utilities {
         }
         public static ScrollBars GetVisibleScrollBars(TextBox control) {
 
-            return control.ScrollBars;
+            ScrollBars scrollBars = ScrollBars.None;
+
+            if (!control.Multiline) {
+
+                scrollBars = control.ScrollBars;
+
+                // If WordWrap is enabled, the horizontal scroll bar never appears, even if it is enabled.
+
+                if (control.WordWrap)
+                    scrollBars &= ~ScrollBars.Horizontal;
+
+            }
+
+            return scrollBars;
 
         }
         public static ScrollBars GetVisibleScrollBars(Control control) {
