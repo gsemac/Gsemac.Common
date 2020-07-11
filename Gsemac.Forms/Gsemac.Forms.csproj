@@ -43,6 +43,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ControlState.cs" />
+    <Compile Include="DataGridViewProgressBarCell.cs" />
+    <Compile Include="DataGridViewProgressBarColumn.cs" />
     <Compile Include="Extensions\ControlExtensions.cs" />
     <Compile Include="IControlState.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -51,6 +53,12 @@
     <Compile Include="Utilities\FormUtilities.cs" />
     <Compile Include="Utilities\SplitContainerUtilities.cs" />
     <Compile Include="Utilities\TreeViewUtilities.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Gsemac.Utilities\Gsemac.Utilities.csproj">
+      <Project>{46F3DE15-F452-4EAA-A886-C6BD1CBA7976}</Project>
+      <Name>Gsemac.Utilities</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
