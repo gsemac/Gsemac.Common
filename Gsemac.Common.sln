@@ -19,7 +19,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Gsemac.Utilities.Tests", "G
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gsemac.Forms", "Gsemac.Forms\Gsemac.Forms.csproj", "{E9B26DE4-5B88-40E9-AB7E-43048A965586}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gsemac.Assembly", "Gsemac.Assembly\Gsemac.Assembly.csproj", "{DD31A3B9-CCAB-45CC-AFBC-2E17F34FA65C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Gsemac.Application", "Gsemac.Application\Gsemac.Application.csproj", "{DD31A3B9-CCAB-45CC-AFBC-2E17F34FA65C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
