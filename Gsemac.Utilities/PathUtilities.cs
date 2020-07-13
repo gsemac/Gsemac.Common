@@ -98,14 +98,14 @@ namespace Gsemac.Utilities {
             // - If the path is a directory, we'll just open the directory.
             // - If the path is a file, we'll open the directory and highlight the file.
 
-            string explorerArguments = $"\"{path}\"";
             bool isFilePath = IsFilePath(path);
-
-            if (isFilePath)
-                explorerArguments = $"/select, \"{path}\"";
 
             if (isFilePath || System.IO.Directory.Exists(path))
                 path = System.IO.Path.GetFullPath(path);
+
+            string explorerArguments = isFilePath ?
+                $"/select, \"{path}\"" :
+                $"\"{path}\"";
 
             if (isFilePath || options.HasFlag(OpenPathOptions.NewWindow) || !System.IO.Directory.Exists(path)) {
 
