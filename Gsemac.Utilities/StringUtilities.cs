@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text.RegularExpressions;
 
 namespace Gsemac.Utilities {
 
@@ -22,6 +23,16 @@ namespace Gsemac.Utilities {
             }
             else
                 return input;
+
+        }
+
+        public static string NormalizeSpace(string input, NormalizeSpaceOptions options = NormalizeSpaceOptions.Default) {
+
+            string pattern = options.HasFlag(NormalizeSpaceOptions.PreserveLineBreaks) ?
+                @"[^\S\r\n]" :
+                @"\s+";
+
+            return Regex.Replace(input, pattern, " ");
 
         }
 
