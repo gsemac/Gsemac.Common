@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Text.RegularExpressions;
 
 namespace Gsemac.Utilities {
@@ -23,6 +25,24 @@ namespace Gsemac.Utilities {
             }
             else
                 return input;
+
+        }
+
+        public static IEnumerable<string> SplitAfter(string input, params char[] delimiters) {
+
+            string pattern = "([" + Regex.Escape(string.Join("", delimiters)) + "])";
+            string[] items = Regex.Split(input, pattern);
+
+            for (int i = 0; i < items.Count(); i += 2) {
+
+                string item = items[i];
+
+                if (i + 1 < items.Count())
+                    item += items[i + 1];
+
+                yield return item;
+
+            }
 
         }
 

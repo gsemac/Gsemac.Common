@@ -30,31 +30,31 @@ namespace Gsemac.Utilities.Tests {
         [TestMethod]
         public void GetPathRelativeToRootWithRoot() {
 
-            Assert.AreEqual(@"Users\Username", PathUtilities.GetPathRelativeToRoot(@"\Users\Username"));
+            Assert.AreEqual(@"Users\Username", PathUtilities.GetRelativePathToRoot(@"\Users\Username"));
 
         }
         [TestMethod]
         public void GetPathRelativeToRootWithDriveRoot() {
 
-            Assert.AreEqual(@"Users\Username", PathUtilities.GetPathRelativeToRoot(@"C:\Users\Username"));
+            Assert.AreEqual(@"Users\Username", PathUtilities.GetRelativePathToRoot(@"C:\Users\Username"));
 
         }
         [TestMethod]
         public void GetPathRelativeToRootWithNetworkShare() {
 
-            Assert.AreEqual(@"Username", PathUtilities.GetPathRelativeToRoot(@"\\Share\Users\Username"));
+            Assert.AreEqual(@"Username", PathUtilities.GetRelativePathToRoot(@"\\Share\Users\Username"));
 
         }
         [TestMethod]
         public void GetPathRelativeToRootWithRelativePath() {
 
-            Assert.AreEqual(@"Users\Username", PathUtilities.GetPathRelativeToRoot(@"Users\Username"));
+            Assert.AreEqual(@"Users\Username", PathUtilities.GetRelativePathToRoot(@"Users\Username"));
 
         }
         [TestMethod]
         public void GetPathRelativeToRootWithEmptyString() {
 
-            Assert.AreEqual(string.Empty, PathUtilities.GetPathRelativeToRoot(string.Empty));
+            Assert.AreEqual(string.Empty, PathUtilities.GetRelativePathToRoot(string.Empty));
 
         }
 

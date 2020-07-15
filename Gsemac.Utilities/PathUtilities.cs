@@ -1,22 +1,17 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 
 namespace Gsemac.Utilities {
 
-    [Flags]
-    public enum OpenPathOptions {
-        None,
-        Default = None,
-        /// <summary>
-        /// Open the path a new window even if it is already open.
-        /// </summary>
-        NewWindow
-    }
-
     public static class PathUtilities {
 
         // Public members
+
+        public const int MaxFilePathLength = 259; // 260 minus 1 for '\0'
+        public const int MaxDirectoryPathLength = 247; // 248 minus 1 for '\0'
+        public const int MaxPathSegmentLength = 255;
 
         public static string GetRelativePath(string fullPath, string relativePath) {
 
@@ -37,7 +32,7 @@ namespace Gsemac.Utilities {
                 return fullPath;
 
         }
-        public static string GetPathRelativeToRoot(string path) {
+        public static string GetRelativePathToRoot(string path) {
 
             string relativePath = path;
 
@@ -50,6 +45,38 @@ namespace Gsemac.Utilities {
             return relativePath;
 
         }
+        public static IEnumerable<string> GetPathSegments(string path) {
+
+            // Get the root of the path first, as it might contain multiple directory separators.
+
+            string pathRoot = System.IO.Path.GetPathRoot(path);
+
+            if (!string.IsNullOrEmpty(pathRoot)) {
+
+                // On Windows, GetPathRoot can return just a drive letter (e.g. "C:"). To signify that this is a path, append a directory separator.
+                // The separator is not always appended, because it might be a single separator (e.g. "/") on Unix systems.
+
+                if (pathRoot.Last() != System.IO.Path.DirectorySeparatorChar && pathRoot.Last() != System.IO.Path.AltDirectorySeparatorChar) {
+
+                    pathRoot += System.IO.Path.DirectorySeparatorChar.ToString();
+
+                }
+
+                path = path.Substring(pathRoot.Length);
+
+                yield return pathRoot;
+
+            }
+
+            // Return the remaining segments.
+
+            IEnumerable<string> remainingSegments = StringUtilities.SplitAfter(path, System.IO.Path.DirectorySeparatorChar, System.IO.Path.AltDirectorySeparatorChar);
+
+            foreach (string segment in remainingSegments)
+                yield return segment;
+
+        }
+
         public static string AnonymizePath(string path) {
 
             // Remove the current user's username from the path (if the path is inside the user directory).
@@ -60,8 +87,8 @@ namespace Gsemac.Utilities {
 
                 // Make the paths relative to their root so that the path can be anonymized regardless of the drive it's on.
 
-                userDirectory = GetPathRelativeToRoot(userDirectory);
-                path = GetPathRelativeToRoot(path);
+                userDirectory = GetRelativePathToRoot(userDirectory);
+                path = GetRelativePathToRoot(path);
 
                 if (path.StartsWith(userDirectory)) {
 
@@ -76,17 +103,83 @@ namespace Gsemac.Utilities {
             return path;
 
         }
+        public static string SanitizePath(string path, string invalidCharacterReplacement = "_") {
+
+            return ReplaceInvalidPathChars(path, invalidCharacterReplacement, InvalidPathCharacterOptions.Default | InvalidPathCharacterOptions.AllowPathSeparators);
+
+        }
+
         public static string TrimDirectorySeparators(string path) {
 
             return path?.Trim(System.IO.Path.DirectorySeparatorChar, System.IO.Path.AltDirectorySeparatorChar);
 
         }
-        public static bool IsFilePath(string path) {
+        public static string ReplaceInvalidPathChars(string path, InvalidPathCharacterOptions options = InvalidPathCharacterOptions.Default) {
 
-            return path.Any() &&
+            return ReplaceInvalidPathChars(path, string.Empty, options);
+
+        }
+        public static string ReplaceInvalidPathChars(string path, string replacement, InvalidPathCharacterOptions options = InvalidPathCharacterOptions.Default) {
+
+            IEnumerable<char> invalidCharacters = Enumerable.Empty<char>();
+
+            if (options.HasFlag(InvalidPathCharacterOptions.IncludeInvalidPathCharacters))
+                invalidCharacters = invalidCharacters.Concat(System.IO.Path.GetInvalidPathChars());
+
+            if (options.HasFlag(InvalidPathCharacterOptions.IncludeInvalidFileNameCharacters))
+                invalidCharacters = invalidCharacters.Concat(System.IO.Path.GetInvalidFileNameChars());
+
+            if (options.HasFlag(InvalidPathCharacterOptions.AllowPathSeparators))
+                invalidCharacters = invalidCharacters.Where(c => c != System.IO.Path.DirectorySeparatorChar && c != System.IO.Path.AltDirectorySeparatorChar);
+
+            path = string.Join(replacement, path.Split(invalidCharacters.ToArray()));
+
+            return path;
+
+        }
+
+        public static bool IsFilePath(string path, bool verifyFileExists = true) {
+
+            bool result = path.Any() &&
                 path.Last() != System.IO.Path.DirectorySeparatorChar &&
-                path.Last() != System.IO.Path.AltDirectorySeparatorChar &&
-                System.IO.File.Exists(path);
+                path.Last() != System.IO.Path.AltDirectorySeparatorChar;
+
+            if (verifyFileExists && result)
+                result = System.IO.File.Exists(path);
+
+            return result;
+
+        }
+        public static bool IsPathTooLong(string path) {
+
+            // For the purpose of checking the length, replace all illegal characters in the path.
+            // This will ensure Path methods don't throw.
+
+            path = ReplaceInvalidPathChars(path, " ");
+
+            path = System.IO.Path.GetFullPath(path);
+
+            // Check the length of the entire path.
+
+            if (IsFilePath(path, false)) {
+
+                if (path.Length > MaxFilePathLength)
+                    return false;
+
+            }
+            else {
+
+                if (path.Length > MaxDirectoryPathLength)
+                    return false;
+
+            }
+
+            // Check the length of each segment.
+
+            if (GetPathSegments(path).Any(segment => segment.Length > MaxPathSegmentLength))
+                return false;
+
+            return true;
 
         }
 
@@ -98,7 +191,7 @@ namespace Gsemac.Utilities {
             // - If the path is a directory, we'll just open the directory.
             // - If the path is a file, we'll open the directory and highlight the file.
 
-            bool isFilePath = IsFilePath(path);
+            bool isFilePath = IsFilePath(path, true);
 
             if (isFilePath || System.IO.Directory.Exists(path))
                 path = System.IO.Path.GetFullPath(path);
