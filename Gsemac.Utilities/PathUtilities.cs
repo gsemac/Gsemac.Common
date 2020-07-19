@@ -105,7 +105,7 @@ namespace Gsemac.Utilities {
         }
         public static string SanitizePath(string path, string invalidCharacterReplacement = "_") {
 
-            return ReplaceInvalidPathChars(path, invalidCharacterReplacement, InvalidPathCharacterOptions.Default | InvalidPathCharacterOptions.AllowPathSeparators);
+            return ReplaceInvalidPathChars(path, invalidCharacterReplacement, InvalidPathCharacterOptions.Default | InvalidPathCharacterOptions.PreserveDirectoryStructure);
 
         }
 
@@ -121,6 +121,7 @@ namespace Gsemac.Utilities {
         }
         public static string ReplaceInvalidPathChars(string path, string replacement, InvalidPathCharacterOptions options = InvalidPathCharacterOptions.Default) {
 
+            string rootPath = string.Empty;
             IEnumerable<char> invalidCharacters = Enumerable.Empty<char>();
 
             if (options.HasFlag(InvalidPathCharacterOptions.IncludeInvalidPathCharacters))
@@ -129,10 +130,23 @@ namespace Gsemac.Utilities {
             if (options.HasFlag(InvalidPathCharacterOptions.IncludeInvalidFileNameCharacters))
                 invalidCharacters = invalidCharacters.Concat(System.IO.Path.GetInvalidFileNameChars());
 
-            if (options.HasFlag(InvalidPathCharacterOptions.AllowPathSeparators))
+            if (options.HasFlag(InvalidPathCharacterOptions.PreserveDirectoryStructure)) {
+
+                // The root of the path might contain characters that would be invalid file name characters (e.g. ':' in "C:\").
+                // In order to preserve the root path information, we'll remove it for now and add it back later.
+
+                rootPath = System.IO.Path.GetPathRoot(ReplaceInvalidPathChars(path, InvalidPathCharacterOptions.IncludeInvalidPathCharacters));
+
+                path = path.Substring(rootPath.Length);
+
                 invalidCharacters = invalidCharacters.Where(c => c != System.IO.Path.DirectorySeparatorChar && c != System.IO.Path.AltDirectorySeparatorChar);
 
+            }
+
             path = string.Join(replacement, path.Split(invalidCharacters.ToArray()));
+
+            if (!string.IsNullOrEmpty(rootPath))
+                path = System.IO.Path.Combine(rootPath, path);
 
             return path;
 
@@ -155,7 +169,7 @@ namespace Gsemac.Utilities {
             // For the purpose of checking the length, replace all illegal characters in the path.
             // This will ensure Path methods don't throw.
 
-            path = ReplaceInvalidPathChars(path, " ");
+            path = ReplaceInvalidPathChars(path, " ", InvalidPathCharacterOptions.PreserveDirectoryStructure);
 
             path = System.IO.Path.GetFullPath(path);
 
@@ -163,23 +177,25 @@ namespace Gsemac.Utilities {
 
             if (IsFilePath(path, false)) {
 
-                if (path.Length > MaxFilePathLength)
-                    return false;
+                if (System.IO.Path.GetDirectoryName(path).Length > MaxDirectoryPathLength || path.Length > MaxFilePathLength)
+                    return true;
 
             }
             else {
 
+                path = TrimDirectorySeparators(path);
+
                 if (path.Length > MaxDirectoryPathLength)
-                    return false;
+                    return true;
 
             }
 
             // Check the length of each segment.
 
-            if (GetPathSegments(path).Any(segment => segment.Length > MaxPathSegmentLength))
-                return false;
+            if (GetPathSegments(path).Any(segment => TrimDirectorySeparators(segment).Length > MaxPathSegmentLength))
+                return true;
 
-            return true;
+            return false;
 
         }
 

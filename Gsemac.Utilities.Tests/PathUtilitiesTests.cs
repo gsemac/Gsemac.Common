@@ -6,6 +6,8 @@ namespace Gsemac.Utilities.Tests {
     [TestClass]
     public class PathUtilitiesTests {
 
+        // GetRelativePath
+
         [TestMethod]
         public void TestGetRelativePathWithRelativePath() {
 
@@ -26,6 +28,8 @@ namespace Gsemac.Utilities.Tests {
             Assert.AreEqual(@"\directory\subdirectory\file.txt", result);
 
         }
+
+        // GetRelativePathToRoot
 
         [TestMethod]
         public void GetPathRelativeToRootWithRoot() {
@@ -58,6 +62,8 @@ namespace Gsemac.Utilities.Tests {
 
         }
 
+        // AnonymizePath
+
         [TestMethod]
         public void TestAnonymizePathWithUserDirectory() {
 
@@ -66,6 +72,61 @@ namespace Gsemac.Utilities.Tests {
             string anonymizedPath = PathUtilities.AnonymizePath(path);
 
             Assert.AreEqual(@"%USERPROFILE%\test", anonymizedPath);
+
+        }
+
+        // IsPathTooLong
+
+        [TestMethod]
+        public void TestIsPathTooLongWithDirectoryPathEqualToMaxDirectoryPathLength() {
+
+            // Note that the ending directory separator is not considered when calculating the length.
+
+            string path = @"C:\a\b\c\".PadRight(PathUtilities.MaxDirectoryPathLength, '0') + @"\";
+
+            Assert.IsFalse(PathUtilities.IsPathTooLong(path));
+
+        }
+        [TestMethod]
+        public void TestIsPathTooLongWithDirectoryPathLongerThanMaxDirectoryPathLength() {
+
+            string path = @"C:\a\b\c\".PadRight(PathUtilities.MaxDirectoryPathLength + 1, '0') + @"\";
+
+            Assert.IsTrue(PathUtilities.IsPathTooLong(path));
+
+        }
+        [TestMethod]
+        public void TestIsPathTooLongWithDirectoryPathEqualToMaxDirectoryPathLengthWithInvalidPathCharacter() {
+
+            // Note that the ending directory separator is not considered when calculating the length.
+
+            string path = @"C:\a\b\c|\".PadRight(PathUtilities.MaxDirectoryPathLength, '0') + @"\";
+
+            Assert.IsFalse(PathUtilities.IsPathTooLong(path));
+
+        }
+        [TestMethod]
+        public void TestIsPathTooLongWithDirectoryPathLongerThanMaxDirectoryPathLengthWithInvalidPathCharacter() {
+
+            string path = @"C:\a\b\c|\".PadRight(PathUtilities.MaxDirectoryPathLength + 1, '0') + @"\";
+
+            Assert.IsTrue(PathUtilities.IsPathTooLong(path));
+
+        }
+        [TestMethod]
+        public void TestIsPathTooLongWithFilePathEqualToMaxFilePathLength() {
+
+            string path = @"C:\a\b\c\".PadRight(PathUtilities.MaxFilePathLength, '0');
+
+            Assert.IsFalse(PathUtilities.IsPathTooLong(path));
+
+        }
+        [TestMethod]
+        public void TestIsPathTooLongWithFilePathLongerThanMaxFilePathLength() {
+
+            string path = @"C:\a\b\c\".PadRight(PathUtilities.MaxFilePathLength + 1, '0');
+
+            Assert.IsTrue(PathUtilities.IsPathTooLong(path));
 
         }
 
