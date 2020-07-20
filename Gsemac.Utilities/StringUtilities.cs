@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -7,6 +8,8 @@ using System.Text.RegularExpressions;
 namespace Gsemac.Utilities {
 
     public static class StringUtilities {
+
+        // Public members
 
         public static string After(string input, string substring) {
 
@@ -76,28 +79,9 @@ namespace Gsemac.Utilities {
 
             input = sb.ToString();
 
-            // Unescape HTML entities (e.g. "&#038;" -> "&").
-            // Note that HtmlDecode on its own is NOT case-insensitive, although web browsers generally handle HTML entities in a case-insensitive manner.
-
-            // The following regex pattern is sourced from https://stackoverflow.com/a/56490838/5383169 (mahoor13)
-
-            string htmlEntityPattern = "&([a-z0-9]+|#[0-9]{1,6}|#x[0-9a-f]{1,6});";
-
-            input = Regex.Replace(input, htmlEntityPattern, m => m.Value.ToLowerInvariant(), RegexOptions.IgnoreCase);
-
-            input = System.Net.WebUtility.HtmlDecode(input);
-
-            // Unescape data string encoding (e.g. "%20" -> " ").
-            // UnescapeDataString can throw an exception on Windows XP if there are any percent symbols that aren't part of an escape sequence (?).
-
-#pragma warning disable CA1031 // Do not catch general exception types
-            try {
-
-                input = Uri.UnescapeDataString(input);
-
-            }
-            catch (Exception) { }
-#pragma warning restore CA1031 // Do not catch general exception types
+            input = UnescapeHtmlEntities(input);
+            input = UnescapeDataString(input);
+            input = UnescapeUnicodeEscapeSequences(input);
 
             return input;
 
@@ -134,6 +118,61 @@ namespace Gsemac.Utilities {
             }
 
             return result;
+
+        }
+
+        // Private members
+
+        private static string UnescapeHtmlEntities(string input) {
+
+            // Unescape HTML entities (e.g. "&#038;" -> "&").
+            // Note that HtmlDecode on its own is NOT case-insensitive, although web browsers generally handle HTML entities in a case-insensitive manner.
+
+            // The following regex pattern is sourced from https://stackoverflow.com/a/56490838/5383169 (mahoor13)
+
+            string htmlEntityPattern = "&([a-z0-9]+|#[0-9]{1,6}|#x[0-9a-f]{1,6});";
+
+            input = Regex.Replace(input, htmlEntityPattern, m => m.Value.ToLowerInvariant(), RegexOptions.IgnoreCase);
+
+            input = System.Net.WebUtility.HtmlDecode(input);
+
+            return input;
+
+        }
+        private static string UnescapeDataString(string input) {
+
+            // Unescape data string encoding (e.g. "%20" -> " ").
+            // UnescapeDataString can throw an exception on Windows XP if there are any percent symbols that aren't part of an escape sequence (?).
+
+#pragma warning disable CA1031 // Do not catch general exception types
+            try {
+
+                input = Uri.UnescapeDataString(input);
+
+            }
+            catch (Exception) { }
+#pragma warning restore CA1031 // Do not catch general exception types
+
+            return input;
+
+        }
+        private static string UnescapeUnicodeEscapeSequences(string input) {
+
+            // Unescape unicode escape sequences (e.g., "\u2320" -> "⌠").
+
+            string unicodeEscapeSequencePattern = @"\\u([0-9a-f]{4})";
+
+            input = Regex.Replace(input, unicodeEscapeSequencePattern, m => ParseUnicodeEscapeSequence(m.Value), RegexOptions.IgnoreCase);
+
+            return input;
+
+        }
+        private static string ParseUnicodeEscapeSequence(string input) {
+
+            if (int.TryParse(input.Substring(2), NumberStyles.HexNumber, CultureInfo.InvariantCulture, out int parsedInt))
+                return char.ConvertFromUtf32(parsedInt).ToString();
+
+            return input;
 
         }
 

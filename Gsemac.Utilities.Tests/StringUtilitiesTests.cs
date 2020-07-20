@@ -50,9 +50,21 @@ namespace Gsemac.Utilities.Tests {
 
         }
         [TestMethod]
+        public void TestUnescapeWithInvalidDataString() {
+
+            Assert.AreEqual("%g%h1test", StringUtilities.Unescape("%g%h1test"));
+
+        }
+        [TestMethod]
         public void TestUnescapeWithHtmlEntities() {
 
             Assert.AreEqual("'・\"ñ'", StringUtilities.Unescape("&#039;&#12539;&QUOT;&ntilde;&#x27;"));
+
+        }
+        [TestMethod]
+        public void TestUnescapeWithInvalidHtmlEntities() {
+
+            Assert.AreEqual("&invalid;", StringUtilities.Unescape("&invalid;"));
 
         }
         [TestMethod]
@@ -71,6 +83,12 @@ namespace Gsemac.Utilities.Tests {
         public void TestUnescapeWithEmptyString() {
 
             Assert.AreEqual(string.Empty, StringUtilities.Unescape(string.Empty));
+
+        }
+        [TestMethod]
+        public void TestUnescapeWithUnicodeEscapeSequence() {
+
+            Assert.AreEqual(@"⌠", StringUtilities.Unescape(@"\u2320"));
 
         }
 
