@@ -56,6 +56,40 @@ namespace Gsemac.Utilities {
 
         }
 
+        public static string ToProperCase(string input, ProperCaseOptions options = ProperCaseOptions.None) {
+
+            if (string.IsNullOrEmpty(input))
+                return input;
+
+            // TextInfo.ToTitleCase preserves sequences of all-caps, assuming that the sequence represents an acronym.
+            // If we do not wish to preserve acronyms, we'll make the entire string lowercase first.
+
+            if (!options.HasFlag(ProperCaseOptions.PreserveAcronyms))
+                input = input.ToLowerInvariant();
+
+            string result = System.Threading.Thread.CurrentThread.CurrentCulture.TextInfo.ToTitleCase(input);
+
+            // Fix possessive S (e.g. "'s") because TextInfo.ToTitleCase will capitalize them (e.g. "John's" -> "John'S").
+
+            result = Regex.Replace(result, @"\b(['’])S\b", "$1s");
+
+            // Capitalize Roman numerals.
+
+            if (options.HasFlag(ProperCaseOptions.CapitalizeRomanNumerals)) {
+
+                // Regex adapted from Regular Expressions Cookbook, 6.9. Roman Numerals, example "Modern Roman numerals, strict":
+                // https://www.oreilly.com/library/view/regular-expressions-cookbook/9780596802837/ch06s09.html
+
+                const string romanNumeralsPattern = @"\b(?=[MDCLXVI])M*(C[MD]|D?C{0,3})(X[CL]|L?X{0,3})(I[XV]|V?I{0,3})\b";
+
+                result = Regex.Replace(result, romanNumeralsPattern, m => m.Value.ToUpperInvariant(), RegexOptions.IgnoreCase);
+
+            }
+
+            return result;
+
+        }
+
     }
 
 }
