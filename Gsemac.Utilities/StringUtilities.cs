@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Text.RegularExpressions;
 
 namespace Gsemac.Utilities {
@@ -53,6 +54,52 @@ namespace Gsemac.Utilities {
                 @"\s+";
 
             return Regex.Replace(input, pattern, " ");
+
+        }
+        public static string Unescape(string input) {
+
+            if (string.IsNullOrEmpty(input))
+                return input;
+
+            StringBuilder sb = new StringBuilder(input);
+
+            // Fix miscellaneous encoding issues.
+            // These cases are based on instances found "in the wild", and are not guaranteed to be perfect because we cannot be sure what the original encoding was.
+
+            sb.Replace(@"â€™", @"'");
+            sb.Replace(@"â˜†", @"☆");
+
+            // Unescape backslash-escaped quotes (from JSON strings, for example).
+
+            sb.Replace(@"\'", @"'");
+            sb.Replace(@"\""", @"""");
+
+            input = sb.ToString();
+
+            // Unescape HTML entities (e.g. "&#038;" -> "&").
+            // Note that HtmlDecode on its own is NOT case-insensitive, although web browsers generally handle HTML entities in a case-insensitive manner.
+
+            // The following regex pattern is sourced from https://stackoverflow.com/a/56490838/5383169 (mahoor13)
+
+            string htmlEntityPattern = "&([a-z0-9]+|#[0-9]{1,6}|#x[0-9a-f]{1,6});";
+
+            input = Regex.Replace(input, htmlEntityPattern, m => m.Value.ToLowerInvariant(), RegexOptions.IgnoreCase);
+
+            input = System.Net.WebUtility.HtmlDecode(input);
+
+            // Unescape data string encoding (e.g. "%20" -> " ").
+            // UnescapeDataString can throw an exception on Windows XP if there are any percent symbols that aren't part of an escape sequence (?).
+
+#pragma warning disable CA1031 // Do not catch general exception types
+            try {
+
+                input = Uri.UnescapeDataString(input);
+
+            }
+            catch (Exception) { }
+#pragma warning restore CA1031 // Do not catch general exception types
+
+            return input;
 
         }
 

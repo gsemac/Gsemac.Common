@@ -1,6 +1,5 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -39,6 +38,39 @@ namespace Gsemac.Utilities.Tests {
             IEnumerable<string> result = StringUtilities.SplitAfter(input, '/');
 
             Assert.IsTrue(result.SequenceEqual(expectedResult));
+
+        }
+
+        // Unescape
+
+        [TestMethod]
+        public void TestUnescapeWithDataString() {
+
+            Assert.AreEqual("https://meyerweb.com/eric/tools/dencoder/", StringUtilities.Unescape("https%3A%2F%2Fmeyerweb.com%2Feric%2Ftools%2Fdencoder%2F"));
+
+        }
+        [TestMethod]
+        public void TestUnescapeWithHtmlEntities() {
+
+            Assert.AreEqual("'・\"ñ'", StringUtilities.Unescape("&#039;&#12539;&QUOT;&ntilde;&#x27;"));
+
+        }
+        [TestMethod]
+        public void TestUnescapeWithBrokenEncoding() {
+
+            Assert.AreEqual("'☆", StringUtilities.Unescape("â€™â˜†"));
+
+        }
+        [TestMethod]
+        public void TestUnescapeWithEscapedQuotes() {
+
+            Assert.AreEqual(@"\""\'", StringUtilities.Unescape(@"\\""\\'"));
+
+        }
+        [TestMethod]
+        public void TestUnescapeWithEmptyString() {
+
+            Assert.AreEqual(string.Empty, StringUtilities.Unescape(string.Empty));
 
         }
 
