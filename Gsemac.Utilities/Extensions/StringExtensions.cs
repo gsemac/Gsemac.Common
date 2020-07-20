@@ -1,4 +1,4 @@
-﻿namespace Gsemac.Utilities.Tests.Extensions {
+﻿namespace Gsemac.Utilities.Extensions {
 
     public static class StringExtensions {
 
