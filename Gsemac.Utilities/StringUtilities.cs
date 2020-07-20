@@ -56,7 +56,7 @@ namespace Gsemac.Utilities {
 
         }
 
-        public static string ToProperCase(string input, ProperCaseOptions options = ProperCaseOptions.None) {
+        public static string ToProperCase(string input, ProperCaseOptions options = ProperCaseOptions.Default) {
 
             if (string.IsNullOrEmpty(input))
                 return input;
