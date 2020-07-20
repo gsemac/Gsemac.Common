@@ -1,5 +1,4 @@
-﻿using Gsemac.Forms.Utilities;
-using System.Drawing;
+﻿using System.Drawing;
 using System.Reflection;
 using System.Windows.Forms;
 

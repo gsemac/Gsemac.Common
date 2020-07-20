@@ -6,7 +6,7 @@ using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
 
-namespace Gsemac.Forms.Utilities {
+namespace Gsemac.Forms {
 
     public static class ControlUtilities {
 

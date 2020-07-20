@@ -5,7 +5,7 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 
-namespace Gsemac.Forms.Utilities {
+namespace Gsemac.Forms {
 
     public static class DataGridViewUtilities {
 

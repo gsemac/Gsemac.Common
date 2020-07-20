@@ -1,6 +1,6 @@
 ﻿using System.Windows.Forms;
 
-namespace Gsemac.Forms.Utilities {
+namespace Gsemac.Forms {
 
     public static class SplitContainerUtilities {
 

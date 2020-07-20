@@ -3,7 +3,7 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 
-namespace Gsemac.Forms.Utilities {
+namespace Gsemac.Forms {
 
     public static class FormUtilities {
 
@@ -30,8 +30,8 @@ namespace Gsemac.Forms.Utilities {
             if (!IsFormOnScreen(form)) {
 
                 Rectangle workingArea = Screen.PrimaryScreen.WorkingArea;
-                int centerX = (workingArea.Width / 2) - (form.Width / 2);
-                int centerY = (workingArea.Height / 2) - (form.Height / 2);
+                int centerX = workingArea.Width / 2 - form.Width / 2;
+                int centerY = workingArea.Height / 2 - form.Height / 2;
 
                 form.Location = new Point(centerX, centerY);
 
