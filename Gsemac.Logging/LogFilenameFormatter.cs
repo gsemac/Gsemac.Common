@@ -20,7 +20,7 @@ namespace Gsemac.Logging {
 
         }
 
-        public string Format(DateTime timestamp) {
+        public string Format(DateTimeOffset timestamp) {
 
             StringBuilder sb = new StringBuilder();
 

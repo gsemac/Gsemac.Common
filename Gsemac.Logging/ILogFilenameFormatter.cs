@@ -7,7 +7,7 @@ namespace Gsemac.Logging {
         string Name { get; set; }
         string FileExtension { get; set; }
 
-        string Format(DateTime timestamp);
+        string Format(DateTimeOffset timestamp);
 
     }
 
