@@ -24,6 +24,27 @@ namespace Gsemac.Utilities {
 
         }
 
+        public static bool TryFormat(DateTimeOffset input, string format, out string result) {
+
+#pragma warning disable CA1031 // Do not catch general exception types
+            try {
+
+                result = input.ToString(format);
+
+                return true;
+
+            }
+            catch (Exception) {
+
+                result = string.Empty;
+
+                return false;
+
+            }
+#pragma warning restore CA1031 // Do not catch general exception types
+
+        }
+
     }
 
 }
