@@ -121,6 +121,38 @@ namespace Gsemac.Utilities {
 
         }
 
+        public static bool IsNumeric(string input, NumberStyles style = NumberStyles.AllowLeadingWhite | NumberStyles.AllowTrailingWhite | NumberStyles.AllowDecimalPoint) {
+
+            return double.TryParse(input, style, CultureInfo.InvariantCulture, out _);
+
+        }
+        public static string PadLeadingDigits(string input, int numberOfDigits) {
+
+            // Trim all existing leading zeros.
+
+            input = (input ?? "").TrimStart('0');
+
+            // Make sure the string contains at least one (whole) digit.
+
+            if (input.Length <= 0 || input.StartsWith("."))
+                input = "0" + input;
+
+            // Pad the string with zeros so that the leading digits have a length of /at least/ the desired number of digits.
+            // If there are already more leading digits than desired, no padding is added.
+
+            int currentLeadingDigits = input.IndexOf(".");
+
+            if (currentLeadingDigits < 0)
+                currentLeadingDigits = input.Length;
+
+            int paddingLength = Math.Max(numberOfDigits - currentLeadingDigits, 0);
+
+            input = "".PadLeft(paddingLength, '0') + input;
+
+            return input;
+
+        }
+
         // Private members
 
         private static string UnescapeHtmlEntities(string input) {

@@ -131,6 +131,69 @@ namespace Gsemac.Utilities.Tests {
 
         }
 
+        // IsNumeric
+
+        [TestMethod]
+        public void TestIsNumericWithPositiveInteger() {
+
+            Assert.IsTrue(StringUtilities.IsNumeric("1"));
+
+        }
+        [TestMethod]
+        public void TestIsNumericWithNegativeInteger() {
+
+            // By default, negative integers should not be counted as numeric ("-" is not a digit).
+            // This can be controlled by providing a different set of NumberStyles.
+
+            Assert.IsFalse(StringUtilities.IsNumeric("-1"));
+
+        }
+        [TestMethod]
+        public void TestIsNumericWithSingleDecimalPoint() {
+
+            Assert.IsTrue(StringUtilities.IsNumeric("1.0"));
+
+        }
+        [TestMethod]
+        public void TestIsNumericWithMultipleDecimalPoints() {
+
+            Assert.IsFalse(StringUtilities.IsNumeric("1.0.0"));
+
+        }
+
+        // PadLeadingDigits
+
+        [TestMethod]
+        public void TestPadLeadingDigitsWithEmptyString() {
+
+            Assert.AreEqual("000", StringUtilities.PadLeadingDigits(string.Empty, 3));
+
+        }
+        [TestMethod]
+        public void TestPadLeadingDigitsWithInteger() {
+
+            Assert.AreEqual("001", StringUtilities.PadLeadingDigits("1", 3));
+
+        }
+        [TestMethod]
+        public void TestPadLeadingDigitsWithDecimalPoint() {
+
+            Assert.AreEqual("001.2", StringUtilities.PadLeadingDigits("1.2", 3));
+
+        }
+        [TestMethod]
+        public void TestPadLeadingDigitsWithLeadingZeros() {
+
+            Assert.AreEqual("01", StringUtilities.PadLeadingDigits("000001", 2));
+
+        }
+        [TestMethod]
+        public void TestPadLeadingDigitsWithPaddingLengthLessThanExistingLength() {
+
+            Assert.AreEqual("123", StringUtilities.PadLeadingDigits("123", 2));
+
+        }
+
     }
 
 }
