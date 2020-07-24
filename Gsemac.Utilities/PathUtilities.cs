@@ -77,6 +77,43 @@ namespace Gsemac.Utilities {
 
         }
 
+        public static string GetRandomTemporaryDirectoryPath() {
+
+            return System.IO.Path.Combine(System.IO.Path.GetTempPath(), System.IO.Path.GetRandomFileName());
+
+        }
+        public static string GetRandomTemporaryFilePath() {
+
+            return System.IO.Path.Combine(System.IO.Path.GetTempPath(), System.IO.Path.GetRandomFileName());
+
+        }
+        public static string GetUniqueTemporaryDirectoryPath() {
+
+            lock (uniquePathMutex) {
+
+                string result;
+
+                // Theoretically, this could result in an infinite loop. But that won't happen... Right?
+
+                do {
+
+                    result = GetRandomTemporaryDirectoryPath();
+
+                } while (System.IO.Directory.Exists(result));
+
+                System.IO.Directory.CreateDirectory(result);
+
+                return result;
+
+            }
+
+        }
+        public static string GetUniqueTemporaryFilePath() {
+
+            return System.IO.Path.GetTempFileName();
+
+        }
+
         public static string AnonymizePath(string path) {
 
             // Remove the current user's username from the path (if the path is inside the user directory).
@@ -243,6 +280,10 @@ namespace Gsemac.Utilities {
                 OpenPath(defaultPath, options);
 
         }
+
+        // Private members
+
+        private static readonly object uniquePathMutex = new object();
 
     }
 
