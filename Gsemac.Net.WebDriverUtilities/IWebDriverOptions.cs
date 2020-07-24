@@ -1,0 +1,17 @@
+﻿using System;
+using System.Net;
+
+namespace Gsemac.Net.WebDriverUtilities {
+
+    public interface IWebDriverOptions {
+
+        IWebProxy Proxy { get; set; }
+        TimeSpan Timeout { get; set; }
+        string UserAgent { get; set; }
+        string WebDriverExecutablePath { get; set; }
+        string BrowserExecutablePath { get; set; }
+        bool Headless { get; set; }
+
+    }
+
+}
