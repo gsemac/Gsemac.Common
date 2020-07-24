@@ -11,7 +11,7 @@ namespace Gsemac.Net.WebDriverUtilities {
 
         // Public members
 
-        private static IWebDriver CreateFirefoxWebDriver(IWebDriverOptions options, Uri uri) {
+        public static IWebDriver CreateFirefoxWebDriver(IWebDriverOptions options, Uri uri) {
 
             FirefoxOptions driverOptions = new FirefoxOptions {
                 BrowserExecutableLocation = options.BrowserExecutablePath
@@ -62,7 +62,7 @@ namespace Gsemac.Net.WebDriverUtilities {
             return driver;
 
         }
-        private static IWebDriver CreateChromeWebDriver(IWebDriverOptions options, Uri uri) {
+        public static IWebDriver CreateChromeWebDriver(IWebDriverOptions options, Uri uri) {
 
             ChromeOptions driverOptions = new ChromeOptions {
                 BinaryLocation = options.BrowserExecutablePath
