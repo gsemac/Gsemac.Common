@@ -3,7 +3,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Threading;
 
-namespace Gsemac.Net.Selenium {
+namespace Gsemac.Net.SeleniumUtilities {
 
     public class FixedCapacityWebDriverPool :
         IWebDriverPool {

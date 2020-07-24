@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Net;
 
-namespace Gsemac.Net.WebDriverUtilities {
+namespace Gsemac.Net.SeleniumUtilities {
 
     public interface IWebDriverOptions {
 

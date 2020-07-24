@@ -1,7 +1,7 @@
 ﻿using OpenQA.Selenium;
 using System;
 
-namespace Gsemac.Net.Selenium {
+namespace Gsemac.Net.SeleniumUtilities {
 
     public interface IWebDriverPool {
 

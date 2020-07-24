@@ -1,11 +1,10 @@
-﻿using Gsemac.Net.WebDriverUtilities;
-using OpenQA.Selenium;
+﻿using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Firefox;
 using System;
 using System.Net;
 
-namespace Gsemac.Net.Selenium {
+namespace Gsemac.Net.SeleniumUtilities {
 
     public static class SeleniumUtilities {
 
