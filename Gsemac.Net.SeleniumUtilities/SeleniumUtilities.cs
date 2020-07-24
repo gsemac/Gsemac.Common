@@ -3,8 +3,7 @@ using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Firefox;
 using System;
-using System.Collections.Generic;
-using System.Linq;
+using System.Net;
 
 namespace Gsemac.Net.Selenium {
 
@@ -117,9 +116,34 @@ namespace Gsemac.Net.Selenium {
             return userAgent;
 
         }
-        public static IDictionary<string, string> GetCookies(IWebDriver driver) {
+        public static CookieCollection GetCookies(IWebDriver driver) {
 
-            return driver.Manage().Cookies.AllCookies.ToDictionary(cookie => cookie.Name, cookie => cookie.Value);
+            CookieCollection cookies = new CookieCollection();
+
+            foreach (OpenQA.Selenium.Cookie cookie in driver.Manage().Cookies.AllCookies) {
+
+                System.Net.Cookie netCookie = new System.Net.Cookie(cookie.Name, cookie.Value, cookie.Path, cookie.Domain) {
+                    HttpOnly = cookie.IsHttpOnly,
+                    Secure = cookie.Secure
+                };
+
+                if (cookie.Expiry.HasValue)
+                    netCookie.Expires = cookie.Expiry.Value;
+
+                cookies.Add(netCookie);
+
+            }
+
+            return cookies;
+
+        }
+        public static void AddCookies(IWebDriver driver, CookieCollection cookies) {
+
+            foreach (System.Net.Cookie cookie in cookies) {
+
+                driver.Manage().Cookies.AddCookie(new OpenQA.Selenium.Cookie(cookie.Name, cookie.Value, cookie.Domain, cookie.Path, cookie.Expires));
+
+            }
 
         }
 
