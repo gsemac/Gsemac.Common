@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30320.27
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gsemac.Net.WebDriverUtilities", "Gsemac.Net.WebDriverUtilities\Gsemac.Net.WebDriverUtilities.csproj", "{EE6E3FF1-4949-4D70-83B7-A5729663BFF4}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gsemac.Net.WebDriver", "Gsemac.Net.WebDriverUtilities\Gsemac.Net.WebDriver.csproj", "{EE6E3FF1-4949-4D70-83B7-A5729663BFF4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gsemac.Net.Selenium", "Gsemac.Net.SeleniumUtilities\Gsemac.Net.Selenium.csproj", "{5E040719-BE3D-4998-A8C8-5BCE020B473B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{EE6E3FF1-4949-4D70-83B7-A5729663BFF4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EE6E3FF1-4949-4D70-83B7-A5729663BFF4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EE6E3FF1-4949-4D70-83B7-A5729663BFF4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5E040719-BE3D-4998-A8C8-5BCE020B473B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5E040719-BE3D-4998-A8C8-5BCE020B473B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5E040719-BE3D-4998-A8C8-5BCE020B473B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5E040719-BE3D-4998-A8C8-5BCE020B473B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
