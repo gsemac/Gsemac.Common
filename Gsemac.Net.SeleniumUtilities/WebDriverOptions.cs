@@ -5,7 +5,6 @@ namespace Gsemac.Net.SeleniumUtilities {
 
     public class WebDriverOptions :
         IWebDriverOptions {
-
         public IWebProxy Proxy { get; set; }
         public TimeSpan Timeout { get; set; } = TimeSpan.FromSeconds(30);
         public string UserAgent { get; set; }

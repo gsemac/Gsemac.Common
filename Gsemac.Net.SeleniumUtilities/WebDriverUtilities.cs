@@ -16,13 +16,15 @@ namespace Gsemac.Net.SeleniumUtilities {
 
         public static IWebDriver CreateFirefoxWebDriver(IWebDriverOptions options, Uri uri) {
 
+            string webDriverExecutablePath = GetFullWebDriverExecutablePath(options.WebDriverExecutablePath);
+
             FirefoxOptions driverOptions = new FirefoxOptions {
                 BrowserExecutableLocation = options.BrowserExecutablePath
             };
 
-            FirefoxDriverService driverService = string.IsNullOrEmpty(options.WebDriverExecutablePath) ?
+            FirefoxDriverService driverService = string.IsNullOrEmpty(webDriverExecutablePath) ?
                 FirefoxDriverService.CreateDefaultService() :
-                FirefoxDriverService.CreateDefaultService(System.IO.Path.GetDirectoryName(options.WebDriverExecutablePath));
+                FirefoxDriverService.CreateDefaultService(Path.GetDirectoryName(webDriverExecutablePath));
 
             driverService.HideCommandPromptWindow = true;
 
@@ -67,13 +69,15 @@ namespace Gsemac.Net.SeleniumUtilities {
         }
         public static IWebDriver CreateChromeWebDriver(IWebDriverOptions options, Uri uri) {
 
+            string webDriverExecutablePath = GetFullWebDriverExecutablePath(options.WebDriverExecutablePath);
+
             ChromeOptions driverOptions = new ChromeOptions {
                 BinaryLocation = options.BrowserExecutablePath
             };
 
-            ChromeDriverService driverService = string.IsNullOrEmpty(options.WebDriverExecutablePath) ?
+            ChromeDriverService driverService = string.IsNullOrEmpty(webDriverExecutablePath) ?
                 ChromeDriverService.CreateDefaultService() :
-                ChromeDriverService.CreateDefaultService(System.IO.Path.GetDirectoryName(options.WebDriverExecutablePath));
+                ChromeDriverService.CreateDefaultService(Path.GetDirectoryName(webDriverExecutablePath));
 
             driverService.HideCommandPromptWindow = true;
 
@@ -181,17 +185,14 @@ namespace Gsemac.Net.SeleniumUtilities {
 
             IJavaScriptExecutor javascriptExecutor = (IJavaScriptExecutor)driver;
 
-            javascriptExecutor.ExecuteScript(Properties.Resources.HideOtherElementsJs);
-            javascriptExecutor.ExecuteScript($"window[\"hiddenElements\"] = hideOtherElements({elementXPath});");
+            javascriptExecutor.ExecuteScript(Properties.Resources.HideOtherElementsJs + $"\nwindow[\"hiddenElements\"] = hideOtherElements('{elementXPath}');");
 
         }
         public static void RestoreHiddenElements(IWebDriver driver) {
 
             IJavaScriptExecutor javascriptExecutor = (IJavaScriptExecutor)driver;
 
-            javascriptExecutor.ExecuteScript(Properties.Resources.HideOtherElementsJs);
-            javascriptExecutor.ExecuteScript($"return restoreHiddenElements(window[\"hiddenElements\"]);");
-
+            javascriptExecutor.ExecuteScript(Properties.Resources.HideOtherElementsJs + $"\nreturn restoreHiddenElements(window[\"hiddenElements\"]);");
 
         }
 
@@ -323,6 +324,15 @@ namespace Gsemac.Net.SeleniumUtilities {
 #endif
 
         // Private members
+
+        private static string GetFullWebDriverExecutablePath(string webDriverExecutablePath) {
+
+            if (!string.IsNullOrEmpty(webDriverExecutablePath) && !Path.IsPathRooted(webDriverExecutablePath))
+                webDriverExecutablePath = Path.GetFullPath(webDriverExecutablePath);
+
+            return webDriverExecutablePath;
+
+        }
 
         private static Screenshot TakeScreenshot(IWebDriver driver) {
 
