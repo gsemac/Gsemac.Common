@@ -196,6 +196,30 @@ namespace Gsemac.Net.SeleniumUtilities {
 
         }
 
+        public static void NonBlockingGoToUrl(IWebDriver driver, string url) {
+
+            // By default, GoToUrl blocks until the page has loaded completely.
+            // To avoid blocking, a low timeout is set so that a timeout exception is raised, which is then caught.
+
+            TimeSpan originalTimeout = driver.Manage().Timeouts().PageLoad;
+
+#pragma warning disable CA1031 // Do not catch general exception types
+            try {
+
+                driver.Manage().Timeouts().PageLoad = TimeSpan.FromSeconds(1);
+                driver.Navigate().GoToUrl(url);
+
+            }
+            catch (WebDriverException) { }
+            finally {
+
+                driver.Manage().Timeouts().PageLoad = originalTimeout;
+
+            }
+#pragma warning restore CA1031 // Do not catch general exception types
+
+        }
+
 #if NETFRAMEWORK
 
         public static Bitmap ScreenshotPage(IWebDriver driver) {
