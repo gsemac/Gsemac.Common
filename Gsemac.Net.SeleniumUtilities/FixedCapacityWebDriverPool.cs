@@ -40,6 +40,7 @@ namespace Gsemac.Net.SeleniumUtilities {
             }
             else {
 
+                webDriver.Close();
                 webDriver.Dispose();
 
             }
