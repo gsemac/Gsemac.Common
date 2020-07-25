@@ -6,7 +6,7 @@ using System.Net;
 
 namespace Gsemac.Net.SeleniumUtilities {
 
-    public static class SeleniumUtilities {
+    public static class WebDriverUtilities {
 
         // Public members
 
