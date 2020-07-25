@@ -146,6 +146,24 @@ namespace Gsemac.Net.SeleniumUtilities {
 
         }
 
+        public static void HideOtherElements(IWebDriver driver, string elementXPath) {
+
+            IJavaScriptExecutor javascriptExecutor = (IJavaScriptExecutor)driver;
+
+            javascriptExecutor.ExecuteScript(Properties.Resources.HideOtherElementsJs);
+            javascriptExecutor.ExecuteScript($"window[\"hiddenElements\"] = hideOtherElements({elementXPath});");
+
+        }
+        public static void RestoreHiddenElements(IWebDriver driver) {
+
+            IJavaScriptExecutor javascriptExecutor = (IJavaScriptExecutor)driver;
+
+            javascriptExecutor.ExecuteScript(Properties.Resources.HideOtherElementsJs);
+            javascriptExecutor.ExecuteScript($"return restoreHiddenElements(window[\"hiddenElements\"]);");
+
+
+        }
+
     }
 
 }
