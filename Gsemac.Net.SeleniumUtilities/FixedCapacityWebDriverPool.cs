@@ -118,6 +118,9 @@ namespace Gsemac.Net.SeleniumUtilities {
 
                 if (!isDisposed) {
 
+                    if (!spawnedDrivers.Any(driver => driver == webDriver))
+                        throw new ArgumentException(nameof(webDriver), "The given driver is not owned by this pool.");
+
                     pool.Enqueue(webDriver);
 
                     poolAccessWaiter.Set();
