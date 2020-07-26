@@ -62,6 +62,97 @@ namespace Gsemac.Utilities.Tests {
 
         }
 
+        // GetFileName
+
+        [TestMethod]
+        public void TestGetFilenameFromUri() {
+
+            Assert.AreEqual("file.jpg", PathUtilities.GetFileName("https://website.com/file.jpg"));
+
+        }
+        [TestMethod]
+        public void TestGetFilenameFromUnrootedUri() {
+
+            Assert.AreEqual("file.jpg", PathUtilities.GetFileName("path/file.jpg"));
+
+        }
+        [TestMethod]
+        public void TestGetFilenameFromUriWithUriParameters() {
+
+            Assert.AreEqual("file.jpg", PathUtilities.GetFileName("path/file.jpg?file=1#anchor"));
+
+        }
+        [TestMethod]
+        public void TestGetFilenameFromUriWithMultipleUriParameters() {
+
+            // The last URI parameter has its name omitted intentionally (this test is due to a real-world encounter).
+
+            // If this were treated like a regular path, "proxy?img=file=&file.jpg" would be the filename.
+            // However, the actual filename here is "proxy", which also does not have a file extension.
+
+            Assert.AreEqual("proxy", PathUtilities.GetFileName("https://website.com/proxy?img=file=&file.jpg"));
+
+        }
+        [TestMethod]
+        public void TestGetFilenameFromLocalPath() {
+
+            Assert.AreEqual("file.jpg", PathUtilities.GetFileName(@"c:\path\file.jpg"));
+
+        }
+        [TestMethod]
+        public void TestGetFilenameFromUriWithIllegalCharacters() {
+
+            Assert.AreEqual("|file.jpg", PathUtilities.GetFileName("path/|file.jpg"));
+
+        }
+
+        // GetFileNameWithoutExtension
+
+        [TestMethod]
+        public void TestGetFilenameWithoutExtension() {
+
+            Assert.AreEqual("file", PathUtilities.GetFileNameWithoutExtension("path/file.jpg"));
+
+        }
+        [TestMethod]
+        public void TestGetFilenameWithoutExtensionWithParameters() {
+
+            Assert.AreEqual("file", PathUtilities.GetFileNameWithoutExtension("path/file.jpg?file=1#anchor"));
+
+        }
+        [TestMethod]
+        public void TestGetFilenameWithoutExtensionWithMultiplePeriods() {
+
+            Assert.AreEqual("file.1", PathUtilities.GetFileNameWithoutExtension("path/file.1.jpg"));
+
+        }
+        [TestMethod]
+        public void TestGetFilenameWithoutExtensionWithNoExtension() {
+
+            Assert.AreEqual("file", PathUtilities.GetFileNameWithoutExtension("path/file"));
+
+        }
+
+        // GetFileExtension
+
+        [TestMethod]
+        public void TestGetFileExtensionFromUriWithIllegalCharacters() {
+
+            Assert.AreEqual(".jpg", PathUtilities.GetFileExtension("path/|file.jpg"));
+
+        }
+        [TestMethod]
+        public void TestGetFileExtensionFromUriWithExtensionInUriParameter() {
+
+            // The last URI parameter has its name omitted intentionally (this test is due to a real-world encounter).
+
+            // If this were treated like a regular path, "proxy?img=file=&file.jpg" would be the filename, and the extension would be ".jpg".
+            // However, the actual filename here is "proxy", which does not have an extension.
+
+            Assert.IsTrue(string.IsNullOrEmpty(PathUtilities.GetFileExtension("https://website.com/proxy?img=file=&file.jpg")));
+
+        }
+
         // AnonymizePath
 
         [TestMethod]

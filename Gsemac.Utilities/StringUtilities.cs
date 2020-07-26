@@ -11,12 +11,7 @@ namespace Gsemac.Utilities {
 
         // Public members
 
-        public static string After(string input, string substring) {
-
-            return After(input, substring, StringComparison.CurrentCulture);
-
-        }
-        public static string After(string input, string substring, StringComparison comparisonType) {
+        public static string After(string input, string substring, StringComparison comparisonType = StringComparison.CurrentCulture) {
 
             int index = input.IndexOf(substring, comparisonType);
 
@@ -29,6 +24,87 @@ namespace Gsemac.Utilities {
             }
             else
                 return input;
+
+        }
+        public static string AfterLast(string input, string substring, StringComparison comparisonType = StringComparison.CurrentCulture) {
+
+            int index = input.LastIndexOf(substring, comparisonType);
+
+            if (index >= 0) {
+
+                index += substring.Length;
+
+                return input.Substring(index, input.Length - index);
+
+            }
+            else
+                return input;
+
+        }
+        public static string Before(string input, string substring, StringComparison comparisonType = StringComparison.CurrentCulture) {
+
+            int index = input.IndexOf(substring, comparisonType);
+
+            if (index >= 0)
+                return input.Substring(0, index);
+            else
+                return input;
+
+        }
+        public static string BeforeLast(string input, string substring, StringComparison comparisonType = StringComparison.CurrentCulture) {
+
+            int index = input.LastIndexOf(substring, comparisonType);
+
+            if (index >= 0)
+                return input.Substring(0, index);
+            else
+                return input;
+
+        }
+        public static string Between(string input, string leftSubstring, string rightSubstring, StringComparison comparisonType = StringComparison.CurrentCulture) {
+
+            // Find start and end indices of the desired substring.
+
+            int startIndex = input.IndexOf(leftSubstring, comparisonType);
+            int endIndex = -1;
+
+            if (startIndex >= 0) {
+
+                startIndex += leftSubstring.Length;
+
+                if (startIndex < input.Length)
+                    endIndex = input.IndexOf(rightSubstring, startIndex, comparisonType);
+
+            }
+
+            // Get substring.
+
+            if (startIndex >= 0 && endIndex >= 0)
+                return input.Substring(startIndex, endIndex - startIndex);
+
+            return string.Empty;
+
+        }
+        public static string BetweenLast(string input, string leftSubstring, string rightSubstring) {
+
+            leftSubstring = Regex.Escape(leftSubstring);
+            rightSubstring = Regex.Escape(rightSubstring);
+
+            Regex regex = new Regex(string.Format("{0}(.*?){1}", leftSubstring, rightSubstring), RegexOptions.RightToLeft | RegexOptions.Singleline);
+
+            Match match = regex.Match(input);
+
+            if (match.Success)
+                return match.Groups[1].Value;
+            else
+                return string.Empty;
+
+        }
+        public static IEnumerable<string> BetweenMany(string input, string leftSubstring, string rightSubstring) {
+
+            return Regex.Matches(input, Regex.Escape(leftSubstring) + "(.+?)" + Regex.Escape(rightSubstring), RegexOptions.Singleline)
+                .Cast<Match>()
+                .Select(m => m.Groups[1].Value);
 
         }
 
@@ -47,6 +123,16 @@ namespace Gsemac.Utilities {
                 yield return item;
 
             }
+
+        }
+        public static string ReplaceLast(string input, string oldValue, string newValue, StringComparison comparisonType = StringComparison.CurrentCulture) {
+
+            int index = input.LastIndexOf(oldValue, comparisonType);
+
+            if (index >= 0)
+                input = input.Remove(index, oldValue.Length).Insert(index, newValue);
+
+            return input;
 
         }
 

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace Gsemac.Utilities {
 
@@ -74,6 +75,94 @@ namespace Gsemac.Utilities {
 
             foreach (string segment in remainingSegments)
                 yield return segment;
+
+        }
+        public static string GetFileName(string path) {
+
+            // This process should work for both remote and local paths.
+
+            string result = string.Empty;
+
+            if (!string.IsNullOrEmpty(path)) {
+
+                try {
+
+                    if (!Uri.TryCreate(path, UriKind.Absolute, out Uri uri))
+                        uri = new Uri(new Uri("http://anything"), path);
+
+                    result = System.IO.Path.GetFileName(uri.LocalPath);
+
+                }
+#pragma warning disable CA1031 // Do not catch general exception types
+                catch (ArgumentException) {
+
+                    // We can end up here if the path contains illegal characters (e.g. "|").
+                    // Even though it shouldn't be allowed, there are URLs out there that contain them.
+                    // We should still be able to handle this case.
+
+                    Match filenameMatch = Regex.Match(path, @"(?:.*\/)?(.+?)(?:$|\?|#)");
+
+                    if (filenameMatch.Success)
+                        result = filenameMatch.Groups[1].Value;
+
+                }
+#pragma warning restore CA1031 // Do not catch general exception types
+
+            }
+
+            return result;
+
+        }
+        public static string GetFileNameWithoutExtension(string path) {
+
+            string fileName = GetFileName(path);
+
+            return StringUtilities.BeforeLast(fileName, ".");
+
+        }
+        public static string GetFileExtension(string path) {
+
+            string filename = GetFileName(path);
+
+            return string.IsNullOrEmpty(filename) ?
+                string.Empty :
+                System.IO.Path.GetExtension(ReplaceInvalidPathChars(filename));
+
+        }
+        public static string SetFileExtension(string path, string extension) {
+
+            if (string.IsNullOrEmpty(path))
+                throw new ArgumentNullException(nameof(extension));
+
+            if (string.IsNullOrEmpty(extension))
+                throw new ArgumentNullException(nameof(extension));
+
+            if (!IsFilePath(path, verifyFileExists: false))
+                throw new ArgumentException("The given path was not a valid file path.");
+
+            extension = extension.Trim();
+
+            if (!extension.StartsWith("."))
+                extension = "." + extension;
+
+            string oldExtension = GetFileExtension(path);
+
+            if (!string.IsNullOrEmpty(oldExtension)) {
+
+                // The path already has a file extension, so replace the old extension.
+
+                path = StringUtilities.ReplaceLast(path, oldExtension, extension);
+
+            }
+            else {
+
+                // The path does not have a file extension, so we'll just append the new extension.
+
+                path += extension;
+
+            }
+
+            return path;
 
         }
 
