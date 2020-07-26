@@ -33,6 +33,8 @@ namespace Gsemac.Net.SeleniumUtilities {
         }
         public void ReleaseWebDriver(IWebDriver webDriver) {
 
+            webDriver.Navigate().GoToUrl("about:blank");
+
             ReleaseWebDriverInternal(webDriver);
 
         }
