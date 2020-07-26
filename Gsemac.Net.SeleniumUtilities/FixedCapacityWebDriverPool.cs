@@ -1,6 +1,7 @@
 ﻿using OpenQA.Selenium;
 using System;
-using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 
 namespace Gsemac.Net.SeleniumUtilities {
@@ -10,11 +11,13 @@ namespace Gsemac.Net.SeleniumUtilities {
 
         // Public members
 
-        public FixedCapacityWebDriverPool(Func<IWebDriver> createWebDriverFunc, int poolSize) {
+        public FixedCapacityWebDriverPool(IWebDriverOptions webDriverOptions, int poolSize) {
 
-            this.createWebDriverFunc = createWebDriverFunc;
+            this.driverOptions = webDriverOptions;
             this.poolSize = poolSize;
-            poolSemaphore = new SemaphoreSlim(poolSize);
+
+            if (poolSize < 1)
+                throw new ArgumentOutOfRangeException(nameof(poolSize), "The pool size must be at least 1.");
 
         }
 
@@ -30,54 +33,129 @@ namespace Gsemac.Net.SeleniumUtilities {
         }
         public void ReleaseWebDriver(IWebDriver webDriver) {
 
-            // If there are threads waiting for a web driver, we'll put it in the queue.
-            // Otherwise, we'll dispose of the web driver to avoid hanging onto it unnecessarily.
+            ReleaseWebDriverInternal(webDriver);
 
-            if (numberOfWaitingThreads > 0 && pool.Count < poolSize) {
+        }
 
-                pool.Enqueue(webDriver);
+        public void Dispose() {
+
+            Dispose(true);
+
+            GC.SuppressFinalize(this);
+
+        }
+
+        // Protected members
+
+        protected virtual void Dispose(bool disposing) {
+
+            if (disposing && !isDisposed) {
+
+                lock (poolLock) {
+
+                    isDisposed = true;
+
+                    // Close and dispose of any created drivers.
+
+                    foreach (IWebDriver driver in spawnedDrivers) {
+
+                        driver.Close();
+                        driver.Dispose();
+
+                    }
+
+                    pool.Clear();
+                    spawnedDrivers.Clear();
+
+                    // Release all threads currently waiting for access to the pool, allowing the wait handle to be safely disposed.
+
+                    while (!poolAccessWaiter.WaitOne(0))
+                        poolAccessWaiter.Set();
+
+                    poolAccessWaiter.Dispose();
+
+                }
 
             }
-            else {
-
-                webDriver.Close();
-                webDriver.Dispose();
-
-            }
-
-            poolSemaphore.Release();
 
         }
 
         // Private members
 
         private readonly int poolSize;
-        private readonly Func<IWebDriver> createWebDriverFunc;
-        private readonly ConcurrentQueue<IWebDriver> pool = new ConcurrentQueue<IWebDriver>();
-        private readonly SemaphoreSlim poolSemaphore;
-        private int numberOfWaitingThreads = 0;
+        private readonly IWebDriverOptions driverOptions;
+        private readonly Queue<IWebDriver> pool = new Queue<IWebDriver>();
+        private readonly List<IWebDriver> spawnedDrivers = new List<IWebDriver>();
+        private readonly object poolLock = new object();
+        private readonly AutoResetEvent poolAccessWaiter = new AutoResetEvent(false);
+        private bool isDisposed = false;
 
         private IWebDriver GetWebDriverInternal(TimeSpan? timeout) {
 
-            Interlocked.Increment(ref numberOfWaitingThreads);
+            // Attempt to take a web driver from the pool.
 
-            IWebDriver webDriver = null;
-            bool enteredSemaphore = true;
+            IWebDriver webDriver = SpawnOrGetWebDriverFromPool();
 
-            if (timeout.HasValue)
-                enteredSemaphore = poolSemaphore.Wait((int)timeout.Value.TotalMilliseconds);
-            else
-                poolSemaphore.Wait();
+            // If no web drivers were available, wait until one is available.
 
-            if (enteredSemaphore && !pool.TryDequeue(out webDriver)) {
+            if (webDriver is null && !isDisposed && poolAccessWaiter != null) {
 
-                // There are no web drivers available in the pool, so create a new one.
+                if (timeout.HasValue)
+                    poolAccessWaiter.WaitOne(timeout.Value);
+                else
+                    poolAccessWaiter.WaitOne();
 
-                webDriver = createWebDriverFunc();
+                webDriver = SpawnOrGetWebDriverFromPool();
 
             }
 
-            Interlocked.Decrement(ref numberOfWaitingThreads);
+            return webDriver;
+
+        }
+        private void ReleaseWebDriverInternal(IWebDriver webDriver) {
+
+            lock (poolLock) {
+
+                if (!isDisposed) {
+
+                    pool.Enqueue(webDriver);
+
+                    poolAccessWaiter.Set();
+
+                }
+
+            }
+
+        }
+
+        private IWebDriver SpawnOrGetWebDriverFromPool() {
+
+            IWebDriver webDriver = null;
+
+            lock (poolLock) {
+
+                if (!isDisposed) {
+
+                    if (pool.Count() > 0) {
+
+                        // If there is a driver in the pool we can use, use it.
+
+                        webDriver = pool.Dequeue();
+
+                    }
+                    else if (spawnedDrivers.Count() < poolSize) {
+
+                        // If we haven't spawned the maximum amount of drivers yet, create a new one to use.
+
+                        webDriver = WebDriverUtilities.CreateWebDriver(driverOptions);
+
+                        spawnedDrivers.Add(webDriver);
+
+                    }
+
+                }
+
+            }
 
             return webDriver;
 
