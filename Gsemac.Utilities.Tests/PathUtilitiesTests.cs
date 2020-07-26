@@ -153,6 +153,21 @@ namespace Gsemac.Utilities.Tests {
 
         }
 
+        // SetFileExtension
+
+        [TestMethod]
+        public void TestSetFileExtensionWithFileName() {
+
+            Assert.AreEqual("file.jpg", PathUtilities.SetFileExtension("file.tmp", ".jpg"));
+
+        }
+        [TestMethod]
+        public void TestSetFileExtensionWithRelativeFilePath() {
+
+            Assert.AreEqual("path/file.jpg", PathUtilities.SetFileExtension("path/file.tmp", ".jpg"));
+
+        }
+
         // AnonymizePath
 
         [TestMethod]
