@@ -107,6 +107,11 @@ namespace Gsemac.Utilities {
                 .Select(m => m.Groups[1].Value);
 
         }
+        public static int Count(string input, string substring) {
+
+            return (input.Length - input.Replace(substring, string.Empty).Length) / substring.Length;
+
+        }
 
         public static IEnumerable<string> SplitAfter(string input, params char[] delimiters) {
 
