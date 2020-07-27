@@ -103,7 +103,7 @@ namespace Gsemac.Net.SeleniumUtilities {
 
             uri = uri ?? new Uri("http://example.com/");
 
-            string browserExecutableFileName = System.IO.Path.GetFileNameWithoutExtension(options.BrowserExecutablePath);
+            string browserExecutableFileName = Path.GetFileNameWithoutExtension(options.BrowserExecutablePath);
 
             if (browserExecutableFileName.Equals("firefox", StringComparison.OrdinalIgnoreCase))
                 return CreateFirefoxWebDriver(options, uri);
@@ -183,9 +183,16 @@ namespace Gsemac.Net.SeleniumUtilities {
 
         public static void HideOtherElements(IWebDriver driver, string elementXPath) {
 
+            // The xpath string may contain quotes, so we may need to use different outer quotes depending on what's inside.
+            // This isn't foolproof, but should work in the majority of situations.
+
+            string elementXPathWithQuotes = elementXPath.Contains("\"") ?
+                $"'{elementXPath}'" :
+                $"\"{elementXPath}'\"";
+
             IJavaScriptExecutor javascriptExecutor = (IJavaScriptExecutor)driver;
 
-            javascriptExecutor.ExecuteScript(Properties.Resources.HideOtherElementsJs + $"\nwindow[\"hiddenElements\"] = hideOtherElements('{elementXPath}');");
+            javascriptExecutor.ExecuteScript(Properties.Resources.HideOtherElementsJs + $"\nwindow[\"hiddenElements\"] = hideOtherElements({elementXPathWithQuotes});");
 
         }
         public static void RestoreHiddenElements(IWebDriver driver) {
