@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Drawing;
 using System.Net;
 
 namespace Gsemac.Net.SeleniumUtilities {
@@ -11,6 +12,7 @@ namespace Gsemac.Net.SeleniumUtilities {
         string WebDriverExecutablePath { get; set; }
         string BrowserExecutablePath { get; set; }
         bool Headless { get; set; }
+        Size WindowSize { get; set; }
 
     }
 
