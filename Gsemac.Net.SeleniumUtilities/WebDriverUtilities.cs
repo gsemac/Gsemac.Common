@@ -30,8 +30,8 @@ namespace Gsemac.Net.SeleniumUtilities {
 
             // Resize the window to a reasonable resolution so that viewport matches a conventional monitor viewport.
 
-            driverOptions.AddArguments($"-width={options.WindowSize.Width}");
-            driverOptions.AddArguments($"-height={options.WindowSize.Height}");
+            driverOptions.AddArguments($"--width={options.WindowSize.Width}");
+            driverOptions.AddArguments($"--height={options.WindowSize.Height}");
 
             if (options.Headless)
                 driverOptions.AddArgument("--headless");
@@ -235,12 +235,6 @@ namespace Gsemac.Net.SeleniumUtilities {
 
             // This implementation was adapted from https://stackoverflow.com/a/31396164/5383169 (Lachlan Goodhew-Cook)
 
-            // Maximize the driver window to maximize the amount of visible content.
-
-            Size originalSize = driver.Manage().Window.Size;
-
-            driver.Manage().Window.Maximize();
-
             // By default, the screenshot will only contain the window's visible content.
             // In order to get a full page screenshot, we need to take multiple screenshots and stitch them together.
 
@@ -312,23 +306,12 @@ namespace Gsemac.Net.SeleniumUtilities {
 
             }
 
-            // Restore the original window size.
-
-            driver.Manage().Window.Size = originalSize;
-
             // Return the result.
 
             return result;
 
         }
         public static Bitmap ScreenshotElement(IWebDriver driver, string elementXPath) {
-
-            // Maximize the driver window to maximize the amount of visible content.
-            // Even though this is done by ScreenshotPage, it's done here as well so that the element bounds are consistent.
-
-            Size originalSize = driver.Manage().Window.Size;
-
-            driver.Manage().Window.Maximize();
 
             // Hide all elements except for the one we're interested in.
 
@@ -345,8 +328,6 @@ namespace Gsemac.Net.SeleniumUtilities {
             // Restore the original window state.
 
             RestoreHiddenElements(driver);
-
-            driver.Manage().Window.Size = originalSize;
 
             // Return the result.
 
