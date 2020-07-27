@@ -181,6 +181,33 @@ namespace Gsemac.Utilities.Tests {
 
         }
 
+        // IsLocalPath
+
+        [TestMethod]
+        public void TestIsLocalPathWithAbsoluteFilePathWithDriveLetter() {
+
+            Assert.IsTrue(PathUtilities.IsLocalPath(@"C:\user\documents\file.txt"));
+
+        }
+        [TestMethod]
+        public void TestIsLocalPathWitNetworkFilePath() {
+
+            Assert.IsTrue(PathUtilities.IsLocalPath(@"\\user\documents\file.txt"));
+
+        }
+        [TestMethod]
+        public void TestIsLocalPathWithAbsoluteDirectoryPath() {
+
+            Assert.IsTrue(PathUtilities.IsLocalPath(@"C:\user\documents\"));
+
+        }
+        [TestMethod]
+        public void TestIsLocalPathWithAbsoluteUrl() {
+
+            Assert.IsFalse(PathUtilities.IsLocalPath(@"https://website.com"));
+
+        }
+
         // IsPathTooLong
 
         [TestMethod]

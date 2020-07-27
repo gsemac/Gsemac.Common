@@ -290,6 +290,17 @@ namespace Gsemac.Utilities {
             return result;
 
         }
+        public static bool IsLocalPath(string path) {
+
+            if (Uri.TryCreate(path, UriKind.Absolute, out Uri result)) {
+
+                return result.IsFile;
+
+            }
+
+            return false;
+
+        }
         public static bool IsPathTooLong(string path) {
 
             // For the purpose of checking the length, replace all illegal characters in the path.
