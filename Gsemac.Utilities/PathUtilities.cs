@@ -81,7 +81,7 @@ namespace Gsemac.Utilities {
 
             // This process should work for both remote and local paths.
 
-            string result = string.Empty;
+            string result = path is null ? string.Empty : "";
 
             if (!string.IsNullOrEmpty(path)) {
 
@@ -124,9 +124,12 @@ namespace Gsemac.Utilities {
 
             string filename = GetFileName(path);
 
-            return string.IsNullOrEmpty(filename) ?
-                string.Empty :
-                System.IO.Path.GetExtension(ReplaceInvalidPathChars(filename));
+            if (filename is null)
+                return string.Empty;
+            else if (string.IsNullOrEmpty(filename))
+                return "";
+            else
+                return System.IO.Path.GetExtension(ReplaceInvalidPathChars(filename));
 
         }
         public static string SetFileExtension(string path, string extension) {
