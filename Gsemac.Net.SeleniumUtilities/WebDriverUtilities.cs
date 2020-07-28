@@ -102,15 +102,20 @@ namespace Gsemac.Net.SeleniumUtilities {
         public static IWebDriver CreateWebDriver(IWebDriverOptions options, Uri uri = null) {
 
             uri = uri ?? new Uri("http://example.com/");
-
             string browserExecutableFileName = Path.GetFileNameWithoutExtension(options.BrowserExecutablePath);
 
+            IWebDriver result;
+
             if (browserExecutableFileName.Equals("firefox", StringComparison.OrdinalIgnoreCase))
-                return CreateFirefoxWebDriver(options, uri);
+                result = CreateFirefoxWebDriver(options, uri);
             else if (browserExecutableFileName.Equals("chrome", StringComparison.OrdinalIgnoreCase))
-                return CreateChromeWebDriver(options, uri);
+                result = CreateChromeWebDriver(options, uri);
             else
                 throw new ArgumentException("The given browser executable was not recognized.");
+
+            result.Manage().Window.Position = options.WindowPosition;
+
+            return result;
 
         }
 

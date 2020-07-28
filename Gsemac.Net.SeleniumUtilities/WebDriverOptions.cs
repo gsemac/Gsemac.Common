@@ -13,6 +13,7 @@ namespace Gsemac.Net.SeleniumUtilities {
         public string WebDriverExecutablePath { get; set; }
         public string BrowserExecutablePath { get; set; }
         public bool Headless { get; set; } = false;
+        public Point WindowPosition { get; set; } = new Point(0, 0);
         public Size WindowSize { get; set; } = new Size(1024, 768);
 
     }
