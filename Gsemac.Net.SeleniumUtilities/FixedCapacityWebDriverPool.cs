@@ -61,7 +61,7 @@ namespace Gsemac.Net.SeleniumUtilities {
 
                     foreach (IWebDriver driver in spawnedDrivers) {
 
-                        driver.Close();
+                        driver.Quit();
                         driver.Dispose();
 
                     }
