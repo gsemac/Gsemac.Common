@@ -144,10 +144,19 @@ namespace Gsemac.Utilities {
         public static string NormalizeSpace(string input, NormalizeSpaceOptions options = NormalizeSpaceOptions.Default) {
 
             string pattern = options.HasFlag(NormalizeSpaceOptions.PreserveLineBreaks) ?
-                @"[^\S\r\n]" :
+                @"[^\S\r\n]+" :
                 @"\s+";
 
             return Regex.Replace(input, pattern, " ");
+
+        }
+        public static string NormalizeLineBreaks(string input, NormalizeSpaceOptions options = NormalizeSpaceOptions.Default) {
+
+            string pattern = options.HasFlag(NormalizeSpaceOptions.PreserveLineBreaks) ?
+                @"\r\n|\n" :
+                @"(?:\r\n|\n)+";
+
+            return Regex.Replace(input, pattern, Environment.NewLine);
 
         }
         public static string Unescape(string input) {
