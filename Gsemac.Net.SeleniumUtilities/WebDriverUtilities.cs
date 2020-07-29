@@ -157,6 +157,13 @@ namespace Gsemac.Net.SeleniumUtilities {
 
                 OpenQA.Selenium.Cookie cookie = new OpenQA.Selenium.Cookie(netCookie.Name, netCookie.Value, netCookie.Domain, netCookie.Path, expiry);
 
+                // If a cookie with the same name arleady exists, delete it so that it can be replaced.
+
+                OpenQA.Selenium.Cookie existingCookie = driver.Manage().Cookies.GetCookieNamed(cookie.Name);
+
+                if (existingCookie != null)
+                    driver.Manage().Cookies.DeleteCookie(existingCookie);
+
                 driver.Manage().Cookies.AddCookie(cookie);
 
             }
