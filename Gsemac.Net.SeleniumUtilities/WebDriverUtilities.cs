@@ -151,9 +151,13 @@ namespace Gsemac.Net.SeleniumUtilities {
         }
         public static void AddCookies(IWebDriver driver, CookieCollection cookies) {
 
-            foreach (System.Net.Cookie cookie in cookies) {
+            foreach (System.Net.Cookie netCookie in cookies) {
 
-                driver.Manage().Cookies.AddCookie(new OpenQA.Selenium.Cookie(cookie.Name, cookie.Value, cookie.Domain, cookie.Path, cookie.Expires));
+                DateTime? expiry = netCookie.Expires.Equals(DateTime.MinValue) ? null : (DateTime?)netCookie.Expires;
+
+                OpenQA.Selenium.Cookie cookie = new OpenQA.Selenium.Cookie(netCookie.Name, netCookie.Value, netCookie.Domain, netCookie.Path, expiry);
+
+                driver.Manage().Cookies.AddCookie(cookie);
 
             }
 
