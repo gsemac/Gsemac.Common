@@ -14,6 +14,7 @@ namespace Gsemac.Net.SeleniumUtilities {
         bool Headless { get; set; }
         Point WindowPosition { get; set; }
         Size WindowSize { get; set; }
+        bool DisablePopUps { get; set; }
 
     }
 

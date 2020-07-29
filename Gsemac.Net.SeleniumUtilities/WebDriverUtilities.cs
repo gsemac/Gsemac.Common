@@ -56,6 +56,9 @@ namespace Gsemac.Net.SeleniumUtilities {
 
             }
 
+            if (options.DisablePopUps)
+                profile.SetPreference("dom.popup_allowed_events", "");
+
             // This preference disables the "navigator.webdriver" property.
 
             profile.SetPreference("dom.webdriver.enabled", false);
