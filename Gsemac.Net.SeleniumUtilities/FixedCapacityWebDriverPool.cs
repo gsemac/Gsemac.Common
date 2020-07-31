@@ -23,22 +23,19 @@ namespace Gsemac.Net.SeleniumUtilities {
 
         public IWebDriver GetWebDriver() {
 
-            return new AutoReleasingWebDriver(GetWebDriverInternal(null), this);
+            return GetWebDriverInternal(null);
 
         }
         public IWebDriver GetWebDriver(TimeSpan timeout) {
 
-            return new AutoReleasingWebDriver(GetWebDriverInternal(timeout), this);
+            return GetWebDriverInternal(timeout);
 
         }
-        public void ReleaseWebDriver(IWebDriver webDriver) {
+        public void ReleaseWebDriver(IWebDriver webDriver, bool disposeWebDriver = false) {
 
             webDriver.Navigate().GoToUrl("about:blank");
 
-            if (webDriver is AutoReleasingWebDriver)
-                webDriver.Dispose();
-            else
-                ReleaseWebDriverInternal(webDriver);
+            ReleaseWebDriverInternal(webDriver, disposeWebDriver);
 
         }
 
@@ -117,7 +114,7 @@ namespace Gsemac.Net.SeleniumUtilities {
             return webDriver;
 
         }
-        private void ReleaseWebDriverInternal(IWebDriver webDriver) {
+        private void ReleaseWebDriverInternal(IWebDriver webDriver, bool disposeWebDriver) {
 
             lock (poolLock) {
 
@@ -126,7 +123,26 @@ namespace Gsemac.Net.SeleniumUtilities {
                     if (!spawnedDrivers.Any(driver => driver == webDriver))
                         throw new ArgumentException(nameof(webDriver), "The given driver is not owned by this pool.");
 
-                    pool.Enqueue(webDriver);
+                    if (disposeWebDriver) {
+
+                        // Close and dispose of the web driver entirely.
+
+                        webDriver.Quit();
+
+                        webDriver.Dispose();
+
+                        spawnedDrivers.Remove(webDriver);
+
+                    }
+                    else {
+
+                        // Return the web driver to the pool.
+
+                        pool.Enqueue(webDriver);
+
+                    }
+
+                    // Allow the next thread waiting for a web driver to continue.
 
                     poolAccessWaiter.Set();
 

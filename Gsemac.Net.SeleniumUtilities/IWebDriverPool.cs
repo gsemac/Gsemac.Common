@@ -7,7 +7,7 @@ namespace Gsemac.Net.SeleniumUtilities {
         IDisposable {
 
         IWebDriver GetWebDriver();
-        void ReleaseWebDriver(IWebDriver webDriver);
+        void ReleaseWebDriver(IWebDriver webDriver, bool disposeWebDriver = false);
 
     }
 
