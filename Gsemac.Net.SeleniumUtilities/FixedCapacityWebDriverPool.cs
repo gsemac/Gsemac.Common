@@ -23,19 +23,22 @@ namespace Gsemac.Net.SeleniumUtilities {
 
         public IWebDriver GetWebDriver() {
 
-            return GetWebDriverInternal(null);
+            return new AutoReleasingWebDriver(GetWebDriverInternal(null), this);
 
         }
         public IWebDriver GetWebDriver(TimeSpan timeout) {
 
-            return GetWebDriverInternal(timeout);
+            return new AutoReleasingWebDriver(GetWebDriverInternal(timeout), this);
 
         }
         public void ReleaseWebDriver(IWebDriver webDriver) {
 
             webDriver.Navigate().GoToUrl("about:blank");
 
-            ReleaseWebDriverInternal(webDriver);
+            if (webDriver is AutoReleasingWebDriver)
+                webDriver.Dispose();
+            else
+                ReleaseWebDriverInternal(webDriver);
 
         }
 
