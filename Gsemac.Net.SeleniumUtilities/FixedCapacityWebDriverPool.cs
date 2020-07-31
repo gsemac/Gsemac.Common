@@ -1,4 +1,5 @@
-﻿using OpenQA.Selenium;
+﻿using Gsemac.Net.SeleniumUtilities.Extensions;
+using OpenQA.Selenium;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -33,7 +34,8 @@ namespace Gsemac.Net.SeleniumUtilities {
         }
         public void ReleaseWebDriver(IWebDriver webDriver, bool disposeWebDriver = false) {
 
-            webDriver.Navigate().GoToUrl("about:blank");
+            if (webDriver != null && !webDriver.HasQuit())
+                webDriver.Navigate().GoToUrl("about:blank");
 
             ReleaseWebDriverInternal(webDriver, disposeWebDriver);
 
@@ -123,11 +125,12 @@ namespace Gsemac.Net.SeleniumUtilities {
                     if (!spawnedDrivers.Any(driver => driver == webDriver))
                         throw new ArgumentException(nameof(webDriver), "The given driver is not owned by this pool.");
 
-                    if (disposeWebDriver) {
+                    if (disposeWebDriver && webDriver.HasQuit()) {
 
                         // Close and dispose of the web driver entirely.
 
-                        webDriver.Quit();
+                        if (!webDriver.HasQuit())
+                            webDriver.Quit();
 
                         webDriver.Dispose();
 
