@@ -87,6 +87,7 @@ namespace Gsemac.Net.SeleniumUtilities {
             // Resize the window to a reasonable resolution so that viewport matches a conventional monitor viewport.
 
             driverOptions.AddArgument($"--window-size={options.WindowSize.Width},{options.WindowSize.Height}");
+            driverOptions.AddArgument($"--window-position={options.WindowPosition.X},{options.WindowPosition.Y}");
 
             if (options.Headless)
                 driverOptions.AddArgument("--headless");
