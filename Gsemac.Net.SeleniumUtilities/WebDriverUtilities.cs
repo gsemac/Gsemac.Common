@@ -65,6 +65,8 @@ namespace Gsemac.Net.SeleniumUtilities {
 
             driverOptions.Profile = profile;
 
+            driverOptions.PageLoadStrategy = options.PageLoadStrategy;
+
             IWebDriver driver = new FirefoxDriver(driverService, driverOptions);
 
             return driver;
@@ -101,6 +103,8 @@ namespace Gsemac.Net.SeleniumUtilities {
             // This argument disables the "navigator.webdriver" property.
 
             driverOptions.AddArgument("--disable-blink-features=AutomationControlled");
+
+            driverOptions.PageLoadStrategy = options.PageLoadStrategy;
 
             IWebDriver driver = new ChromeDriver(driverService, driverOptions);
 

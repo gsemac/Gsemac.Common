@@ -1,4 +1,5 @@
-﻿using System;
+﻿using OpenQA.Selenium;
+using System;
 using System.Drawing;
 using System.Net;
 
@@ -15,6 +16,8 @@ namespace Gsemac.Net.SeleniumUtilities {
         public bool Headless { get; set; } = false;
         public Point WindowPosition { get; set; } = new Point(0, 0);
         public Size WindowSize { get; set; } = new Size(1024, 768);
+
+        public PageLoadStrategy PageLoadStrategy { get; set; } = PageLoadStrategy.Default;
         public bool DisablePopUps { get; set; } = false;
 
     }
