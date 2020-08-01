@@ -1,6 +1,7 @@
 ﻿using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Firefox;
+using OpenQA.Selenium.Support.UI;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -181,6 +182,11 @@ namespace Gsemac.Net.SeleniumUtilities {
             }
 
         }
+        public static bool IsDocumentComplete(IWebDriver driver) {
+
+            return ((IJavaScriptExecutor)driver).ExecuteScript("return document.readyState").Equals("complete");
+
+        }
 
         public static Size GetDocumentSize(IWebDriver driver) {
 
@@ -236,6 +242,10 @@ namespace Gsemac.Net.SeleniumUtilities {
             if (blocking) {
 
                 driver.Navigate().GoToUrl(url);
+
+                WebDriverWait wait = new WebDriverWait(driver, driver.Manage().Timeouts().PageLoad);
+
+                wait.Until(d => IsDocumentComplete(d));
 
             }
             else {
