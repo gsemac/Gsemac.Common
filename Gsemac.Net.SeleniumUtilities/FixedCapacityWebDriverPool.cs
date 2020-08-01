@@ -125,7 +125,7 @@ namespace Gsemac.Net.SeleniumUtilities {
                     if (!spawnedDrivers.Any(driver => driver == webDriver))
                         throw new ArgumentException(nameof(webDriver), "The given driver is not owned by this pool.");
 
-                    if (disposeWebDriver && webDriver.HasQuit()) {
+                    if (disposeWebDriver || webDriver.HasQuit()) {
 
                         // Close and dispose of the web driver entirely.
 
