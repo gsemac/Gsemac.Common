@@ -98,6 +98,10 @@ namespace Gsemac.Net.SeleniumUtilities {
             if (options.Proxy != null)
                 driverOptions.AddArgument($"--proxy-server=\"{options.Proxy.GetProxy(uri).AbsoluteUri}\"");
 
+            // This argument disables the "navigator.webdriver" property.
+
+            driverOptions.AddArgument("--disable-blink-features=AutomationControlled");
+
             IWebDriver driver = new ChromeDriver(driverService, driverOptions);
 
             return driver;

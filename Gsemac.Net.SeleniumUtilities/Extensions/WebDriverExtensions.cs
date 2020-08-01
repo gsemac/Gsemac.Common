@@ -1,4 +1,5 @@
 ﻿using OpenQA.Selenium;
+using System.Linq;
 
 namespace Gsemac.Net.SeleniumUtilities.Extensions {
 
@@ -6,7 +7,16 @@ namespace Gsemac.Net.SeleniumUtilities.Extensions {
 
         public static bool HasQuit(this IWebDriver webDriver) {
 
-            return string.IsNullOrEmpty(webDriver.ToString());
+            try {
+
+                return webDriver?.WindowHandles?.Any() ?? true;
+
+            }
+            catch (WebDriverException) {
+
+                return true;
+
+            }
 
         }
 
