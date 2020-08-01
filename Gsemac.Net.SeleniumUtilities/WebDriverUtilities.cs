@@ -93,10 +93,10 @@ namespace Gsemac.Net.SeleniumUtilities {
                 driverOptions.AddArgument("--headless");
 
             if (!string.IsNullOrEmpty(options.UserAgent))
-                driverOptions.AddArgument($"--user-agent=\"{options.UserAgent}\"");
+                driverOptions.AddArgument($"--user-agent={options.UserAgent}");
 
             if (options.Proxy != null)
-                driverOptions.AddArgument($"--proxy-server=\"{options.Proxy.GetProxy(uri).AbsoluteUri}\"");
+                driverOptions.AddArgument($"--proxy-server={options.Proxy.GetProxy(uri).AbsoluteUri}");
 
             // This argument disables the "navigator.webdriver" property.
 
