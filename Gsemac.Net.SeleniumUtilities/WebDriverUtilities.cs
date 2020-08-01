@@ -263,6 +263,11 @@ namespace Gsemac.Net.SeleniumUtilities {
             }
 
         }
+        public static void GoToBlank(IWebDriver driver) {
+
+            driver.Navigate().GoToUrl("about:blank");
+
+        }
 
 #if NETFRAMEWORK
 
