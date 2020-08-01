@@ -9,7 +9,7 @@ namespace Gsemac.Net.SeleniumUtilities.Extensions {
 
             try {
 
-                return webDriver?.WindowHandles?.Any() ?? true;
+                return !(webDriver?.WindowHandles?.Any()) ?? true;
 
             }
             catch (WebDriverException) {
