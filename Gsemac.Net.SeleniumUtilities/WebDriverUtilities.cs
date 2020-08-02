@@ -66,7 +66,7 @@ namespace Gsemac.Net.SeleniumUtilities {
 
             driverOptions.Profile = profile;
 
-            driverOptions.PageLoadStrategy = options.PageLoadStrategy;
+            driverOptions.PageLoadStrategy = (OpenQA.Selenium.PageLoadStrategy)options.PageLoadStrategy;
 
             IWebDriver driver = new FirefoxDriver(driverService, driverOptions);
 
@@ -105,7 +105,7 @@ namespace Gsemac.Net.SeleniumUtilities {
 
             driverOptions.AddArgument("--disable-blink-features=AutomationControlled");
 
-            driverOptions.PageLoadStrategy = options.PageLoadStrategy;
+            driverOptions.PageLoadStrategy = (OpenQA.Selenium.PageLoadStrategy)options.PageLoadStrategy;
 
             IWebDriver driver = new ChromeDriver(driverService, driverOptions);
 
