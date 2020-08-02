@@ -16,6 +16,9 @@ namespace Gsemac.Logging {
             this.Message = logMessage;
 
         }
+        public LogEventArgs(LogLevel logLevel, string source, string message) :
+            this(new LogMessage(logLevel, source, message)) {
+        }
 
         public override string ToString() {
 
