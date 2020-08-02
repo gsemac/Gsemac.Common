@@ -8,7 +8,7 @@ namespace Gsemac.Logging {
 
         // Public members
 
-        public event EventHandler<LogEventArgs> Logged;
+        public event LogEventHandler Logged;
 
         public bool Enabled { get; set; } = true;
         public bool IgnoreExceptions { get; set; } = true;

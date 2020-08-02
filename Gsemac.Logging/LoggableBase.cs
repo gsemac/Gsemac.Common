@@ -6,7 +6,7 @@ namespace Gsemac.Logging {
 
         // Public members
 
-        public event EventHandler<LogEventArgs> Log;
+        public event LogEventHandler Log;
 
         // Protected members
 

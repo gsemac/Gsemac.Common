@@ -2,9 +2,11 @@
 
 namespace Gsemac.Logging {
 
+    public delegate void LogEventHandler(object sender, LogEventArgs e);
+
     public interface ILogger {
 
-        event EventHandler<LogEventArgs> Logged;
+        event LogEventHandler Logged;
 
         bool Enabled { get; set; }
         bool IgnoreExceptions { get; set; }

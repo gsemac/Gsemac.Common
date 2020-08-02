@@ -4,7 +4,7 @@ namespace Gsemac.Logging {
 
     public interface ILoggable {
 
-        event EventHandler<LogEventArgs> Log;
+        event LogEventHandler Log;
 
     }
 
