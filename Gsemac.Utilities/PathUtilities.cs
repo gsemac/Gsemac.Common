@@ -281,7 +281,12 @@ namespace Gsemac.Utilities {
 
         }
 
-        public static bool IsFilePath(string path, bool verifyFileExists = true) {
+        public static bool IsFilePath(string path) {
+
+            return IsFilePath(path, verifyFileExists: true);
+
+        }
+        public static bool IsFilePath(string path, bool verifyFileExists) {
 
             bool result = path.Any() &&
                 path.Last() != System.IO.Path.DirectorySeparatorChar &&
@@ -295,13 +300,27 @@ namespace Gsemac.Utilities {
         }
         public static bool IsLocalPath(string path) {
 
+            return IsLocalPath(path, verifyPathExists: true);
+
+        }
+        public static bool IsLocalPath(string path, bool verifyPathExists) {
+
+            bool isLocalPath = false;
+
             if (Uri.TryCreate(path, UriKind.Absolute, out Uri result)) {
 
-                return result.IsFile;
+                // "IsFile" returns true for both local file and directory paths.
+
+                isLocalPath = result.IsFile;
+
+                if (verifyPathExists)
+                    isLocalPath = System.IO.Directory.Exists(result.AbsolutePath) || System.IO.File.Exists(result.AbsolutePath);
+
+                return isLocalPath;
 
             }
 
-            return false;
+            return isLocalPath;
 
         }
         public static bool IsPathTooLong(string path) {

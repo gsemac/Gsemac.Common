@@ -186,25 +186,25 @@ namespace Gsemac.Utilities.Tests {
         [TestMethod]
         public void TestIsLocalPathWithAbsoluteFilePathWithDriveLetter() {
 
-            Assert.IsTrue(PathUtilities.IsLocalPath(@"C:\user\documents\file.txt"));
+            Assert.IsTrue(PathUtilities.IsLocalPath(@"C:\user\documents\file.txt", verifyPathExists: false));
 
         }
         [TestMethod]
         public void TestIsLocalPathWitNetworkFilePath() {
 
-            Assert.IsTrue(PathUtilities.IsLocalPath(@"\\user\documents\file.txt"));
+            Assert.IsTrue(PathUtilities.IsLocalPath(@"\\user\documents\file.txt", verifyPathExists: false));
 
         }
         [TestMethod]
         public void TestIsLocalPathWithAbsoluteDirectoryPath() {
 
-            Assert.IsTrue(PathUtilities.IsLocalPath(@"C:\user\documents\"));
+            Assert.IsTrue(PathUtilities.IsLocalPath(@"C:\user\documents\", verifyPathExists: false));
 
         }
         [TestMethod]
         public void TestIsLocalPathWithAbsoluteUrl() {
 
-            Assert.IsFalse(PathUtilities.IsLocalPath(@"https://website.com"));
+            Assert.IsFalse(PathUtilities.IsLocalPath(@"https://website.com", verifyPathExists: false));
 
         }
 
