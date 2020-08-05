@@ -324,7 +324,7 @@ namespace Gsemac.Utilities {
                     isLocalPath = testUri.IsFile && !testUri.IsUnc;
 
                     if (isLocalPath && verifyPathExists)
-                        isLocalPath = System.IO.Directory.Exists(testUri.LocalPath) || System.IO.File.Exists(testUri.LocalPath);
+                        isLocalPath = PathExists(testUri.LocalPath);
 
                 }
                 else if (new char[] { System.IO.Path.AltDirectorySeparatorChar, System.IO.Path.DirectorySeparatorChar }.All(c => c != path.First()) && Uri.TryCreate(path, UriKind.Relative, out _)) {
@@ -341,6 +341,15 @@ namespace Gsemac.Utilities {
             }
 
             return isLocalPath;
+
+        }
+        public static bool IsRootedPath(string path) {
+
+            // Sanitize the path before checking, because "Path.IsPathRooted" throws an ArgumentException for paths containing illegal characters.
+
+            path = SanitizePath(path);
+
+            return System.IO.Path.IsPathRooted(path);
 
         }
         public static bool IsPathTooLong(string path) {
@@ -375,6 +384,11 @@ namespace Gsemac.Utilities {
                 return true;
 
             return false;
+
+        }
+        public static bool PathExists(string path) {
+
+            return System.IO.Directory.Exists(path) || System.IO.File.Exists(path);
 
         }
 
