@@ -190,21 +190,58 @@ namespace Gsemac.Utilities.Tests {
 
         }
         [TestMethod]
-        public void TestIsLocalPathWitNetworkFilePath() {
-
-            Assert.IsTrue(PathUtilities.IsLocalPath(@"\\user\documents\file.txt", verifyPathExists: false));
-
-        }
-        [TestMethod]
         public void TestIsLocalPathWithAbsoluteDirectoryPath() {
 
             Assert.IsTrue(PathUtilities.IsLocalPath(@"C:\user\documents\", verifyPathExists: false));
 
         }
         [TestMethod]
-        public void TestIsLocalPathWithAbsoluteUrl() {
+        public void TestIsLocalPathWithRelativeDirectoryPath() {
 
-            Assert.IsFalse(PathUtilities.IsLocalPath(@"https://website.com", verifyPathExists: false));
+            Assert.IsTrue(PathUtilities.IsLocalPath(@"C:\user\documents|\", verifyPathExists: false));
+
+        }
+        [TestMethod]
+        public void TestIsLocalPathWithAbsoluteDirectoryPathWithInvalidCharacters() {
+
+            // IsLocalPath does not attempt to do any validation.
+
+            Assert.IsTrue(PathUtilities.IsLocalPath(@"documents|\", verifyPathExists: false));
+
+        }
+        [TestMethod]
+        public void TestIsLocalPathWithRelativeDirectoryPathWithInvalidCharacters() {
+
+            // IsLocalPath does not attempt to do any validation.
+
+            Assert.IsTrue(PathUtilities.IsLocalPath(@"documents\|file.txt", verifyPathExists: false));
+
+        }
+        [TestMethod]
+        public void TestIsLocalPathWithUrl() {
+
+            Assert.IsFalse(PathUtilities.IsLocalPath(@"https://example.com", verifyPathExists: false));
+
+        }
+        [TestMethod]
+        public void TestIsLocalPathWithUrlWithMissingProtocol() {
+
+            // UNC paths (network paths) are not considered local.
+            // The "Uri" class considers "file://" and "\\" both valid for UNC paths.
+
+            Assert.IsFalse(PathUtilities.IsLocalPath(@"//example.com", verifyPathExists: false));
+
+        }
+        [TestMethod]
+        public void TestIsLocalPathWithUncFilePath() {
+
+            Assert.IsFalse(PathUtilities.IsLocalPath(@"\\user\documents\file.txt", verifyPathExists: false));
+
+        }
+        [TestMethod]
+        public void TestIsLocalPathWithLongPathSyntax() {
+
+            Assert.IsTrue(PathUtilities.IsLocalPath(@"\\?\C:\documents\file.txt", verifyPathExists: false));
 
         }
 

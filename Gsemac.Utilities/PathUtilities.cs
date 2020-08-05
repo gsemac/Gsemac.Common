@@ -13,6 +13,7 @@ namespace Gsemac.Utilities {
         public const int MaxFilePathLength = 259; // 260 minus 1 for '\0'
         public const int MaxDirectoryPathLength = 247; // 248 minus 1 for '\0'
         public const int MaxPathSegmentLength = 255;
+        public const string ExtendedLengthPrefix = @"\\?\";
 
         public static string GetRelativePath(string fullPath, string relativePath) {
 
@@ -307,16 +308,35 @@ namespace Gsemac.Utilities {
 
             bool isLocalPath = false;
 
-            if (Uri.TryCreate(path, UriKind.Absolute, out Uri result)) {
+            if (!string.IsNullOrEmpty(path)) {
 
-                // "IsFile" returns true for both local file and directory paths.
+                // Remove the extended length prefix if it is present. If it is present, "Uri.TryCreate" will fail.
+                // Since we're not creating any files, we don't need to worry about it.
 
-                isLocalPath = result.IsFile;
+                if (path.StartsWith(ExtendedLengthPrefix))
+                    path = path.Substring(ExtendedLengthPrefix.Length);
 
-                if (verifyPathExists)
-                    isLocalPath = System.IO.Directory.Exists(result.AbsolutePath) || System.IO.File.Exists(result.AbsolutePath);
+                if (Uri.TryCreate(path, UriKind.Absolute, out Uri testUri)) {
 
-                return isLocalPath;
+                    // "IsFile" returns true for both local file and directory paths.
+                    // "IsUnc" will return true for paths beginning with "\\" or "//" (the latter case gets turned into "file://"). 
+
+                    isLocalPath = testUri.IsFile && !testUri.IsUnc;
+
+                    if (isLocalPath && verifyPathExists)
+                        isLocalPath = System.IO.Directory.Exists(testUri.LocalPath) || System.IO.File.Exists(testUri.LocalPath);
+
+                }
+                else if (new char[] { System.IO.Path.AltDirectorySeparatorChar, System.IO.Path.DirectorySeparatorChar }.All(c => c != path.First()) && Uri.TryCreate(path, UriKind.Relative, out _)) {
+
+                    // Check the full path for this relative path.
+                    // We initially avoid cases where the path begins with a directory separator as those should be considered rooted.
+
+                    path = System.IO.Path.GetFullPath(path);
+
+                    isLocalPath = IsLocalPath(path, verifyPathExists: verifyPathExists);
+
+                }
 
             }
 
