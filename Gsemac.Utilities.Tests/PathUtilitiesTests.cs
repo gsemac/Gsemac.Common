@@ -190,15 +190,21 @@ namespace Gsemac.Utilities.Tests {
 
         }
         [TestMethod]
-        public void TestIsLocalPathWithAbsoluteDirectoryPath() {
+        public void TestIsLocalPathWithAbsoluteDirectoryPathWithDriveLetter() {
 
             Assert.IsTrue(PathUtilities.IsLocalPath(@"C:\user\documents\", verifyPathExists: false));
 
         }
         [TestMethod]
+        public void TestIsLocalPathWithAbsoluteDirectoryPath() {
+
+            Assert.IsTrue(PathUtilities.IsLocalPath(@"\user\documents\", verifyPathExists: false));
+
+        }
+        [TestMethod]
         public void TestIsLocalPathWithRelativeDirectoryPath() {
 
-            Assert.IsTrue(PathUtilities.IsLocalPath(@"C:\user\documents|\", verifyPathExists: false));
+            Assert.IsTrue(PathUtilities.IsLocalPath(@"documents\", verifyPathExists: false));
 
         }
         [TestMethod]
@@ -214,7 +220,7 @@ namespace Gsemac.Utilities.Tests {
 
             // IsLocalPath does not attempt to do any validation.
 
-            Assert.IsTrue(PathUtilities.IsLocalPath(@"documents\|file.txt", verifyPathExists: false));
+            Assert.IsTrue(PathUtilities.IsLocalPath(@"documents|\", verifyPathExists: false));
 
         }
         [TestMethod]
