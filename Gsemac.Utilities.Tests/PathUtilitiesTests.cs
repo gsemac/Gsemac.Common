@@ -283,6 +283,22 @@ namespace Gsemac.Utilities.Tests {
             Assert.IsFalse(PathUtilities.IsPathRooted(@"documents\"));
 
         }
+        [TestMethod]
+        public void TestIsPathRootedWithLongAbsoluteDirectoryPath() {
+
+            string path = @"C:\user\documents\".PadRight(PathUtilities.MaxDirectoryPathLength, '0') + @"\";
+
+            Assert.IsTrue(PathUtilities.IsPathRooted(path));
+
+        }
+        [TestMethod]
+        public void TestIsPathRootedWithLongAbsoluteDirectoryPathWithExtendedLengthPrefix() {
+
+            string path = PathUtilities.ExtendedLengthPrefix + @"C:\user\documents\".PadRight(PathUtilities.MaxDirectoryPathLength, '0') + @"\";
+
+            Assert.IsTrue(PathUtilities.IsPathRooted(path));
+
+        }
 
         // IsPathTooLong
 
