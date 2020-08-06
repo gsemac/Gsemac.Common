@@ -343,13 +343,14 @@ namespace Gsemac.Utilities {
             return isLocalPath;
 
         }
-        public static bool IsRootedPath(string path) {
+        public static bool IsPathRooted(string path) {
 
-            // Sanitize the path before checking, because "Path.IsPathRooted" throws an ArgumentException for paths containing illegal characters.
+            // "System.IO.Path.IsPathRooted" throws an exception for paths longer than the maximum path length, as well as for malformed paths (e.g. paths containing invalid characters).
 
-            path = SanitizePath(path);
+            string directorySeparatorsStr = System.IO.Path.DirectorySeparatorChar.ToString() + System.IO.Path.AltDirectorySeparatorChar.ToString();
+            string pattern = @"^(?:[" + Regex.Escape(directorySeparatorsStr) + @"]|[a-z]+\:\/\/|[a-z]\:)";
 
-            return System.IO.Path.IsPathRooted(path);
+            return Regex.IsMatch(path, pattern, RegexOptions.IgnoreCase);
 
         }
         public static bool IsPathTooLong(string path) {

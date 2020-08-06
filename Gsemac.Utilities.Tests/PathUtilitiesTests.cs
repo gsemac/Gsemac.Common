@@ -251,6 +251,39 @@ namespace Gsemac.Utilities.Tests {
 
         }
 
+        // IsPathRooted
+
+        [TestMethod]
+        public void TestIsPathRootedWithAbsoluteDirectoryPath() {
+
+            Assert.IsTrue(PathUtilities.IsPathRooted(@"\user\documents\"));
+
+        }
+        [TestMethod]
+        public void TestIsPathRootedWithAbsoluteDirectoryPathWithDriverLetter() {
+
+            Assert.IsTrue(PathUtilities.IsPathRooted(@"C:\user\documents\"));
+
+        }
+        [TestMethod]
+        public void TestIsPathRootedWithUrl() {
+
+            Assert.IsTrue(PathUtilities.IsPathRooted(@"https://example.com"));
+
+        }
+        [TestMethod]
+        public void TestIsPathRootedWithUncPath() {
+
+            Assert.IsTrue(PathUtilities.IsPathRooted(@"\\user\documents\"));
+
+        }
+        [TestMethod]
+        public void TestIsPathRootedWithRelativeDirectoryPath() {
+
+            Assert.IsFalse(PathUtilities.IsPathRooted(@"documents\"));
+
+        }
+
         // IsPathTooLong
 
         [TestMethod]
