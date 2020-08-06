@@ -206,6 +206,28 @@ namespace Gsemac.Utilities {
             return System.IO.Path.GetTempFileName();
 
         }
+        public static bool IsTemporaryFilePath(string path) {
+
+            bool isTemporaryFilePath = false;
+
+            try {
+
+                path = System.IO.Path.GetFullPath(path);
+
+                isTemporaryFilePath = path.StartsWith(System.IO.Path.GetTempPath()) && IsFilePath(path);
+
+            }
+#pragma warning disable CA1031 // Do not catch general exception types
+            catch (Exception) {
+
+                // If the path is not a valid path, then it definitely isn't a temporary file path.
+
+            }
+#pragma warning restore CA1031 // Do not catch general exception types
+
+            return isTemporaryFilePath;
+
+        }
 
         public static string AnonymizePath(string path) {
 
@@ -284,7 +306,7 @@ namespace Gsemac.Utilities {
 
         public static bool IsFilePath(string path) {
 
-            return IsFilePath(path, verifyFileExists: true);
+            return IsFilePath(path, verifyFileExists: false);
 
         }
         public static bool IsFilePath(string path, bool verifyFileExists) {
@@ -301,7 +323,7 @@ namespace Gsemac.Utilities {
         }
         public static bool IsLocalPath(string path) {
 
-            return IsLocalPath(path, verifyPathExists: true);
+            return IsLocalPath(path, verifyPathExists: false);
 
         }
         public static bool IsLocalPath(string path, bool verifyPathExists) {
