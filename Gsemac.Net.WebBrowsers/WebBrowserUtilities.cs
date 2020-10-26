@@ -21,9 +21,10 @@ namespace Gsemac.Net.WebBrowsers {
 
             IEnumerable<string> webBrowserExecutablePaths = new string[]{
                 @"Google\Chrome\Application\chrome.exe",
+                @"Internet Explorer\iexplore.exe",
                 @"Mozilla Firefox\firefox.exe",
                 @"Opera\launcher.exe",
-                @"Vivaldi\Application\vivaldi.exe",
+                @"Vivaldi\Application\vivaldi.exe"
             }.SelectMany(path => programFilesDirectoryPaths.Select(programFilesDirectoryPath => System.IO.Path.Combine(programFilesDirectoryPath, path)))
             .Distinct();
 
