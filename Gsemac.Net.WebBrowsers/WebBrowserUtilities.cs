@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Gsemac.Net.WebBrowsers {
@@ -13,13 +14,18 @@ namespace Gsemac.Net.WebBrowsers {
 
             IEnumerable<string> programFilesDirectoryPaths = new string[]{
                 @"Program Files",
-                @"Program Files (x86)"
-            }.SelectMany(path => driveDirectoryPaths.Select(drivePath => System.IO.Path.Combine(drivePath, path)));
+                @"Program Files (x86)",
+                Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+            }.SelectMany(path => driveDirectoryPaths.Select(drivePath => System.IO.Path.Combine(drivePath, path)))
+            .Distinct();
 
             IEnumerable<string> webBrowserExecutablePaths = new string[]{
                 @"Google\Chrome\Application\chrome.exe",
-                @"Mozilla Firefox\firefox.exe"
-            }.SelectMany(path => programFilesDirectoryPaths.Select(programFilesDirectoryPath => System.IO.Path.Combine(programFilesDirectoryPath, path)));
+                @"Mozilla Firefox\firefox.exe",
+                @"Opera\launcher.exe",
+                @"Vivaldi\Application\vivaldi.exe",
+            }.SelectMany(path => programFilesDirectoryPaths.Select(programFilesDirectoryPath => System.IO.Path.Combine(programFilesDirectoryPath, path)))
+            .Distinct();
 
             return webBrowserExecutablePaths.Where(path => System.IO.File.Exists(path));
 
