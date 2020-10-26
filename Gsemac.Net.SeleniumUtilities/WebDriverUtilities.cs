@@ -115,7 +115,7 @@ namespace Gsemac.Net.SeleniumUtilities {
         public static IWebDriver CreateWebDriver(IWebDriverOptions options, Uri uri = null) {
 
             uri = uri ?? new Uri("http://example.com/");
-            string browserExecutableFileName = Path.GetFileNameWithoutExtension(options.BrowserExecutablePath);
+            string browserExecutableFileName = Path.GetFileNameWithoutExtension(options.BrowserExecutablePath) ?? "";
 
             IWebDriver result;
 
