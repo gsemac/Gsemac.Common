@@ -1,4 +1,5 @@
-﻿using OpenQA.Selenium;
+﻿using Gsemac.Net.WebBrowsers;
+using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Firefox;
 using OpenQA.Selenium.Support.UI;
@@ -115,16 +116,32 @@ namespace Gsemac.Net.SeleniumUtilities {
         public static IWebDriver CreateWebDriver(IWebDriverOptions options, Uri uri = null) {
 
             uri = uri ?? new Uri("http://example.com/");
-            string browserExecutableFileName = Path.GetFileNameWithoutExtension(options.BrowserExecutablePath) ?? "";
+
+            IWebBrowserInfo browserInfo = File.Exists(options.BrowserExecutablePath) ?
+                new WebBrowserInfo(options.BrowserExecutablePath) :
+                null;
 
             IWebDriver result;
 
-            if (browserExecutableFileName.Equals("firefox", StringComparison.OrdinalIgnoreCase))
-                result = CreateFirefoxWebDriver(options, uri);
-            else if (browserExecutableFileName.Equals("chrome", StringComparison.OrdinalIgnoreCase))
-                result = CreateChromeWebDriver(options, uri);
-            else
-                throw new ArgumentException("The given browser executable was not recognized.");
+            switch (browserInfo?.Id ?? WebBrowserId.Unknown) {
+
+                case WebBrowserId.Chrome:
+
+                    result = CreateChromeWebDriver(options, uri);
+
+                    break;
+
+                case WebBrowserId.Firefox:
+
+                    result = CreateFirefoxWebDriver(options, uri);
+
+                    break;
+
+                default:
+
+                    throw new ArgumentException("The given browser was not recognized.");
+
+            }
 
             result.Manage().Window.Position = options.WindowPosition;
 

@@ -5,6 +5,12 @@ VisualStudioVersion = 16.0.30320.27
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Gsemac.Net.SeleniumUtilities", "Gsemac.Net.SeleniumUtilities\Gsemac.Net.SeleniumUtilities.csproj", "{EE6E3FF1-4949-4D70-83B7-A5729663BFF4}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Gsemac.Net.WebBrowsers", "Gsemac.Net.WebBrowsers\Gsemac.Net.WebBrowsers\Gsemac.Net.WebBrowsers.csproj", "{5ED723C0-22EE-47C2-ACC3-5EBDF53DD9C8}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "submodules", "submodules", "{A94DF98E-48EC-47E5-93F8-22DBF99C1E59}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Gsemac.Utilities", "Gsemac.Net.WebBrowsers\Gsemac.Common\Gsemac.Utilities\Gsemac.Utilities.csproj", "{0EF07E71-5806-4E90-A9C3-9BE52E904C04}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,9 +21,21 @@ Global
 		{EE6E3FF1-4949-4D70-83B7-A5729663BFF4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EE6E3FF1-4949-4D70-83B7-A5729663BFF4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EE6E3FF1-4949-4D70-83B7-A5729663BFF4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5ED723C0-22EE-47C2-ACC3-5EBDF53DD9C8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5ED723C0-22EE-47C2-ACC3-5EBDF53DD9C8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5ED723C0-22EE-47C2-ACC3-5EBDF53DD9C8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5ED723C0-22EE-47C2-ACC3-5EBDF53DD9C8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0EF07E71-5806-4E90-A9C3-9BE52E904C04}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0EF07E71-5806-4E90-A9C3-9BE52E904C04}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0EF07E71-5806-4E90-A9C3-9BE52E904C04}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0EF07E71-5806-4E90-A9C3-9BE52E904C04}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{5ED723C0-22EE-47C2-ACC3-5EBDF53DD9C8} = {A94DF98E-48EC-47E5-93F8-22DBF99C1E59}
+		{0EF07E71-5806-4E90-A9C3-9BE52E904C04} = {A94DF98E-48EC-47E5-93F8-22DBF99C1E59}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {F09574C8-02A5-4A41-B692-04AA663B8303}

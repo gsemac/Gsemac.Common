@@ -14,6 +14,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Gsemac.Net.WebBrowsers\Gsemac.Net.WebBrowsers\Gsemac.Net.WebBrowsers.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Reference Include="System.Drawing" Condition="'$(TargetFramework)' == 'net40-client'" />
   </ItemGroup>
 
