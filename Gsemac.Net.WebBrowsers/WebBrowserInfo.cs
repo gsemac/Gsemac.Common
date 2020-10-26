@@ -13,7 +13,8 @@ namespace Gsemac.Net.WebBrowsers {
         public string Name { get; }
         public Version Version { get; }
         public string ExecutablePath { get; }
-        public bool Is64BitExecutable { get; } = false;
+        public bool Is64Bit { get; } = false;
+        public WebBrowserId Id { get; }
 
         public WebBrowserInfo(string browserExecutablePath) {
 
@@ -23,7 +24,8 @@ namespace Gsemac.Net.WebBrowsers {
 
             this.Name = versionInfo.ProductName;
             this.Version = new Version(versionInfo.ProductVersion);
-            this.Is64BitExecutable = PathUtilities.PathContainsSegment(browserExecutablePath, "Program Files (x86)");
+            this.Is64Bit = GetIs64BitExecutable(browserExecutablePath);
+            this.Id = GetBrowserId(browserExecutablePath);
 
         }
 
@@ -33,10 +35,41 @@ namespace Gsemac.Net.WebBrowsers {
 
             sb.Append($"{Name}");
 
-            if (Is64BitExecutable)
+            if (Is64Bit)
                 sb.Append(" (64-bit)");
 
             return sb.ToString();
+
+        }
+
+        // Private members
+
+        private static bool GetIs64BitExecutable(string browserExecutablePath) {
+
+            return Environment.Is64BitOperatingSystem &&
+                PathUtilities.PathContainsSegment(browserExecutablePath, "Program Files");
+
+        }
+        private static WebBrowserId GetBrowserId(string browserExecutablePath) {
+
+            string filename = System.IO.Path.GetFileNameWithoutExtension(browserExecutablePath);
+
+            if (filename.Equals("chrome", StringComparison.OrdinalIgnoreCase))
+                return WebBrowserId.Chrome;
+
+            if (filename.Equals("iexplore", StringComparison.OrdinalIgnoreCase))
+                return WebBrowserId.InternetExplorer;
+
+            if (filename.Equals("firefox", StringComparison.OrdinalIgnoreCase))
+                return WebBrowserId.Firefox;
+
+            if (filename.Equals("vivaldi", StringComparison.OrdinalIgnoreCase))
+                return WebBrowserId.Vivaldi;
+
+            if (browserExecutablePath.EndsWith(@"Opera\launcher.exe", StringComparison.OrdinalIgnoreCase))
+                return WebBrowserId.Opera;
+
+            return WebBrowserId.Unknown;
 
         }
 

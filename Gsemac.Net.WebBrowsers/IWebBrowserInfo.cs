@@ -7,7 +7,8 @@ namespace Gsemac.Net.WebBrowsers {
         string Name { get; }
         Version Version { get; }
         string ExecutablePath { get; }
-        bool Is64BitExecutable { get; }
+        bool Is64Bit { get; }
+        WebBrowserId Id { get; }
 
     }
 
