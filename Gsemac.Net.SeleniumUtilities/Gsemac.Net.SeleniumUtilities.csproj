@@ -1,4 +1,4 @@
-<Project Sdk="MSBuild.Sdk.Extras/2.0.54">
+﻿<Project Sdk="MSBuild.Sdk.Extras/2.0.54">
 
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0;net40-client</TargetFrameworks>
@@ -36,5 +36,8 @@
   <PropertyGroup Condition="$([System.Text.RegularExpressions.Regex]::IsMatch('$(TargetFramework)', '^netcoreapp\d'))">
     <DefineConstants>NETCORE</DefineConstants>
   </PropertyGroup>
+  <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
+    <Exec Command="&quot;$(MSBuildToolsPath)\msbuild.exe&quot; &quot;$(ProjectDir)..\Gsemac.Net.WebBrowsers\Gsemac.Net.WebBrowsers.sln&quot; /p:Configuration=$(ConfigurationName) /verbosity:minimal /restore" />
+  </Target>
   
 </Project>
