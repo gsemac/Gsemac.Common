@@ -14,10 +14,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Gsemac.Net.WebBrowsers\Gsemac.Net.WebBrowsers\Gsemac.Net.WebBrowsers.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
+    <Reference Include="Gsemac.Net.WebBrowsers">
+      <HintPath>..\Gsemac.Net.WebBrowsers\Gsemac.Net.WebBrowsers\bin\$(ConfigurationName)\$(TargetFramework)\Gsemac.Net.WebBrowsers.dll</HintPath>
+    </Reference>
     <Reference Include="System.Drawing" Condition="'$(TargetFramework)' == 'net40-client'" />
   </ItemGroup>
 
@@ -37,7 +36,7 @@
     <DefineConstants>NETCORE</DefineConstants>
   </PropertyGroup>
   <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
-    <Exec Command="&quot;$(MSBuildToolsPath)\msbuild.exe&quot; &quot;$(ProjectDir)..\Gsemac.Net.WebBrowsers\Gsemac.Net.WebBrowsers.sln&quot; /p:Configuration=$(ConfigurationName) /verbosity:minimal /restore" />
+    <Exec Command="&quot;$(MSBuildToolsPath)\msbuild.exe&quot; &quot;..\Gsemac.Net.WebBrowsers\Gsemac.Net.WebBrowsers.sln&quot; /p:Configuration=$(ConfigurationName) /verbosity:quiet /restore" />
   </Target>
   
 </Project>
