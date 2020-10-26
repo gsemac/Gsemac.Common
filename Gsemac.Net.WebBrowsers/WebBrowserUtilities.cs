@@ -31,6 +31,12 @@ namespace Gsemac.Net.WebBrowsers {
             return webBrowserExecutablePaths.Where(path => System.IO.File.Exists(path));
 
         }
+        public static IEnumerable<IWebBrowserInfo> GetInstalledWebBrowsers() {
+
+            return GetInstalledWebBrowserExecutablePaths()
+                .Select(path => new WebBrowserInfo(path));
+
+        }
 
     }
 
