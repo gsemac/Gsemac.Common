@@ -355,6 +355,21 @@ namespace Gsemac.Utilities.Tests {
 
         }
 
+        // PathContainsSegment
+
+        [TestMethod]
+        public void TestPathContainsSegmentReturnsTrueWithDirectorySegment() {
+
+            Assert.IsTrue(PathUtilities.PathContainsSegment(@"C:\path\to\directory\", "to"));
+
+        }
+        [TestMethod]
+        public void TestPathContainsSegmentReturnsFalseWithDirectorySegment() {
+
+            Assert.IsFalse(PathUtilities.PathContainsSegment(@"C:\path\to\directory\", "too"));
+
+        }
+
     }
 
 }

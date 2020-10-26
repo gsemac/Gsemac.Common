@@ -414,6 +414,15 @@ namespace Gsemac.Utilities {
             return System.IO.Directory.Exists(path) || System.IO.File.Exists(path);
 
         }
+        public static bool PathContainsSegment(string path, string pathSegment) {
+
+            pathSegment = TrimDirectorySeparators(pathSegment);
+
+            return GetPathSegments(path)
+                .Select(segment => TrimDirectorySeparators(segment))
+                .Any(segment => segment.Equals(pathSegment, StringComparison.OrdinalIgnoreCase));
+
+        }
 
         public static void OpenPath(string path, OpenPathOptions options = OpenPathOptions.None) {
 
