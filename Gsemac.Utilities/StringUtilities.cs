@@ -152,11 +152,24 @@ namespace Gsemac.Utilities {
         }
         public static string NormalizeLineBreaks(string input, NormalizeSpaceOptions options = NormalizeSpaceOptions.Default) {
 
-            string pattern = options.HasFlag(NormalizeSpaceOptions.PreserveLineBreaks) ?
-                @"\r\n|\n" :
-                @"(?:\r\n|\n)+";
+            string result = Regex.Replace(input, @"\r\n|\n", "\n");
 
-            return Regex.Replace(input, pattern, Environment.NewLine);
+            // Runs of 2 or more line breaks will be collapsed into a single line break unless the PreserveLineBreaks flag is set.
+
+            if (!options.HasFlag(NormalizeSpaceOptions.PreserveLineBreaks)) {
+
+                if (options.HasFlag(NormalizeSpaceOptions.PreserveParagraphBreaks))
+                    result = Regex.Replace(result, @"\n{3,}", "\n\n");
+                else
+                    result = Regex.Replace(result, @"\n+", "\n");
+
+            }
+
+            // Replace the temporary newlines with the evironment's newline sequence.
+
+            result = Regex.Replace(result, @"\n", Environment.NewLine);
+
+            return result;
 
         }
         public static string Unescape(string input) {

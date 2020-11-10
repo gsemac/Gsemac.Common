@@ -41,6 +41,30 @@ namespace Gsemac.Utilities.Tests {
 
         }
 
+        // NormalizeLineBreaks
+
+        [TestMethod]
+        public void TestNormalizeLineBreaksWithMixedLineBreaks() {
+
+            Assert.AreEqual($"a{Environment.NewLine}b{Environment.NewLine}c",
+                StringUtilities.NormalizeLineBreaks("a\r\n\nb\n\r\nc"));
+
+        }
+        [TestMethod]
+        public void TestNormalizeLineBreaksWithPreserveLineBreaksOption() {
+
+            Assert.AreEqual($"a{Environment.NewLine}{Environment.NewLine}b{Environment.NewLine}{Environment.NewLine}c",
+                StringUtilities.NormalizeLineBreaks("a\r\n\nb\n\r\nc", NormalizeSpaceOptions.PreserveLineBreaks));
+
+        }
+        [TestMethod]
+        public void TestNormalizeLineBreaksWithPreserveParagraphBreaksOption() {
+
+            Assert.AreEqual($"a{Environment.NewLine}{Environment.NewLine}b{Environment.NewLine}{Environment.NewLine}c",
+                StringUtilities.NormalizeLineBreaks("a\r\n\nb\n\r\n\n\nc", NormalizeSpaceOptions.PreserveParagraphBreaks));
+
+        }
+
         // Unescape
 
         [TestMethod]

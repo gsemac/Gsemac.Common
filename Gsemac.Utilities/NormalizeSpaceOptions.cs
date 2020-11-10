@@ -6,7 +6,8 @@ namespace Gsemac.Utilities {
     public enum NormalizeSpaceOptions {
         None = 0,
         Default = None,
-        PreserveLineBreaks = 1
+        PreserveLineBreaks = 1,
+        PreserveParagraphBreaks = 2
     }
 
 }
