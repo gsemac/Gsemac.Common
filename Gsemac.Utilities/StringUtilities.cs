@@ -289,14 +289,12 @@ namespace Gsemac.Utilities {
             // Unescape data string encoding (e.g. "%20" -> " ").
             // UnescapeDataString can throw an exception on Windows XP if there are any percent symbols that aren't part of an escape sequence (?).
 
-#pragma warning disable CA1031 // Do not catch general exception types
             try {
 
                 input = Uri.UnescapeDataString(input);
 
             }
             catch (Exception) { }
-#pragma warning restore CA1031 // Do not catch general exception types
 
             return input;
 
