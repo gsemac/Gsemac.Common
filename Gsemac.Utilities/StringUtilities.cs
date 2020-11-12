@@ -204,6 +204,9 @@ namespace Gsemac.Utilities {
 
             switch (casing) {
 
+                case StringCasing.Unchanged:
+                    return input;
+
                 case StringCasing.Lower:
                     return input.ToLowerInvariant();
 
