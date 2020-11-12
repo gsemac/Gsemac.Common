@@ -202,6 +202,9 @@ namespace Gsemac.Utilities {
 
         public static string ToCase(string input, StringCasing casing) {
 
+            if (string.IsNullOrEmpty(input))
+                return input;
+
             switch (casing) {
 
                 case StringCasing.Unchanged:
