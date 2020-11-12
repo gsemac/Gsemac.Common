@@ -200,6 +200,25 @@ namespace Gsemac.Utilities {
 
         }
 
+        public static string ToCase(string input, StringCasing casing) {
+
+            switch (casing) {
+
+                case StringCasing.Lower:
+                    return input.ToLowerInvariant();
+
+                case StringCasing.Upper:
+                    return input.ToUpperInvariant();
+
+                case StringCasing.Proper:
+                    return ToProperCase(input);
+
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(input));
+
+            }
+
+        }
         public static string ToProperCase(string input, ProperCaseOptions options = ProperCaseOptions.Default) {
 
             if (string.IsNullOrEmpty(input))
