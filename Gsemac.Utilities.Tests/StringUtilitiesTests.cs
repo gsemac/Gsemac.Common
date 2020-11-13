@@ -133,19 +133,19 @@ namespace Gsemac.Utilities.Tests {
         [TestMethod]
         public void TestToProperCaseWithUpperCaseAndPreserveAcronymsOption() {
 
-            Assert.AreEqual("MY TITLE", StringUtilities.ToProperCase("MY TITLE", ProperCaseOptions.PreserveAcronyms));
+            Assert.AreEqual("MY TITLE", StringUtilities.ToProperCase("MY TITLE", CasingOptions.PreserveAcronyms));
 
         }
         [TestMethod]
         public void TestToProperCaseWithRomanNumerals() {
 
-            Assert.AreEqual("James III Of Scotland", StringUtilities.ToProperCase("james iii of scotland", ProperCaseOptions.CapitalizeRomanNumerals));
+            Assert.AreEqual("James III Of Scotland", StringUtilities.ToProperCase("james iii of scotland", CasingOptions.CapitalizeRomanNumerals));
 
         }
         [TestMethod]
         public void TestToProperCaseWithRomanNumeralsInsideOfWord() {
 
-            Assert.AreEqual("The Liver Is An Organ", StringUtilities.ToProperCase("the liver is an organ", ProperCaseOptions.CapitalizeRomanNumerals));
+            Assert.AreEqual("The Liver Is An Organ", StringUtilities.ToProperCase("the liver is an organ", CasingOptions.CapitalizeRomanNumerals));
 
         }
         [TestMethod]

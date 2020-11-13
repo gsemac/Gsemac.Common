@@ -219,13 +219,16 @@ namespace Gsemac.Utilities {
                 case StringCasing.Proper:
                     return ToProperCase(input);
 
+                case StringCasing.Sentence:
+                    return ToSentenceCase(input);
+
                 default:
                     throw new ArgumentOutOfRangeException(nameof(input));
 
             }
 
         }
-        public static string ToProperCase(string input, ProperCaseOptions options = ProperCaseOptions.Default) {
+        public static string ToProperCase(string input, CasingOptions options = CasingOptions.Default) {
 
             if (string.IsNullOrEmpty(input))
                 return input;
@@ -233,7 +236,7 @@ namespace Gsemac.Utilities {
             // TextInfo.ToTitleCase preserves sequences of all-caps, assuming that the sequence represents an acronym.
             // If we do not wish to preserve acronyms, we'll make the entire string lowercase first.
 
-            if (!options.HasFlag(ProperCaseOptions.PreserveAcronyms))
+            if (!options.HasFlag(CasingOptions.PreserveAcronyms))
                 input = input.ToLowerInvariant();
 
             string result = System.Threading.Thread.CurrentThread.CurrentCulture.TextInfo.ToTitleCase(input);
@@ -242,18 +245,24 @@ namespace Gsemac.Utilities {
 
             result = Regex.Replace(result, @"\b(['’])S\b", "$1s");
 
-            // Capitalize Roman numerals.
+            if (options.HasFlag(CasingOptions.CapitalizeRomanNumerals))
+                result = CapitalizeRomanNumerals(result);
 
-            if (options.HasFlag(ProperCaseOptions.CapitalizeRomanNumerals)) {
+            return result;
 
-                // Regex adapted from Regular Expressions Cookbook, 6.9. Roman Numerals, example "Modern Roman numerals, strict":
-                // https://www.oreilly.com/library/view/regular-expressions-cookbook/9780596802837/ch06s09.html
+        }
+        public static string ToSentenceCase(string input, CasingOptions options = CasingOptions.Default) {
 
-                const string romanNumeralsPattern = @"\b(?=[MDCLXVI])M*(C[MD]|D?C{0,3})(X[CL]|L?X{0,3})(I[XV]|V?I{0,3})\b";
+            if (string.IsNullOrEmpty(input))
+                return input;
 
-                result = Regex.Replace(result, romanNumeralsPattern, m => m.Value.ToUpperInvariant(), RegexOptions.IgnoreCase);
+            if (!options.HasFlag(CasingOptions.PreserveAcronyms))
+                input = input.ToLowerInvariant();
 
-            }
+            string result = Regex.Replace(input, @"(?:^|[\.!?])\s*(\w)", m => m.Value.ToUpperInvariant());
+
+            if (options.HasFlag(CasingOptions.CapitalizeRomanNumerals))
+                result = CapitalizeRomanNumerals(result);
 
             return result;
 
@@ -341,6 +350,16 @@ namespace Gsemac.Utilities {
                 return char.ConvertFromUtf32(parsedInt).ToString();
 
             return input;
+
+        }
+        private static string CapitalizeRomanNumerals(string input) {
+
+            // Regex adapted from Regular Expressions Cookbook, 6.9. Roman Numerals, example "Modern Roman numerals, strict":
+            // https://www.oreilly.com/library/view/regular-expressions-cookbook/9780596802837/ch06s09.html
+
+            const string romanNumeralsPattern = @"\b(?=[MDCLXVI])M*(C[MD]|D?C{0,3})(X[CL]|L?X{0,3})(I[XV]|V?I{0,3})\b";
+
+            return Regex.Replace(input, romanNumeralsPattern, m => m.Value.ToUpperInvariant(), RegexOptions.IgnoreCase);
 
         }
 

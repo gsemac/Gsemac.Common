@@ -2,7 +2,7 @@
 
     public static class StringExtensions {
 
-        public static string ToProper(this string input, ProperCaseOptions options = ProperCaseOptions.Default) {
+        public static string ToProper(this string input, CasingOptions options = CasingOptions.Default) {
 
             return StringUtilities.ToProperCase(input, options);
 

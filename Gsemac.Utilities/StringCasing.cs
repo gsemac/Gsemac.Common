@@ -4,7 +4,8 @@
         Unchanged = 0,
         Lower,
         Upper,
-        Proper
+        Proper,
+        Sentence
     }
 
 }
