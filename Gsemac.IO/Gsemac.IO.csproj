@@ -11,7 +11,6 @@
 
 	<ItemGroup>
 	  <ProjectReference Include="..\Gsemac.Core\Gsemac.Core.csproj" />
-	  <ProjectReference Include="..\Gsemac.Utilities\Gsemac.Core.csproj" />
 	</ItemGroup>
 
 </Project>

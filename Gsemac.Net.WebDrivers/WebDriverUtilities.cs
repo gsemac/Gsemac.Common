@@ -1,6 +1,4 @@
 ﻿using Gsemac.Net.WebBrowsers;
-using Gsemac.Net.WebBrowsers;
-using Gsemac.Net.WebDrivers;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Firefox;
@@ -273,8 +271,6 @@ namespace Gsemac.Net.WebDrivers {
                 // To avoid blocking, a low timeout is set so that a timeout exception is raised, which is then caught.
 
                 TimeSpan originalTimeout = driver.Manage().Timeouts().PageLoad;
-
-#pragma warning disable CA1031 // Do not catch general exception types
                 try {
 
                     driver.Manage().Timeouts().PageLoad = TimeSpan.FromSeconds(1);
@@ -287,8 +283,6 @@ namespace Gsemac.Net.WebDrivers {
                     driver.Manage().Timeouts().PageLoad = originalTimeout;
 
                 }
-#pragma warning restore CA1031 // Do not catch general exception types
-
             }
 
         }
@@ -417,13 +411,13 @@ namespace Gsemac.Net.WebDrivers {
 
         }
 
+#if NETFRAMEWORK
+
         private static Screenshot TakeScreenshot(IWebDriver driver) {
 
             return (driver as ITakesScreenshot).GetScreenshot();
 
         }
-
-#if NETFRAMEWORK
 
         private static Bitmap ScreenshotToBitmap(Screenshot screenshot) {
 
