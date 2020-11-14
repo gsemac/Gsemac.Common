@@ -1,4 +1,5 @@
-﻿using Gsemac.Utilities;
+﻿using Gsemac.Drawing;
+using Gsemac.Utilities;
 using System;
 using System.ComponentModel;
 using System.Drawing;

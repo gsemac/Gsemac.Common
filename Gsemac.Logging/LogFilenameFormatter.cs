@@ -1,4 +1,4 @@
-﻿using Gsemac.Utilities;
+﻿using Gsemac.Core;
 using System;
 using System.Text;
 

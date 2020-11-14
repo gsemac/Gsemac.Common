@@ -55,9 +55,13 @@
     <Compile Include="ControlUtilities.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Gsemac.Utilities\Gsemac.Utilities.csproj">
+    <ProjectReference Include="..\Gsemac.Drawing\Gsemac.Drawing.csproj">
+      <Project>{8014aec9-1a1c-403f-9030-cda5bc921d91}</Project>
+      <Name>Gsemac.Drawing</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Gsemac.Core\Gsemac.Core.csproj">
       <Project>{46F3DE15-F452-4EAA-A886-C6BD1CBA7976}</Project>
-      <Name>Gsemac.Utilities</Name>
+      <Name>Gsemac.Core</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
