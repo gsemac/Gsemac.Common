@@ -1,10 +1,10 @@
 ﻿using System.Drawing;
 
-namespace Gsemac.Drawing {
+namespace Gsemac.Drawing.Extensions {
 
-    public static class ColorUtilities {
+    public static class ColorExtensions {
 
-        public static Color Tint(Color baseColor, float factor) {
+        public static Color Tint(this Color baseColor, float factor) {
 
             // Adapted from the answer given here:
             // https://stackoverflow.com/a/31325812/5383169
@@ -20,7 +20,7 @@ namespace Gsemac.Drawing {
             return Color.FromArgb(newR, newG, newB);
 
         }
-        public static Color Shade(Color baseColor, float factor) {
+        public static Color Shade(this Color baseColor, float factor) {
 
             // Adapted from the answer given here:
             // https://stackoverflow.com/a/31325812/5383169
