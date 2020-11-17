@@ -35,9 +35,9 @@ namespace Gsemac.Collections {
 
             }
 
-            // If we get here, the strings are equal.
+            // If we get here, the strings are either equal, or one of them is null/empty.
 
-            return 0;
+            return cultureInfo.CompareInfo.Compare(x, y, CompareOptions.IgnoreCase);
 
         }
 
