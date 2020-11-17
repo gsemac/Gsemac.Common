@@ -155,6 +155,19 @@ namespace Gsemac.Collections.Tests {
             }, sortedItems);
 
         }
+        [TestMethod]
+        public void TestSortDoesNotThrowWithEmptyStrings() {
+
+            string[] items = new[] {
+                string.Empty,
+                "",
+                null,
+                " ",
+            };
+
+            string[] sortedItems = items.OrderBy(item => item, new NaturalSortComparer(CultureInfo.InvariantCulture)).ToArray();
+
+        }
 
     }
 

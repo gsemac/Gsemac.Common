@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
-using System.Text.RegularExpressions;
 
 namespace Gsemac.Collections {
 
@@ -85,18 +82,22 @@ namespace Gsemac.Collections {
             int startIndex = 0;
             int endIndex = 0;
 
-            while (startIndex < input.Length) {
+            if (!(input is null)) {
 
-                if (ConsumeNumericSequence(input, ref startIndex, ref endIndex) || ConsumeAlphabeticSequence(input, ref startIndex, ref endIndex)) {
+                while (startIndex < input.Length) {
 
-                    yield return input.Substring(startIndex, endIndex - startIndex);
+                    if (ConsumeNumericSequence(input, ref startIndex, ref endIndex) || ConsumeAlphabeticSequence(input, ref startIndex, ref endIndex)) {
 
-                    startIndex = endIndex;
+                        yield return input.Substring(startIndex, endIndex - startIndex);
 
-                }
-                else {
+                        startIndex = endIndex;
 
-                    break;
+                    }
+                    else {
+
+                        break;
+
+                    }
 
                 }
 
