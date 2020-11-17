@@ -29,7 +29,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Gsemac.IO", "Gsemac.IO\Gsem
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Gsemac.Drawing", "Gsemac.Drawing\Gsemac.Drawing.csproj", "{8014AEC9-1A1C-403F-9030-CDA5BC921D91}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gsemac.Core.Tests", "Gsemac.Core.Tests\Gsemac.Core.Tests.csproj", "{45BBC45F-484A-4473-BEB7-1C9651F42119}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Gsemac.Core.Tests", "Gsemac.Core.Tests\Gsemac.Core.Tests.csproj", "{45BBC45F-484A-4473-BEB7-1C9651F42119}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gsemac.Collections.Tests", "Gsemac.Collections.Tests\Gsemac.Collections.Tests.csproj", "{DB17A8E1-9F7A-40F8-8122-88E6EDC49B4D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -85,6 +87,10 @@ Global
 		{45BBC45F-484A-4473-BEB7-1C9651F42119}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{45BBC45F-484A-4473-BEB7-1C9651F42119}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{45BBC45F-484A-4473-BEB7-1C9651F42119}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DB17A8E1-9F7A-40F8-8122-88E6EDC49B4D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DB17A8E1-9F7A-40F8-8122-88E6EDC49B4D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DB17A8E1-9F7A-40F8-8122-88E6EDC49B4D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DB17A8E1-9F7A-40F8-8122-88E6EDC49B4D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -102,6 +108,7 @@ Global
 		{97A040D8-3023-44B4-B85B-CC351F44BC92} = {559AE943-A0A6-43B1-ACF0-BE305C5B4FCE}
 		{8014AEC9-1A1C-403F-9030-CDA5BC921D91} = {559AE943-A0A6-43B1-ACF0-BE305C5B4FCE}
 		{45BBC45F-484A-4473-BEB7-1C9651F42119} = {742EDB7B-BAAD-43E2-82B6-2ECAA2D28338}
+		{DB17A8E1-9F7A-40F8-8122-88E6EDC49B4D} = {742EDB7B-BAAD-43E2-82B6-2ECAA2D28338}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {D040AD76-9C92-4D4E-99AD-45B26C068360}

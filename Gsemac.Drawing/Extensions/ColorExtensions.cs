@@ -4,7 +4,7 @@ namespace Gsemac.Drawing.Extensions {
 
     public static class ColorExtensions {
 
-        public static Color Tint(this Color baseColor, float factor) {
+        public static Color AddTint(this Color baseColor, float factor) {
 
             // Adapted from the answer given here:
             // https://stackoverflow.com/a/31325812/5383169
@@ -20,7 +20,7 @@ namespace Gsemac.Drawing.Extensions {
             return Color.FromArgb(newR, newG, newB);
 
         }
-        public static Color Shade(this Color baseColor, float factor) {
+        public static Color AddShade(this Color baseColor, float factor) {
 
             // Adapted from the answer given here:
             // https://stackoverflow.com/a/31325812/5383169
