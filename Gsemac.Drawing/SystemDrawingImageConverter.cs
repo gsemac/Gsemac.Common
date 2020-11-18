@@ -53,19 +53,14 @@ namespace Gsemac.Drawing {
 
                 ImageCodecInfo encoder = GetEncoderForFileExtension(destinationExt);
 
-                using (Image image = ImageUtilities.OpenImage(sourceFilePath)) {
+                Image image;
 
-                    if (options.Width.HasValue || options.Height.HasValue) {
+                using (image = ImageUtilities.OpenImage(sourceFilePath)) {
 
-                        using (Image resizedImage = ImageUtilities.ResizeImage(image, options.Width, options.Height))
-                            image.Save(destinationFilePath, encoder, encoderParameters);
+                    foreach (IImageFilter filter in options.Filters)
+                        image = filter.Apply(image);
 
-                    }
-                    else {
-
-                        image.Save(destinationFilePath, encoder, encoderParameters);
-
-                    }
+                    image.Save(destinationFilePath, encoder, encoderParameters);
 
                 }
 
