@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 
-namespace Gsemac.Assembly {
+namespace Gsemac.Reflection.Assembly {
 
     public class AnyCpuFileSystemAssemblyResolver :
         FileSystemAssemblyResolver {

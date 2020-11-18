@@ -1,9 +1,21 @@
-﻿namespace Gsemac.Assembly {
+﻿using System.Collections.Generic;
+
+namespace Gsemac.Reflection.Assembly {
 
     public class FileSystemAssemblyResolver :
         FileSystemAssemblyResolverBase {
 
         // Public members
+
+        public FileSystemAssemblyResolver() :
+            this(new[] { "lib" }) {
+        }
+        public FileSystemAssemblyResolver(IEnumerable<string> probingPaths) {
+
+            foreach (string probingPath in probingPaths)
+                ProbingPaths.Add(probingPath);
+
+        }
 
         public override string GetAssemblyPath(string assemblyName) {
 

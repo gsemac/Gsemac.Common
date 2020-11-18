@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Gsemac.Assembly {
+namespace Gsemac.Core.Assembly {
 
     public interface IAssemblyInfo {
 

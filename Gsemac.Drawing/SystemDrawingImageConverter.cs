@@ -14,16 +14,7 @@ namespace Gsemac.Drawing {
 
         // Public members
 
-        public IEnumerable<string> SupportedImageFormats => new[] {
-            ".bmp",
-            ".gif",
-            ".exif",
-            ".jpg",
-            ".jpeg",
-            ".png",
-            ".tif",
-            ".tiff"
-        };
+        public IEnumerable<string> SupportedImageFormats => ImageUtilities.GetSupportedFileExtensions();
 
         public void ConvertImage(string sourceFilePath, string destinationFilePath, IImageConversionOptions options) {
 
@@ -40,76 +31,21 @@ namespace Gsemac.Drawing {
                 throw new FileNotFoundException("The source file was not found.", sourceFilePath);
 
             string sourceExt = Path.GetExtension(sourceFilePath);
-            string destinationExt = Path.GetExtension(destinationFilePath);
             bool overwriteSourceFile = sourceFilePath.Equals(destinationFilePath, StringComparison.OrdinalIgnoreCase);
 
-            if (!SupportedImageFormats.Any(ext => ext.Equals(sourceExt, StringComparison.OrdinalIgnoreCase)) ||
-                !SupportedImageFormats.Any(ext => ext.Equals(destinationExt, StringComparison.OrdinalIgnoreCase)))
+            if (!ImageUtilities.IsFileExtensionSupported(sourceExt))
                 throw new Exception("The image format is not supported.");
 
-            using (EncoderParameters encoderParameters = new EncoderParameters(1))
-            using (EncoderParameter qualityParameter = new EncoderParameter(Encoder.Quality, (int)(100.0f * options.Quality))) {
+            Image image;
 
-                encoderParameters.Param[0] = qualityParameter;
+            using (image = ImageUtilities.OpenImage(sourceFilePath, openWithoutLocking: overwriteSourceFile)) {
 
-                ImageCodecInfo encoder = GetEncoderForFileExtension(destinationExt);
+                foreach (IImageFilter filter in options.Filters)
+                    image = filter.Apply(image);
 
-                Image image;
-
-                using (image = ImageUtilities.OpenImage(sourceFilePath, openWithoutLocking: overwriteSourceFile)) {
-
-                    foreach (IImageFilter filter in options.Filters)
-                        image = filter.Apply(image);
-
-                    image.Save(destinationFilePath, encoder, encoderParameters);
-
-                }
+                ImageUtilities.SaveImage(image, destinationFilePath, options.EncoderOptions);
 
             }
-
-        }
-
-        // Private members
-
-        private ImageFormat GetImageFormatForFileExtension(string fileExtension) {
-
-            switch (fileExtension.ToLowerInvariant()) {
-
-                case ".bmp":
-                    return ImageFormat.Bmp;
-
-                case ".gif":
-                    return ImageFormat.Gif;
-
-                case ".exif":
-                    return ImageFormat.Exif;
-
-                case ".jpg":
-                case ".jpeg":
-                    return ImageFormat.Jpeg;
-
-                case ".png":
-                    return ImageFormat.Png;
-
-                case ".tif":
-                case ".tiff":
-                    return ImageFormat.Tiff;
-
-                default:
-                    throw new ArgumentException("Unrecognized file extension.");
-
-            }
-
-        }
-        private ImageCodecInfo GetEncoderForFileExtension(string fileExtension) {
-
-            ImageFormat format = GetImageFormatForFileExtension(fileExtension);
-
-            ImageCodecInfo decoder = ImageCodecInfo.GetImageDecoders()
-                .Where(codec => codec.FormatID == format.Guid)
-                .FirstOrDefault();
-
-            return decoder;
 
         }
 

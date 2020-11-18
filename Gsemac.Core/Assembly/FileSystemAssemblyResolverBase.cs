@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 
-namespace Gsemac.Assembly {
+namespace Gsemac.Core.Assembly {
 
     public abstract class FileSystemAssemblyResolverBase :
         IAssemblyResolver {
@@ -11,7 +10,6 @@ namespace Gsemac.Assembly {
 
         public bool AddExtension { get; set; } = true;
         public ICollection<string> ProbingPaths { get; } = new List<string>();
-        public bool ProbeCurrentDirectory { get; set; } = true;
         public bool Unsafe { get; set; } = false;
 
         public System.Reflection.Assembly ResolveAssembly(string assemblyName) {
@@ -53,8 +51,7 @@ namespace Gsemac.Assembly {
 
             }
 
-            if (ProbeCurrentDirectory)
-                yield return new EntryAssemblyInfo().Directory;
+            yield return new EntryAssemblyInfo().Directory;
 
         }
 

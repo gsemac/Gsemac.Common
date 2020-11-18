@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Gsemac.Assembly {
+namespace Gsemac.Reflection.Assembly {
 
     public interface IAssemblyResolver {
 

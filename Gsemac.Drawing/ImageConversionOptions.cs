@@ -5,7 +5,7 @@ namespace Gsemac.Drawing {
     public class ImageConversionOptions :
         IImageConversionOptions {
 
-        public float Quality { get; set; } = 1.0f;
+        public IImageEncoderOptions EncoderOptions { get; } = new ImageEncoderOptions();
 
 #if NETFRAMEWORK
         public ICollection<IImageFilter> Filters { get; } = new List<IImageFilter>();

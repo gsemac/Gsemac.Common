@@ -1,5 +1,6 @@
 ﻿#if NETFRAMEWORK
 
+using Gsemac.Drawing.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -13,6 +14,8 @@ namespace Gsemac.Drawing {
 
         public Image Apply(Image sourceImage) {
 
+            Image resultImage = sourceImage;
+
             ColorMatrix colorMatrix = new ColorMatrix(new float[][] {
                 new[]{0.3f, 0.3f, 0.3f, 0.0f, 0.0f},
                 new[]{0.59f, 0.59f, 0.59f, 0.0f, 0.0f},
@@ -25,12 +28,23 @@ namespace Gsemac.Drawing {
 
                 attributes.SetColorMatrix(colorMatrix);
 
-                using (Graphics graphics = Graphics.FromImage(sourceImage))
-                    graphics.DrawImage(sourceImage, new Rectangle(0, 0, sourceImage.Width, sourceImage.Height), 0, 0, sourceImage.Width, sourceImage.Height, GraphicsUnit.Pixel, attributes);
+                if (sourceImage.HasIndexedPixelFormat()) {
+
+                    // We can't create a graphics object from an image with an indexed pixel format, so we need to create a new bitmap.
+
+                    using (sourceImage)
+                        resultImage = new Bitmap(sourceImage);
+
+                }
+
+                // Draw the modified image directly on top of the original image.
+
+                using (Graphics graphics = Graphics.FromImage(resultImage))
+                    graphics.DrawImage(resultImage, new Rectangle(0, 0, resultImage.Width, resultImage.Height), 0, 0, resultImage.Width, resultImage.Height, GraphicsUnit.Pixel, attributes);
 
             }
 
-            return sourceImage;
+            return resultImage;
 
         }
 

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 
-namespace Gsemac.Assembly {
+namespace Gsemac.Core.Assembly {
 
     public class FileSystemAssemblyInfo :
         IAssemblyInfo {

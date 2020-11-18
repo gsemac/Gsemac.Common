@@ -1,4 +1,4 @@
-<Project Sdk="MSBuild.Sdk.Extras/2.0.54">
+﻿<Project Sdk="MSBuild.Sdk.Extras/2.0.54">
 
 	<PropertyGroup>
 		<TargetFrameworks>netstandard2.0;net40-client</TargetFrameworks>
@@ -19,8 +19,23 @@
 		<DefineConstants>NETCORE</DefineConstants>
 	</PropertyGroup>
 
+	<ItemGroup Condition="$(DefineConstants.Contains('NETFRAMEWORK'))">
+		<Reference Include="System.Drawing" />
+		<Reference Include="WebPWrapper">
+			<HintPath>lib\net40-client\WebPWrapper.dll</HintPath>
+		</Reference>
+		<ContentWithTargetPath Include="lib\native\x64\libwebp_x64.dll">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<TargetPath>libwebp_x64.dll</TargetPath>
+		</ContentWithTargetPath>
+		<ContentWithTargetPath Include="lib\native\x86\libwebp_x86.dll">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<TargetPath>libwebp_x86.dll</TargetPath>
+		</ContentWithTargetPath>
+	</ItemGroup>
+
 	<ItemGroup>
-		<Reference Include="System.Drawing" Condition="$(DefineConstants.Contains('NETFRAMEWORK'))" />
+		<ProjectReference Include="..\Gsemac.Reflection\Gsemac.Reflection.csproj" />
 	</ItemGroup>
 
 </Project>
