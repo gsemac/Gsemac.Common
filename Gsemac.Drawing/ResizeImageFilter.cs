@@ -12,10 +12,11 @@ namespace Gsemac.Drawing {
 
         // Public members
 
-        public ResizeImageFilter(int? width = null, int? height = null) {
+        public ResizeImageFilter(int? width = null, int? height = null, ImageSizingMode options = ImageSizingMode.None) {
 
             this.width = width;
             this.height = height;
+            this.options = options;
 
         }
 
@@ -23,6 +24,20 @@ namespace Gsemac.Drawing {
 
             if (!width.HasValue && !height.HasValue)
                 return sourceImage;
+
+            if (options == ImageSizingMode.ResizeIfLarger) {
+
+                if ((!width.HasValue || sourceImage.Width <= width.Value) && (!height.HasValue || sourceImage.Height <= height.Value))
+                    return sourceImage;
+
+            }
+
+            if (options == ImageSizingMode.ResizeIfSmaller) {
+
+                if ((!width.HasValue || sourceImage.Width >= width.Value) && (!height.HasValue || sourceImage.Height >= height.Value))
+                    return sourceImage;
+
+            }
 
             using (sourceImage)
                 return ImageUtilities.ResizeImage(sourceImage, width, height);
@@ -33,6 +48,7 @@ namespace Gsemac.Drawing {
 
         private readonly int? width;
         private readonly int? height;
+        private readonly ImageSizingMode options;
 
     }
 
