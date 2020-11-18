@@ -6,7 +6,7 @@ namespace Gsemac.Drawing {
 
         IEnumerable<string> SupportedImageFormats { get; }
 
-        bool ConvertImage(string sourceFilename, string destinationFilename, IImageConversionOptions options);
+        void ConvertImage(string sourceFilePath, string destinationFilePath, IImageConversionOptions options);
 
     }
 
