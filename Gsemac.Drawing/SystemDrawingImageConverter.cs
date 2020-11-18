@@ -41,13 +41,14 @@ namespace Gsemac.Drawing {
 
             string sourceExt = Path.GetExtension(sourceFilePath);
             string destinationExt = Path.GetExtension(destinationFilePath);
+            bool overwriteSourceFile = sourceFilePath.Equals(destinationFilePath, StringComparison.OrdinalIgnoreCase);
 
             if (!SupportedImageFormats.Any(ext => ext.Equals(sourceExt, StringComparison.OrdinalIgnoreCase)) ||
                 !SupportedImageFormats.Any(ext => ext.Equals(destinationExt, StringComparison.OrdinalIgnoreCase)))
                 throw new Exception("The image format is not supported.");
 
             using (EncoderParameters encoderParameters = new EncoderParameters(1))
-            using (EncoderParameter qualityParameter = new EncoderParameter(Encoder.Quality, (int)(100 * options.Quality))) {
+            using (EncoderParameter qualityParameter = new EncoderParameter(Encoder.Quality, (int)(100.0f * options.Quality))) {
 
                 encoderParameters.Param[0] = qualityParameter;
 
@@ -55,7 +56,7 @@ namespace Gsemac.Drawing {
 
                 Image image;
 
-                using (image = ImageUtilities.OpenImage(sourceFilePath)) {
+                using (image = ImageUtilities.OpenImage(sourceFilePath, openWithoutLocking: overwriteSourceFile)) {
 
                     foreach (IImageFilter filter in options.Filters)
                         image = filter.Apply(image);
