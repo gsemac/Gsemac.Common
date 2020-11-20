@@ -33,6 +33,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Gsemac.Collections.Tests", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Gsemac.Reflection", "Gsemac.Reflection\Gsemac.Reflection.csproj", "{2A0FF2DC-5815-41F1-A9CC-F4C1C7166637}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gsemac.Net.Tests", "Gsemac.Net.Tests\Gsemac.Net.Tests.csproj", "{D720B6A0-3105-4190-B502-D24EEFE0BB76}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -91,6 +93,10 @@ Global
 		{2A0FF2DC-5815-41F1-A9CC-F4C1C7166637}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2A0FF2DC-5815-41F1-A9CC-F4C1C7166637}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2A0FF2DC-5815-41F1-A9CC-F4C1C7166637}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D720B6A0-3105-4190-B502-D24EEFE0BB76}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D720B6A0-3105-4190-B502-D24EEFE0BB76}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D720B6A0-3105-4190-B502-D24EEFE0BB76}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D720B6A0-3105-4190-B502-D24EEFE0BB76}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -109,6 +115,7 @@ Global
 		{45BBC45F-484A-4473-BEB7-1C9651F42119} = {742EDB7B-BAAD-43E2-82B6-2ECAA2D28338}
 		{DB17A8E1-9F7A-40F8-8122-88E6EDC49B4D} = {742EDB7B-BAAD-43E2-82B6-2ECAA2D28338}
 		{2A0FF2DC-5815-41F1-A9CC-F4C1C7166637} = {559AE943-A0A6-43B1-ACF0-BE305C5B4FCE}
+		{D720B6A0-3105-4190-B502-D24EEFE0BB76} = {742EDB7B-BAAD-43E2-82B6-2ECAA2D28338}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {D040AD76-9C92-4D4E-99AD-45B26C068360}
