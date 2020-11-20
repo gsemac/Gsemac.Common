@@ -172,31 +172,42 @@ namespace Gsemac.Core {
             return result;
 
         }
-        public static string Unescape(string input) {
+
+        public static string Unescape(string input, UnescapeOptions options = UnescapeOptions.Default) {
 
             if (string.IsNullOrEmpty(input))
                 return input;
 
-            StringBuilder sb = new StringBuilder(input);
+            string result = input;
 
-            // Fix miscellaneous encoding issues.
-            // These cases are based on instances found "in the wild", and are not guaranteed to be perfect because we cannot be sure what the original encoding was.
+            if (options.HasFlag(UnescapeOptions.RepairTextEncoding))
+                result = RepairTextEncoding(result);
 
-            sb.Replace(@"â€™", @"'");
-            sb.Replace(@"â˜†", @"☆");
+            // Build the regex that will match different kinds of escape sequences.
 
-            // Unescape backslash-escaped quotes (from JSON strings, for example).
+            List<string> escapePatterns = new List<string>();
 
-            sb.Replace(@"\'", @"'");
-            sb.Replace(@"\""", @"""");
+            if (options.HasFlag(UnescapeOptions.UnescapeHtmlEntities)) {
 
-            input = sb.ToString();
+                // The following regex pattern is sourced from https://stackoverflow.com/a/56490838/5383169 (mahoor13)
 
-            input = UnescapeHtmlEntities(input);
-            input = UnescapeDataString(input);
-            input = UnescapeUnicodeEscapeSequences(input);
+                escapePatterns.Add(@"&([a-z0-9]+|#[0-9]{1,6}|#x[0-9a-f]{1,6});");
 
-            return input;
+            }
+
+            if (options.HasFlag(UnescapeOptions.UnescapeUriEncoding))
+                escapePatterns.Add(@"%(?:u[0-9a-f]{4}|[0-9a-f]{2})");
+
+            if (options.HasFlag(UnescapeOptions.UnescapeEscapeSequences))
+                escapePatterns.Add(@"\\(?:u[0-9a-f]{4}|x[0-9a-f]{2,4}|[abfnrtv'""\\\?])");
+
+            // Replace all escape sequences.
+
+            Regex escapeRegex = new Regex(string.Join("|", escapePatterns.Select(pattern => $"(?:{pattern})")), RegexOptions.IgnoreCase);
+
+            result = escapeRegex.Replace(result, m => UnescapeEscapeSequence(m.Value));
+
+            return result;
 
         }
 
@@ -302,56 +313,112 @@ namespace Gsemac.Core {
 
         // Private members
 
-        private static string UnescapeHtmlEntities(string input) {
+        private static string UnescapeEscapeSequence(string input) {
 
-            // Unescape HTML entities (e.g. "&#038;" -> "&").
-            // Note that HtmlDecode on its own is NOT case-insensitive, although web browsers generally handle HTML entities in a case-insensitive manner.
+            if (input.StartsWith("&")) {
 
-            // The following regex pattern is sourced from https://stackoverflow.com/a/56490838/5383169 (mahoor13)
+                // Unescape HTML entities (e.g. "&#038;" -> "&").
+                // Note that HtmlDecode is CASE-SENSITIVE, although web browsers generally handle HTML entities in a case-insensitive manner.
 
-            string htmlEntityPattern = "&([a-z0-9]+|#[0-9]{1,6}|#x[0-9a-f]{1,6});";
-
-            input = Regex.Replace(input, htmlEntityPattern, m => m.Value.ToLowerInvariant(), RegexOptions.IgnoreCase);
-
-            input = System.Net.WebUtility.HtmlDecode(input);
-
-            return input;
-
-        }
-        private static string UnescapeDataString(string input) {
-
-            // Unescape data string encoding (e.g. "%20" -> " ").
-            // UnescapeDataString can throw an exception on Windows XP if there are any percent symbols that aren't part of an escape sequence (?).
-
-            try {
-
-                input = Uri.UnescapeDataString(input);
+                return System.Net.WebUtility.HtmlDecode(input.ToLowerInvariant());
 
             }
-            catch (Exception) { }
+            else if (input.Length == 2) {
+
+                switch (input.Substring(1)) {
+
+                    case "a":
+                        return "\a";
+
+                    case "b":
+                        return "\b";
+
+                    case "f":
+                        return "\f";
+
+                    case "n":
+                        return "\n";
+
+                    case "r":
+                        return "\r";
+
+                    case "t":
+                        return "\t";
+
+                    case "v":
+                        return "\v";
+
+                    default:
+                        return input.Substring(1);
+
+                }
+
+            }
+            else {
+
+                bool octal = false;
+
+                if (input.StartsWith("\\")) {
+
+                    // Denotes escape sequences (e.g., "\u2320" -> "⌠", "\n" = newline, etc.).
+
+                    input = input.Substring(1);
+
+                    if (input.All(c => char.IsDigit(c) && c >= '0' && c < '8'))
+                        octal = true;
+                    else
+                        input = input.Substring(1); // skip "u" or "x"
+
+                }
+                else if (input.StartsWith("%")) {
+
+                    // Denotes data URI encoding (e.g. "%20" -> " ").
+
+                    // Notes on Uri.UnescapeDataString (and why it's not used here):
+                    // - Ignores unicode escape sequences (e.g. "%u0107" -> "ć")
+                    // - Can throw an exception on Windows XP if there are any percent symbols that aren't part of an escape sequence (?).
+
+                    input = input.TrimStart('%', 'u');
+
+                }
+
+                if (octal) {
+
+                    // Parse number as octal.
+
+                    return char.ConvertFromUtf32(Convert.ToInt32(input, 8)).ToString();
+
+                }
+                else {
+
+                    // Parse number as hex.
+
+                    if (int.TryParse(input, NumberStyles.HexNumber, CultureInfo.InvariantCulture, out int parsedInt))
+                        return char.ConvertFromUtf32(parsedInt).ToString();
+
+                }
+
+            }
+
+            // If we get here, the escape sequence wasn't recognized.
 
             return input;
 
         }
-        private static string UnescapeUnicodeEscapeSequences(string input) {
+        private static string RepairTextEncoding(string input) {
 
-            // Unescape unicode escape sequences (e.g., "\u2320" -> "⌠").
+            StringBuilder sb = new StringBuilder(input);
 
-            string unicodeEscapeSequencePattern = @"\\u([0-9a-f]{4})";
+            // Fix miscellaneous encoding issues.
+            // These cases are based on instances found "in the wild", and are not guaranteed to be perfect because we cannot be sure what the original encoding was.
 
-            input = Regex.Replace(input, unicodeEscapeSequencePattern, m => ParseUnicodeEscapeSequence(m.Value), RegexOptions.IgnoreCase);
+            sb.Replace(@"â€™", @"'");
+            sb.Replace(@"â˜†", @"☆");
 
-            return input;
-
-        }
-        private static string ParseUnicodeEscapeSequence(string input) {
-
-            if (int.TryParse(input.Substring(2), NumberStyles.HexNumber, CultureInfo.InvariantCulture, out int parsedInt))
-                return char.ConvertFromUtf32(parsedInt).ToString();
-
-            return input;
+            return sb.ToString();
 
         }
+
         private static string CapitalizeRomanNumerals(string input) {
 
             // Regex adapted from Regular Expressions Cookbook, 6.9. Roman Numerals, example "Modern Roman numerals, strict":

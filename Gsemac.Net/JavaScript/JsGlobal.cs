@@ -1,5 +1,7 @@
-﻿using System;
+﻿using Gsemac.Core;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -24,14 +26,23 @@ namespace Gsemac.Net.JavaScript {
         }
         public static string EncodeUriComponent(string str) {
 
-            return Uri.EscapeDataString(str);
+            string result = Uri.EscapeDataString(str);
+
+            // Characters -_.!~*'() should NOT be escaped, but EscapeDataString will escape them.
+
+            string unescapedCharacterPattern = string.Join("|", "-_.!~*'()"
+                .Select(c => Regex.Escape(Uri.EscapeDataString(c.ToString()))));
+
+            result = Regex.Replace(result, unescapedCharacterPattern, m => Uri.UnescapeDataString(m.Value));
+
+            return result;
 
         }
         public static int? ParseInt(string str) {
 
             int radix = 10;
 
-            if (str.StartsWith("0x")) {
+            if (str.StartsWith("0x", StringComparison.OrdinalIgnoreCase)) {
 
                 radix = 16;
 
@@ -68,28 +79,7 @@ namespace Gsemac.Net.JavaScript {
         }
         public static string Unescape(string str) {
 
-            // Replace escaped characters ("\x", "\n", "\\", etc.).
-
-            Regex escapedCharacterPattern = new Regex(@"\\(x[\da-f]{1,2}|[n\\])", RegexOptions.IgnoreCase);
-
-            str = escapedCharacterPattern.Replace(str, m => {
-
-                string match = m.Groups[1].Value;
-
-                switch (match) {
-
-                    case "n":
-                        return "\n";
-
-                    case "\\":
-                        return match;
-
-                    default:
-                        return Convert.ToChar(Convert.ToUInt32(match.Substring(1), 16)).ToString();
-
-                }
-
-            });
+            str = StringUtilities.Unescape(str, UnescapeOptions.UnescapeEscapeSequences | UnescapeOptions.UnescapeUriEncoding);
 
             return str;
 

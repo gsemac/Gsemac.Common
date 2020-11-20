@@ -115,6 +115,18 @@ namespace Gsemac.Core.Tests {
             Assert.AreEqual(@"⌠", StringUtilities.Unescape(@"\u2320"));
 
         }
+        [TestMethod]
+        public void TestUnescapeWithUnicodeDataString() {
+
+            Assert.AreEqual(@"⌠", StringUtilities.Unescape(@"%u2320"));
+
+        }
+        [TestMethod]
+        public void TestUnescapeWithEscapedEscapeSequences() {
+
+            Assert.AreEqual(@"\\n", StringUtilities.Unescape(@"%5C%6e"));
+
+        }
 
         // ToProperCase
 
