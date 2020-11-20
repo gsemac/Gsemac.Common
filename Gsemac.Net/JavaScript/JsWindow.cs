@@ -7,7 +7,7 @@ namespace Gsemac.Net.JavaScript {
 
         public static string Atob(string encodedData) {
 
-            byte[] bytes = Convert.FromBase64String(encodedData)
+            byte[] bytes = Convert.FromBase64String(encodedData);
 
             return Encoding.GetEncoding(28591).GetString(bytes);
 
