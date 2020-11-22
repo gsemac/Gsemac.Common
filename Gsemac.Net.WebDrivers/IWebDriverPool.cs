@@ -9,6 +9,8 @@ namespace Gsemac.Net.WebDrivers {
         IWebDriver GetWebDriver();
         void ReleaseWebDriver(IWebDriver webDriver, bool disposeWebDriver = false);
 
+        void Clear();
+
     }
 
 }

@@ -41,6 +41,22 @@ namespace Gsemac.Net.WebDrivers {
 
         }
 
+        public void Clear() {
+
+            // Close and dispose of any created drivers.
+
+            foreach (IWebDriver driver in spawnedDrivers) {
+
+                driver.Quit();
+                driver.Dispose();
+
+            }
+
+            pool.Clear();
+            spawnedDrivers.Clear();
+
+        }
+
         public void Dispose() {
 
             Dispose(true);
@@ -59,17 +75,7 @@ namespace Gsemac.Net.WebDrivers {
 
                     isDisposed = true;
 
-                    // Close and dispose of any created drivers.
-
-                    foreach (IWebDriver driver in spawnedDrivers) {
-
-                        driver.Quit();
-                        driver.Dispose();
-
-                    }
-
-                    pool.Clear();
-                    spawnedDrivers.Clear();
+                    Clear();
 
                     // Release all threads currently waiting for access to the pool, allowing the wait handle to be safely disposed.
 
