@@ -1,12 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace Gsemac.Net.JavaScript.Extensions {
 
     public static class JsArrayExtensions {
 
+        public static T Pop<T>(this IList<T> array) {
+
+            T last = array.LastOrDefault();
+
+            if (array.Count > 0)
+                array.RemoveAt(array.Count - 1);
+
+            return last;
+
+        }
         public static T[] Reverse<T>(this T[] array) {
 
             if (array is null)
@@ -41,27 +50,14 @@ namespace Gsemac.Net.JavaScript.Extensions {
             return array;
 
         }
-        public static T[] Splice<T>(this T[] array, int start) {
+        public static T Shift<T>(this IList<T> array) {
 
-            // Note that since arrays are immutable, we can't actually remove the items.
+            T first = array.FirstOrDefault();
 
-            if (array is null)
-                return null;
+            if (array.Count > 0)
+                array.RemoveAt(0);
 
-            return array.Skip(start).ToArray();
-
-        }
-        public static T[] Splice<T>(this T[] array, int start, int deleteCount) {
-
-            // Note that since arrays are immutable, we can't actually remove the items.
-
-            if (array is null)
-                return null;
-
-            if (deleteCount > array.Length - start)
-                return Splice(array, start);
-
-            return array.Skip(start).Take(deleteCount).ToArray();
+            return first;
 
         }
         public static IList<T> Splice<T>(this IList<T> array, int start) {
