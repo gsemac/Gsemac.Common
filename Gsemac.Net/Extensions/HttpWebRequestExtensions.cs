@@ -45,7 +45,7 @@ namespace Gsemac.Net.Extensions {
 
         private static Tuple<long, long> ParseRangeHeader(string headerValue) {
 
-            Match match = Regex.Match(headerValue, "");
+            Match match = Regex.Match(headerValue, @"(\d+)-(\d+)");
 
             if (!match.Success)
                 throw new ArgumentNullException(nameof(headerValue));
