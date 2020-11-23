@@ -1,68 +1,18 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
-  <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{E9B26DE4-5B88-40E9-AB7E-43048A965586}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Gsemac.Forms</RootNamespace>
-    <AssemblyName>Gsemac.Forms</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <Deterministic>true</Deterministic>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>none</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <ItemGroup>
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Drawing" />
-    <Reference Include="System.Windows.Forms" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="ControlState.cs" />
-    <Compile Include="DataGridViewProgressBarCell.cs" />
-    <Compile Include="DataGridViewProgressBarColumn.cs" />
-    <Compile Include="Extensions\ControlExtensions.cs" />
-    <Compile Include="IControlState.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="DataGridViewUtilities.cs" />
-    <Compile Include="FormUtilities.cs" />
-    <Compile Include="SplitContainerUtilities.cs" />
-    <Compile Include="TreeViewUtilities.cs" />
-    <Compile Include="ControlUtilities.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Gsemac.Drawing\Gsemac.Drawing.csproj">
-      <Project>{8014aec9-1a1c-403f-9030-cda5bc921d91}</Project>
-      <Name>Gsemac.Drawing</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Gsemac.Core\Gsemac.Core.csproj">
-      <Project>{46F3DE15-F452-4EAA-A886-C6BD1CBA7976}</Project>
-      <Name>Gsemac.Core</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+﻿<Project Sdk="MSBuild.Sdk.Extras/2.0.54">
+
+	<PropertyGroup>
+		<TargetFrameworks>net40-client</TargetFrameworks>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)' == 'Release'">
+		<DebugType>none</DebugType>
+		<DebugSymbols>false</DebugSymbols>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\Gsemac.Core\Gsemac.Core.csproj" />
+		<ProjectReference Include="..\Gsemac.Drawing\Gsemac.Drawing.csproj" />
+		<Reference Include="System.Windows.Forms" />
+	</ItemGroup>
+
 </Project>
