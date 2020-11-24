@@ -124,7 +124,7 @@ namespace Gsemac.Core.Tests {
         [TestMethod]
         public void TestUnescapeWithEscapedEscapeSequences() {
 
-            Assert.AreEqual(@"\\n", StringUtilities.Unescape(@"%5C%6e"));
+            Assert.AreEqual(@"\n", StringUtilities.Unescape(@"%5C%6e"));
 
         }
 
