@@ -64,10 +64,26 @@ namespace Gsemac.Text {
         }
         protected string ReadUntilAny(params char[] delimiters) {
 
-            StringBuilder valueBuilder = new StringBuilder();
+            return ReadUntilAny(delimiters, false);
 
-            while (!EndOfStream && !delimiters.Any(c => c == (char)Reader.Peek()))
+        }
+        protected string ReadUntilAny(char[] delimiters, bool allowEscapeSequences) {
+
+            StringBuilder valueBuilder = new StringBuilder();
+            bool insideEscapeSequence = false;
+
+            while (!EndOfStream && ((insideEscapeSequence && allowEscapeSequences) || !delimiters.Any(c => c == (char)Reader.Peek()))) {
+
+                char nextChar = (char)Reader.Peek();
+
+                if (nextChar == '\\' && !insideEscapeSequence)
+                    insideEscapeSequence = true;
+                else
+                    insideEscapeSequence = false;
+
                 valueBuilder.Append(ReadCharacter());
+
+            }
 
             return valueBuilder.ToString();
 

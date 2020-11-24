@@ -92,7 +92,7 @@ namespace Gsemac.Text.Ini {
         }
         private bool ReadSectionName() {
 
-            string value = ReadUntilAny(']', '\r', '\n');
+            string value = ReadUntilAny(new char[] { ']', '\r', '\n' }, allowEscapeSequences: true);
 
             if (Unescape)
                 value = IniFile.Unescape(value);
@@ -145,7 +145,8 @@ namespace Gsemac.Text.Ini {
         }
         private bool ReadPropertyName() {
 
-            string value = AllowComments ? ReadUntilAny('=', ';', '\n') : ReadUntilAny('=', '\n');
+            char[] delimiters = AllowComments ? new char[] { '=', ';', '\n' } : new char[] { '=', '\n' };
+            string value = ReadUntilAny(delimiters, allowEscapeSequences: true);
 
             if (Unescape)
                 value = IniFile.Unescape(value);
@@ -182,7 +183,7 @@ namespace Gsemac.Text.Ini {
         }
         private bool ReadPropertyValue() {
 
-            string value = AllowComments ? ReadUntilAny(';', '\n') : Reader.ReadLine();
+            string value = AllowComments ? ReadUntilAny(new char[] { ';', '\r', '\n' }, allowEscapeSequences: true) : Reader.ReadLine();
 
             if (Unescape)
                 value = IniFile.Unescape(value);
