@@ -145,7 +145,7 @@ namespace Gsemac.Text.Ini {
         }
         private bool ReadPropertyName() {
 
-            char[] delimiters = AllowComments ? new char[] { '=', ';', '\n' } : new char[] { '=', '\n' };
+            char[] delimiters = AllowComments ? new char[] { '=', ';', '\r', '\n' } : new char[] { '=', '\r', '\n' };
             string value = ReadUntilAny(delimiters, allowEscapeSequences: true);
 
             if (Unescape)
