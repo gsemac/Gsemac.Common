@@ -41,12 +41,20 @@ namespace Gsemac.Text {
 
         }
 
-        protected string ReadCharacter() {
+        protected char? PeekCharacter() {
 
             if (Reader.EndOfStream)
-                return string.Empty;
+                return null;
 
-            return ((char)Reader.Read()).ToString();
+            return (char)Reader.Peek();
+
+        }
+        protected char? ReadCharacter() {
+
+            if (Reader.EndOfStream)
+                return null;
+
+            return (char)Reader.Read();
 
         }
         protected string ReadUntil(char delimiter) {

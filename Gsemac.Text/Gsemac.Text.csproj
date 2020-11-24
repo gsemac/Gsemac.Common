@@ -9,4 +9,8 @@
 		<DebugSymbols>false</DebugSymbols>
 	</PropertyGroup>
 
+	<ItemGroup>
+	  <ProjectReference Include="..\Gsemac.Core\Gsemac.Core.csproj" />
+	</ItemGroup>
+
 </Project>

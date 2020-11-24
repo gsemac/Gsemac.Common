@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Gsemac.Core.Extensions;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -58,19 +59,21 @@ namespace Gsemac.Text.Ini {
 
             if (!EndOfStream) {
 
-                switch ((char)Reader.Peek()) {
+                char? nextChar = PeekCharacter();
 
-                    case '[':
-                        ReadSection();
-                        break;
+                if (nextChar == '[') {
 
-                    case ';':
-                        ReadComment();
-                        break;
+                    ReadSection();
 
-                    default:
-                        ReadProperty();
-                        break;
+                }
+                else if (nextChar == ';' && AllowComments) {
+
+                    ReadComment();
+
+                }
+                else {
+
+                    ReadProperty();
 
                 }
 
@@ -78,17 +81,17 @@ namespace Gsemac.Text.Ini {
 
         }
 
-        private void ReadSectionStart() {
+        private bool ReadSectionStart() {
 
             if (EndOfStream)
-                return;
+                return false;
 
-            SkipWhitespace();
+            tokens.Enqueue(new IniLexerToken(IniLexerTokenType.SectionStart, ReadCharacter().Value.ToString()));
 
-            tokens.Enqueue(new IniLexerToken(IniLexerTokenType.SectionStart, ReadCharacter()));
+            return true;
 
         }
-        private void ReadSectionName() {
+        private bool ReadSectionName() {
 
             string value = ReadUntilAny(']', '\r', '\n');
 
@@ -96,15 +99,27 @@ namespace Gsemac.Text.Ini {
 
             tokens.Enqueue(new IniLexerToken(IniLexerTokenType.SectionName, value.Trim()));
 
+            // If we reached the end of the line rather than the end of the section, the section was not closed.
+
+            if (PeekCharacter()?.IsNewLine() ?? false)
+                return false;
+
+            return true;
+
         }
-        private void ReadSectionEnd() {
+        private bool ReadSectionEnd() {
 
             if (EndOfStream)
-                return;
+                return false;
 
-            SkipWhitespace();
+            // If we reached the end of the line rather than the end of the section, the section was not closed.
 
-            tokens.Enqueue(new IniLexerToken(IniLexerTokenType.SectionEnd, ReadCharacter()));
+            if (PeekCharacter()?.IsNewLine() ?? false)
+                return false;
+
+            tokens.Enqueue(new IniLexerToken(IniLexerTokenType.SectionEnd, ReadCharacter().Value.ToString()));
+
+            return true;
 
         }
         private void ReadCommentStart() {
@@ -114,7 +129,7 @@ namespace Gsemac.Text.Ini {
 
             SkipWhitespace();
 
-            tokens.Enqueue(new IniLexerToken(IniLexerTokenType.CommentStart, ReadCharacter()));
+            tokens.Enqueue(new IniLexerToken(IniLexerTokenType.CommentStart, ReadCharacter().Value.ToString()));
 
         }
         private void ReadCommentContent() {
@@ -126,7 +141,7 @@ namespace Gsemac.Text.Ini {
             tokens.Enqueue(new IniLexerToken(IniLexerTokenType.Comment, value.Trim()));
 
         }
-        private void ReadPropertyName() {
+        private bool ReadPropertyName() {
 
             string value = ReadUntilAny('=', '\n');
 
@@ -134,32 +149,46 @@ namespace Gsemac.Text.Ini {
 
             tokens.Enqueue(new IniLexerToken(IniLexerTokenType.PropertyName, value.Trim()));
 
+            // If we reached the end of the line rather than the end of the property, the property does not have a value.
+
+            if (PeekCharacter()?.IsNewLine() ?? false)
+                return false;
+
+            return true;
+
         }
-        private void ReadPropertyValueSeparator() {
+        private bool ReadPropertyValueSeparator() {
 
             if (EndOfStream)
-                return;
+                return false;
 
-            SkipWhitespace();
+            // If we reached the end of the line rather than a property value separator, the property does not have a value.
 
-            tokens.Enqueue(new IniLexerToken(IniLexerTokenType.PropertyValueSeparator, ReadCharacter()));
+            if (PeekCharacter()?.IsNewLine() ?? false)
+                return false;
+
+            tokens.Enqueue(new IniLexerToken(IniLexerTokenType.PropertyValueSeparator, ReadCharacter().Value.ToString()));
+
+            return true;
 
         }
-        private void ReadPropertyValue() {
+        private bool ReadPropertyValue() {
 
-            string value = ReadUntilAny(';', '\n');
+            string value = AllowComments ? ReadUntilAny(';', '\n') : Reader.ReadLine();
 
             // Whitespace surrounding property values is ignored.
 
             tokens.Enqueue(new IniLexerToken(IniLexerTokenType.PropertyValue, value.Trim()));
 
+            return true;
+
         }
 
         private void ReadSection() {
 
-            ReadSectionStart();
-            ReadSectionName();
-            ReadSectionEnd();
+            if (ReadSectionStart())
+                if (ReadSectionName())
+                    ReadSectionEnd();
 
         }
         private void ReadComment() {
@@ -170,9 +199,9 @@ namespace Gsemac.Text.Ini {
         }
         private void ReadProperty() {
 
-            ReadPropertyName();
-            ReadPropertyValueSeparator();
-            ReadPropertyValue();
+            if (ReadPropertyName())
+                if (ReadPropertyValueSeparator())
+                    ReadPropertyValue();
 
         }
 
