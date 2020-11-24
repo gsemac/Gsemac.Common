@@ -6,7 +6,7 @@ namespace Gsemac.Text {
     public abstract class LexerBase<T> :
          ILexer<T> {
 
-        public bool EndOfStream => EqualityComparer<T>.Default.Equals(PeekNextToken(), default);
+        public bool EndOfStream => Reader.EndOfStream;
 
         public abstract bool ReadNextToken(out T token);
         public abstract T PeekNextToken();
@@ -27,16 +27,25 @@ namespace Gsemac.Text {
 
         }
 
+        protected void SkipCharacter() {
+
+            if (!Reader.EndOfStream)
+                Reader.Read();
+
+        }
         protected void SkipWhitespace() {
 
             while (!Reader.EndOfStream && char.IsWhiteSpace((char)Reader.Peek()))
                 Reader.Read();
 
         }
-        protected void SkipCharacter() {
 
-            if (!Reader.EndOfStream)
-                Reader.Read();
+        protected string ReadCharacter() {
+
+            if (Reader.EndOfStream)
+                return string.Empty;
+
+            return ((char)Reader.Read()).ToString();
 
         }
 

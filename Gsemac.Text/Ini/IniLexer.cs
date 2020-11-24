@@ -26,7 +26,8 @@ namespace Gsemac.Text.Ini {
         }
         public override bool ReadNextToken(out IIniLexerToken token) {
 
-            ReadNextTokens();
+            if (!tokens.Any())
+                ReadNextTokens();
 
             if (tokens.Any()) {
 
@@ -51,9 +52,9 @@ namespace Gsemac.Text.Ini {
 
         private void ReadNextTokens() {
 
-            if (!EndOfStream) {
+            SkipWhitespace();
 
-                SkipWhitespace();
+            if (!EndOfStream) {
 
                 switch ((char)Reader.Peek()) {
 
@@ -82,7 +83,7 @@ namespace Gsemac.Text.Ini {
 
             SkipWhitespace();
 
-            tokens.Enqueue(new IniLexerToken(IniLexerTokenType.SectionStart, ((char)Reader.Read()).ToString()));
+            tokens.Enqueue(new IniLexerToken(IniLexerTokenType.SectionStart, ReadCharacter()));
 
         }
         private void ReadSectionName() {
@@ -104,7 +105,7 @@ namespace Gsemac.Text.Ini {
 
             SkipWhitespace();
 
-            tokens.Enqueue(new IniLexerToken(IniLexerTokenType.SectionEnd, ((char)Reader.Read()).ToString()));
+            tokens.Enqueue(new IniLexerToken(IniLexerTokenType.SectionEnd, ReadCharacter()));
 
         }
         private void ReadCommentStart() {
@@ -114,7 +115,7 @@ namespace Gsemac.Text.Ini {
 
             SkipWhitespace();
 
-            tokens.Enqueue(new IniLexerToken(IniLexerTokenType.CommentStart, ((char)Reader.Read()).ToString()));
+            tokens.Enqueue(new IniLexerToken(IniLexerTokenType.CommentStart, ReadCharacter()));
 
         }
         private void ReadCommentContent() {
@@ -148,14 +149,14 @@ namespace Gsemac.Text.Ini {
 
             SkipWhitespace();
 
-            tokens.Enqueue(new IniLexerToken(IniLexerTokenType.PropertyValueSeparator, ((char)Reader.Read()).ToString()));
+            tokens.Enqueue(new IniLexerToken(IniLexerTokenType.PropertyValueSeparator, ReadCharacter()));
 
         }
         private void ReadPropertyValue() {
 
             StringBuilder valueBuilder = new StringBuilder();
 
-            while (!EndOfStream && (char)Reader.Peek() != '\n')
+            while (!EndOfStream && !new[] { ';', '\n' }.Any(c => c == (char)Reader.Peek()))
                 valueBuilder.Append((char)Reader.Read());
 
             // Whitespace surrounding property values is ignored.
