@@ -6,7 +6,9 @@
         SectionEnd, // ]
         PropertyName,
         PropertyValueSeparator, // =
-        PropertyValue
+        PropertyValue,
+        CommentStart,
+        Comment
     }
 
     public interface IIniLexerToken {
