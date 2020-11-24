@@ -6,10 +6,10 @@ namespace Gsemac.Text {
     public abstract class LexerBase<T> :
          ILexer<T> {
 
-        public bool EndOfStream => EqualityComparer<T>.Default.Equals(Peek(), default);
+        public bool EndOfStream => EqualityComparer<T>.Default.Equals(PeekNextToken(), default);
 
-        public abstract bool Read(out T token);
-        public abstract T Peek();
+        public abstract bool ReadNextToken(out T token);
+        public abstract T PeekNextToken();
 
         public void Dispose() {
 
