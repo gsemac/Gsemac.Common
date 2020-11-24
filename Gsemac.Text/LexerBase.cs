@@ -74,14 +74,19 @@ namespace Gsemac.Text {
 
             while (!EndOfStream && ((insideEscapeSequence && allowEscapeSequences) || !delimiters.Any(c => c == (char)Reader.Peek()))) {
 
-                char nextChar = (char)Reader.Peek();
+                char nextChar = ReadCharacter().Value;
+
+                valueBuilder.Append(nextChar);
+
+                // Treat "\r\n" as a single character than can be escaped.
+
+                if (nextChar == '\r' && (char)Reader.Peek() == '\n')
+                    valueBuilder.Append(ReadCharacter());
 
                 if (nextChar == '\\' && !insideEscapeSequence)
                     insideEscapeSequence = true;
                 else
                     insideEscapeSequence = false;
-
-                valueBuilder.Append(ReadCharacter());
 
             }
 

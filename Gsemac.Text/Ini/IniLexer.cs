@@ -183,7 +183,8 @@ namespace Gsemac.Text.Ini {
         }
         private bool ReadPropertyValue() {
 
-            string value = AllowComments ? ReadUntilAny(new char[] { ';', '\r', '\n' }, allowEscapeSequences: true) : Reader.ReadLine();
+            char[] delimiters = AllowComments ? new char[] { ';', '\r', '\n' } : new char[] { '\r', '\n' };
+            string value = ReadUntilAny(delimiters, allowEscapeSequences: true);
 
             if (Unescape)
                 value = IniFile.Unescape(value);
