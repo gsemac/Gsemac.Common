@@ -1,6 +1,6 @@
 ﻿#if NETFRAMEWORK
 
-using Gsemac.Reflection.Assembly;
+using Gsemac.Reflection;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
