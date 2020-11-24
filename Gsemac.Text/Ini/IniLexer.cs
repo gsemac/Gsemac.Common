@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 
 namespace Gsemac.Text.Ini {
 
@@ -143,7 +142,9 @@ namespace Gsemac.Text.Ini {
         }
         private bool ReadPropertyName() {
 
-            string value = ReadUntilAny('=', '\n');
+            string value = AllowComments ?
+                ReadUntilAny('=', ';', '\n') :
+                ReadUntilAny('=', '\n');
 
             // Whitespace surrounding property names is ignored.
 
@@ -165,6 +166,9 @@ namespace Gsemac.Text.Ini {
             // If we reached the end of the line rather than a property value separator, the property does not have a value.
 
             if (PeekCharacter()?.IsNewLine() ?? false)
+                return false;
+
+            if (PeekCharacter() != '=')
                 return false;
 
             tokens.Enqueue(new IniLexerToken(IniLexerTokenType.PropertyValueSeparator, ReadCharacter().Value.ToString()));
