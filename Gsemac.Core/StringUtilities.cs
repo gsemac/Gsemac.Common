@@ -199,7 +199,7 @@ namespace Gsemac.Core {
                 escapePatterns.Add(@"%(?:u[0-9a-f]{4}|[0-9a-f]{2})");
 
             if (options.HasFlag(UnescapeOptions.UnescapeEscapeSequences))
-                escapePatterns.Add(@"\\(?:u[0-9a-f]{4}|x[0-9a-f]{2,4}|[abfnrtv'""\\\?])");
+                escapePatterns.Add(@"\\(?:u[0-9a-f]{4}|x[0-9a-f]{2,4}|.)");
 
             // Replace all escape sequences.
 
@@ -326,6 +326,9 @@ namespace Gsemac.Core {
             else if (input.Length == 2) {
 
                 switch (input.Substring(1)) {
+
+                    case "0":
+                        return "\0";
 
                     case "a":
                         return "\a";

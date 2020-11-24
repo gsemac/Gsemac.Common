@@ -11,7 +11,7 @@ namespace Gsemac.Text.Ini {
 
         // Public members
 
-        public bool UnescapeTokens { get; set; } = true;
+        public bool Unescape { get; set; } = true;
         public bool AllowComments { get; set; } = true;
 
         public IniLexer(Stream stream) :
@@ -94,6 +94,9 @@ namespace Gsemac.Text.Ini {
 
             string value = ReadUntilAny(']', '\r', '\n');
 
+            if (Unescape)
+                value = IniFile.Unescape(value);
+
             // Whitespace surrounding section names is ignored.
 
             tokens.Enqueue(new IniLexerToken(IniLexerTokenType.SectionName, value.Trim()));
@@ -142,9 +145,10 @@ namespace Gsemac.Text.Ini {
         }
         private bool ReadPropertyName() {
 
-            string value = AllowComments ?
-                ReadUntilAny('=', ';', '\n') :
-                ReadUntilAny('=', '\n');
+            string value = AllowComments ? ReadUntilAny('=', ';', '\n') : ReadUntilAny('=', '\n');
+
+            if (Unescape)
+                value = IniFile.Unescape(value);
 
             // Whitespace surrounding property names is ignored.
 
@@ -179,6 +183,9 @@ namespace Gsemac.Text.Ini {
         private bool ReadPropertyValue() {
 
             string value = AllowComments ? ReadUntilAny(';', '\n') : Reader.ReadLine();
+
+            if (Unescape)
+                value = IniFile.Unescape(value);
 
             // Whitespace surrounding property values is ignored.
 
