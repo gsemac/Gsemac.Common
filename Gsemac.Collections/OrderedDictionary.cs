@@ -82,8 +82,8 @@ namespace Gsemac.Collections {
 
         // Private members
 
-        private readonly List<TKey> orderedKeys = new List<TKey>();
-        private readonly Dictionary<TKey, TValue> dict = new Dictionary<TKey, TValue>();
+        private readonly IList<TKey> orderedKeys = new List<TKey>();
+        private readonly IDictionary<TKey, TValue> dict = new Dictionary<TKey, TValue>();
 
         private void SetValue(TKey key, TValue value) {
 

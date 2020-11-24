@@ -10,6 +10,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+	  <ProjectReference Include="..\Gsemac.Collections\Gsemac.Collections.csproj" />
 	  <ProjectReference Include="..\Gsemac.Core\Gsemac.Core.csproj" />
 	</ItemGroup>
 

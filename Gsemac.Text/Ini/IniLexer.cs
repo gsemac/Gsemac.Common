@@ -95,7 +95,7 @@ namespace Gsemac.Text.Ini {
             string value = ReadUntilAny(new char[] { ']', '\r', '\n' }, allowEscapeSequences: true);
 
             if (Unescape)
-                value = IniFile.Unescape(value);
+                value = IniData.Unescape(value);
 
             // Whitespace surrounding section names is ignored.
 
@@ -149,7 +149,7 @@ namespace Gsemac.Text.Ini {
             string value = ReadUntilAny(delimiters, allowEscapeSequences: true);
 
             if (Unescape)
-                value = IniFile.Unescape(value);
+                value = IniData.Unescape(value);
 
             // Whitespace surrounding property names is ignored.
 
@@ -187,7 +187,7 @@ namespace Gsemac.Text.Ini {
             string value = ReadUntilAny(delimiters, allowEscapeSequences: true);
 
             if (Unescape)
-                value = IniFile.Unescape(value);
+                value = IniData.Unescape(value);
 
             // Whitespace surrounding property values is ignored.
 
