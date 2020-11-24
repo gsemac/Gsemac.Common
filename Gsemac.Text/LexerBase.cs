@@ -1,5 +1,6 @@
-﻿using System.Collections.Generic;
-using System.IO;
+﻿using System.IO;
+using System.Linq;
+using System.Text;
 
 namespace Gsemac.Text {
 
@@ -46,6 +47,21 @@ namespace Gsemac.Text {
                 return string.Empty;
 
             return ((char)Reader.Read()).ToString();
+
+        }
+        protected string ReadUntil(char delimiter) {
+
+            return ReadUntilAny(new[] { delimiter });
+
+        }
+        protected string ReadUntilAny(params char[] delimiters) {
+
+            StringBuilder valueBuilder = new StringBuilder();
+
+            while (!EndOfStream && !delimiters.Any(c => c == (char)Reader.Peek()))
+                valueBuilder.Append(ReadCharacter());
+
+            return valueBuilder.ToString();
 
         }
 

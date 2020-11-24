@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -11,6 +10,9 @@ namespace Gsemac.Text.Ini {
         IIniLexer {
 
         // Public members
+
+        public bool UnescapeTokens { get; set; } = true;
+        public bool AllowComments { get; set; } = true;
 
         public IniLexer(Stream stream) :
             base(stream) {
@@ -88,14 +90,11 @@ namespace Gsemac.Text.Ini {
         }
         private void ReadSectionName() {
 
-            StringBuilder valueBuilder = new StringBuilder();
-
-            while (!EndOfStream && !new[] { ']', '\n' }.Any(c => c == (char)Reader.Peek()))
-                valueBuilder.Append((char)Reader.Read());
+            string value = ReadUntilAny(']', '\r', '\n');
 
             // Whitespace surrounding section names is ignored.
 
-            tokens.Enqueue(new IniLexerToken(IniLexerTokenType.SectionName, valueBuilder.ToString().Trim()));
+            tokens.Enqueue(new IniLexerToken(IniLexerTokenType.SectionName, value.Trim()));
 
         }
         private void ReadSectionEnd() {
@@ -120,26 +119,20 @@ namespace Gsemac.Text.Ini {
         }
         private void ReadCommentContent() {
 
-            StringBuilder valueBuilder = new StringBuilder();
-
-            while (!EndOfStream && (char)Reader.Peek() != '\n')
-                valueBuilder.Append((char)Reader.Read());
+            string value = Reader.ReadLine();
 
             // Whitespace surrounding comments is ignored.
 
-            tokens.Enqueue(new IniLexerToken(IniLexerTokenType.Comment, valueBuilder.ToString().Trim()));
+            tokens.Enqueue(new IniLexerToken(IniLexerTokenType.Comment, value.Trim()));
 
         }
         private void ReadPropertyName() {
 
-            StringBuilder valueBuilder = new StringBuilder();
-
-            while (!EndOfStream && !new[] { '=', '\n' }.Any(c => c == (char)Reader.Peek()))
-                valueBuilder.Append((char)Reader.Read());
+            string value = ReadUntilAny('=', '\n');
 
             // Whitespace surrounding property names is ignored.
 
-            tokens.Enqueue(new IniLexerToken(IniLexerTokenType.PropertyName, valueBuilder.ToString().Trim()));
+            tokens.Enqueue(new IniLexerToken(IniLexerTokenType.PropertyName, value.Trim()));
 
         }
         private void ReadPropertyValueSeparator() {
@@ -154,14 +147,11 @@ namespace Gsemac.Text.Ini {
         }
         private void ReadPropertyValue() {
 
-            StringBuilder valueBuilder = new StringBuilder();
-
-            while (!EndOfStream && !new[] { ';', '\n' }.Any(c => c == (char)Reader.Peek()))
-                valueBuilder.Append((char)Reader.Read());
+            string value = ReadUntilAny(';', '\n');
 
             // Whitespace surrounding property values is ignored.
 
-            tokens.Enqueue(new IniLexerToken(IniLexerTokenType.PropertyValue, valueBuilder.ToString().Trim()));
+            tokens.Enqueue(new IniLexerToken(IniLexerTokenType.PropertyValue, value.Trim()));
 
         }
 
