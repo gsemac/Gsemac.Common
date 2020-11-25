@@ -1,6 +1,7 @@
 ﻿namespace Gsemac.Text.Ini {
 
-    public class IniProperty {
+    public class IniProperty :
+        IIniProperty {
 
         // Public members
 

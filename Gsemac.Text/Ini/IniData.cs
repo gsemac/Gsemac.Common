@@ -7,23 +7,23 @@ using System.Text.RegularExpressions;
 namespace Gsemac.Text.Ini {
 
     public class IniData :
-        IEnumerable<IniSection> {
+        IIniData {
 
         // Public members
 
-        public IniSection this[string key] {
+        public IIniSection this[string key] {
             get => GetSection(key) ?? new IniSection(string.Empty);
             set => AddSection(value);
         }
 
-        public void AddSection(IniSection section) {
+        public void AddSection(IIniSection section) {
 
             sections[section.Name.ToLowerInvariant()] = section;
 
         }
-        public IniSection GetSection(string name) {
+        public IIniSection GetSection(string name) {
 
-            if (sections.TryGetValue(name.ToLowerInvariant(), out IniSection section))
+            if (sections.TryGetValue(name.ToLowerInvariant(), out IIniSection section))
                 return section;
 
             return null;
@@ -35,7 +35,7 @@ namespace Gsemac.Text.Ini {
 
         }
 
-        public IEnumerator<IniSection> GetEnumerator() {
+        public IEnumerator<IIniSection> GetEnumerator() {
 
             return sections.Values.GetEnumerator();
 
@@ -43,6 +43,12 @@ namespace Gsemac.Text.Ini {
         IEnumerator IEnumerable.GetEnumerator() {
 
             return GetEnumerator();
+
+        }
+
+        public override string ToString() {
+
+            return base.ToString();
 
         }
 
@@ -65,7 +71,7 @@ namespace Gsemac.Text.Ini {
 
         // Private members
 
-        private readonly IDictionary<string, IniSection> sections = new OrderedDictionary<string, IniSection>();
+        private readonly IDictionary<string, IIniSection> sections = new OrderedDictionary<string, IIniSection>();
 
     }
 

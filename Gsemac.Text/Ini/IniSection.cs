@@ -5,13 +5,13 @@ using System.Collections.Generic;
 namespace Gsemac.Text.Ini {
 
     public class IniSection :
-        IEnumerable<IniProperty> {
+        IIniSection {
 
         // Public members
 
         public string this[string key] {
             get => GetProperty(key)?.Value ?? string.Empty;
-            set => AddProperty(key, value);
+            set => AddProperty(new IniProperty(key, value));
         }
 
         public string Name { get; }
@@ -22,19 +22,14 @@ namespace Gsemac.Text.Ini {
 
         }
 
-        public void AddProperty(string name, string value) {
-
-            AddProperty(new IniProperty(name, value));
-
-        }
-        public void AddProperty(IniProperty property) {
+        public void AddProperty(IIniProperty property) {
 
             properties[property.Name.ToLowerInvariant()] = property;
 
         }
-        public IniProperty GetProperty(string name) {
+        public IIniProperty GetProperty(string name) {
 
-            if (properties.TryGetValue(name.ToLowerInvariant(), out IniProperty property))
+            if (properties.TryGetValue(name.ToLowerInvariant(), out IIniProperty property))
                 return property;
 
             return null;
@@ -46,7 +41,7 @@ namespace Gsemac.Text.Ini {
 
         }
 
-        public IEnumerator<IniProperty> GetEnumerator() {
+        public IEnumerator<IIniProperty> GetEnumerator() {
 
             return properties.Values.GetEnumerator();
 
@@ -59,7 +54,7 @@ namespace Gsemac.Text.Ini {
 
         // Private members
 
-        private readonly IDictionary<string, IniProperty> properties = new OrderedDictionary<string, IniProperty>();
+        private readonly IDictionary<string, IIniProperty> properties = new OrderedDictionary<string, IIniProperty>();
 
     }
 
