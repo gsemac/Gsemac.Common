@@ -1,4 +1,5 @@
 ﻿using Gsemac.Collections;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -21,15 +22,35 @@ namespace Gsemac.Text.Ini {
             Name = name;
 
         }
+        public IniSection(string name, IIniData parentIniData) :
+            this(name) {
+
+            this.parentIniData = parentIniData;
+
+        }
 
         public void AddProperty(IIniProperty property) {
 
-            properties[property.Name.ToLowerInvariant()] = property;
+            if (property is null)
+                throw new ArgumentNullException(nameof(property));
+
+            properties[GetKey(property.Name)] = property;
+
+            // Add the section to its parent if we haven't done so already.
+            // This is so temporary sections can be created that are only added when values are added.
+
+            if (!(parentIniData is null) && !addedToParent) {
+
+                parentIniData.AddSection(this);
+
+                addedToParent = true;
+
+            }
 
         }
         public IIniProperty GetProperty(string name) {
 
-            if (properties.TryGetValue(name.ToLowerInvariant(), out IIniProperty property))
+            if (properties.TryGetValue(GetKey(name), out IIniProperty property))
                 return property;
 
             return null;
@@ -37,7 +58,7 @@ namespace Gsemac.Text.Ini {
         }
         public bool RemoveProperty(string name) {
 
-            return properties.Remove(name.ToLowerInvariant());
+            return properties.Remove(GetKey(name));
 
         }
 
@@ -55,6 +76,17 @@ namespace Gsemac.Text.Ini {
         // Private members
 
         private readonly IDictionary<string, IIniProperty> properties = new OrderedDictionary<string, IIniProperty>();
+        private readonly IIniData parentIniData = null;
+        private bool addedToParent = false;
+
+        private string GetKey(string propertyName) {
+
+            if (string.IsNullOrEmpty(propertyName))
+                return propertyName;
+
+            return propertyName.ToLowerInvariant().Trim();
+
+        }
 
     }
 

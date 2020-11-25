@@ -6,7 +6,7 @@
         // Public members
 
         public string Name { get; }
-        public string Value { get; }
+        public string Value { get; set; }
 
         public IniProperty(string name, string value) {
 

@@ -3,7 +3,7 @@
     public interface IIniProperty {
 
         string Name { get; }
-        string Value { get; }
+        string Value { get; set; }
 
     }
 
