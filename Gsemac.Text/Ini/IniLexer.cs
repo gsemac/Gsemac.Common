@@ -11,11 +11,14 @@ namespace Gsemac.Text.Ini {
 
         // Public members
 
-        public bool Unescape { get; set; } = true;
-        public bool AllowComments { get; set; } = true;
-
         public IniLexer(Stream stream) :
             base(stream) {
+        }
+        public IniLexer(Stream stream, IIniOptions options) :
+            this(stream) {
+
+            this.options = options;
+
         }
 
         public override IIniLexerToken PeekNextToken() {
@@ -51,6 +54,7 @@ namespace Gsemac.Text.Ini {
         // Private members
 
         private readonly Queue<IIniLexerToken> tokens = new Queue<IIniLexerToken>();
+        private readonly IIniOptions options = new IniOptions();
 
         private void ReadNextTokens() {
 
@@ -65,7 +69,7 @@ namespace Gsemac.Text.Ini {
                     ReadSection();
 
                 }
-                else if (nextChar == ';' && AllowComments) {
+                else if (nextChar == ';' && options.AllowComments) {
 
                     ReadComment();
 
@@ -94,7 +98,7 @@ namespace Gsemac.Text.Ini {
 
             string value = ReadUntilAny(new char[] { ']', '\r', '\n' }, allowEscapeSequences: true);
 
-            if (Unescape)
+            if (options.Unescape)
                 value = IniData.Unescape(value);
 
             // Whitespace surrounding section names is ignored.
@@ -145,10 +149,10 @@ namespace Gsemac.Text.Ini {
         }
         private bool ReadPropertyName() {
 
-            char[] delimiters = AllowComments ? new char[] { '=', ';', '\r', '\n' } : new char[] { '=', '\r', '\n' };
+            char[] delimiters = options.AllowComments ? new char[] { '=', ';', '\r', '\n' } : new char[] { '=', '\r', '\n' };
             string value = ReadUntilAny(delimiters, allowEscapeSequences: true);
 
-            if (Unescape)
+            if (options.Unescape)
                 value = IniData.Unescape(value);
 
             // Whitespace surrounding property names is ignored.
@@ -183,10 +187,10 @@ namespace Gsemac.Text.Ini {
         }
         private bool ReadPropertyValue() {
 
-            char[] delimiters = AllowComments ? new char[] { ';', '\r', '\n' } : new char[] { '\r', '\n' };
+            char[] delimiters = options.AllowComments ? new char[] { ';', '\r', '\n' } : new char[] { '\r', '\n' };
             string value = ReadUntilAny(delimiters, allowEscapeSequences: true);
 
-            if (Unescape)
+            if (options.Unescape)
                 value = IniData.Unescape(value);
 
             // Whitespace surrounding property values is ignored.

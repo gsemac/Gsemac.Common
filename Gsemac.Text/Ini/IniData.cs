@@ -21,6 +21,13 @@ namespace Gsemac.Text.Ini {
 
         public IIniSection DefaultSection => this[string.Empty];
 
+        public IniData() { }
+        public IniData(IIniOptions options) {
+
+            this.options = options;
+
+        }
+
         public void AddSection(IIniSection section) {
 
             sections[GetKey(section.Name)] = section;
@@ -130,11 +137,21 @@ namespace Gsemac.Text.Ini {
 
         public static IniData Parse(string iniString) {
 
+            return Parse(iniString, new IniOptions());
+
+        }
+        public static IniData Parse(string iniString, IIniOptions options) {
+
             using (MemoryStream ms = new MemoryStream(Encoding.UTF8.GetBytes(iniString)))
                 return FromStream(ms);
 
         }
         public static IniData FromFile(string filePath) {
+
+            return FromFile(filePath, new IniOptions());
+
+        }
+        public static IniData FromFile(string filePath, IIniOptions options) {
 
             using (FileStream fs = new FileStream(filePath, FileMode.Open))
                 return FromStream(fs);
@@ -142,7 +159,13 @@ namespace Gsemac.Text.Ini {
         }
         public static IniData FromStream(Stream stream) {
 
-            IniData result = new IniData();
+            return FromStream(stream, new IniOptions());
+
+        }
+        public static IniData FromStream(Stream stream, IIniOptions options) {
+
+            IniData result = new IniData(options);
+
             IIniSection lastSection = null;
             IIniProperty lastProperty = null;
 
@@ -188,6 +211,7 @@ namespace Gsemac.Text.Ini {
         // Private members
 
         private readonly IDictionary<string, IIniSection> sections = new OrderedDictionary<string, IIniSection>();
+        private readonly IIniOptions options = new IniOptions();
 
         private string GetKey(string sectionName) {
 
