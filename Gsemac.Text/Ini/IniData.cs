@@ -128,10 +128,7 @@ namespace Gsemac.Text.Ini {
         }
         public static string Unescape(string input) {
 
-            string result = Regex.Replace(input, @"\\(?:x[0-9a-z]{2,4}|.)",
-                m => StringUtilities.Unescape(m.Value, UnescapeOptions.UnescapeEscapeSequences), RegexOptions.IgnoreCase | RegexOptions.Singleline);
-
-            return result;
+            return StringUtilities.Unescape(input, UnescapeOptions.UnescapeEscapeSequences);
 
         }
 

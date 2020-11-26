@@ -203,7 +203,7 @@ namespace Gsemac.Core {
 
             // Replace all escape sequences.
 
-            Regex escapeRegex = new Regex(string.Join("|", escapePatterns.Select(pattern => $"(?:{pattern})")), RegexOptions.IgnoreCase);
+            Regex escapeRegex = new Regex(string.Join("|", escapePatterns.Select(pattern => $"(?:{pattern})")), RegexOptions.IgnoreCase | RegexOptions.Singleline);
 
             result = escapeRegex.Replace(result, m => UnescapeEscapeSequence(m.Value));
 
