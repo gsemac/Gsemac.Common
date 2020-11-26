@@ -47,7 +47,7 @@ namespace Gsemac.Net.Curl {
 
             Task curlTask = Task.Factory.StartNew(() => {
 
-                CurlUtilities.ThreadSafeGlobalInit();
+                LibCurl.GlobalInit();
 
                 try {
 
@@ -59,8 +59,8 @@ namespace Gsemac.Net.Curl {
                         LibCurl.EasySetOpt(easyHandle, CurlOption.FollowLocation, AllowAutoRedirect ? 1 : 0);
                         LibCurl.EasySetOpt(easyHandle, CurlOption.Timeout, Timeout);
 
-                        if (File.Exists(CurlUtilities.CABundlePath))
-                            LibCurl.EasySetOpt(easyHandle, CurlOption.CaInfo, CurlUtilities.CABundlePath);
+                        if (File.Exists(LibCurl.CABundlePath))
+                            LibCurl.EasySetOpt(easyHandle, CurlOption.CaInfo, LibCurl.CABundlePath);
 
                         LibCurl.Perform(easyHandle);
 
@@ -73,7 +73,7 @@ namespace Gsemac.Net.Curl {
                 }
                 finally {
 
-                    CurlUtilities.ThreadSafeGlobalCleanup();
+                    LibCurl.GlobalCleanup();
 
                 }
 

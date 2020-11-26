@@ -4,19 +4,41 @@ namespace Gsemac.Net.Curl {
 
     public static class LibCurl {
 
+        // Public members
+
+        public static string CABundlePath {
+            get => Environment.Is64BitProcess ? "x64/curl-ca-bundle.crt" : "x86/curl-ca-bundle.crt";
+        }
+        public static string CurlExecutablePath {
+            get => Environment.Is64BitProcess ? "x64/curl.exe" : "x86/curl.exe";
+        }
+        public static string LibCurlPath {
+            get => Environment.Is64BitProcess ? "x64/libcurl-x64.dll" : "x86/libcurl.dll";
+        }
+
         public static CurlCode GlobalInit(CurlGlobal flags = CurlGlobal.Default) {
 
-            return Environment.Is64BitProcess ?
-                LibCurlNativeMethods.GlobalInit64(flags) :
-                LibCurlNativeMethods.GlobalInit32(flags);
+            lock (globalInitMutex) {
+
+                // curl_global_init is reference counted, so repeated calls are okay.
+
+                return Environment.Is64BitProcess ?
+                    LibCurlNativeMethods.GlobalInit64(flags) :
+                    LibCurlNativeMethods.GlobalInit32(flags);
+
+            }
 
         }
         public static void GlobalCleanup() {
 
-            if (Environment.Is64BitProcess)
-                LibCurlNativeMethods.GlobalCleanup64();
-            else
-                LibCurlNativeMethods.GlobalCleanup32();
+            lock (globalInitMutex) {
+
+                if (Environment.Is64BitProcess)
+                    LibCurlNativeMethods.GlobalCleanup64();
+                else
+                    LibCurlNativeMethods.GlobalCleanup32();
+
+            }
 
         }
 
@@ -88,6 +110,10 @@ namespace Gsemac.Net.Curl {
                 LibCurlNativeMethods.EasyReset32(handle);
 
         }
+
+        // Private members
+
+        private static readonly object globalInitMutex = new object();
 
     }
 

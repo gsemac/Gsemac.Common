@@ -12,7 +12,7 @@ namespace Gsemac.Net.Curl {
         // Public members
 
         public BinCurlWebClient() :
-            this(CurlUtilities.CurlExecutablePath) {
+            this(LibCurl.CurlExecutablePath) {
         }
         /// <summary>
         /// Initializes a new instance of the <see cref="BinCurlWebClient"/> class.

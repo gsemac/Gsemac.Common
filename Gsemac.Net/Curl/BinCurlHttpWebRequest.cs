@@ -18,7 +18,7 @@ namespace Gsemac.Net.Curl {
         public string CurlArguments => GetCurlArguments();
 
         public BinCurlHttpWebRequest(Uri requestUri) :
-            this(requestUri, CurlUtilities.CurlExecutablePath) {
+            this(requestUri, LibCurl.CurlExecutablePath) {
 
             getResponseAsyncDelegate = () => GetResponse();
 
