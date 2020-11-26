@@ -10,8 +10,18 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+	  <PackageReference Include="Selenium.WebDriver" Version="3.141.0" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<ProjectReference Include="..\Gsemac.IO\Gsemac.IO.csproj" />
 		<ProjectReference Include="..\Gsemac.Core\Gsemac.Core.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Compile Update="Properties\Resources.Designer.cs">
+	    <DesignTime>True</DesignTime>
+	  </Compile>
 	</ItemGroup>
 
 </Project>
