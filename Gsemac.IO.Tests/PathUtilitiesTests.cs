@@ -1,8 +1,7 @@
-using Gsemac.IO;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 
-namespace Gsemac.Utilities.Tests {
+namespace Gsemac.IO.Tests {
 
     [TestClass]
     public class PathUtilitiesTests {
