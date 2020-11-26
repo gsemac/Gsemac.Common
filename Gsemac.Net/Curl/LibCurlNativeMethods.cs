@@ -3,7 +3,7 @@ using System.Runtime.InteropServices;
 
 namespace Gsemac.Net.Curl {
 
-    internal static class NativeMethods {
+    internal static class LibCurlNativeMethods {
 
         // Public members
 
