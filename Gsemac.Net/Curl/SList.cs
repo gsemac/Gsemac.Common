@@ -9,7 +9,9 @@ namespace Gsemac.Net.Curl {
 
         public SListHandle Handle => handle;
 
-        public SList() { }
+        public SList() :
+            this(new SListHandle()) {
+        }
         public SList(SListHandle handle) {
 
             this.handle = handle;

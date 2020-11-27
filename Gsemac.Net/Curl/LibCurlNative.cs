@@ -74,8 +74,10 @@ namespace Gsemac.Net.Curl {
 
         // Private members
 
-        private const string X86DllPath = @"x86/libcurl";
-        private const string X64DllPath = @"x64/libcurl-x64";
+        // Note: .NET Framework can't find the DLL with forward slashes, but finds it with backslashes.
+
+        private const string X86DllPath = @"x86\\libcurl";
+        private const string X64DllPath = @"x64\\libcurl-x64";
 
     }
 

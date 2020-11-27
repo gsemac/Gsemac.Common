@@ -24,4 +24,15 @@
 		</Compile>
 	</ItemGroup>
 
+	<ItemGroup>
+		<None Include="lib\native\x64\*">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<Link>x64\%(Filename)%(Extension)</Link>
+		</None>
+		<None Include="lib\native\x86\*">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<Link>x86\%(Filename)%(Extension)</Link>
+		</None>
+	</ItemGroup>
+
 </Project>
