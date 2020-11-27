@@ -3,7 +3,8 @@ using System.Net;
 
 namespace Gsemac.Net {
 
-    public interface IHttpWebResponse {
+    public interface IHttpWebResponse :
+        IWebResponse {
 
         /// <summary>
         /// Gets the method that is used to encode the body of the response.
