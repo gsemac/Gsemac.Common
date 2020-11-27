@@ -79,14 +79,14 @@ namespace Gsemac.Net.Curl {
                 LibCurlNative.EasySetOpt32(handle, option, value);
 
         }
-        public static CurlCode EasySetOpt(CurlEasyHandle handle, CurlOption option, WriteCallback value) {
+        public static CurlCode EasySetOpt(CurlEasyHandle handle, CurlOption option, WriteFunctionDelegate value) {
 
             return Environment.Is64BitProcess ?
                 LibCurlNative.EasySetOpt64(handle, option, value) :
                 LibCurlNative.EasySetOpt32(handle, option, value);
 
         }
-        public static CurlCode EasySetOpt(CurlEasyHandle handle, CurlOption option, ProgressCallback value) {
+        public static CurlCode EasySetOpt(CurlEasyHandle handle, CurlOption option, ProgressFunctionDelegate value) {
 
             return Environment.Is64BitProcess ?
                 LibCurlNative.EasySetOpt64(handle, option, value) :

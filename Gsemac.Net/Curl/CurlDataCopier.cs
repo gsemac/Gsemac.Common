@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
 using System.Threading;
 
 namespace Gsemac.Net.Curl {
@@ -20,17 +17,29 @@ namespace Gsemac.Net.Curl {
             this.outputStream = outputStream;
             this.cancellationToken = cancellationToken;
 
+            // Delegates must be kept alive (i.e. not garbage collected) unil there is no chance of them being called again.
+            // To make sure they are kept alive for the duration of the request, they are stored in member variables.
+
+            this.headerFunction = new WriteFunctionDelegate(HeaderFunction);
+            this.writeFunction = new WriteFunctionDelegate(WriteFunction);
+            this.progressFunction = new ProgressFunctionDelegate(ProgressFunction);
+
         }
         public CurlDataCopier(CurlEasyHandle easyHandle, Stream outputStream, CancellationToken cancellationToken) :
             this(outputStream, cancellationToken) {
 
-            LibCurl.EasySetOpt(easyHandle, CurlOption.HeaderFunction, WriteCallback);
-            LibCurl.EasySetOpt(easyHandle, CurlOption.WriteFunction, WriteCallback);
-            LibCurl.EasySetOpt(easyHandle, CurlOption.ProgessFunction, ProgressCallback);
+            LibCurl.EasySetOpt(easyHandle, CurlOption.HeaderFunction, headerFunction);
+            LibCurl.EasySetOpt(easyHandle, CurlOption.WriteFunction, writeFunction);
+            LibCurl.EasySetOpt(easyHandle, CurlOption.ProgessFunction, progressFunction);
 
         }
 
-        public UIntPtr WriteCallback(IntPtr data, UIntPtr size, UIntPtr nmemb, IntPtr userdata) {
+        public UIntPtr HeaderFunction(IntPtr data, UIntPtr size, UIntPtr nmemb, IntPtr userdata) {
+
+            return WriteFunction(data, size, nmemb, userdata);
+
+        }
+        public UIntPtr WriteFunction(IntPtr data, UIntPtr size, UIntPtr nmemb, IntPtr userdata) {
 
             int length = (int)size * (int)nmemb;
             byte[] buffer = new byte[length];
@@ -42,7 +51,7 @@ namespace Gsemac.Net.Curl {
             return (UIntPtr)length;
 
         }
-        public int ProgressCallback(IntPtr clientp, double dltotal, double dlnow, double ultotal, double ulnow) {
+        public int ProgressFunction(IntPtr clientp, double dltotal, double dlnow, double ultotal, double ulnow) {
 
             // Returning a non-zero value will cause the transfer to abort with code CURLE_ABORTED_BY_CALLBACK.
 
@@ -57,6 +66,9 @@ namespace Gsemac.Net.Curl {
 
         private readonly Stream outputStream;
         private readonly CancellationToken cancellationToken;
+        private readonly WriteFunctionDelegate headerFunction;
+        private readonly WriteFunctionDelegate writeFunction;
+        private readonly ProgressFunctionDelegate progressFunction;
 
     }
 

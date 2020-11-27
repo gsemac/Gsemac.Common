@@ -43,14 +43,14 @@ namespace Gsemac.Net.Curl {
         public static extern CurlCode EasySetOpt64(CurlEasyHandle handle, CurlOption option, string value);
 
         [DllImport(X86DllPath, EntryPoint = "curl_easy_setopt")]
-        public static extern CurlCode EasySetOpt32(CurlEasyHandle handle, CurlOption option, WriteCallback value);
+        public static extern CurlCode EasySetOpt32(CurlEasyHandle handle, CurlOption option, WriteFunctionDelegate value);
         [DllImport(X64DllPath, EntryPoint = "curl_easy_setopt")]
-        public static extern CurlCode EasySetOpt64(CurlEasyHandle handle, CurlOption option, WriteCallback value);
+        public static extern CurlCode EasySetOpt64(CurlEasyHandle handle, CurlOption option, WriteFunctionDelegate value);
 
         [DllImport(X86DllPath, EntryPoint = "curl_easy_setopt")]
-        public static extern CurlCode EasySetOpt32(CurlEasyHandle handle, CurlOption option, ProgressCallback value);
+        public static extern CurlCode EasySetOpt32(CurlEasyHandle handle, CurlOption option, ProgressFunctionDelegate value);
         [DllImport(X64DllPath, EntryPoint = "curl_easy_setopt")]
-        public static extern CurlCode EasySetOpt64(CurlEasyHandle handle, CurlOption option, ProgressCallback value);
+        public static extern CurlCode EasySetOpt64(CurlEasyHandle handle, CurlOption option, ProgressFunctionDelegate value);
 
         [DllImport(X86DllPath, EntryPoint = "curl_easy_perform")]
         public static extern CurlCode EasyPerform32(CurlEasyHandle handle);
