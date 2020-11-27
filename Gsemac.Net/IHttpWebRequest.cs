@@ -4,7 +4,8 @@ using System.Security.Cryptography.X509Certificates;
 
 namespace Gsemac.Net {
 
-    public interface IHttpWebRequest {
+    public interface IHttpWebRequest :
+        IWebRequest {
 
         /// <summary>
         /// Gets or sets the value of the Accept HTTP header.
