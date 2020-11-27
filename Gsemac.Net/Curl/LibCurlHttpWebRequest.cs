@@ -17,7 +17,7 @@ namespace Gsemac.Net.Curl {
         public LibCurlHttpWebRequest(Uri requestUri) :
             base(requestUri) {
 
-            getResponseAsyncDelegate = () => GetResponse();
+            getResponseDelegate = new GetResponseDelegate(GetResponse);
 
         }
 
@@ -30,9 +30,6 @@ namespace Gsemac.Net.Curl {
 
             if (!Method.Equals("POST", StringComparison.OrdinalIgnoreCase) && !Method.Equals("PUT", StringComparison.OrdinalIgnoreCase))
                 throw new ProtocolViolationException("Method must be POST or PUT.");
-
-            if (requestStream is null)
-                requestStream = new MemoryStream();
 
             return requestStream;
 
@@ -64,7 +61,10 @@ namespace Gsemac.Net.Curl {
                         LibCurl.EasySetOpt(easyHandle, CurlOption.Timeout, Timeout);
                         LibCurl.EasySetOpt(easyHandle, CurlOption.CustomRequest, Method);
                         LibCurl.EasySetOpt(easyHandle, CurlOption.HttpVersion, (int)GetHttpVersion());
-                        LibCurl.EasySetOpt(easyHandle, CurlOption.AcceptEncoding, GetAcceptEncoding());
+
+                        if (AutomaticDecompression != DecompressionMethods.None)
+                            LibCurl.EasySetOpt(easyHandle, CurlOption.AcceptEncoding, GetAcceptEncoding());
+
                         LibCurl.EasySetOpt(easyHandle, CurlOption.TcpKeepAlive, KeepAlive ? 1 : 0);
 
                         if (File.Exists(LibCurl.CABundlePath))
@@ -79,8 +79,17 @@ namespace Gsemac.Net.Curl {
 
                         // Copy cookies.
 
-                        if (!(CookieContainer is null))
-                            LibCurl.EasySetOpt(easyHandle, CurlOption.Cookie, CookieContainer.GetCookieHeader(RequestUri));
+                        string cookieHeader = CookieContainer?.GetCookieHeader(RequestUri);
+
+                        if (!string.IsNullOrEmpty(cookieHeader))
+                            LibCurl.EasySetOpt(easyHandle, CurlOption.Cookie, cookieHeader);
+
+                        // Add request data (i.e. POST/PUT data).
+
+                        string requestData = GetRequestData();
+
+                        if (requestData.Length > 0)
+                            LibCurl.EasySetOpt(easyHandle, CurlOption.PostFields, requestData);
 
                         // Execute the request.
 
@@ -108,20 +117,35 @@ namespace Gsemac.Net.Curl {
         }
         public override IAsyncResult BeginGetResponse(AsyncCallback callback, object state) {
 
-            return getResponseAsyncDelegate.BeginInvoke(callback, state);
+            return getResponseDelegate.BeginInvoke(callback, state);
 
         }
         public override WebResponse EndGetResponse(IAsyncResult asyncResult) {
 
-            return getResponseAsyncDelegate.EndInvoke(asyncResult);
+            return getResponseDelegate.EndInvoke(asyncResult);
 
         }
 
         // Private members
 
-        private readonly Func<WebResponse> getResponseAsyncDelegate;
-        private MemoryStream requestStream;
+        private delegate WebResponse GetResponseDelegate();
 
+        private readonly GetResponseDelegate getResponseDelegate;
+        private readonly MemoryStream requestStream = new MemoryStream();
+
+        private string GetAcceptEncoding() {
+
+            List<string> decompressionMethodStrs = new List<string>();
+
+            if (AutomaticDecompression.HasFlag(DecompressionMethods.GZip))
+                decompressionMethodStrs.Add("gzip");
+
+            if (AutomaticDecompression.HasFlag(DecompressionMethods.Deflate))
+                decompressionMethodStrs.Add("deflate");
+
+            return string.Join(", ", decompressionMethodStrs);
+
+        }
         private CurlHttpVersion GetHttpVersion() {
 
             if (!(ProtocolVersion is null)) {
@@ -143,26 +167,13 @@ namespace Gsemac.Net.Curl {
             return CurlHttpVersion.None;
 
         }
-        private string GetAcceptEncoding() {
+        private string GetRequestData() {
 
-            List<string> decompressionMethodStrs = new List<string>();
+            string requestData = Encoding.ASCII.GetString(requestStream.ToArray());
 
-            if (AutomaticDecompression == DecompressionMethods.None) {
+            requestStream.Dispose();
 
-                decompressionMethodStrs.Add("identity");
-
-            }
-            else {
-
-                if (AutomaticDecompression.HasFlag(DecompressionMethods.GZip))
-                    decompressionMethodStrs.Add("gzip");
-
-                if (AutomaticDecompression.HasFlag(DecompressionMethods.Deflate))
-                    decompressionMethodStrs.Add("deflate");
-
-            }
-
-            return string.Join(", ", decompressionMethodStrs);
+            return requestData;
 
         }
 

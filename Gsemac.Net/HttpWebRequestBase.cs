@@ -43,7 +43,7 @@ namespace Gsemac.Net {
         public Uri Address => RequestUri;
         public bool AllowAutoRedirect { get; set; } = true;
         public bool AllowWriteStreamBuffering { get; set; } = true;
-        public DecompressionMethods AutomaticDecompression { get; set; } = DecompressionMethods.Deflate | DecompressionMethods.GZip;
+        public DecompressionMethods AutomaticDecompression { get; set; } = DecompressionMethods.GZip | DecompressionMethods.Deflate;
         public string Connection {
             get => Headers[HttpRequestHeader.Connection];
             set => Headers[HttpRequestHeader.Connection] = value;
