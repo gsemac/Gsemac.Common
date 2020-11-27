@@ -103,8 +103,35 @@ namespace Gsemac.Net.Curl {
         DebugData = CurlOptType.ObjectPoint + 95,
         CookieSession = CurlOptType.Long + 96,
         CaPath = CurlOptType.StringPoint + 97,
-        // #todo Add the rest
+        BufferSize = CurlOptType.Long + 98,
+        NoSignal = CurlOptType.Long + 99,
+        Share = CurlOptType.ObjectPoint + 100,
+        ProxyType = CurlOptType.Long + 101,
+        AcceptEncoding = CurlOptType.StringPoint + 102,
+        Private = CurlOptType.ObjectPoint + 103,
+        Http200Aliases = CurlOptType.SListPoint + 104,
+        UnrestrictedAuth = CurlOptType.Long + 105,
+        FtpUseEprt = CurlOptType.Long + 106,
+        HttpAuth = CurlOptType.Long + 107,
+        SslCtxFunction = CurlOptType.FunctionPoint + 108,
+        SslCtxData = CurlOptType.ObjectPoint + 109,
+        FtpCreateMissingDirs = CurlOptType.Long + 110,
+        ProxyAuth = CurlOptType.Long + 111,
+        FtpResponseTimeout = CurlOptType.Long + 112,
+        IPResolve = CurlOptType.Long + 113,
+        MaxFileSize = CurlOptType.Long + 114,
+        InFileSizeLarge = CurlOptType.OffT + 115,
+        ResumeFromLarge = CurlOptType.OffT + 116,
+        MaxFileSizeLarge = CurlOptType.OffT + 117,
+        NetRCFile = CurlOptType.StringPoint + 118,
+        UseSsl = CurlOptType.Long + 119,
+        PostFieldSizeLarge = CurlOptType.OffT + 120,
+        TcpNoDelay = CurlOptType.Long + 121,
+        FtpSslAuth = CurlOptType.Long + 129,
+        // #todo Add missing options
         TimeoutMs = CurlOptType.Long + 155,
+        // #todo Add missing options
+        TcpKeepAlive = CurlOptType.Long + 213,
     }
 
 }

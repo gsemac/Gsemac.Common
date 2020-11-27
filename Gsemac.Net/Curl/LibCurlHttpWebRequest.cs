@@ -1,7 +1,9 @@
 ﻿using Gsemac.IO;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Net;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -58,7 +60,12 @@ namespace Gsemac.Net.Curl {
 
                         LibCurl.EasySetOpt(easyHandle, CurlOption.Url, RequestUri.AbsoluteUri);
                         LibCurl.EasySetOpt(easyHandle, CurlOption.FollowLocation, AllowAutoRedirect ? 1 : 0);
+                        LibCurl.EasySetOpt(easyHandle, CurlOption.MaxRedirs, MaximumAutomaticRedirections);
                         LibCurl.EasySetOpt(easyHandle, CurlOption.Timeout, Timeout);
+                        LibCurl.EasySetOpt(easyHandle, CurlOption.CustomRequest, Method);
+                        LibCurl.EasySetOpt(easyHandle, CurlOption.HttpVersion, (int)GetHttpVersion());
+                        LibCurl.EasySetOpt(easyHandle, CurlOption.AcceptEncoding, GetAcceptEncoding());
+                        LibCurl.EasySetOpt(easyHandle, CurlOption.TcpKeepAlive, KeepAlive ? 1 : 0);
 
                         if (File.Exists(LibCurl.CABundlePath))
                             LibCurl.EasySetOpt(easyHandle, CurlOption.CaInfo, LibCurl.CABundlePath);
@@ -114,6 +121,50 @@ namespace Gsemac.Net.Curl {
 
         private readonly Func<WebResponse> getResponseAsyncDelegate;
         private MemoryStream requestStream;
+
+        private CurlHttpVersion GetHttpVersion() {
+
+            if (!(ProtocolVersion is null)) {
+
+                if (ProtocolVersion.Major == 1 && ProtocolVersion.Minor == 0)
+                    return CurlHttpVersion.Http10;
+
+                if (ProtocolVersion.Major == 1 && ProtocolVersion.Minor == 1)
+                    return CurlHttpVersion.Http11;
+
+                if (ProtocolVersion.Major == 2 && ProtocolVersion.Minor == 0)
+                    return CurlHttpVersion.Http2;
+
+                if (ProtocolVersion.Major == 3 && ProtocolVersion.Minor == 0)
+                    return CurlHttpVersion.Http3;
+
+            }
+
+            return CurlHttpVersion.None;
+
+        }
+        private string GetAcceptEncoding() {
+
+            List<string> decompressionMethodStrs = new List<string>();
+
+            if (AutomaticDecompression == DecompressionMethods.None) {
+
+                decompressionMethodStrs.Add("identity");
+
+            }
+            else {
+
+                if (AutomaticDecompression.HasFlag(DecompressionMethods.GZip))
+                    decompressionMethodStrs.Add("gzip");
+
+                if (AutomaticDecompression.HasFlag(DecompressionMethods.Deflate))
+                    decompressionMethodStrs.Add("deflate");
+
+            }
+
+            return string.Join(", ", decompressionMethodStrs);
+
+        }
 
     }
 

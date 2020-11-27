@@ -68,7 +68,7 @@ namespace Gsemac.Net {
         }
         public bool KeepAlive { get; set; } = true;
         public int MaximumAutomaticRedirections { get; set; } = 50;
-        public Version ProtocolVersion { get; set; }
+        public Version ProtocolVersion { get; set; } = new Version(2, 0);
         public int ReadWriteTimeout { get; set; } = 300000;
         public string Referer {
             get => Headers[HttpRequestHeader.Referer];
