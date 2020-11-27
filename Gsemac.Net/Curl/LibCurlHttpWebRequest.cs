@@ -51,7 +51,8 @@ namespace Gsemac.Net.Curl {
 
                 try {
 
-                    using (CurlEasyHandle easyHandle = LibCurl.EasyInit()) {
+                    using (CurlEasyHandle easyHandle = LibCurl.EasyInit())
+                    using (SList headers = new SList()) {
 
                         CurlDataCopier dataCopier = new CurlDataCopier(easyHandle, stream, cancellationToken);
 
@@ -62,7 +63,16 @@ namespace Gsemac.Net.Curl {
                         if (File.Exists(LibCurl.CABundlePath))
                             LibCurl.EasySetOpt(easyHandle, CurlOption.CaInfo, LibCurl.CABundlePath);
 
-                        LibCurl.Perform(easyHandle);
+                        // Copy headers.
+
+                        foreach (string headerName in Headers.AllKeys)
+                            headers.Append($"{headerName}: {Headers[headerName]}");
+
+                        LibCurl.EasySetOpt(easyHandle, CurlOption.HttpHeader, headers.Handle.DangerousGetHandle());
+
+                        // Execute the request.
+
+                        LibCurl.EasyPerform(easyHandle);
 
                         // Close the stream to indicate that we're done writing to it, unblocking readers.
 

@@ -23,8 +23,8 @@ namespace Gsemac.Net.Curl {
                 // curl_global_init is reference counted, so repeated calls are okay.
 
                 return Environment.Is64BitProcess ?
-                    LibCurlNativeMethods.GlobalInit64(flags) :
-                    LibCurlNativeMethods.GlobalInit32(flags);
+                    LibCurlNative.GlobalInit64(flags) :
+                    LibCurlNative.GlobalInit32(flags);
 
             }
 
@@ -34,9 +34,9 @@ namespace Gsemac.Net.Curl {
             lock (globalInitMutex) {
 
                 if (Environment.Is64BitProcess)
-                    LibCurlNativeMethods.GlobalCleanup64();
+                    LibCurlNative.GlobalCleanup64();
                 else
-                    LibCurlNativeMethods.GlobalCleanup32();
+                    LibCurlNative.GlobalCleanup32();
 
             }
 
@@ -45,69 +45,86 @@ namespace Gsemac.Net.Curl {
         public static CurlEasyHandle EasyInit() {
 
             return Environment.Is64BitProcess ?
-                LibCurlNativeMethods.EasyInit64() :
-                LibCurlNativeMethods.EasyInit32();
+                LibCurlNative.EasyInit64() :
+                LibCurlNative.EasyInit32();
 
         }
         public static void EasyCleanup(CurlEasyHandle handle) {
 
             if (Environment.Is64BitProcess)
-                LibCurlNativeMethods.EasyCleanup64(handle);
+                LibCurlNative.EasyCleanup64(handle);
             else
-                LibCurlNativeMethods.EasyCleanup32(handle);
+                LibCurlNative.EasyCleanup32(handle);
 
         }
 
         public static CurlCode EasySetOpt(CurlEasyHandle handle, CurlOption option, int value) {
 
             return Environment.Is64BitProcess ?
-                LibCurlNativeMethods.EasySetOpt64(handle, option, value) :
-                LibCurlNativeMethods.EasySetOpt32(handle, option, value);
+                LibCurlNative.EasySetOpt64(handle, option, value) :
+                LibCurlNative.EasySetOpt32(handle, option, value);
 
         }
         public static CurlCode EasySetOpt(CurlEasyHandle handle, CurlOption option, IntPtr value) {
 
             return Environment.Is64BitProcess ?
-                LibCurlNativeMethods.EasySetOpt64(handle, option, value) :
-                LibCurlNativeMethods.EasySetOpt32(handle, option, value);
+                LibCurlNative.EasySetOpt64(handle, option, value) :
+                LibCurlNative.EasySetOpt32(handle, option, value);
 
         }
         public static CurlCode EasySetOpt(CurlEasyHandle handle, CurlOption option, string value) {
 
             return Environment.Is64BitProcess ?
-                LibCurlNativeMethods.EasySetOpt64(handle, option, value) :
-                LibCurlNativeMethods.EasySetOpt32(handle, option, value);
+                LibCurlNative.EasySetOpt64(handle, option, value) :
+                LibCurlNative.EasySetOpt32(handle, option, value);
 
         }
         public static CurlCode EasySetOpt(CurlEasyHandle handle, CurlOption option, WriteCallback value) {
 
             return Environment.Is64BitProcess ?
-                LibCurlNativeMethods.EasySetOpt64(handle, option, value) :
-                LibCurlNativeMethods.EasySetOpt32(handle, option, value);
+                LibCurlNative.EasySetOpt64(handle, option, value) :
+                LibCurlNative.EasySetOpt32(handle, option, value);
 
         }
         public static CurlCode EasySetOpt(CurlEasyHandle handle, CurlOption option, ProgressCallback value) {
 
             return Environment.Is64BitProcess ?
-                LibCurlNativeMethods.EasySetOpt64(handle, option, value) :
-                LibCurlNativeMethods.EasySetOpt32(handle, option, value);
+                LibCurlNative.EasySetOpt64(handle, option, value) :
+                LibCurlNative.EasySetOpt32(handle, option, value);
 
         }
 
-        public static CurlCode Perform(CurlEasyHandle handle) {
+        public static CurlCode EasyPerform(CurlEasyHandle handle) {
 
             return Environment.Is64BitProcess ?
-              LibCurlNativeMethods.Perform64(handle) :
-              LibCurlNativeMethods.Perform32(handle);
+              LibCurlNative.EasyPerform64(handle) :
+              LibCurlNative.EasyPerform32(handle);
 
         }
 
         public static void EasyReset(CurlEasyHandle handle) {
 
             if (Environment.Is64BitProcess)
-                LibCurlNativeMethods.EasyReset64(handle);
+                LibCurlNative.EasyReset64(handle);
             else
-                LibCurlNativeMethods.EasyReset32(handle);
+                LibCurlNative.EasyReset32(handle);
+
+        }
+
+        public static SListHandle SListAppend(SListHandle handle, string @string) {
+
+            return Environment.Is64BitProcess ?
+                   LibCurlNative.SListAppend64(handle, @string) :
+                   LibCurlNative.SListAppend32(handle, @string);
+
+
+        }
+        public static void SListFreeAll(SListHandle handle) {
+
+            if (Environment.Is64BitProcess)
+                LibCurlNative.SListFreeAll64(handle);
+            else
+                LibCurlNative.SListFreeAll32(handle);
 
         }
 

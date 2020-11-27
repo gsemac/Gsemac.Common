@@ -3,7 +3,7 @@ using System.Runtime.InteropServices;
 
 namespace Gsemac.Net.Curl {
 
-    internal static class LibCurlNativeMethods {
+    internal static class LibCurlNative {
 
         // Public members
 
@@ -53,14 +53,24 @@ namespace Gsemac.Net.Curl {
         public static extern CurlCode EasySetOpt64(CurlEasyHandle handle, CurlOption option, ProgressCallback value);
 
         [DllImport(X86DllPath, EntryPoint = "curl_easy_perform")]
-        public static extern CurlCode Perform32(CurlEasyHandle handle);
+        public static extern CurlCode EasyPerform32(CurlEasyHandle handle);
         [DllImport(X64DllPath, EntryPoint = "curl_easy_perform")]
-        public static extern CurlCode Perform64(CurlEasyHandle handle);
+        public static extern CurlCode EasyPerform64(CurlEasyHandle handle);
 
         [DllImport(X86DllPath, EntryPoint = "curl_easy_reset")]
         public static extern void EasyReset32(CurlEasyHandle handle);
         [DllImport(X64DllPath, EntryPoint = "curl_easy_reset")]
         public static extern void EasyReset64(CurlEasyHandle handle);
+
+        [DllImport(X86DllPath, EntryPoint = "curl_slist_append")]
+        public static extern SListHandle SListAppend32(SListHandle handle, string @string);
+        [DllImport(X64DllPath, EntryPoint = "curl_slist_append")]
+        public static extern SListHandle SListAppend64(SListHandle handle, string @string);
+
+        [DllImport(X86DllPath, EntryPoint = "curl_slist_free_all")]
+        public static extern void SListFreeAll32(SListHandle handle);
+        [DllImport(X64DllPath, EntryPoint = "curl_slist_free_all")]
+        public static extern void SListFreeAll64(SListHandle handle);
 
         // Private members
 
