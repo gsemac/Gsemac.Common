@@ -22,16 +22,19 @@
 	<ItemGroup Condition="$(DefineConstants.Contains('NETFRAMEWORK'))">
 		<Reference Include="System.Drawing" />
 		<Reference Include="WebPWrapper">
-			<HintPath>lib\net40-client\WebPWrapper.dll</HintPath>
+			<HintPath>lib\net\WebPWrapper.dll</HintPath>
 		</Reference>
-		<ContentWithTargetPath Include="lib\native\x64\libwebp_x64.dll">
+	</ItemGroup>
+
+	<ItemGroup>
+		<None Include="lib\native\x64\*">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-			<TargetPath>libwebp_x64.dll</TargetPath>
-		</ContentWithTargetPath>
-		<ContentWithTargetPath Include="lib\native\x86\libwebp_x86.dll">
+			<Link>x64\%(Filename)%(Extension)</Link>
+		</None>
+		<None Include="lib\native\x86\*">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-			<TargetPath>libwebp_x86.dll</TargetPath>
-		</ContentWithTargetPath>
+			<Link>x86\%(Filename)%(Extension)</Link>
+		</None>
 	</ItemGroup>
 
 	<ItemGroup>
