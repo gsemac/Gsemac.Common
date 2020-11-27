@@ -70,6 +70,11 @@ namespace Gsemac.Net.Curl {
 
                         LibCurl.EasySetOpt(easyHandle, CurlOption.HttpHeader, headers.Handle.DangerousGetHandle());
 
+                        // Copy cookies.
+
+                        if (!(CookieContainer is null))
+                            LibCurl.EasySetOpt(easyHandle, CurlOption.Cookie, CookieContainer.GetCookieHeader(RequestUri));
+
                         // Execute the request.
 
                         LibCurl.EasyPerform(easyHandle);

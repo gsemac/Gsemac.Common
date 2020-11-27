@@ -110,21 +110,27 @@ namespace Gsemac.Net.Curl {
                 arguments.Add(string.Format("--connect-timeout {0}", Timeout / 1000.0));
 
             // Add headers.
+
             arguments.AddRange(HeadersToCurlArguments());
 
             // Add cookies.
+
             arguments.Add(CookiesToCurlArgument());
 
             // Add method.
+
             arguments.Add(MethodToCurlArgument());
 
             // Add request data.
+
             arguments.Add(DataToCurlArgument());
 
             // Add proxy.
+
             arguments.Add(ProxyToCurlArgument());
 
             // Add basic auth credentials.
+
             arguments.Add(CredentialsToCurlArgument());
 
             string argumentString = string.Format("{0} \"{1}\"", string.Join(" ", arguments.Where(x => !string.IsNullOrEmpty(x))), EscapeCurlArgument(RequestUri.AbsoluteUri));
