@@ -81,192 +81,31 @@ namespace Gsemac.Net.Curl {
         private readonly Func<WebResponse> getResponseAsyncDelegate;
         private MemoryStream requestStream;
 
-        string GetCurlArguments() {
-
-            List<string> arguments = new List<string> {
-                "--include",    // include response headers in output
-                "--output - ",  // output binary data directly to standard output
-            };
-
-            if (AllowAutoRedirect) {
-
-                arguments.Add("--location");
-                arguments.Add(string.Format("--max-redirs {0}", MaximumAutomaticRedirections));
-
-            }
-
-            if (AutomaticDecompression != DecompressionMethods.None)
-                arguments.Add("--compressed");
-
-            if (!KeepAlive)
-                arguments.Add("--no-keepalive");
-
-            if (ProtocolVersion != null)
-                if (ProtocolVersion.Major > 1)
-                    arguments.Add(string.Format("--http{0}", ProtocolVersion.Major));
-                else
-                    arguments.Add(string.Format("--http{0}.{1}", ProtocolVersion.Major, ProtocolVersion.Minor));
-
-            if (Timeout != System.Threading.Timeout.Infinite)
-                arguments.Add(string.Format("--connect-timeout {0}", Timeout / 1000.0));
-
-            // Add headers.
-
-            arguments.AddRange(HeadersToCurlArguments());
-
-            // Add cookies.
-
-            arguments.Add(CookiesToCurlArgument());
-
-            // Add method.
-
-            arguments.Add(MethodToCurlArgument());
-
-            // Add request data.
-
-            arguments.Add(DataToCurlArgument());
-
-            // Add proxy.
-
-            arguments.Add(ProxyToCurlArgument());
-
-            // Add basic auth credentials.
-
-            arguments.Add(CredentialsToCurlArgument());
-
-            string argumentString = string.Format("{0} \"{1}\"", string.Join(" ", arguments.Where(x => !string.IsNullOrEmpty(x))), EscapeCurlArgument(RequestUri.AbsoluteUri));
-
-            return argumentString;
-
-        }
-        List<string> HeadersToCurlArguments() {
-
-            List<string> result = new List<string>();
-
-            for (int i = 0; i < Headers.Count; ++i) {
-
-                string header = Headers.GetKey(i);
-
-                foreach (string value in Headers.GetValues(i))
-                    result.Add(string.Format("--header \"{0}: {1}\"", EscapeCurlArgument(header), EscapeCurlArgument(Headers[header])));
-
-            }
-
-            if (AutomaticDecompression != DecompressionMethods.None) {
-
-                List<string> headerValues = new List<string>();
-
-                if (AutomaticDecompression.HasFlag(DecompressionMethods.Deflate))
-                    headerValues.Add("deflate");
-
-                if (AutomaticDecompression.HasFlag(DecompressionMethods.GZip))
-                    headerValues.Add("gzip");
-
-                string headerValue = string.Join(",", headerValues);
-
-                if (!string.IsNullOrEmpty(headerValue))
-                    result.Add(string.Format("--header \"{0}: {1}\"", "Accept-Encoding", headerValue));
-
-            }
-
-            return result;
-
-        }
-        string CookiesToCurlArgument() {
-
-            if (CookieContainer is null)
-                return string.Empty;
-
-            List<string> cookieStrings = new List<string>();
-
-            foreach (Cookie cookie in CookieContainer.GetCookies(RequestUri))
-                cookieStrings.Add(cookie.ToString());
-
-            string argumentString = string.Format("--cookie \"{0}\"", EscapeCurlArgument(string.Join(";", cookieStrings)));
-
-            return cookieStrings.Count <= 0 ? string.Empty : argumentString;
-
-        }
-        string MethodToCurlArgument() {
-
-            if (string.IsNullOrEmpty(Method))
-                Method = "GET";
-
-            switch (Method.ToLower()) {
-
-                case "get": // no action required
-                    return string.Empty;
-
-                case "head": // make HEAD request + redirect stderr to stdout so we can read it via the ProcessStream
-                    return "--head --stderr -";
-
-                case "post":
-                    return "-X POST";
-
-                case "put":
-                    return "-X PUT";
-
-                default:
-                    return string.Format("-X {0}", Method);
-
-            }
-
-        }
-        string DataToCurlArgument() {
+        private string GetPostData() {
 
             if (requestStream is null)
                 return string.Empty;
 
-            string dataString = Encoding.UTF8.GetString(requestStream.ToArray());
-
-            return string.Format("--data \"{0}\"", EscapeCurlArgument(dataString));
+            return Encoding.UTF8.GetString(requestStream.ToArray());
 
         }
-        string ProxyToCurlArgument() {
+        private string GetCurlArguments() {
 
-            // Argument should be of the following form:
-            // -x, --proxy <[protocol://][user:password@]proxyhost[:port]>
-
-            if (Proxy is null || Proxy.IsBypassed(RequestUri))
-                return string.Empty;
-
-            StringBuilder sb = new StringBuilder();
-
-            sb.Append("--proxy ");
-            sb.Append("\"");
-            sb.Append(EscapeCurlArgument(Proxy.ToProxyString(RequestUri)));
-            sb.Append("\"");
-
-            return sb.ToString();
-
-        }
-        string CredentialsToCurlArgument() {
-
-            // Argument should be of the following form:
-            // -u username:password
-
-            StringBuilder sb = new StringBuilder();
-
-            NetworkCredential credentials = Credentials?.GetCredential(RequestUri, "Basic");
-
-            if (credentials != null) {
-
-                sb.Append("-u ");
-                sb.Append("\"");
-                sb.Append(credentials.ToCredentialString());
-                sb.Append("\"");
-
-            }
-
-            return EscapeCurlArgument(sb.ToString());
-
-        }
-        public string EscapeCurlArgument(string input) {
-
-            if (string.IsNullOrEmpty(input))
-                return string.Empty;
-
-            return input.Replace("\"", @"\""");
+            return new CurlCommandLineArgumentsBuilder()
+                .WithHeaderOutput()
+                .WithConsoleOutput()
+                .WithAutomaticRedirect(AllowAutoRedirect ? MaximumAutomaticRedirections : 0)
+                .WithAutomaticDecompression(AutomaticDecompression)
+                .WithHttpVersion(ProtocolVersion)
+                .WithKeepAlive(KeepAlive)
+                .WithConnectTimeout(Timeout)
+                .WithHeaders(Headers)
+                .WithCookies(CookieContainer, RequestUri)
+                .WithPostData(GetPostData())
+                .WithProxy(Proxy, RequestUri)
+                .WithCredentials(Credentials, RequestUri)
+                .WithUri(RequestUri)
+                .ToString();
 
         }
 

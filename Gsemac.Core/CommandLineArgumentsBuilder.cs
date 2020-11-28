@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 
@@ -9,12 +10,25 @@ namespace Gsemac.Core {
 
         // Public members
 
-        public void AddArgument(string argumentValue) {
+        public CommandLineArgumentsBuilder AddArgument(string argumentValue) {
+
+            if (string.IsNullOrWhiteSpace(argumentValue))
+                throw new ArgumentNullException(nameof(argumentValue));
 
             arguments.Add(EscapeArgumentValue(argumentValue));
 
+            return this;
+
         }
-        public void AddArgument(string argumentName, string argumentValue) {
+        public CommandLineArgumentsBuilder AddArgument(string argumentName, string argumentValue) {
+
+            argumentName = argumentName?.Trim();
+
+            if (string.IsNullOrWhiteSpace(argumentName))
+                throw new ArgumentNullException(nameof(argumentName));
+
+            if (string.IsNullOrWhiteSpace(argumentValue))
+                throw new ArgumentNullException(nameof(argumentValue));
 
             if (!argumentName.StartsWith("-")) {
 
@@ -27,7 +41,10 @@ namespace Gsemac.Core {
 
             arguments.Add($"{EscapeArgumentValue(argumentName)} {EscapeArgumentValue(argumentValue)}");
 
+            return this;
+
         }
+
         public void Clear() {
 
             arguments.Clear();
@@ -39,6 +56,10 @@ namespace Gsemac.Core {
             return string.Join(" ", arguments);
 
         }
+
+        ICommandLineArgumentsBuilder ICommandLineArgumentsBuilder.AddArgument(string argumentValue) => AddArgument(argumentValue);
+        ICommandLineArgumentsBuilder ICommandLineArgumentsBuilder.AddArgument(string argumentName, string argumentValue) => AddArgument(argumentName, argumentValue);
+
 
         // Private members
 
