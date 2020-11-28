@@ -1,9 +1,9 @@
 ﻿using Gsemac.IO;
+using Gsemac.Net.Extensions;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -72,28 +72,11 @@ namespace Gsemac.Net.Curl {
                         if (File.Exists(LibCurl.CABundlePath))
                             LibCurl.EasySetOpt(easyHandle, CurlOption.CaInfo, LibCurl.CABundlePath);
 
-                        // Set method.
-
-                        LibCurl.EasySetOpt(easyHandle, CurlOption.CustomRequest, Method);
-
-                        if (Method.Equals("post", StringComparison.OrdinalIgnoreCase))
-                            LibCurl.EasySetOpt(easyHandle, CurlOption.Post, 1);
-                        else if (Method.Equals("put", StringComparison.OrdinalIgnoreCase))
-                            LibCurl.EasySetOpt(easyHandle, CurlOption.Put, 1);
-
-                        // Copy headers.
-
-                        foreach (string headerName in Headers.AllKeys)
-                            headers.Append($"{headerName}: {Headers[headerName]}");
-
-                        LibCurl.EasySetOpt(easyHandle, CurlOption.HttpHeader, headers.Handle);
-
-                        // Copy cookies.
-
-                        string cookieHeader = CookieContainer?.GetCookieHeader(RequestUri);
-
-                        if (!string.IsNullOrEmpty(cookieHeader))
-                            LibCurl.EasySetOpt(easyHandle, CurlOption.Cookie, cookieHeader);
+                        SetCookies(easyHandle);
+                        SetCredentials(easyHandle);
+                        SetHeaders(easyHandle, headers);
+                        SetMethod(easyHandle);
+                        SetProxy(easyHandle);
 
                         // Execute the request.
 
@@ -169,6 +152,51 @@ namespace Gsemac.Net.Curl {
             }
 
             return CurlHttpVersion.None;
+
+        }
+
+        private void SetCredentials(CurlEasyHandle easyHandle) {
+
+            if (!(Credentials is null)) {
+
+                string credentialString = Credentials.ToCredentialString(RequestUri, "Basic");
+
+                if (!string.IsNullOrEmpty(credentialString))
+                    LibCurl.EasySetOpt(easyHandle, CurlOption.UserPwd, credentialString);
+
+            }
+
+        }
+        private void SetCookies(CurlEasyHandle easyHandle) {
+
+            string cookieHeader = CookieContainer?.GetCookieHeader(RequestUri);
+
+            if (!string.IsNullOrEmpty(cookieHeader))
+                LibCurl.EasySetOpt(easyHandle, CurlOption.Cookie, cookieHeader);
+
+        }
+        private void SetHeaders(CurlEasyHandle easyHandle, SList headers) {
+
+            foreach (string headerName in Headers.AllKeys)
+                headers.Append($"{headerName}: {Headers[headerName]}");
+
+            LibCurl.EasySetOpt(easyHandle, CurlOption.HttpHeader, headers.Handle);
+
+        }
+        private void SetMethod(CurlEasyHandle easyHandle) {
+
+            LibCurl.EasySetOpt(easyHandle, CurlOption.CustomRequest, Method);
+
+            if (Method.Equals("post", StringComparison.OrdinalIgnoreCase))
+                LibCurl.EasySetOpt(easyHandle, CurlOption.Post, 1);
+            else if (Method.Equals("put", StringComparison.OrdinalIgnoreCase))
+                LibCurl.EasySetOpt(easyHandle, CurlOption.Put, 1);
+
+        }
+        private void SetProxy(CurlEasyHandle easyHandle) {
+
+            if (!(Proxy is null) && !Proxy.IsBypassed(RequestUri))
+                LibCurl.EasySetOpt(easyHandle, CurlOption.Proxy, Proxy.ToProxyString(RequestUri));
 
         }
 

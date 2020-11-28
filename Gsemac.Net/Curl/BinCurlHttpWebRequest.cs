@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Gsemac.Net.Extensions;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -229,37 +230,11 @@ namespace Gsemac.Net.Curl {
             if (Proxy is null || Proxy.IsBypassed(RequestUri))
                 return string.Empty;
 
-            Uri proxyUri = Proxy.GetProxy(RequestUri);
-
             StringBuilder sb = new StringBuilder();
 
             sb.Append("--proxy ");
             sb.Append("\"");
-
-            sb.Append(proxyUri.GetLeftPart(UriPartial.Scheme));
-
-            if (Proxy.Credentials != null) {
-
-                NetworkCredential credentials = Proxy.Credentials.GetCredential(RequestUri, string.Empty);
-
-                if (credentials != null) {
-
-                    sb.Append(EscapeCurlArgument(credentials.UserName));
-                    sb.Append(":");
-                    sb.Append(EscapeCurlArgument(credentials.Password));
-                    sb.Append("@");
-
-                }
-
-            }
-
-            sb.Append(proxyUri.Host);
-
-            if (!proxyUri.IsDefaultPort)
-                sb.Append(string.Format(":{0}", proxyUri.Port));
-
-            sb.Append("/");
-
+            sb.Append(EscapeCurlArgument(Proxy.ToProxyString(RequestUri)));
             sb.Append("\"");
 
             return sb.ToString();
@@ -272,26 +247,18 @@ namespace Gsemac.Net.Curl {
 
             StringBuilder sb = new StringBuilder();
 
-            if (Credentials != null) {
+            NetworkCredential credentials = Credentials?.GetCredential(RequestUri, "Basic");
 
-                NetworkCredential credentials = Proxy.Credentials.GetCredential(RequestUri, string.Empty);
+            if (credentials != null) {
 
-                if (credentials != null) {
-
-                    sb.Append("-u ");
-                    sb.Append("\"");
-
-                    sb.Append(EscapeCurlArgument(credentials.UserName));
-                    sb.Append(":");
-                    sb.Append(EscapeCurlArgument(credentials.Password));
-
-                    sb.Append("\"");
-
-                }
+                sb.Append("-u ");
+                sb.Append("\"");
+                sb.Append(credentials.ToCredentialString());
+                sb.Append("\"");
 
             }
 
-            return sb.ToString();
+            return EscapeCurlArgument(sb.ToString());
 
         }
         public string EscapeCurlArgument(string input) {
