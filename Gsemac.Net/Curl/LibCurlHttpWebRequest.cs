@@ -82,14 +82,14 @@ namespace Gsemac.Net.Curl {
 
                         LibCurl.EasyPerform(easyHandle);
 
-                        // Close the stream to indicate that we're done writing to it, unblocking readers.
-
-                        stream.Close();
-
                     }
 
                 }
                 finally {
+
+                    // Close the stream to indicate that we're done writing to it, unblocking readers.
+
+                    stream.Close();
 
                     LibCurl.GlobalCleanup();
 
