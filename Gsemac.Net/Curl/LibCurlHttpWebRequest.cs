@@ -155,24 +155,24 @@ namespace Gsemac.Net.Curl {
 
         }
 
-        private void SetCredentials(CurlEasyHandle easyHandle) {
-
-            if (!(Credentials is null)) {
-
-                string credentialString = Credentials.ToCredentialString(RequestUri, "Basic");
-
-                if (!string.IsNullOrEmpty(credentialString))
-                    LibCurl.EasySetOpt(easyHandle, CurlOption.UserPwd, credentialString);
-
-            }
-
-        }
         private void SetCookies(CurlEasyHandle easyHandle) {
 
             string cookieHeader = CookieContainer?.GetCookieHeader(RequestUri);
 
             if (!string.IsNullOrEmpty(cookieHeader))
                 LibCurl.EasySetOpt(easyHandle, CurlOption.Cookie, cookieHeader);
+
+        }
+        private void SetCredentials(CurlEasyHandle easyHandle) {
+
+            if (!(Credentials is null)) {
+
+                string credentialString = Credentials.ToCredentialString(RequestUri);
+
+                if (!string.IsNullOrEmpty(credentialString))
+                    LibCurl.EasySetOpt(easyHandle, CurlOption.UserPwd, credentialString);
+
+            }
 
         }
         private void SetHeaders(CurlEasyHandle easyHandle, SList headers) {
