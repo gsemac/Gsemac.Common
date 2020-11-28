@@ -7,13 +7,13 @@ namespace Gsemac.Net.Curl {
         // Public members
 
         public static string CABundlePath {
-            get => Environment.Is64BitProcess ? "x64/curl-ca-bundle.crt" : "x86/curl-ca-bundle.crt";
+            get => Environment.Is64BitProcess ? @"x64\curl-ca-bundle.crt" : @"x86\curl-ca-bundle.crt";
         }
         public static string CurlExecutablePath {
-            get => Environment.Is64BitProcess ? "x64/curl.exe" : "x86/curl.exe";
+            get => Environment.Is64BitProcess ? @"x64\curl.exe" : @"x86\curl.exe";
         }
         public static string LibCurlPath {
-            get => Environment.Is64BitProcess ? "x64/libcurl-x64.dll" : "x86/libcurl.dll";
+            get => Environment.Is64BitProcess ? @"x64\libcurl-x64.dll" : @"x86\libcurl.dll";
         }
 
         public static CurlCode GlobalInit(CurlGlobal flags = CurlGlobal.Default) {

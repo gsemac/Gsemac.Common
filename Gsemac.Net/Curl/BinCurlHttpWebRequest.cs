@@ -1,8 +1,5 @@
-﻿using Gsemac.Net.Extensions;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.IO;
-using System.Linq;
 using System.Net;
 using System.Text;
 
@@ -20,9 +17,6 @@ namespace Gsemac.Net.Curl {
 
         public BinCurlHttpWebRequest(Uri requestUri) :
             this(requestUri, LibCurl.CurlExecutablePath) {
-
-            getResponseAsyncDelegate = () => GetResponse();
-
         }
         /// <summary>
         /// Initializes a new instance of the <see cref="BinCurlHttpWebRequest"/> class.
@@ -33,6 +27,8 @@ namespace Gsemac.Net.Curl {
             base(requestUri) {
 
             this.curlExecutablePath = curlExecutablePath;
+
+            getResponseAsyncDelegate = new GetResponseDelegate(GetResponse);
 
         }
 
@@ -77,8 +73,10 @@ namespace Gsemac.Net.Curl {
 
         // Private members
 
+        private delegate WebResponse GetResponseDelegate();
+
         private readonly string curlExecutablePath;
-        private readonly Func<WebResponse> getResponseAsyncDelegate;
+        private readonly GetResponseDelegate getResponseAsyncDelegate;
         private MemoryStream requestStream;
 
         private string GetPostData() {

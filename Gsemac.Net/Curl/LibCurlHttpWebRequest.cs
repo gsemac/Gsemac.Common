@@ -185,6 +185,9 @@ namespace Gsemac.Net.Curl {
         }
         private void SetMethod(CurlEasyHandle easyHandle) {
 
+            if (string.IsNullOrWhiteSpace(Method))
+                Method = "GET";
+
             LibCurl.EasySetOpt(easyHandle, CurlOption.CustomRequest, Method);
 
             if (Method.Equals("post", StringComparison.OrdinalIgnoreCase))
