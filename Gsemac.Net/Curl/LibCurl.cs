@@ -93,6 +93,20 @@ namespace Gsemac.Net.Curl {
                 LibCurlNative.EasySetOpt32(handle, option, value);
 
         }
+        public static CurlCode EasySetOpt(CurlEasyHandle handle, CurlOption option, ReadFunctionDelegate value) {
+
+            return Environment.Is64BitProcess ?
+                LibCurlNative.EasySetOpt64(handle, option, value) :
+                LibCurlNative.EasySetOpt32(handle, option, value);
+
+        }
+        public static CurlCode EasySetOpt(CurlEasyHandle handle, CurlOption option, SListHandle value) {
+
+            return Environment.Is64BitProcess ?
+                LibCurlNative.EasySetOpt64(handle, option, value) :
+                LibCurlNative.EasySetOpt32(handle, option, value);
+
+        }
 
         public static CurlCode EasyPerform(CurlEasyHandle handle) {
 

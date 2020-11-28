@@ -51,15 +51,17 @@ namespace Gsemac.Net.Curl {
                 try {
 
                     using (CurlEasyHandle easyHandle = LibCurl.EasyInit())
-                    using (SList headers = new SList()) {
+                    using (SList headers = new SList())
+                    using (MemoryStream postDataStream = new MemoryStream(requestStream.ToArray())) {
 
-                        CurlDataCopier dataCopier = new CurlDataCopier(easyHandle, stream, cancellationToken);
+                        CurlDataCopier dataCopier = new CurlDataCopier(stream, postDataStream, cancellationToken);
+
+                        dataCopier.SetCallbacks(easyHandle);
 
                         LibCurl.EasySetOpt(easyHandle, CurlOption.Url, RequestUri.AbsoluteUri);
                         LibCurl.EasySetOpt(easyHandle, CurlOption.FollowLocation, AllowAutoRedirect ? 1 : 0);
                         LibCurl.EasySetOpt(easyHandle, CurlOption.MaxRedirs, MaximumAutomaticRedirections);
                         LibCurl.EasySetOpt(easyHandle, CurlOption.Timeout, Timeout);
-                        LibCurl.EasySetOpt(easyHandle, CurlOption.CustomRequest, Method);
                         LibCurl.EasySetOpt(easyHandle, CurlOption.HttpVersion, (int)GetHttpVersion());
 
                         if (AutomaticDecompression != DecompressionMethods.None)
@@ -70,12 +72,21 @@ namespace Gsemac.Net.Curl {
                         if (File.Exists(LibCurl.CABundlePath))
                             LibCurl.EasySetOpt(easyHandle, CurlOption.CaInfo, LibCurl.CABundlePath);
 
+                        // Set method.
+
+                        LibCurl.EasySetOpt(easyHandle, CurlOption.CustomRequest, Method);
+
+                        if (Method.Equals("post", StringComparison.OrdinalIgnoreCase))
+                            LibCurl.EasySetOpt(easyHandle, CurlOption.Post, 1);
+                        else if (Method.Equals("put", StringComparison.OrdinalIgnoreCase))
+                            LibCurl.EasySetOpt(easyHandle, CurlOption.Put, 1);
+
                         // Copy headers.
 
                         foreach (string headerName in Headers.AllKeys)
                             headers.Append($"{headerName}: {Headers[headerName]}");
 
-                        LibCurl.EasySetOpt(easyHandle, CurlOption.HttpHeader, headers.Handle.DangerousGetHandle());
+                        LibCurl.EasySetOpt(easyHandle, CurlOption.HttpHeader, headers.Handle);
 
                         // Copy cookies.
 
@@ -83,13 +94,6 @@ namespace Gsemac.Net.Curl {
 
                         if (!string.IsNullOrEmpty(cookieHeader))
                             LibCurl.EasySetOpt(easyHandle, CurlOption.Cookie, cookieHeader);
-
-                        // Add request data (i.e. POST/PUT data).
-
-                        string requestData = GetRequestData();
-
-                        if (requestData.Length > 0)
-                            LibCurl.EasySetOpt(easyHandle, CurlOption.PostFields, requestData);
 
                         // Execute the request.
 
@@ -165,15 +169,6 @@ namespace Gsemac.Net.Curl {
             }
 
             return CurlHttpVersion.None;
-
-        }
-        private string GetRequestData() {
-
-            string requestData = Encoding.ASCII.GetString(requestStream.ToArray());
-
-            requestStream.Dispose();
-
-            return requestData;
 
         }
 

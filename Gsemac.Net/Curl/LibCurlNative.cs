@@ -52,6 +52,16 @@ namespace Gsemac.Net.Curl {
         [DllImport(X64DllPath, EntryPoint = "curl_easy_setopt")]
         public static extern CurlCode EasySetOpt64(CurlEasyHandle handle, CurlOption option, ProgressFunctionDelegate value);
 
+        [DllImport(X86DllPath, EntryPoint = "curl_easy_setopt")]
+        public static extern CurlCode EasySetOpt32(CurlEasyHandle handle, CurlOption option, ReadFunctionDelegate value);
+        [DllImport(X64DllPath, EntryPoint = "curl_easy_setopt")]
+        public static extern CurlCode EasySetOpt64(CurlEasyHandle handle, CurlOption option, ReadFunctionDelegate value);
+
+        [DllImport(X86DllPath, EntryPoint = "curl_easy_setopt")]
+        public static extern CurlCode EasySetOpt32(CurlEasyHandle handle, CurlOption option, SListHandle value);
+        [DllImport(X64DllPath, EntryPoint = "curl_easy_setopt")]
+        public static extern CurlCode EasySetOpt64(CurlEasyHandle handle, CurlOption option, SListHandle value);
+
         [DllImport(X86DllPath, EntryPoint = "curl_easy_perform")]
         public static extern CurlCode EasyPerform32(CurlEasyHandle handle);
         [DllImport(X64DllPath, EntryPoint = "curl_easy_perform")]
