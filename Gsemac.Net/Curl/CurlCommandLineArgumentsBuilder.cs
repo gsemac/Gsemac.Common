@@ -61,7 +61,8 @@ namespace Gsemac.Net.Curl {
                 foreach (Cookie cookie in cookieContainer.GetCookies(requestUri))
                     cookieStrings.Add(cookie.ToString());
 
-                AddArgument("--cookie", string.Join(";", cookieStrings));
+                if (cookieStrings.Count > 0)
+                    AddArgument("--cookie", string.Join(";", cookieStrings));
 
             }
 
