@@ -5,6 +5,11 @@ namespace Gsemac.Net.Extensions {
 
     public static class CredentialsExtensions {
 
+        public static string ToCredentialString(this ICredentials credentials, Uri uri) {
+
+            return credentials.ToCredentialString(uri, string.Empty);
+
+        }
         public static string ToCredentialString(this ICredentials credentials, Uri uri, string authType) {
 
             if (credentials is null)
