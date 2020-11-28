@@ -16,9 +16,6 @@ namespace Gsemac.Net.Curl {
 
         public LibCurlHttpWebRequest(Uri requestUri) :
             base(requestUri) {
-
-            getResponseDelegate = new GetResponseDelegate(GetResponse);
-
         }
 
         // Methods overidden from WebRequest
@@ -81,7 +78,6 @@ namespace Gsemac.Net.Curl {
                         // Execute the request.
 
                         LibCurl.EasyPerform(easyHandle);
-
                     }
 
                 }
@@ -99,25 +95,12 @@ namespace Gsemac.Net.Curl {
 
             HaveResponse = true;
 
-            return new LibCurlHttpWebResponse(RequestUri, stream, cancellationTokenSource);
-
-        }
-        public override IAsyncResult BeginGetResponse(AsyncCallback callback, object state) {
-
-            return getResponseDelegate.BeginInvoke(callback, state);
-
-        }
-        public override WebResponse EndGetResponse(IAsyncResult asyncResult) {
-
-            return getResponseDelegate.EndInvoke(asyncResult);
+            return new LibCurlHttpWebResponse(this, stream, cancellationTokenSource);
 
         }
 
         // Private members
 
-        private delegate WebResponse GetResponseDelegate();
-
-        private readonly GetResponseDelegate getResponseDelegate;
         private readonly MemoryStream requestStream = new MemoryStream();
 
         private string GetAcceptEncoding() {

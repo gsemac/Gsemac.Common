@@ -29,10 +29,21 @@ namespace Gsemac.Net {
         }
         public override ICredentials Credentials { get; set; }
         public override WebHeaderCollection Headers { get; set; } = new WebHeaderCollection();
-        public override string Method { get; set; }
-        public override IWebProxy Proxy { get; set; }
+        public override string Method { get; set; } = "GET";
+        public override IWebProxy Proxy { get; set; } = new WebProxy();
         public override Uri RequestUri { get; }
         public override int Timeout { get; set; } = (int)TimeSpan.FromSeconds(100).TotalMilliseconds; // 100 seconds is the default for HttpWebRequest
+
+        public override IAsyncResult BeginGetResponse(AsyncCallback callback, object state) {
+
+            return getResponseDelegate.BeginInvoke(callback, state);
+
+        }
+        public override WebResponse EndGetResponse(IAsyncResult asyncResult) {
+
+            return getResponseDelegate.EndInvoke(asyncResult);
+
+        }
 
         // Properties inherited from IHttpWebRequest
 
@@ -119,11 +130,19 @@ namespace Gsemac.Net {
 
         // Protected members
 
+        private delegate WebResponse GetResponseDelegate();
+
         protected HttpWebRequestBase(Uri requestUri) {
 
             this.RequestUri = requestUri;
 
+            getResponseDelegate = new GetResponseDelegate(GetResponse);
+
         }
+
+        // Private members
+
+        private readonly GetResponseDelegate getResponseDelegate;
 
     }
 

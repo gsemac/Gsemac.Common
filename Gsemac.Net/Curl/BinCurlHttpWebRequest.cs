@@ -28,8 +28,6 @@ namespace Gsemac.Net.Curl {
 
             this.curlExecutablePath = curlExecutablePath;
 
-            getResponseAsyncDelegate = new GetResponseDelegate(GetResponse);
-
         }
 
         // Methods overidden from WebRequest
@@ -60,23 +58,10 @@ namespace Gsemac.Net.Curl {
             return new BinCurlHttpWebResponse(RequestUri, stream, ProtocolVersion, Method);
 
         }
-        public override IAsyncResult BeginGetResponse(AsyncCallback callback, object state) {
-
-            return getResponseAsyncDelegate.BeginInvoke(callback, state);
-
-        }
-        public override WebResponse EndGetResponse(IAsyncResult asyncResult) {
-
-            return getResponseAsyncDelegate.EndInvoke(asyncResult);
-
-        }
 
         // Private members
 
-        private delegate WebResponse GetResponseDelegate();
-
         private readonly string curlExecutablePath;
-        private readonly GetResponseDelegate getResponseAsyncDelegate;
         private MemoryStream requestStream;
 
         private string GetPostData() {

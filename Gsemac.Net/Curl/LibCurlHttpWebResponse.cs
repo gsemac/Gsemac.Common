@@ -1,5 +1,4 @@
-﻿using Gsemac.IO;
-using System;
+﻿using System;
 using System.IO;
 using System.Net;
 using System.Threading;
@@ -11,10 +10,14 @@ namespace Gsemac.Net.Curl {
 
         // Public members
 
-        public LibCurlHttpWebResponse(Uri responseUri, Stream responseStream, CancellationTokenSource cancellationTokenSource) :
-            base(responseUri, responseStream) {
+        public LibCurlHttpWebResponse(IHttpWebRequest parentRequest, Stream responseStream, CancellationTokenSource cancellationTokenSource) :
+            base(parentRequest.RequestUri, responseStream) {
 
             this.cancellationTokenSource = cancellationTokenSource;
+            this.maximumAutomaticRedirections = parentRequest.AllowAutoRedirect ? parentRequest.MaximumAutomaticRedirections : 0;
+
+            Method = parentRequest.Method;
+            ProtocolVersion = parentRequest.ProtocolVersion;
 
             // Read headers from the stream before returning to the caller so our property values are valid.
 
@@ -36,6 +39,7 @@ namespace Gsemac.Net.Curl {
         // Private members
 
         private readonly CancellationTokenSource cancellationTokenSource;
+        private readonly int maximumAutomaticRedirections;
 
         private void ReadHttpHeaders(Stream responseStream) {
 
@@ -43,14 +47,26 @@ namespace Gsemac.Net.Curl {
 
                 try {
 
-                    IHttpStatusLine statusLine = reader.ReadStatusLine();
+                    bool readHeaders = true;
+                    int numberOfRedirects = 0;
 
-                    ProtocolVersion = statusLine.ProtocolVersion;
-                    StatusCode = statusLine.StatusCode;
-                    StatusDescription = statusLine.StatusDescription;
+                    while (readHeaders) {
 
-                    foreach (IHttpHeader header in reader.ReadHeaders())
-                        Headers.Add(header.Name, header.Value);
+                        Headers.Clear();
+
+                        IHttpStatusLine statusLine = reader.ReadStatusLine();
+
+                        ProtocolVersion = statusLine.ProtocolVersion;
+                        StatusCode = statusLine.StatusCode;
+                        StatusDescription = statusLine.StatusDescription;
+
+                        foreach (IHttpHeader header in reader.ReadHeaders())
+                            Headers.Add(header.Name, header.Value);
+
+                        readHeaders = !string.IsNullOrEmpty(Headers[HttpResponseHeader.Location]) &&
+                            numberOfRedirects++ < maximumAutomaticRedirections;
+
+                    }
 
                 }
                 catch (ArgumentException) {
