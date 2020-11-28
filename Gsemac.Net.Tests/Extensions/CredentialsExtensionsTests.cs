@@ -19,7 +19,7 @@ namespace Gsemac.Net.Extensions.Tests {
 
             NetworkCredential credential = new NetworkCredential("username", "password", "example.com");
 
-            Assert.AreEqual("username:password", credential.ToCredentialString(new System.Uri("https://example.com")));
+            Assert.AreEqual("username:password", credential.ToCredentialString(new System.Uri("http://example.com")));
 
         }
         [TestMethod]
@@ -27,7 +27,7 @@ namespace Gsemac.Net.Extensions.Tests {
 
             NetworkCredential credential = new NetworkCredential("username", "password", "example.com");
 
-            Assert.AreEqual("username:password", credential.ToCredentialString(new System.Uri("https://example.com"), "Basic"));
+            Assert.AreEqual("username:password", credential.ToCredentialString(new System.Uri("http://example.com"), "Basic"));
 
         }
         [TestMethod]

@@ -7,6 +7,11 @@ namespace Gsemac.Net.Extensions {
 
     public static class WebProxyExtensions {
 
+        public static string ToProxyString(this IWebProxy proxy) {
+
+            return proxy.ToProxyString(new Uri("http://example.com"));
+
+        }
         public static string ToProxyString(this IWebProxy proxy, Uri destination) {
 
             if (proxy is null)
@@ -16,7 +21,7 @@ namespace Gsemac.Net.Extensions {
                 throw new ArgumentNullException(nameof(destination));
 
             Uri proxyUri = proxy.GetProxy(destination);
-            NetworkCredential credentials = proxy.Credentials?.GetCredential(destination, "Basic");
+            NetworkCredential credentials = proxy.Credentials?.GetCredential(destination, string.Empty);
 
             StringBuilder sb = new StringBuilder();
 
@@ -30,7 +35,7 @@ namespace Gsemac.Net.Extensions {
             }
 
             sb.Append(proxyUri.Host);
-            sb.Append(string.Format(":{0}", proxyUri.Port));
+            sb.Append(string.Format(":{0}", proxyUri.Port < 0 ? 1080 : proxyUri.Port));
 
             return sb.ToString();
 
