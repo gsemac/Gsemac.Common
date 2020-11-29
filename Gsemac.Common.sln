@@ -33,7 +33,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Gsemac.Net.Tests", "test\Gs
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Gsemac.Text", "src\Gsemac.Text\Gsemac.Text.csproj", "{214407BF-4C1D-4502-96E6-325FF4A42C8D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gsemac.Text.Tests", "Gsemac.Text.Tests\Gsemac.Text.Tests.csproj", "{9B9113A6-C103-41BE-89D1-5A8F9CAA0EAD}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gsemac.Text.Tests", "test\Gsemac.Text.Tests\Gsemac.Text.Tests.csproj", "{9B9113A6-C103-41BE-89D1-5A8F9CAA0EAD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
