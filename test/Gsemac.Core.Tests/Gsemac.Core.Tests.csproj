@@ -14,7 +14,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\Gsemac.Collections\Gsemac.Collections.csproj" />
+		<ProjectReference Include="..\..\src\Gsemac.Core\Gsemac.Core.csproj" />
 	</ItemGroup>
 
 </Project>
