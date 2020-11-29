@@ -55,7 +55,7 @@ namespace Gsemac.Net.Curl {
 
             HaveResponse = true;
 
-            return new BinCurlHttpWebResponse(RequestUri, stream, ProtocolVersion, Method);
+            return new BinCurlHttpWebResponse(this, stream);
 
         }
 
