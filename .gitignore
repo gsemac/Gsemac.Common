@@ -341,5 +341,4 @@ healthchecksdb
 ConsoleApp1/
 
 # Include DLLs in the repository.
-!/*/lib/*/x64/
-!/*/lib/*/x86/
+!/src/*/lib/**/
