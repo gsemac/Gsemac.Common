@@ -31,6 +31,12 @@ namespace Gsemac.Drawing.Extensions {
 
         }
 
+        public static XyzColor ToXyz(this Color color) {
+
+            return XyzColor.FromRgb(color);
+
+        }
+
     }
 
 }
