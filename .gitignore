@@ -338,7 +338,7 @@ ASALocalRun/
 
 # BeatPulse healthcheck temp database
 healthchecksdb
-/ConsoleApp1
+ConsoleApp1/
 
 # Include DLLs in the repository.
 !/*/lib/*/x64/
