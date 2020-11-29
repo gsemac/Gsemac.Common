@@ -1,4 +1,5 @@
 ﻿using Gsemac.IO;
+using Gsemac.IO.Extensions;
 using Gsemac.Net.Extensions;
 using System;
 using System.Collections.Generic;
@@ -20,17 +21,6 @@ namespace Gsemac.Net.Curl {
 
         // Methods overidden from WebRequest
 
-        public override Stream GetRequestStream() {
-
-            if (string.IsNullOrEmpty(Method))
-                Method = "POST";
-
-            if (!Method.Equals("POST", StringComparison.OrdinalIgnoreCase) && !Method.Equals("PUT", StringComparison.OrdinalIgnoreCase))
-                throw new ProtocolViolationException("Method must be POST or PUT.");
-
-            return requestStream;
-
-        }
         public override WebResponse GetResponse() {
 
             ConcurrentMemoryStream stream = new ConcurrentMemoryStream() {
@@ -54,7 +44,7 @@ namespace Gsemac.Net.Curl {
 
                     using (CurlEasyHandle easyHandle = LibCurl.EasyInit())
                     using (SList headers = new SList())
-                    using (MemoryStream postDataStream = new MemoryStream(requestStream.ToArray())) {
+                    using (MemoryStream postDataStream = new MemoryStream(GetRequestStream(validateMethod: false).ToArray())) {
 
                         CurlDataCopier dataCopier = new CurlDataCopier(stream, postDataStream, cancellationToken);
 
@@ -106,8 +96,6 @@ namespace Gsemac.Net.Curl {
         }
 
         // Private members
-
-        private readonly MemoryStream requestStream = new MemoryStream();
 
         private string GetAcceptEncoding() {
 

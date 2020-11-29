@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Gsemac.IO.Extensions;
+using System;
 using System.IO;
 using System.Net;
 using System.Text;
@@ -32,20 +33,6 @@ namespace Gsemac.Net.Curl {
 
         // Methods overidden from WebRequest
 
-        public override Stream GetRequestStream() {
-
-            if (string.IsNullOrEmpty(Method))
-                Method = "POST";
-
-            if (!Method.Equals("POST", StringComparison.OrdinalIgnoreCase) && !Method.Equals("PUT", StringComparison.OrdinalIgnoreCase))
-                throw new ProtocolViolationException("Method must be POST or PUT.");
-
-            if (requestStream is null)
-                requestStream = new MemoryStream();
-
-            return requestStream;
-
-        }
         public override WebResponse GetResponse() {
 
             BinCurlProcessStream stream = new BinCurlProcessStream(curlExecutablePath, CurlArguments) {
@@ -62,11 +49,12 @@ namespace Gsemac.Net.Curl {
         // Private members
 
         private readonly string curlExecutablePath;
-        private MemoryStream requestStream;
 
         private string GetPostData() {
 
-            if (requestStream is null)
+            Stream requestStream = GetRequestStream(validateMethod: false);
+
+            if (requestStream.Length <= 0)
                 return string.Empty;
 
             return Encoding.UTF8.GetString(requestStream.ToArray());

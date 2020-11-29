@@ -6,11 +6,20 @@ namespace Gsemac.IO.Extensions {
 
         public static byte[] ToArray(this Stream stream) {
 
-            using (var memoryStream = new MemoryStream()) {
+            if (stream is MemoryStream memoryStream) {
 
-                stream.CopyTo(memoryStream);
+                return memoryStream.ToArray();
 
-                return memoryStream.GetBuffer();
+            }
+            else {
+
+                using (var ms = new MemoryStream()) {
+
+                    stream.CopyTo(ms);
+
+                    return ms.ToArray();
+
+                }
 
             }
 

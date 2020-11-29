@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Net;
 using System.Security.Cryptography.X509Certificates;
 
@@ -33,6 +34,8 @@ namespace Gsemac.Net {
         public override IWebProxy Proxy { get; set; } = new WebProxy();
         public override Uri RequestUri { get; }
         public override int Timeout { get; set; } = (int)TimeSpan.FromSeconds(100).TotalMilliseconds; // 100 seconds is the default for HttpWebRequest
+
+        public override Stream GetRequestStream() => GetRequestStream(validateMethod: true);
 
         public override IAsyncResult BeginGetResponse(AsyncCallback callback, object state) {
 
@@ -140,8 +143,28 @@ namespace Gsemac.Net {
 
         }
 
+        protected Stream GetRequestStream(bool validateMethod) {
+
+            if (validateMethod) {
+
+                if (string.IsNullOrEmpty(Method))
+                    Method = "POST";
+
+                if (!Method.Equals("POST", StringComparison.OrdinalIgnoreCase) && !Method.Equals("PUT", StringComparison.OrdinalIgnoreCase))
+                    throw new ProtocolViolationException("Method must be POST or PUT.");
+
+            }
+
+            if (requestStream is null)
+                requestStream = new MemoryStream();
+
+            return requestStream;
+
+        }
+
         // Private members
 
+        private MemoryStream requestStream;
         private readonly GetResponseDelegate getResponseDelegate;
 
     }
