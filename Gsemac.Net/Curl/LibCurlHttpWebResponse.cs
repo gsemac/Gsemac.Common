@@ -10,9 +10,12 @@ namespace Gsemac.Net.Curl {
 
         // Public members
 
+        public override Uri ResponseUri => responseUri;
+
         public LibCurlHttpWebResponse(IHttpWebRequest parentRequest, Stream responseStream, CancellationTokenSource cancellationTokenSource) :
             base(parentRequest.RequestUri, responseStream) {
 
+            this.responseUri = parentRequest.RequestUri;
             this.cancellationTokenSource = cancellationTokenSource;
             this.maximumAutomaticRedirections = parentRequest.AllowAutoRedirect ? parentRequest.MaximumAutomaticRedirections : 0;
 
@@ -38,6 +41,7 @@ namespace Gsemac.Net.Curl {
 
         // Private members
 
+        private Uri responseUri;
         private readonly CancellationTokenSource cancellationTokenSource;
         private readonly int maximumAutomaticRedirections;
 
@@ -63,8 +67,20 @@ namespace Gsemac.Net.Curl {
                         foreach (IHttpHeader header in reader.ReadHeaders())
                             Headers.Add(header.Name, header.Value);
 
-                        readHeaders = !string.IsNullOrEmpty(Headers[HttpResponseHeader.Location]) &&
-                            numberOfRedirects++ < maximumAutomaticRedirections;
+                        // Update response URI and continue reading headers if we were redirected.
+
+                        string location = Headers[HttpResponseHeader.Location];
+                        bool hasLocation = !string.IsNullOrWhiteSpace(location);
+
+                        readHeaders = hasLocation;
+
+                        if (hasLocation) {
+
+                            responseUri = new Uri(location);
+
+                            readHeaders = numberOfRedirects++ < maximumAutomaticRedirections;
+
+                        }
 
                     }
 
