@@ -1,8 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Net;
-using System.Text;
 using System.Text.RegularExpressions;
 
 namespace Gsemac.Net.Curl {
@@ -32,6 +31,23 @@ namespace Gsemac.Net.Curl {
             // Read headers from the stream before returning to the caller so our property values are valid.
 
             ReadHttpHeaders(responseStream);
+
+            // Check status code for success.
+
+            if (StatusCode == 0) {
+
+                // We didn't read a status code from the stream at all.
+
+                throw new WebException("Received an empty response.", null, WebExceptionStatus.ServerProtocolViolation, this);
+
+            }
+            else if (!((int)StatusCode).ToString(CultureInfo.InvariantCulture).StartsWith("2")) {
+
+                // We got a response, but didn't get a success code.
+
+                throw new WebException($"The remote server returned an error: ({(int)StatusCode}) {StatusDescription}.", null, WebExceptionStatus.ProtocolError, this);
+
+            }
 
         }
 
