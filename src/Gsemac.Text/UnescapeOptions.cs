@@ -1,4 +1,4 @@
-﻿namespace Gsemac.Core {
+﻿namespace Gsemac.Text {
 
     public enum UnescapeOptions {
         RepairTextEncoding = 1,

@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 
-namespace Gsemac.Core {
+namespace Gsemac.Text {
 
     public static class StringUtilities {
 

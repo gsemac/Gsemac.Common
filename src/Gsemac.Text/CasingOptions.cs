@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Gsemac.Core {
+namespace Gsemac.Text {
 
     [Flags]
     public enum CasingOptions {

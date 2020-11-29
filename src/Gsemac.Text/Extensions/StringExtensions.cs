@@ -1,6 +1,4 @@
-﻿using Gsemac.Core;
-
-namespace Gsemac.Utilities.Extensions {
+﻿namespace Gsemac.Text.Extensions {
 
     public static class StringExtensions {
 

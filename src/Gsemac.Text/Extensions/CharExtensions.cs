@@ -1,4 +1,4 @@
-﻿namespace Gsemac.Core.Extensions {
+﻿namespace Gsemac.Text.Extensions {
 
     public static class CharExtensions {
 
