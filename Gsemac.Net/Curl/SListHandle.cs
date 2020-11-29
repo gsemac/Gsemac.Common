@@ -14,9 +14,18 @@ namespace Gsemac.Net.Curl {
 
         protected override bool ReleaseHandle() {
 
-            LibCurl.SListFreeAll(this);
+            if (!IsClosed)
+                LibCurl.SListFreeAll(this);
 
             return true;
+
+        }
+        protected override void Dispose(bool disposing) {
+
+            if (disposing)
+                ReleaseHandle();
+
+            base.Dispose(disposing);
 
         }
 

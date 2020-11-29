@@ -18,7 +18,9 @@ namespace Gsemac.Net {
                 if (long.TryParse(Headers[HttpResponseHeader.ContentLength], out long result))
                     return result;
 
-                return 0;
+                // It's important to return -1 instead of 0, which lets classes like WebClient know there is still a body, just no content-length header.
+
+                return -1;
 
             }
             set => Headers[HttpResponseHeader.ContentLength] = value.ToString();

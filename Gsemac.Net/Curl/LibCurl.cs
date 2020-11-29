@@ -16,11 +16,22 @@ namespace Gsemac.Net.Curl {
             get => Environment.Is64BitProcess ? @"x64\libcurl-x64.dll" : @"x86\libcurl.dll";
         }
 
+        public static bool IsInitialized {
+            get {
+
+                lock (globalInitMutex)
+                    return globalInitRefCount > 0;
+
+            }
+        }
+
         public static CurlCode GlobalInit(CurlGlobal flags = CurlGlobal.Default) {
 
             lock (globalInitMutex) {
 
-                // curl_global_init is reference counted, so repeated calls are okay.
+                // curl_global_init is reference counted, but I do manual reference counting in order to implement IsInitialized.
+
+                ++globalInitRefCount;
 
                 return Environment.Is64BitProcess ?
                     LibCurlNative.GlobalInit64(flags) :
@@ -33,10 +44,17 @@ namespace Gsemac.Net.Curl {
 
             lock (globalInitMutex) {
 
-                if (Environment.Is64BitProcess)
-                    LibCurlNative.GlobalCleanup64();
-                else
-                    LibCurlNative.GlobalCleanup32();
+                if (globalInitRefCount == 1) {
+
+                    if (Environment.Is64BitProcess)
+                        LibCurlNative.GlobalCleanup64();
+                    else
+                        LibCurlNative.GlobalCleanup32();
+
+                }
+
+                if (globalInitRefCount > 0)
+                    --globalInitRefCount;
 
             }
 
@@ -145,6 +163,7 @@ namespace Gsemac.Net.Curl {
         // Private members
 
         private static readonly object globalInitMutex = new object();
+        private static int globalInitRefCount = 0;
 
     }
 

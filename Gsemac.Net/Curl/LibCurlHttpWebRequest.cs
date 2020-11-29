@@ -43,7 +43,12 @@ namespace Gsemac.Net.Curl {
 
             Task curlTask = Task.Factory.StartNew(() => {
 
-                LibCurl.GlobalInit();
+                // We shouldn't need to check if libcurl is initialized, because it's reference counted and can be called multiple times.
+                // However, repeated calls to curl_global_cleanup are crashing my program, so for the time being I'm not pairing it with this.
+                // It's up the user to call curl_global_cleanup once when they're done using it. 
+
+                if (!LibCurl.IsInitialized) // Check so ref count will not be increased (only one call to curl_global_cleanup required after multiple requests)
+                    LibCurl.GlobalInit();
 
                 try {
 
@@ -78,6 +83,7 @@ namespace Gsemac.Net.Curl {
                         // Execute the request.
 
                         LibCurl.EasyPerform(easyHandle);
+
                     }
 
                 }
@@ -87,7 +93,7 @@ namespace Gsemac.Net.Curl {
 
                     stream.Close();
 
-                    LibCurl.GlobalCleanup();
+                    //LibCurl.GlobalCleanup();
 
                 }
 
@@ -177,6 +183,8 @@ namespace Gsemac.Net.Curl {
                 LibCurl.EasySetOpt(easyHandle, CurlOption.Post, 1);
             else if (Method.Equals("put", StringComparison.OrdinalIgnoreCase))
                 LibCurl.EasySetOpt(easyHandle, CurlOption.Put, 1);
+            else if (Method.Equals("head", StringComparison.OrdinalIgnoreCase))
+                LibCurl.EasySetOpt(easyHandle, CurlOption.NoBody, 1);
 
         }
         private void SetProxy(CurlEasyHandle easyHandle) {
