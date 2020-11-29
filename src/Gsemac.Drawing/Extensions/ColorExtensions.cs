@@ -31,9 +31,29 @@ namespace Gsemac.Drawing.Extensions {
 
         }
 
+        public static Color ToRgb(this LabColor color) {
+
+            return color.ToXyz().ToRgb();
+
+        }
         public static XyzColor ToXyz(this Color color) {
 
             return XyzColor.FromRgb(color);
+
+        }
+        public static LabColor ToXyz(this LabColor color) {
+
+            return color.ToXyz();
+
+        }
+        public static LabColor ToLab(this Color color) {
+
+            return LabColor.FromXyz(XyzColor.FromRgb(color));
+
+        }
+        public static LabColor ToLab(this XyzColor color) {
+
+            return LabColor.FromXyz(color);
 
         }
 

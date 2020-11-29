@@ -34,17 +34,9 @@ namespace Gsemac.Drawing {
             double g = tempX * -0.9689 + tempY * 1.8758 + tempZ * 0.0415;
             double b = tempX * 0.0557 + tempY * -0.2040 + tempZ * 1.0570;
 
-            r = r > 0.0031308 ?
-                1.055 * Math.Pow(r, 1 / 2.4) - 0.055 :
-                12.92 * r;
-
-            g = g > 0.0031308 ?
-               1.055 * Math.Pow(g, 1 / 2.4) - 0.055 :
-               12.92 * g;
-
-            b = b > 0.0031308 ?
-              1.055 * Math.Pow(b, 1 / 2.4) - 0.055 :
-              12.92 * b;
+            r = r > 0.0031308 ? 1.055 * Math.Pow(r, 1 / 2.4) - 0.055 : 12.92 * r;
+            g = g > 0.0031308 ? 1.055 * Math.Pow(g, 1 / 2.4) - 0.055 : 12.92 * g;
+            b = b > 0.0031308 ? 1.055 * Math.Pow(b, 1 / 2.4) - 0.055 : 12.92 * b;
 
             r *= 255.0;
             g *= 255.0;
@@ -68,17 +60,9 @@ namespace Gsemac.Drawing {
             double tempG = g / 255.0;
             double tempB = b / 255.0;
 
-            tempR = tempR > 0.04045f ?
-                Math.Pow((tempR + 0.055) / 1.055, 2.4) :
-                tempR / 12.92;
-
-            tempG = tempG > 0.04045f ?
-                Math.Pow((tempR + 0.055) / 1.055, 2.4) :
-                tempG / 12.92;
-
-            tempB = tempB > 0.04045f ?
-              Math.Pow((tempR + 0.055) / 1.055, 2.4) :
-              tempB / 12.92;
+            tempR = tempR > 0.04045f ? Math.Pow((tempR + 0.055) / 1.055, 2.4) : tempR / 12.92;
+            tempG = tempG > 0.04045f ? Math.Pow((tempR + 0.055) / 1.055, 2.4) : tempG / 12.92;
+            tempB = tempB > 0.04045f ? Math.Pow((tempR + 0.055) / 1.055, 2.4) : tempB / 12.92;
 
             tempR *= 100.0;
             tempG *= 100.0;
