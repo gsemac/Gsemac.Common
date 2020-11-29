@@ -7,7 +7,7 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 
-namespace Gsemac.Drawing {
+namespace Gsemac.Drawing.Imaging {
 
     public class SystemDrawingImageConverter :
             IImageConverter {

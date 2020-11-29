@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Gsemac.Drawing {
+namespace Gsemac.Drawing.Imaging {
 
     public interface IImageConverter {
 

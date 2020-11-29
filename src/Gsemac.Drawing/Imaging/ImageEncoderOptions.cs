@@ -1,4 +1,4 @@
-﻿namespace Gsemac.Drawing {
+﻿namespace Gsemac.Drawing.Imaging {
 
     public class ImageEncoderOptions :
         IImageEncoderOptions {

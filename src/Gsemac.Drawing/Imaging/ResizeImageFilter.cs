@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Text;
 
-namespace Gsemac.Drawing {
+namespace Gsemac.Drawing.Imaging {
 
     public class ResizeImageFilter :
         IImageFilter {

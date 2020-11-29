@@ -7,7 +7,7 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.Text;
 
-namespace Gsemac.Drawing {
+namespace Gsemac.Drawing.Imaging {
 
     public class GrayscaleImageFilter :
         IImageFilter {
