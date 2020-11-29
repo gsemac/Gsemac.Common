@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Gsemac.Drawing {
 
-    public class XyzColor {
+    public struct XyzColor {
 
         // Public members
 
@@ -61,8 +61,8 @@ namespace Gsemac.Drawing {
             double tempB = b / 255.0;
 
             tempR = tempR > 0.04045f ? Math.Pow((tempR + 0.055) / 1.055, 2.4) : tempR / 12.92;
-            tempG = tempG > 0.04045f ? Math.Pow((tempR + 0.055) / 1.055, 2.4) : tempG / 12.92;
-            tempB = tempB > 0.04045f ? Math.Pow((tempR + 0.055) / 1.055, 2.4) : tempB / 12.92;
+            tempG = tempG > 0.04045f ? Math.Pow((tempG + 0.055) / 1.055, 2.4) : tempG / 12.92;
+            tempB = tempB > 0.04045f ? Math.Pow((tempB + 0.055) / 1.055, 2.4) : tempB / 12.92;
 
             tempR *= 100.0;
             tempG *= 100.0;

@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Gsemac.Drawing {
 
-    public class LabColor {
+    public struct LabColor {
 
         // Public members
 
@@ -53,9 +53,9 @@ namespace Gsemac.Drawing {
             // Algorithm from https://www.easyrgb.com/en/math.php
             // Using D65 observer values
 
-            x = x / (0.95047 - x);
-            y = y / (1.00000 - y);
-            z = z / (1.08883 - z);
+            x /= referenceX;
+            y /= referenceY;
+            z /= referenceZ;
 
             x = x > 0.008856 ? Math.Pow(x, 1 / 3.0) : (7.787 * x) + (16 / 116.0);
             y = y > 0.008856 ? Math.Pow(y, 1 / 3.0) : (7.787 * y) + (16 / 116.0);
@@ -70,6 +70,10 @@ namespace Gsemac.Drawing {
         }
 
         // Private members
+
+        private const double referenceX = 95.047;
+        private const double referenceY = 100.0;
+        private const double referenceZ = 108.883;
 
         private readonly double l;
         private readonly double a;
