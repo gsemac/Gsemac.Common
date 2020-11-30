@@ -15,4 +15,8 @@
 		<ProjectReference Include="..\Gsemac.Text\Gsemac.Text.csproj" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <PackageReference Include="SharpCompress" Version="0.24.0" />
+	</ItemGroup>
+
 </Project>
