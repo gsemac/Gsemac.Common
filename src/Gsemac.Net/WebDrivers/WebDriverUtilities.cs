@@ -11,9 +11,11 @@ namespace Gsemac.Net.WebDrivers {
 
         // Public members
 
-        public static IWebDriver CreateFirefoxWebDriver(IWebDriverOptions options, Uri uri) {
+        public static IWebDriver CreateFirefoxWebDriver(IWebDriverOptions options, Uri uri = null) {
 
             string webDriverExecutablePath = GetFullWebDriverExecutablePath(options.WebDriverExecutablePath);
+
+            // Create the driver service.
 
             FirefoxOptions driverOptions = new FirefoxOptions {
                 BrowserExecutableLocation = options.BrowserExecutablePath
@@ -30,8 +32,12 @@ namespace Gsemac.Net.WebDrivers {
             driverOptions.AddArguments($"--width={options.WindowSize.Width}");
             driverOptions.AddArguments($"--height={options.WindowSize.Height}");
 
+            // Apply headless setting.
+
             if (options.Headless)
                 driverOptions.AddArgument("--headless");
+
+            // Apply user agent.
 
             FirefoxProfile profile = new FirefoxProfile {
                 DeleteAfterUse = true
@@ -40,9 +46,11 @@ namespace Gsemac.Net.WebDrivers {
             if (!string.IsNullOrEmpty(options.UserAgent))
                 profile.SetPreference("general.useragent.override", options.UserAgent);
 
-            if (options.Proxy != null) {
+            // If the user specified a proxy, apply the proxy.
 
-                string proxyAbsoluteUri = options.Proxy.GetProxy(uri).AbsoluteUri;
+            if (!(options.Proxy is null)) {
+
+                string proxyAbsoluteUri = options.Proxy.GetProxy(uri ?? new Uri("http://example.com")).AbsoluteUri;
 
                 Proxy proxy = new Proxy {
                     HttpProxy = proxyAbsoluteUri,
@@ -53,10 +61,12 @@ namespace Gsemac.Net.WebDrivers {
 
             }
 
+            // Disable pop-ups.
+
             if (options.DisablePopUps)
                 profile.SetPreference("dom.popup_allowed_events", "");
 
-            // This preference disables the "navigator.webdriver" property.
+            // Disable the "navigator.webdriver" property.
 
             profile.SetPreference("dom.webdriver.enabled", false);
 
@@ -69,9 +79,11 @@ namespace Gsemac.Net.WebDrivers {
             return driver;
 
         }
-        public static IWebDriver CreateChromeWebDriver(IWebDriverOptions options, Uri uri) {
+        public static IWebDriver CreateChromeWebDriver(IWebDriverOptions options, Uri uri = null) {
 
             string webDriverExecutablePath = GetFullWebDriverExecutablePath(options.WebDriverExecutablePath);
+
+            // Create the driver service.
 
             ChromeOptions driverOptions = new ChromeOptions {
                 BinaryLocation = options.BrowserExecutablePath
@@ -88,16 +100,22 @@ namespace Gsemac.Net.WebDrivers {
             driverOptions.AddArgument($"--window-size={options.WindowSize.Width},{options.WindowSize.Height}");
             driverOptions.AddArgument($"--window-position={options.WindowPosition.X},{options.WindowPosition.Y}");
 
+            // Apply headless setting.
+
             if (options.Headless)
                 driverOptions.AddArgument("--headless");
+
+            // Apply user agent.
 
             if (!string.IsNullOrEmpty(options.UserAgent))
                 driverOptions.AddArgument($"--user-agent={options.UserAgent}");
 
-            if (options.Proxy != null)
-                driverOptions.AddArgument($"--proxy-server={options.Proxy.GetProxy(uri).AbsoluteUri}");
+            // If the user specified a proxy, apply the proxy.
 
-            // This argument disables the "navigator.webdriver" property.
+            if (!(options.Proxy is null))
+                driverOptions.AddArgument($"--proxy-server={options.Proxy.GetProxy(uri ?? new Uri("http://example.com")).AbsoluteUri}");
+
+            // Disable the "navigator.webdriver" property.
 
             driverOptions.AddArgument("--disable-blink-features=AutomationControlled");
 
