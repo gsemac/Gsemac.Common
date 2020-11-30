@@ -1,16 +1,23 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 
 namespace Gsemac.IO.Compression {
 
-    public interface IArchive {
+    public interface IArchive :
+        IDisposable {
+
+        bool CanRead { get; }
+        bool CanWrite { get; }
+        CompressionLevel CompressionLevel { get; set; }
 
         void AddEntry(Stream stream, string pathInArchive);
-        void RemoveEntry(IArchiveEntry entry);
+        IArchiveEntry GetEntry(string pathInArchive);
+        void DeleteEntry(IArchiveEntry entry);
         void ExtractEntry(IArchiveEntry entry, Stream outputStream);
         IEnumerable<IArchiveEntry> GetEntries();
 
-        void SaveTo(Stream stream, Stream outputStream);
+        void SaveTo(Stream outputStream);
 
     }
 
