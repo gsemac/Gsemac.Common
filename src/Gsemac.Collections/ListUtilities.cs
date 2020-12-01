@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Gsemac.Utilities {
+namespace Gsemac.Collections {
 
     public static class ListUtilities {
 
