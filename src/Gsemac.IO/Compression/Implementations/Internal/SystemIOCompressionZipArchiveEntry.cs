@@ -4,30 +4,22 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Gsemac.IO.Compression.Internal {
+namespace Gsemac.IO.Compression.Implementations.Internal {
 
     internal class SystemIOCompressionZipArchiveEntry :
         IArchiveEntry {
 
         // Public members
 
-        public string Path => entry.FullName;
+        public string Path => BaseEntry.FullName;
+        
+        public System.IO.Compression.ZipArchiveEntry BaseEntry { get; }
 
         public SystemIOCompressionZipArchiveEntry(System.IO.Compression.ZipArchiveEntry entry) {
 
-            this.entry = entry;
+            this.BaseEntry = entry;
 
         }
-
-        public System.IO.Compression.ZipArchiveEntry GetEntry() {
-
-            return entry;
-
-        }
-
-        // Private members
-
-        private readonly System.IO.Compression.ZipArchiveEntry entry;
 
     }
 

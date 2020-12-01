@@ -11,8 +11,8 @@ namespace Gsemac.IO.Compression {
         bool CanWrite { get; }
         CompressionLevel CompressionLevel { get; set; }
 
-        void AddEntry(Stream stream, string pathInArchive);
-        IArchiveEntry GetEntry(string pathInArchive);
+        IArchiveEntry AddEntry(Stream stream, string entryName, bool leaveOpen = false);
+        IArchiveEntry GetEntry(string entryName);
         void DeleteEntry(IArchiveEntry entry);
         void ExtractEntry(IArchiveEntry entry, Stream outputStream);
         IEnumerable<IArchiveEntry> GetEntries();

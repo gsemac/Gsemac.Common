@@ -1,7 +1,7 @@
 ﻿<Project Sdk="MSBuild.Sdk.Extras/2.0.54">
 
 	<PropertyGroup>
-		<TargetFrameworks>netstandard2.0;net40-client</TargetFrameworks>
+		<TargetFrameworks>netstandard2.0;net40-client;net45</TargetFrameworks>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)' == 'Release'">
@@ -9,19 +9,14 @@
 		<DebugSymbols>false</DebugSymbols>
 	</PropertyGroup>
 
-	<PropertyGroup Condition="$([System.Text.RegularExpressions.Regex]::IsMatch('$(TargetFramework)', '^net\d'))">
-		<DefineConstants>NETFRAMEWORK</DefineConstants>
-	</PropertyGroup>
-	<PropertyGroup Condition="$([System.Text.RegularExpressions.Regex]::IsMatch('$(TargetFramework)', '^netstandard\d'))">
-		<DefineConstants>NETSTANDARD</DefineConstants>
-	</PropertyGroup>
-	<PropertyGroup Condition="$([System.Text.RegularExpressions.Regex]::IsMatch('$(TargetFramework)', '^netcoreapp\d'))">
-		<DefineConstants>NETCORE</DefineConstants>
-	</PropertyGroup>
 	<PropertyGroup Condition="$(DefineConstants.Contains('NETCORE')) Or $(DefineConstants.Contains('NETSTANDARD')) Or $([System.Text.RegularExpressions.Regex]::IsMatch('$(TargetFramework)', '^net4[5-9]'))">
 		<DefineConstants>NETFRAMEWORK45_OR_NEWER</DefineConstants>
 	</PropertyGroup>
 
+	<ItemGroup Condition="$(DefineConstants.Contains('NETFRAMEWORK')) And $(DefineConstants.Contains('NETFRAMEWORK45_OR_NEWER'))">
+		<Reference Include="System.IO.Compression" />
+	</ItemGroup>
+	
 	<ItemGroup>
 		<ProjectReference Include="..\Gsemac.Collections\Gsemac.Collections.csproj" />
 		<ProjectReference Include="..\Gsemac.Core\Gsemac.Core.csproj" />

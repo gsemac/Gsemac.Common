@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Gsemac.IO.Compression.Implementations;
+using System;
 using System.Collections.Generic;
 using System.IO;
 
@@ -16,27 +17,37 @@ namespace Gsemac.IO.Compression {
             set => underlyingArchive.CompressionLevel = value;
         }
 
+        public ZipArchive() {
+
+#if NETFRAMEWORK45_OR_NEWER
+
+            underlyingArchive = new SystemIOCompressionZipArchive();
+#else
+            underlyingArchive = new SharpCompressZipArchive();
+#endif
+
+        }
         public ZipArchive(string filePath, FileAccess fileAccess = FileAccess.ReadWrite) {
 
-#if NETCORE || NETSTANDARD
-
-            underlyingArchive = new Internal.SystemIOCompressionZipArchive(filePath, fileAccess);
-
+#if NETFRAMEWORK45_OR_NEWER
+            underlyingArchive = new SystemIOCompressionZipArchive(filePath, fileAccess);
+#else
+            underlyingArchive = new SharpCompressZipArchive(filePath, fileAccess);
 #endif
 
         }
-        public ZipArchive(Stream stream, FileAccess fileAccess = FileAccess.ReadWrite) {
+        public ZipArchive(Stream stream) {
 
-#if NETCORE || NETSTANDARD
-
-            underlyingArchive = new Internal.SystemIOCompressionZipArchive(stream, fileAccess);
-
+#if NETFRAMEWORK45_OR_NEWER
+            underlyingArchive = new SystemIOCompressionZipArchive(stream);
+#else
+            underlyingArchive = new SharpCompressZipArchive(stream);
 #endif
 
         }
 
-        public void AddEntry(Stream stream, string pathInArchive) => underlyingArchive.AddEntry(stream, pathInArchive);
-        public IArchiveEntry GetEntry(string pathInArchive) => underlyingArchive.GetEntry(pathInArchive);
+        public IArchiveEntry AddEntry(Stream stream, string entryName, bool leaveOpen = false) => underlyingArchive.AddEntry(stream, entryName, leaveOpen);
+        public IArchiveEntry GetEntry(string entryName) => underlyingArchive.GetEntry(entryName);
         public void DeleteEntry(IArchiveEntry entry) => underlyingArchive.DeleteEntry(entry);
         public void ExtractEntry(IArchiveEntry entry, Stream outputStream) => underlyingArchive.ExtractEntry(entry, outputStream);
         public IEnumerable<IArchiveEntry> GetEntries() => underlyingArchive.GetEntries();

@@ -2,8 +2,8 @@
 
     public enum CompressionLevel {
         None,
-        OptimizeSpeed,
-        OptimizeSize
+        OptimalSpeed,
+        OptimalSize
     }
 
 }

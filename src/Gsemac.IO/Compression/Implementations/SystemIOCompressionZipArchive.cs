@@ -1,21 +1,22 @@
 ﻿#if NETFRAMEWORK45_OR_NEWER
 
+using Gsemac.IO.Compression.Implementations.Internal;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
 
-namespace Gsemac.IO.Compression.Internal {
+namespace Gsemac.IO.Compression.Implementations {
 
-    internal class SystemIOCompressionZipArchive :
+    public class SystemIOCompressionZipArchive :
         IArchive {
 
         // Public members
 
-        public bool CanRead => zipArchive.Mode == System.IO.Compression.ZipArchiveMode.Read || zipArchive.Mode == System.IO.Compression.ZipArchiveMode.Update;
-        public bool CanWrite => zipArchive.Mode == System.IO.Compression.ZipArchiveMode.Create || zipArchive.Mode == System.IO.Compression.ZipArchiveMode.Update;
-        public CompressionLevel CompressionLevel { get; set; } = CompressionLevel.OptimizeSize;
+        public bool CanRead => archive.Mode == System.IO.Compression.ZipArchiveMode.Read || archive.Mode == System.IO.Compression.ZipArchiveMode.Update;
+        public bool CanWrite => archive.Mode == System.IO.Compression.ZipArchiveMode.Create || archive.Mode == System.IO.Compression.ZipArchiveMode.Update;
+        public CompressionLevel CompressionLevel { get; set; } = CompressionLevel.OptimalSize;
 
         public SystemIOCompressionZipArchive() :
             this(new MemoryStream(), false, FileAccess.ReadWrite) {
@@ -23,35 +24,42 @@ namespace Gsemac.IO.Compression.Internal {
         public SystemIOCompressionZipArchive(string filePath, FileAccess fileAccess = FileAccess.ReadWrite) :
             this(new FileStream(filePath, FileMode.OpenOrCreate, fileAccess), false, fileAccess) {
         }
-        public SystemIOCompressionZipArchive(Stream stream, FileAccess fileAccess = FileAccess.ReadWrite) :
-            this(stream, true, fileAccess) {
+        public SystemIOCompressionZipArchive(Stream stream) :
+            this(stream, true, FileAccess.ReadWrite) {
         }
 
-        public void AddEntry(Stream stream, string pathInArchive) {
+        public IArchiveEntry AddEntry(Stream stream, string entryName, bool leaveOpen = false) {
 
             if (stream is null)
                 throw new ArgumentNullException(nameof(stream));
 
-            if (string.IsNullOrWhiteSpace(pathInArchive))
-                throw new ArgumentNullException(nameof(pathInArchive));
+            if (string.IsNullOrWhiteSpace(entryName))
+                throw new ArgumentNullException(nameof(entryName));
 
             // The ZipArchive class does not overwrite existing files if one already exists at the same path, but adds a duplicate.
             // To simulate overwriting the existing file, we'll delete the original file first if it is present.
 
-            IArchiveEntry existingEntry = GetEntry(pathInArchive);
+            IArchiveEntry existingEntry = GetEntry(entryName);
 
             if (!(existingEntry is null))
                 DeleteEntry(existingEntry);
 
-            System.IO.Compression.ZipArchiveEntry entry = zipArchive.CreateEntry(pathInArchive, GetCompressionLevel(CompressionLevel));
+            System.IO.Compression.ZipArchiveEntry entry = archive.CreateEntry(entryName, GetCompressionLevel(CompressionLevel));
 
             using (Stream entryStream = entry.Open())
                 stream.CopyTo(entryStream);
 
-        }
-        public IArchiveEntry GetEntry(string pathInArchive) {
+            // We can close the stream immediately since it's already copied to the archive.
 
-            System.IO.Compression.ZipArchiveEntry entry = zipArchive.GetEntry(pathInArchive);
+            if (!leaveOpen)
+                stream.Dispose();
+
+            return new SystemIOCompressionZipArchiveEntry(entry);
+
+        }
+        public IArchiveEntry GetEntry(string entryName) {
+
+            System.IO.Compression.ZipArchiveEntry entry = archive.GetEntry(entryName);
 
             return entry is null ? null : new SystemIOCompressionZipArchiveEntry(entry);
 
@@ -61,8 +69,8 @@ namespace Gsemac.IO.Compression.Internal {
             if (entry is null)
                 throw new ArgumentNullException(nameof(entry));
 
-            if (entry is SystemIOCompressionZipArchiveEntry zipArchiveEntry && zipArchiveEntry.GetEntry().Archive == zipArchive)
-                zipArchiveEntry.GetEntry().Delete();
+            if (entry is SystemIOCompressionZipArchiveEntry zipArchiveEntry && zipArchiveEntry.BaseEntry.Archive == archive)
+                zipArchiveEntry.BaseEntry.Delete();
             else
                 throw new ArgumentException("Entry does not belong to this archive.", nameof(entry));
 
@@ -75,9 +83,9 @@ namespace Gsemac.IO.Compression.Internal {
             if (outputStream is null)
                 throw new ArgumentNullException(nameof(outputStream));
 
-            if (entry is SystemIOCompressionZipArchiveEntry zipArchiveEntry && zipArchiveEntry.GetEntry().Archive == zipArchive) {
+            if (entry is SystemIOCompressionZipArchiveEntry zipArchiveEntry && zipArchiveEntry.BaseEntry.Archive == archive) {
 
-                using (Stream entryStream = zipArchiveEntry.GetEntry().Open())
+                using (Stream entryStream = zipArchiveEntry.BaseEntry.Open())
                     entryStream.CopyTo(outputStream);
 
             }
@@ -88,7 +96,7 @@ namespace Gsemac.IO.Compression.Internal {
 
         public IEnumerable<IArchiveEntry> GetEntries() {
 
-            return zipArchive.Entries
+            return archive.Entries
                 .Where(entry => PathUtilities.IsFilePath(entry.FullName))
                 .Select(entry => new SystemIOCompressionZipArchiveEntry(entry));
 
@@ -125,7 +133,7 @@ namespace Gsemac.IO.Compression.Internal {
 
                 if (disposing) {
 
-                    zipArchive.Dispose();
+                    archive.Dispose();
 
                 }
 
@@ -138,13 +146,13 @@ namespace Gsemac.IO.Compression.Internal {
         // Private members
 
         private readonly Stream stream;
-        private readonly System.IO.Compression.ZipArchive zipArchive;
+        private readonly System.IO.Compression.ZipArchive archive;
         private bool disposedValue = false;
 
         private SystemIOCompressionZipArchive(Stream stream, bool leaveOpen, FileAccess fileAccess) {
 
             this.stream = stream;
-            this.zipArchive = new System.IO.Compression.ZipArchive(stream, GetZipArchiveMode(fileAccess), leaveOpen, Encoding.UTF8);
+            this.archive = new System.IO.Compression.ZipArchive(stream, GetZipArchiveMode(fileAccess), leaveOpen, Encoding.UTF8);
 
         }
 
@@ -174,10 +182,10 @@ namespace Gsemac.IO.Compression.Internal {
                 case CompressionLevel.None:
                     return System.IO.Compression.CompressionLevel.NoCompression;
 
-                case CompressionLevel.OptimizeSize:
+                case CompressionLevel.OptimalSize:
                     return System.IO.Compression.CompressionLevel.Optimal;
 
-                case CompressionLevel.OptimizeSpeed:
+                case CompressionLevel.OptimalSpeed:
                     return System.IO.Compression.CompressionLevel.Fastest;
 
                 default:
