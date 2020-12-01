@@ -19,9 +19,9 @@ namespace Gsemac.Net {
 
         }
 
-        public IHttpWebRequest CreateHttpWebRequest(Uri uri) {
+        public IHttpWebRequest CreateHttpWebRequest(Uri requestUri) {
 
-            IHttpWebRequest httpWebRequest = new HttpWebRequestWrapper(uri);
+            IHttpWebRequest httpWebRequest = new HttpWebRequestWrapper(requestUri);
 
             Options.CopyTo(httpWebRequest);
 

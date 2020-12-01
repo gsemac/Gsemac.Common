@@ -1,4 +1,6 @@
 ﻿using System;
+using System.IO;
+using System.Linq;
 
 namespace Gsemac.Net.Curl {
 
@@ -7,13 +9,16 @@ namespace Gsemac.Net.Curl {
         // Public members
 
         public static string CABundlePath {
-            get => Environment.Is64BitProcess ? @"x64\curl-ca-bundle.crt" : @"x86\curl-ca-bundle.crt";
+            get => GetCABundlePath();
+            set => caBundlePath = value;
         }
         public static string CurlExecutablePath {
-            get => Environment.Is64BitProcess ? @"x64\curl.exe" : @"x86\curl.exe";
+            get => GetCurlExecutablePath();
+            set => curlExecutablePath = value;
         }
         public static string LibCurlPath {
-            get => Environment.Is64BitProcess ? @"x64\libcurl-x64.dll" : @"x86\libcurl.dll";
+            get => GetLibCurlPath();
+            set => libCurlPath = value;
         }
 
         public static bool IsInitialized {
@@ -164,6 +169,67 @@ namespace Gsemac.Net.Curl {
 
         private static readonly object globalInitMutex = new object();
         private static int globalInitRefCount = 0;
+        private static string caBundlePath;
+        private static string curlExecutablePath;
+        private static string libCurlPath;
+
+        private static string GetCABundlePath() {
+
+            if (string.IsNullOrEmpty(caBundlePath)) {
+
+                string caBundleFilename = "curl-ca-bundle.crt";
+                string libDirectory = "lib";
+
+                caBundlePath = new string[] {
+                    caBundleFilename,
+                    Path.Combine(libDirectory, caBundleFilename),
+                    Environment.Is64BitProcess ? Path.Combine("x64", caBundleFilename) : Path.Combine("x86", caBundleFilename),
+                    Environment.Is64BitProcess ? Path.Combine(libDirectory, "x64", caBundleFilename) : Path.Combine(libDirectory, "x86", caBundleFilename),
+                }.FirstOrDefault(file => File.Exists(file));
+
+            }
+
+            return caBundlePath;
+
+        }
+        private static string GetCurlExecutablePath() {
+
+            if (string.IsNullOrEmpty(curlExecutablePath)) {
+
+                string caExecutableFilename = "curl.exe";
+                string binDirectory = "bin";
+
+                curlExecutablePath = new string[] {
+                    caExecutableFilename,
+                    Path.Combine(binDirectory, caExecutableFilename),
+                    Environment.Is64BitProcess ? Path.Combine("x64", caExecutableFilename) : Path.Combine("x86", caExecutableFilename),
+                    Environment.Is64BitProcess ? Path.Combine(binDirectory, "x64", caExecutableFilename) : Path.Combine(binDirectory, "x86", caExecutableFilename),
+                }.FirstOrDefault(file => File.Exists(file));
+
+            }
+
+            return curlExecutablePath;
+
+        }
+        private static string GetLibCurlPath() {
+
+            if (string.IsNullOrEmpty(libCurlPath)) {
+
+                string libCurlFilename = Environment.Is64BitProcess ? "libcurl-x64.dll" : "libcurl.dll";
+                string binDirectory = "lib";
+
+                libCurlPath = new string[] {
+                    libCurlFilename,
+                    Path.Combine(binDirectory, libCurlFilename),
+                    Environment.Is64BitProcess ? Path.Combine("x64", libCurlFilename) : Path.Combine("x86", libCurlFilename),
+                    Environment.Is64BitProcess ? Path.Combine(binDirectory, "x64", libCurlFilename) : Path.Combine(binDirectory, "x86", libCurlFilename),
+                }.FirstOrDefault(file => File.Exists(file));
+
+            }
+
+            return libCurlPath;
+
+        }
 
     }
 

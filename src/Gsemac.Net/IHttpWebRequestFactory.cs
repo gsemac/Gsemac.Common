@@ -6,7 +6,7 @@ namespace Gsemac.Net {
 
         IHttpWebRequestOptions Options { get; set; }
 
-        IHttpWebRequest CreateHttpWebRequest(Uri uri);
+        IHttpWebRequest CreateHttpWebRequest(Uri requestUri);
 
     }
 
