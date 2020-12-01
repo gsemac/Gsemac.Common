@@ -13,7 +13,7 @@ namespace Gsemac.IO.Compression.Implementations {
 
         public bool CanRead => fileAccess.HasFlag(FileAccess.Read);
         public bool CanWrite => fileAccess.HasFlag(FileAccess.Write);
-        public CompressionLevel CompressionLevel { get; set; } = CompressionLevel.OptimalSize;
+        public CompressionLevel CompressionLevel { get; set; } = CompressionLevel.Maximum;
 
         public SharpCompressZipArchive() {
 
@@ -175,11 +175,11 @@ namespace Gsemac.IO.Compression.Implementations {
 
             switch (compressionLevel) {
 
-                case CompressionLevel.None:
+                case CompressionLevel.Store:
                     return SharpCompress.Common.CompressionType.None;
 
-                case CompressionLevel.OptimalSpeed:
-                case CompressionLevel.OptimalSize:
+                case CompressionLevel.Fastest:
+                case CompressionLevel.Maximum:
                     return SharpCompress.Common.CompressionType.Deflate;
 
                 default:
@@ -192,13 +192,13 @@ namespace Gsemac.IO.Compression.Implementations {
 
             switch (compressionLevel) {
 
-                case CompressionLevel.None:
+                case CompressionLevel.Store:
                     return SharpCompress.Compressors.Deflate.CompressionLevel.None;
 
-                case CompressionLevel.OptimalSpeed:
+                case CompressionLevel.Fastest:
                     return SharpCompress.Compressors.Deflate.CompressionLevel.BestSpeed;
 
-                case CompressionLevel.OptimalSize:
+                case CompressionLevel.Maximum:
                     return SharpCompress.Compressors.Deflate.CompressionLevel.BestCompression;
 
                 default:

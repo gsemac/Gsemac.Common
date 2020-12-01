@@ -16,7 +16,7 @@ namespace Gsemac.IO.Compression.Implementations {
 
         public bool CanRead => archive.Mode == System.IO.Compression.ZipArchiveMode.Read || archive.Mode == System.IO.Compression.ZipArchiveMode.Update;
         public bool CanWrite => archive.Mode == System.IO.Compression.ZipArchiveMode.Create || archive.Mode == System.IO.Compression.ZipArchiveMode.Update;
-        public CompressionLevel CompressionLevel { get; set; } = CompressionLevel.OptimalSize;
+        public CompressionLevel CompressionLevel { get; set; } = CompressionLevel.Maximum;
 
         public SystemIOCompressionZipArchive() :
             this(new MemoryStream(), false, FileAccess.ReadWrite) {
@@ -179,13 +179,13 @@ namespace Gsemac.IO.Compression.Implementations {
 
             switch (compressionLevel) {
 
-                case CompressionLevel.None:
+                case CompressionLevel.Store:
                     return System.IO.Compression.CompressionLevel.NoCompression;
 
-                case CompressionLevel.OptimalSize:
+                case CompressionLevel.Maximum:
                     return System.IO.Compression.CompressionLevel.Optimal;
 
-                case CompressionLevel.OptimalSpeed:
+                case CompressionLevel.Fastest:
                     return System.IO.Compression.CompressionLevel.Fastest;
 
                 default:
