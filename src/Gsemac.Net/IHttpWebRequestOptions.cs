@@ -6,6 +6,7 @@ namespace Gsemac.Net {
 
         string Accept { get; }
         string AcceptLanguage { get; }
+        DecompressionMethods AutomaticDecompression { get; }
         CookieContainer Cookies { get; }
         IWebProxy Proxy { get; }
         string UserAgent { get; }
