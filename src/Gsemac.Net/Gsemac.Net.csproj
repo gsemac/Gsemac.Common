@@ -11,9 +11,15 @@
 
 	<ItemGroup>
 		<PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+		<PackageReference Include="Portable.BouncyCastle" Version="1.8.8" />
 		<PackageReference Include="Selenium.WebDriver" Version="3.141.0" />
+		<PackageReference Include="System.Data.SQLite" Version="1.0.113.6" />
 	</ItemGroup>
 
+	<ItemGroup Condition="$(DefineConstants.Contains('NETFRAMEWORK'))">
+		<Reference Include="System.Security" />
+	</ItemGroup>
+	
 	<ItemGroup>
 		<ProjectReference Include="..\Gsemac.IO\Gsemac.IO.csproj" />
 		<ProjectReference Include="..\Gsemac.Core\Gsemac.Core.csproj" />
@@ -35,6 +41,12 @@
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 			<Link>x86\%(Filename)%(Extension)</Link>
 		</None>
+	</ItemGroup>
+
+	<ItemGroup Condition="$(DefineConstants.Contains('NETSTANDARD'))">
+	  <PackageReference Include="System.Security.Cryptography.ProtectedData">
+	    <Version>5.0.0</Version>
+	  </PackageReference>
 	</ItemGroup>
 
 </Project>
