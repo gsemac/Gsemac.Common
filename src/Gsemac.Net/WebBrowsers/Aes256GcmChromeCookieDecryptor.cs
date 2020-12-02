@@ -19,16 +19,16 @@ namespace Gsemac.Net.WebBrowsers {
 
             // ASCII encoding of "v10" 
 
-            byte[] v10Bytes = new byte[] { 0x76, 0x31, 0x30 };
+            byte[] signatureBytes = new byte[] { 0x76, 0x31, 0x30 };
 
             using (MemoryStream stream = new MemoryStream(encryptedValue))
             using (BinaryReader reader = new BinaryReader(stream)) {
 
-                if (!reader.ReadBytes(v10Bytes.Length).SequenceEqual(v10Bytes))
+                if (!reader.ReadBytes(signatureBytes.Length).SequenceEqual(signatureBytes))
                     throw new FormatException("Encrypted value is not in the correct format.");
 
                 byte[] nonce = reader.ReadBytes(12);
-                byte[] ciphertext = reader.ReadBytes(encryptedValue.Length - (v10Bytes.Length + nonce.Length));
+                byte[] ciphertext = reader.ReadBytes(encryptedValue.Length - (signatureBytes.Length + nonce.Length));
                 byte[] decryptionKey = GetDecryptionKey();
 
                 return AesGcmDecrypt(ciphertext, decryptionKey, nonce);
