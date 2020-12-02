@@ -24,8 +24,10 @@ namespace Gsemac.Net {
 
             IHttpWebRequest httpWebRequest = webRequestFactory.CreateHttpWebRequest(address);
 
+            httpWebRequest.Headers.Clear();
+
             httpWebRequest.Credentials = Credentials;
-            httpWebRequest.Headers = Headers;
+            Headers.CopyTo(httpWebRequest);
             httpWebRequest.Proxy = Proxy;
 
             return httpWebRequest as WebRequest;

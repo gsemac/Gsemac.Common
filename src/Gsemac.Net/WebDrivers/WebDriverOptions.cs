@@ -1,5 +1,4 @@
-﻿using Gsemac.Net.WebDrivers;
-using System;
+﻿using System;
 using System.Drawing;
 using System.Net;
 
@@ -8,7 +7,7 @@ namespace Gsemac.Net.WebDrivers {
     public class WebDriverOptions :
         IWebDriverOptions {
 
-        public IWebProxy Proxy { get; set; }
+        public IWebProxy Proxy { get; set; } = WebRequest.DefaultWebProxy;
         public TimeSpan Timeout { get; set; } = TimeSpan.FromSeconds(30);
         public string UserAgent { get; set; }
         public string WebDriverExecutablePath { get; set; }

@@ -11,10 +11,23 @@ namespace Gsemac.Net.Extensions {
                 yield return new HttpHeader(key, headerCollection[key]);
 
         }
+
         public static void CopyTo(this WebHeaderCollection source, WebHeaderCollection desination) {
 
             foreach (IHttpHeader header in source.GetHeaders())
                 desination[header.Name] = header.Value;
+
+        }
+        public static void CopyTo(this WebHeaderCollection source, HttpWebRequest desination) {
+
+            foreach (IHttpHeader header in source.GetHeaders())
+                desination.SetHeader(header.Name, header.Value);
+
+        }
+        public static void CopyTo(this WebHeaderCollection source, IHttpWebRequest desination) {
+
+            foreach (IHttpHeader header in source.GetHeaders())
+                desination.SetHeader(header.Name, header.Value);
 
         }
 

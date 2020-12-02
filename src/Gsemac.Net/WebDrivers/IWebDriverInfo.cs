@@ -6,7 +6,8 @@ namespace Gsemac.Net.WebDrivers {
 
         Version Version { get; }
         Uri DownloadUri { get; }
-        string FileHash { get; }
+        string Md5Hash { get; }
+        DateTimeOffset LastUpdated { get; }
 
     }
 

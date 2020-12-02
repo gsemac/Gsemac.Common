@@ -40,6 +40,38 @@ namespace Gsemac.Net.Extensions {
             }
 
         }
+        public static void SetHeader(this IHttpWebRequest webRequest, string headerName, string headerValue) {
+
+            switch (headerName.ToLowerInvariant()) {
+
+                case "accept":
+                    webRequest.Accept = headerValue;
+                    break;
+
+                case "content-type":
+                    webRequest.ContentType = headerValue;
+                    break;
+
+                case "range": {
+
+                        var range = ParseRangeHeader(headerValue);
+
+                        webRequest.AddRange(range.Item1, range.Item2);
+
+                    }
+                    break;
+
+                case "user-agent":
+                    webRequest.UserAgent = headerValue;
+                    break;
+
+                default:
+                    webRequest.Headers.Set(headerName, headerValue);
+                    break;
+
+            }
+
+        }
 
         // Private members
 
