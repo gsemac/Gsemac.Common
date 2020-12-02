@@ -78,6 +78,13 @@ namespace Gsemac.Net.WebBrowsers {
                 .ThenBy(info => info.Is64Bit);
 
         }
+        public static IWebBrowserInfo GetWebBrowser(WebBrowserId webBrowserId) {
+
+            return GetWebBrowsers().Where(info => info.Id == webBrowserId)
+                .OrderByDescending(info => info.Is64Bit)
+                .FirstOrDefault();
+
+        }
 
         // Private members
 

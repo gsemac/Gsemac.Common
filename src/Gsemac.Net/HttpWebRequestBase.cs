@@ -33,7 +33,7 @@ namespace Gsemac.Net {
         public override ICredentials Credentials { get; set; }
         public override WebHeaderCollection Headers { get; set; } = new WebHeaderCollection();
         public override string Method { get; set; } = "GET";
-        public override IWebProxy Proxy { get; set; } = DefaultWebProxy;
+        public override IWebProxy Proxy { get; set; } = WebProxyUtilities.GetDefaultProxy();
         public override Uri RequestUri { get; }
         public override int Timeout { get; set; } = (int)TimeSpan.FromSeconds(100).TotalMilliseconds; // 100 seconds is the default for HttpWebRequest
 
