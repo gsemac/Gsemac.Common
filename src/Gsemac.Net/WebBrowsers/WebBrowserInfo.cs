@@ -44,7 +44,26 @@ namespace Gsemac.Net.WebBrowsers {
 
         }
 
-        public static IEnumerable<string> GetWebBrowserExecutablePaths() {
+        public static IEnumerable<IWebBrowserInfo> GetWebBrowserInfo() {
+
+            return GetWebBrowserExecutablePaths()
+                .Select(path => new WebBrowserInfo(path))
+                .OrderBy(info => info.Name)
+                .ThenBy(info => info.Version)
+                .ThenBy(info => info.Is64Bit);
+
+        }
+        public static IWebBrowserInfo GetWebBrowserInfo(WebBrowserId webBrowserId) {
+
+            return GetWebBrowserInfo().Where(info => info.Id == webBrowserId)
+                .OrderByDescending(info => info.Is64Bit)
+                .FirstOrDefault();
+
+        }
+
+        // Private members
+
+        private static IEnumerable<string> GetWebBrowserExecutablePaths() {
 
             // A better way of detecting installed web browsers might be looking up their associated keys in the registry.
 
@@ -69,24 +88,6 @@ namespace Gsemac.Net.WebBrowsers {
             return webBrowserExecutablePaths.Where(path => System.IO.File.Exists(path));
 
         }
-        public static IEnumerable<IWebBrowserInfo> GetWebBrowsers() {
-
-            return GetWebBrowserExecutablePaths()
-                .Select(path => new WebBrowserInfo(path))
-                .OrderBy(info => info.Name)
-                .ThenBy(info => info.Version)
-                .ThenBy(info => info.Is64Bit);
-
-        }
-        public static IWebBrowserInfo GetWebBrowser(WebBrowserId webBrowserId) {
-
-            return GetWebBrowsers().Where(info => info.Id == webBrowserId)
-                .OrderByDescending(info => info.Is64Bit)
-                .FirstOrDefault();
-
-        }
-
-        // Private members
 
         private static string GetBrowserName(FileVersionInfo versionInfo) {
 

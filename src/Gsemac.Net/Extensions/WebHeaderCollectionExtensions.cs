@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Net;
 
 namespace Gsemac.Net.Extensions {
@@ -16,6 +17,12 @@ namespace Gsemac.Net.Extensions {
 
             foreach (IHttpHeader header in source.GetHeaders())
                 desination[header.Name] = header.Value;
+
+        }
+        public static void CopyTo(this NameValueCollection source, WebHeaderCollection desination) {
+
+            foreach (string key in source.AllKeys)
+                desination[key] = source[key];
 
         }
         public static void CopyTo(this WebHeaderCollection source, HttpWebRequest desination) {
