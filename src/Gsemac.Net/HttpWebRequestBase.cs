@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Globalization;
 using System.IO;
 using System.Net;
 using System.Security.Cryptography.X509Certificates;
+using System.Text;
 
 namespace Gsemac.Net {
 
@@ -82,16 +84,20 @@ namespace Gsemac.Net {
         }
         public bool KeepAlive { get; set; } = true;
         public int MaximumAutomaticRedirections { get; set; } = 50;
+        public int MaximumResponseHeadersLength { get; set; } = HttpWebRequest.DefaultMaximumResponseHeadersLength;
+        public bool Pipelined { get; set; } = true;
         public Version ProtocolVersion { get; set; } = new Version(2, 0);
         public int ReadWriteTimeout { get; set; } = 300000;
         public string Referer {
             get => Headers[HttpRequestHeader.Referer];
             set => Headers[HttpRequestHeader.Referer] = value;
         }
+        public bool SendChunked { get; set; } = false;
         public string TransferEncoding {
             get => Headers[HttpRequestHeader.TransferEncoding];
             set => Headers[HttpRequestHeader.TransferEncoding] = value;
         }
+        public bool UnsafeAuthenticatedConnectionSharing { get; set; } = false;
         public string UserAgent {
             get => Headers[HttpRequestHeader.UserAgent];
             set => Headers[HttpRequestHeader.UserAgent] = value;
@@ -100,36 +106,28 @@ namespace Gsemac.Net {
         public X509CertificateCollection ClientCertificates { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public HttpContinueDelegate ContinueDelegate { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public ServicePoint ServicePoint => throw new NotImplementedException();
-        public int MaximumResponseHeadersLength { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public string MediaType { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public bool SendChunked { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public bool UnsafeAuthenticatedConnectionSharing { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public bool Pipelined { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
-        public void AddRange(int from, int to) {
-            throw new NotImplementedException();
-        }
-        public void AddRange(long from, long to) {
-            throw new NotImplementedException();
-        }
-        public void AddRange(int range) {
-            throw new NotImplementedException();
-        }
-        public void AddRange(long range) {
-            throw new NotImplementedException();
-        }
+        public void AddRange(int from, int to) => AddRange((long)from, to);
+        public void AddRange(long from, long to) => AddRange("bytes", from, to);
+        public void AddRange(int range) => AddRange((long)range);
+        public void AddRange(long range) => AddRange("bytes", range);
         public void AddRange(string rangeSpecifier, long from, long to) {
-            throw new NotImplementedException();
+
+            Headers[HttpRequestHeader.Range] = new RangeHeaderBuilder(Headers[HttpRequestHeader.Range])
+                .AddRange(rangeSpecifier, from, to)
+                .ToString();
+
         }
-        public void AddRange(string rangeSpecifier, int range) {
-            throw new NotImplementedException();
-        }
+        public void AddRange(string rangeSpecifier, int range) => AddRange(rangeSpecifier, (long)range);
         public void AddRange(string rangeSpecifier, long range) {
-            throw new NotImplementedException();
+
+            Headers[HttpRequestHeader.Range] = new RangeHeaderBuilder(Headers[HttpRequestHeader.Range])
+                .AddRange(rangeSpecifier, range)
+                .ToString();
+
         }
-        public void AddRange(string rangeSpecifier, int from, int to) {
-            throw new NotImplementedException();
-        }
+        public void AddRange(string rangeSpecifier, int from, int to) => AddRange(rangeSpecifier, (long)from, to);
 
         // Protected members
 
