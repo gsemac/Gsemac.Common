@@ -9,17 +9,18 @@ using System.Linq;
 namespace Gsemac.Net.WebBrowsers {
 
     public class Aes256GcmChromeCookieDecryptor :
-        IChromeCookieDecryptor {
+        ICookieDecryptor {
 
         // Public members
 
+        public bool CheckSignature(byte[] encryptedValue) {
+
+            return encryptedValue.Take(signatureBytes.Length).SequenceEqual(signatureBytes);
+
+        }
         public byte[] DecryptCookie(byte[] encryptedValue) {
 
             // Based on the answer given here: https://stackoverflow.com/a/60423699 (Topaco)
-
-            // ASCII encoding of "v10" 
-
-            byte[] signatureBytes = new byte[] { 0x76, 0x31, 0x30 };
 
             using (MemoryStream stream = new MemoryStream(encryptedValue))
             using (BinaryReader reader = new BinaryReader(stream)) {
@@ -39,6 +40,7 @@ namespace Gsemac.Net.WebBrowsers {
 
         // Private members
 
+        private readonly byte[] signatureBytes = new byte[] { 0x76, 0x31, 0x30 }; // ASCII encoding of "v10" 
         private byte[] decryptionKey;
 
         private string GetLocalStatePath() {
