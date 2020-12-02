@@ -12,7 +12,7 @@ namespace Gsemac.Net.WebBrowsers {
         public ChromeCookieDecryptor() {
 
             decryptors.Add(new Aes256GcmChromeCookieDecryptor());
-            decryptors.Add(new DPApiChromeCookieDecryptor());
+            decryptors.Add(new DpapiChromeCookieDecryptor());
 
         }
 
