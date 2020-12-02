@@ -1,10 +1,4 @@
-﻿using Gsemac.Net.Extensions;
-using System;
-using System.Collections.Generic;
-using System.Net;
-using System.Text;
-
-namespace Gsemac.Net {
+﻿namespace Gsemac.Net {
 
     public class WebClientFactory :
         IWebClientFactory {
@@ -22,47 +16,22 @@ namespace Gsemac.Net {
 
         }
 
-        public WebClient CreateWebClient() {
+        public System.Net.WebClient CreateWebClient() {
 
-            return new FactorylWebClient(webRequestFactory);
+            return new WebClient(webRequestFactory);
 
         }
 
         // Private members
 
-        private class FactorylWebClient :
-            WebClient {
+        private class WebClient :
+            WebClientBase {
 
             // Public members
 
-            public FactorylWebClient(IHttpWebRequestFactory webRequestFactory) {
-
-                this.webRequestFactory = webRequestFactory;
-
+            public WebClient(IHttpWebRequestFactory webRequestFactory) :
+                base(webRequestFactory) {
             }
-
-            // Protected members
-
-            protected override WebRequest GetWebRequest(Uri address) {
-
-                IHttpWebRequest httpWebRequest = webRequestFactory.CreateHttpWebRequest(address);
-
-                if (!(Credentials is null))
-                    httpWebRequest.Credentials = Credentials;
-
-                if (!(Proxy is null))
-                    httpWebRequest.Proxy = Proxy;
-
-                if (!(Headers is null))
-                    Headers.CopyTo(httpWebRequest.Headers);
-
-                return httpWebRequest as WebRequest;
-
-            }
-
-            // Private members
-
-            private readonly IHttpWebRequestFactory webRequestFactory;
 
         }
 

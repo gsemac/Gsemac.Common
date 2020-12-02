@@ -1,13 +1,10 @@
-﻿using System;
-using System.Net;
-
-namespace Gsemac.Net.Curl {
+﻿namespace Gsemac.Net.Curl {
 
     /// <summary>
     /// Provides common methods for sending data to and receiving data via Curl from a resource identified by a URI.
     /// </summary>
     public class BinCurlWebClient :
-        WebClient {
+        WebClientBase {
 
         // Public members
 
@@ -18,27 +15,9 @@ namespace Gsemac.Net.Curl {
         /// Initializes a new instance of the <see cref="BinCurlWebClient"/> class.
         /// </summary>
         /// <param name="curlExecutablePath">Path to Curl executable.</param>
-        public BinCurlWebClient(string curlExecutablePath) {
-
-            this.curlExecutablePath = curlExecutablePath;
-
+        public BinCurlWebClient(string curlExecutablePath) :
+            base(new BinCurlHttpWebRequestFactory(curlExecutablePath)) {
         }
-
-        // Protected members
-
-        protected override WebRequest GetWebRequest(Uri address) {
-
-            return new BinCurlHttpWebRequest(address, curlExecutablePath) {
-                Credentials = Credentials,
-                Headers = Headers,
-                Proxy = Proxy
-            };
-
-        }
-
-        // Private members
-
-        private readonly string curlExecutablePath;
 
     }
 
