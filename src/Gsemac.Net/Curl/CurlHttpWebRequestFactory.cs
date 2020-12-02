@@ -1,5 +1,4 @@
-﻿using Gsemac.Net.Extensions;
-using System;
+﻿using System;
 using System.IO;
 
 namespace Gsemac.Net.Curl {
@@ -9,29 +8,26 @@ namespace Gsemac.Net.Curl {
 
         // Public members
 
-        public IHttpWebRequestOptions Options { get; set; }
+        public IHttpWebRequestOptions Options {
+            get => webRequestFactory.Options;
+            set => webRequestFactory.Options = value;
+        }
 
         public CurlHttpWebRequestFactory() :
             this(new HttpWebRequestOptions()) {
         }
         public CurlHttpWebRequestFactory(IHttpWebRequestOptions options) {
 
-            this.Options = options;
-
-            useLibCurl = File.Exists(LibCurl.LibCurlPath) || !File.Exists(LibCurl.CurlExecutablePath);
+            if (File.Exists(LibCurl.LibCurlPath) || !File.Exists(LibCurl.CurlExecutablePath))
+                webRequestFactory = new LibCurlHttpWebRequestFactory(options);
+            else
+                webRequestFactory = new BinCurlHttpWebRequestFactory(options);
 
         }
 
         public IHttpWebRequest CreateHttpWebRequest(Uri requestUri) {
 
-            IHttpWebRequest httpWebRequest;
-
-            if (useLibCurl)
-                httpWebRequest = new LibCurlHttpWebRequest(requestUri);
-            else
-                httpWebRequest = new BinCurlHttpWebRequest(requestUri);
-
-            Options.CopyTo(httpWebRequest);
+            IHttpWebRequest httpWebRequest = webRequestFactory.CreateHttpWebRequest(requestUri);
 
             return httpWebRequest;
 
@@ -39,7 +35,7 @@ namespace Gsemac.Net.Curl {
 
         // Private members
 
-        private readonly bool useLibCurl;
+        private readonly IHttpWebRequestFactory webRequestFactory;
 
     }
 
