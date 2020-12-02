@@ -13,6 +13,11 @@ namespace Gsemac.Net {
 
             this.webRequestFactory = webRequestFactory;
 
+            // The Proxy property is non-null by default, and we want to know if the user set the proxy to a blank proxy intentionally.
+            // Instead of trying to figure that out, we'll set the Proxy property here, and assume that whatever the property is from hereon out is what the user wants.
+
+            this.Proxy = webRequestFactory.Options.Proxy;
+
         }
 
         protected override WebRequest GetWebRequest(Uri address) {
@@ -22,11 +27,10 @@ namespace Gsemac.Net {
             if (!(Credentials is null))
                 httpWebRequest.Credentials = Credentials;
 
-            if (!(Proxy is null))
-                httpWebRequest.Proxy = Proxy;
-
             if (!(Headers is null))
                 Headers.CopyTo(httpWebRequest.Headers);
+
+            httpWebRequest.Proxy = Proxy;
 
             return httpWebRequest as WebRequest;
 
