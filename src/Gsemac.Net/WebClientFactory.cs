@@ -5,11 +5,11 @@
 
         // Public members
 
-        public IHttpWebRequestOptions Options {
-            get => webRequestFactory.Options;
-            set => webRequestFactory.Options = value;
-        }
+        public WebClientFactory() {
 
+            webRequestFactory = null;
+
+        }
         public WebClientFactory(IHttpWebRequestFactory webRequestFactory) {
 
             this.webRequestFactory = webRequestFactory;
@@ -18,7 +18,9 @@
 
         public System.Net.WebClient CreateWebClient() {
 
-            return new WebClient(webRequestFactory);
+            return webRequestFactory is null ?
+                new System.Net.WebClient() :
+                new WebClient(webRequestFactory);
 
         }
 
