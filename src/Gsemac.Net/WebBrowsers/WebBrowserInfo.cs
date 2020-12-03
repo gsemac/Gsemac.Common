@@ -99,7 +99,7 @@ namespace Gsemac.Net.WebBrowsers {
             string productName = GetBrowserName(versionInfo);
 
             if (productName.Equals("google chrome", StringComparison.OrdinalIgnoreCase))
-                return WebBrowserId.GoogleChrome;
+                return WebBrowserId.Chrome;
 
             if (productName.Equals("internet explorer", StringComparison.OrdinalIgnoreCase))
                 return WebBrowserId.InternetExplorer;

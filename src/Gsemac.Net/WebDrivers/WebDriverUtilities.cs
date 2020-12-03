@@ -138,7 +138,7 @@ namespace Gsemac.Net.WebDrivers {
 
             switch (browserInfo?.Id ?? WebBrowserId.Unidentified) {
 
-                case WebBrowserId.GoogleChrome:
+                case WebBrowserId.Chrome:
 
                     result = CreateChromeWebDriver(options, uri);
 

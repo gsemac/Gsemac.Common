@@ -30,7 +30,7 @@ namespace Gsemac.Net.WebDrivers {
 
             // If we can get the current version of Google Chrome, we can select an exact web driver version.
 
-            Version browserVersion = WebBrowserInfo.GetWebBrowserInfo(WebBrowserId.GoogleChrome)?.Version;
+            Version browserVersion = WebBrowserInfo.GetWebBrowserInfo(WebBrowserId.Chrome)?.Version;
 
             if (!(browserVersion is null))
                 versionUri = new Uri(versionUri.AbsoluteUri + $"_{browserVersion.Major}.{browserVersion.Minor}.{browserVersion.Build}");

@@ -2,7 +2,7 @@
 
     public enum WebBrowserId {
         Unidentified,
-        GoogleChrome,
+        Chrome,
         Firefox,
         InternetExplorer,
         Opera,
