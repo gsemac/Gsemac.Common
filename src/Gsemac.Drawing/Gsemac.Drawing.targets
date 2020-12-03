@@ -3,7 +3,7 @@
     <ItemGroup>
         <ContentFiles Include="$(MSBuildThisFileDirectory)\..\contentFiles\**\*.*" />
     </ItemGroup>
-    <Target Name="CopyContentFiles" AfterTargets="Build">
+    <Target Name="CopyContentFiles" BeforeTargets="Build">
         <Copy SourceFiles="@(ContentFiles)" DestinationFiles="$(OutDir)%(RecursiveDir)%(Filename)%(Extension)" />
     </Target>
 </Project>
