@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 
-namespace Gsemac.Native {
+namespace Gsemac.Win32 {
 
     public static class User32 {
 
