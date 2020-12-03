@@ -1,5 +1,4 @@
-﻿using System;
-using System.Drawing;
+﻿using System.Drawing;
 
 namespace Gsemac.Drawing {
 
@@ -7,12 +6,12 @@ namespace Gsemac.Drawing {
 
         // Public members
 
-        public static double ColorDistance(Color first, Color second, IColorDistanceAlgorithm algorithm = null) {
+        public static double ColorDistance(Color first, Color second, IColorDistanceStrategy strategy = null) {
 
-            if (algorithm is null)
-                algorithm = new DeltaEColorDistanceAlgorithm();
+            if (strategy is null)
+                strategy = new DeltaEColorDistanceStrategy();
 
-            return algorithm.GetDistance(first, second, normalize: true);
+            return strategy.GetDistance(first, second, normalize: true);
 
         }
 

@@ -2,7 +2,7 @@
 
 namespace Gsemac.Drawing {
 
-    public interface IColorDistanceAlgorithm {
+    public interface IColorDistanceStrategy {
 
         double GetDistance(Color first, Color second, bool normalize);
 

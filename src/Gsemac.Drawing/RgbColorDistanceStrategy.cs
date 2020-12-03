@@ -3,8 +3,8 @@ using System.Drawing;
 
 namespace Gsemac.Drawing {
 
-    public class RgbColorDistanceAlgorithm :
-        IColorDistanceAlgorithm {
+    public class RgbColorDistanceStrategy :
+        IColorDistanceStrategy {
 
         public double GetDistance(Color first, Color second, bool normalize) {
 

@@ -20,7 +20,7 @@ namespace Gsemac.Drawing.Imaging {
             this.tolerance = tolerance;
 
         }
-        public TrimImageFilter(double tolerance, IColorDistanceAlgorithm distanceAlgorithm) {
+        public TrimImageFilter(double tolerance, IColorDistanceStrategy distanceAlgorithm) {
 
             this.tolerance = tolerance;
             this.distanceAlgorithm = distanceAlgorithm;
@@ -32,14 +32,14 @@ namespace Gsemac.Drawing.Imaging {
             this.tolerance = tolerance;
 
         }
-        public TrimImageFilter(Color trimColor, double tolerance, IColorDistanceAlgorithm distanceAlgorithm) {
+        public TrimImageFilter(Color trimColor, double tolerance, IColorDistanceStrategy distanceAlgorithm) {
 
             this.trimColor = trimColor;
             this.distanceAlgorithm = distanceAlgorithm;
             this.tolerance = tolerance;
 
         }
-        public TrimImageFilter(Color trimColor, IColorDistanceAlgorithm distanceAlgorithm) {
+        public TrimImageFilter(Color trimColor, IColorDistanceStrategy distanceAlgorithm) {
 
             this.trimColor = trimColor;
             this.distanceAlgorithm = distanceAlgorithm;
@@ -124,7 +124,7 @@ namespace Gsemac.Drawing.Imaging {
         private const double defaultTolerance = 0.1;
 
         private Color? trimColor;
-        private readonly IColorDistanceAlgorithm distanceAlgorithm = new DeltaEColorDistanceAlgorithm();
+        private readonly IColorDistanceStrategy distanceAlgorithm = new DeltaEColorDistanceStrategy();
         private readonly double tolerance = defaultTolerance;
 
         private bool CompareColors(Color first, Color second) {
