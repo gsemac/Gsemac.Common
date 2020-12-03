@@ -4,7 +4,7 @@
 		<TargetFrameworks>netstandard2.0;net40-client</TargetFrameworks>
 		<Company />
 		<Authors>gsemac</Authors>
-		<Version>0.1.1</Version>
+		<Version>0.1.2</Version>
 		<GeneratePackageOnBuild>false</GeneratePackageOnBuild>
 		<PackageProjectUrl>https://github.com/gsemac/Gsemac.Common</PackageProjectUrl>
 		<RepositoryUrl>https://github.com/gsemac/Gsemac.Common</RepositoryUrl>
@@ -42,6 +42,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<Content Include="Gsemac.Net.targets" PackagePath="build/Gsemac.Net.targets" />
 		<Content Include="lib\native\x86\*" Pack="true" PackagePath="contentFiles\x86">
 			<PackageCopyToOutput>true</PackageCopyToOutput>
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
