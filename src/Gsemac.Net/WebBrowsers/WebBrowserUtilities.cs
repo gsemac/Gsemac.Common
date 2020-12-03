@@ -1,14 +1,15 @@
-﻿using System;
+﻿using Gsemac.Net.Extensions;
+using Gsemac.Threading.Tasks;
+using System;
 using System.Data;
 using System.Data.SQLite;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
-using Gsemac.Net.Extensions;
-using Gsemac.Threading.Tasks;
 
 namespace Gsemac.Net.WebBrowsers {
 
@@ -22,6 +23,9 @@ namespace Gsemac.Net.WebBrowsers {
 
                 case WebBrowserId.GoogleChrome:
                     return GetChromeWebBrowserCookies();
+
+                case WebBrowserId.Firefox:
+                    return GetFirefoxWebBrowserCookies();
 
                 default:
                     throw new ArgumentException(nameof(webBrowserInfo));
@@ -133,14 +137,40 @@ namespace Gsemac.Net.WebBrowsers {
 
         private static string GetChromeCookiesPath() {
 
-            string chromeCookiesPath = Path.Combine(
-                Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+            string chromeCookiesPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
                 @"Google\Chrome\User Data\Default\Cookies");
 
             if (File.Exists(chromeCookiesPath))
                 return chromeCookiesPath;
 
             throw new FileNotFoundException("Could not determine cookies path.", chromeCookiesPath);
+
+        }
+        private static string GetFirefoxCookiesPath() {
+
+            string firefoxProfilesDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+                @"Mozilla\Firefox\Profiles\");
+
+            if (Directory.Exists(firefoxProfilesDirectory)) {
+
+                // Older profiles will be named "*.default", and newer profiles will be named "*.default-release".
+
+                string firefoxProfileDirectory = Directory.GetDirectories(firefoxProfilesDirectory, "*.default-release", SearchOption.TopDirectoryOnly)
+                    .Concat(Directory.GetDirectories(firefoxProfilesDirectory, "*.default", SearchOption.TopDirectoryOnly))
+                    .FirstOrDefault();
+
+                if (Directory.Exists(firefoxProfileDirectory)) {
+
+                    string firefoxCookiesPath = Path.Combine(firefoxProfileDirectory, "cookies.sqlite");
+
+                    if (File.Exists(firefoxCookiesPath))
+                        return firefoxCookiesPath;
+
+                }
+
+            }
+
+            throw new FileNotFoundException("Could not determine cookies path.");
 
         }
         private static CookieContainer GetChromeWebBrowserCookies() {
@@ -177,6 +207,38 @@ namespace Gsemac.Net.WebBrowsers {
                         // Chrome doesn't escape cookies before saving them.
 
                         value = Uri.EscapeDataString(value?.Trim());
+
+                        cookies.Add(new Cookie(name, value, path, domain));
+
+                    }
+
+                }
+
+            }
+
+            return cookies;
+
+        }
+        private static CookieContainer GetFirefoxWebBrowserCookies() {
+
+            CookieContainer cookies = new CookieContainer();
+            string cookiesPath = GetFirefoxCookiesPath();
+
+            // Firefox stores its cookies in an SQLite database.
+
+            using (SQLiteConnection conn = new SQLiteConnection($"Data Source={cookiesPath}")) {
+                using (SQLiteCommand cmd = new SQLiteCommand("SELECT * FROM moz_cookies", conn))
+                using (SQLiteDataAdapter adapter = new SQLiteDataAdapter(cmd))
+                using (DataTable dt = new DataTable()) {
+
+                    adapter.Fill(dt);
+
+                    foreach (DataRow row in dt.Rows) {
+
+                        string name = row["name"].ToString();
+                        string value = row["value"].ToString();
+                        string domain = row["host"].ToString();
+                        string path = row["path"].ToString();
 
                         cookies.Add(new Cookie(name, value, path, domain));
 
