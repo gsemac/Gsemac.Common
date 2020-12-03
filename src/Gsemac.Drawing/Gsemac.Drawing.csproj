@@ -17,14 +17,19 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<None Include="lib\native\x64\*">
-			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-			<Link>x64\%(Filename)%(Extension)</Link>
-		</None>
-		<None Include="lib\native\x86\*">
+		<Content Include="Gsemac.Drawing.targets" PackagePath="build/Gsemac.Drawing.targets" />
+		<Content Include="lib\native\x86\*" Pack="true" PackagePath="contentFiles\x86">
+			<PackageCopyToOutput>true</PackageCopyToOutput>
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 			<Link>x86\%(Filename)%(Extension)</Link>
-		</None>
+		</Content>
+		<Content Include="lib\native\x64\*" Pack="true" PackagePath="contentFiles\x64">
+			<PackageCopyToOutput>true</PackageCopyToOutput>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<Link>x64\%(Filename)%(Extension)</Link>
+		</Content>
+		<Content Include="lib\net\*" Pack="true" PackagePath="contentFiles\"/>
+		<Content Include="licenses\*" Pack="true" PackagePath="contentFiles\licenses"/>
 	</ItemGroup>
 
 	<ItemGroup>
