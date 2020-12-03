@@ -10,7 +10,6 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\Gsemac.Core\Gsemac.Core.csproj" />
 		<ProjectReference Include="..\Gsemac.Drawing\Gsemac.Drawing.csproj" />
 		<ProjectReference Include="..\Gsemac.Text\Gsemac.Text.csproj" />
 		<Reference Include="System.Windows.Forms" />
