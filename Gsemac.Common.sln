@@ -5,7 +5,7 @@ VisualStudioVersion = 16.0.29905.134
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Gsemac.Collections", "src\Gsemac.Collections\Gsemac.Collections.csproj", "{636CC27A-FC0F-4B62-9F5D-E97BEA8D585D}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Gsemac.Native", "src\Gsemac.Native\Gsemac.Native.csproj", "{CC4291DA-1B50-4E9A-A0EC-41D9441DB887}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Gsemac.Win32", "src\Gsemac.Win32\Gsemac.Win32.csproj", "{CC4291DA-1B50-4E9A-A0EC-41D9441DB887}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Gsemac.Core", "src\Gsemac.Core\Gsemac.Core.csproj", "{46F3DE15-F452-4EAA-A886-C6BD1CBA7976}"
 EndProject
