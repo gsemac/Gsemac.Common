@@ -36,7 +36,7 @@ namespace Gsemac.Drawing.Imaging {
         }
         public static bool IsSupportedFileExtension(string filename) {
 
-            string ext = Path.GetExtension(filename).ToLowerInvariant();
+            string ext = PathUtilities.GetFileExtension(filename).ToLowerInvariant();
 
             return GetSupportedFileExtensions().Any(supportedExt => supportedExt.Equals(ext));
 
