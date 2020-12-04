@@ -33,7 +33,7 @@ namespace Gsemac.Drawing.Imaging {
             string sourceExt = Path.GetExtension(sourceFilePath);
             bool overwriteSourceFile = sourceFilePath.Equals(destinationFilePath, StringComparison.OrdinalIgnoreCase);
 
-            if (!ImageUtilities.IsFileExtensionSupported(sourceExt))
+            if (!ImageUtilities.IsSupportedFileExtension(sourceExt))
                 throw new Exception("The image format is not supported.");
 
             Image image;

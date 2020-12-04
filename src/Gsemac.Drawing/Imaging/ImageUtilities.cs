@@ -34,7 +34,7 @@ namespace Gsemac.Drawing.Imaging {
             return extensions;
 
         }
-        public static bool IsFileExtensionSupported(string filename) {
+        public static bool IsSupportedFileExtension(string filename) {
 
             string ext = Path.GetExtension(filename).ToLowerInvariant();
 
@@ -171,7 +171,7 @@ namespace Gsemac.Drawing.Imaging {
 
             string ext = Path.GetExtension(filePath).ToLowerInvariant();
 
-            if (!IsFileExtensionSupported(ext))
+            if (!IsSupportedFileExtension(ext))
                 throw new FileFormatException("The image format is not supported.");
 
             if (ext.Equals(".webp", StringComparison.OrdinalIgnoreCase)) {
@@ -190,7 +190,7 @@ namespace Gsemac.Drawing.Imaging {
 
             string ext = Path.GetExtension(filePath).ToLowerInvariant();
 
-            if (!IsFileExtensionSupported(ext))
+            if (!IsSupportedFileExtension(ext))
                 throw new FileFormatException("The image format is not supported.");
 
             if (ext.Equals(".webp", StringComparison.OrdinalIgnoreCase)) {
