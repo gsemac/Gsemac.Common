@@ -1,5 +1,6 @@
 ﻿#if NETFRAMEWORK
 
+using Gsemac.IO;
 using Gsemac.Reflection;
 using System;
 using System.Collections.Generic;
@@ -171,9 +172,9 @@ namespace Gsemac.Drawing.Imaging {
             string ext = Path.GetExtension(filePath).ToLowerInvariant();
 
             if (!IsFileExtensionSupported(ext))
-                throw new Exception("The image format is not supported.");
+                throw new FileFormatException("The image format is not supported.");
 
-            if (ext.Equals(".webp")) {
+            if (ext.Equals(".webp", StringComparison.OrdinalIgnoreCase)) {
 
                 return OpenWebpImage(filePath);
 
@@ -190,9 +191,9 @@ namespace Gsemac.Drawing.Imaging {
             string ext = Path.GetExtension(filePath).ToLowerInvariant();
 
             if (!IsFileExtensionSupported(ext))
-                throw new Exception("The image format is not supported.");
+                throw new FileFormatException("The image format is not supported.");
 
-            if (ext.Equals(".webp")) {
+            if (ext.Equals(".webp", StringComparison.OrdinalIgnoreCase)) {
 
                 SaveWebpImage(image, filePath, options);
 
