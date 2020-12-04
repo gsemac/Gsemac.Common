@@ -17,6 +17,16 @@ namespace Gsemac.Drawing.Imaging {
 
         public static IEnumerable<string> GetSupportedFileExtensions() {
 
+            List<string> extensions = new List<string>(GetNativelySupportedFileExtensions());
+
+            if (IsWebpSupportAvailable())
+                extensions.Add(".webp");
+
+            return extensions;
+
+        }
+        public static IEnumerable<string> GetNativelySupportedFileExtensions() {
+
             List<string> extensions = new List<string>(new[]{
                 ".bmp",
                 ".gif",
@@ -28,9 +38,6 @@ namespace Gsemac.Drawing.Imaging {
                 ".tiff"
             });
 
-            if (IsWebpSupportAvailable())
-                extensions.Add(".webp");
-
             return extensions;
 
         }
@@ -38,7 +45,14 @@ namespace Gsemac.Drawing.Imaging {
 
             string ext = PathUtilities.GetFileExtension(filename).ToLowerInvariant();
 
-            return GetSupportedFileExtensions().Any(supportedExt => supportedExt.Equals(ext));
+            return GetSupportedFileExtensions().Any(supportedExt => supportedExt.Equals(ext, StringComparison.OrdinalIgnoreCase));
+
+        }
+        public static bool IsNativelySupportedFileExtension(string filename) {
+
+            string ext = PathUtilities.GetFileExtension(filename).ToLowerInvariant();
+
+            return GetNativelySupportedFileExtensions().Any(supportedExt => supportedExt.Equals(ext, StringComparison.OrdinalIgnoreCase));
 
         }
 
