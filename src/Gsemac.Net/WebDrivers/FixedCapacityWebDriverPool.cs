@@ -45,15 +45,8 @@ namespace Gsemac.Net.WebDrivers {
 
             // Close and dispose of any created drivers.
 
-            foreach (IWebDriver driver in spawnedDrivers) {
-
-                driver.Quit();
-                driver.Dispose();
-
-            }
-
-            pool.Clear();
-            spawnedDrivers.Clear();
+            foreach (IWebDriver webDriver in spawnedDrivers.ToArray())
+                ReleaseWebDriver(webDriver, disposeWebDriver: true);
 
         }
 
