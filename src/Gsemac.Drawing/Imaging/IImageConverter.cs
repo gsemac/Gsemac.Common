@@ -4,7 +4,7 @@ namespace Gsemac.Drawing.Imaging {
 
     public interface IImageConverter {
 
-        IEnumerable<string> SupportedImageFormats { get; }
+        IEnumerable<string> SupportedFileTypes { get; }
 
         void ConvertImage(string sourceFilePath, string destinationFilePath, IImageConversionOptions options);
 

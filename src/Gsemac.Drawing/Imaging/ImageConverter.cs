@@ -1,20 +1,19 @@
 ﻿#if NETFRAMEWORK
 
+using Gsemac.IO;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Drawing.Imaging;
 using System.IO;
-using System.Linq;
 
 namespace Gsemac.Drawing.Imaging {
 
-    public class SystemDrawingImageConverter :
+    public class ImageConverter :
             IImageConverter {
 
         // Public members
 
-        public IEnumerable<string> SupportedImageFormats => ImageUtilities.GetSupportedFileTypes();
+        public IEnumerable<string> SupportedFileTypes => ImageUtilities.SupportedFileTypes;
 
         public void ConvertImage(string sourceFilePath, string destinationFilePath, IImageConversionOptions options) {
 
@@ -34,7 +33,7 @@ namespace Gsemac.Drawing.Imaging {
             bool overwriteSourceFile = sourceFilePath.Equals(destinationFilePath, StringComparison.OrdinalIgnoreCase);
 
             if (!ImageUtilities.IsSupportedFileType(sourceExt))
-                throw new Exception("The image format is not supported.");
+                throw new FileFormatException("The image format is not supported.");
 
             Image image;
 

@@ -1,12 +1,12 @@
 ﻿#if NETFRAMEWORK
 
+using Gsemac.Drawing.Imaging.Extensions;
 using Gsemac.IO;
 using Gsemac.Reflection;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
-using System.IO;
 using System.Linq;
 
 namespace Gsemac.Drawing.Imaging {
@@ -15,32 +15,9 @@ namespace Gsemac.Drawing.Imaging {
 
         // Public members
 
-        public static IEnumerable<string> GetSupportedFileTypes() {
+        public static IEnumerable<string> SupportedFileTypes => GetSupportedFileTypes();
+        public static IEnumerable<string> NativelySupportedFileTypes => GetNativelySupportedFileTypes();
 
-            List<string> extensions = new List<string>(GetNativelySupportedFileTypes());
-
-            if (IsWebpSupportAvailable())
-                extensions.Add(".webp");
-
-            return extensions;
-
-        }
-        public static IEnumerable<string> GetNativelySupportedFileTypes() {
-
-            List<string> extensions = new List<string>(new[]{
-                ".bmp",
-                ".gif",
-                ".exif",
-                ".jpg",
-                ".jpeg",
-                ".png",
-                ".tif",
-                ".tiff"
-            });
-
-            return extensions;
-
-        }
         public static bool IsSupportedFileType(string filename) {
 
             string ext = PathUtilities.GetFileExtension(filename).ToLowerInvariant();
@@ -48,7 +25,7 @@ namespace Gsemac.Drawing.Imaging {
             return GetSupportedFileTypes().Any(supportedExt => supportedExt.Equals(ext, StringComparison.OrdinalIgnoreCase));
 
         }
-        public static bool IsNativelySupportedFileTypes(string filename) {
+        public static bool IsNativelySupportedFileType(string filename) {
 
             string ext = PathUtilities.GetFileExtension(filename).ToLowerInvariant();
 
@@ -139,6 +116,45 @@ namespace Gsemac.Drawing.Imaging {
 
         }
 
+        private static IEnumerable<string> GetSupportedFileTypes() {
+
+            return GetImageReaders().SelectMany(reader => reader.SupportedFileTypes);
+
+        }
+        private static IEnumerable<string> GetNativelySupportedFileTypes() {
+
+            List<string> extensions = new List<string>(new[]{
+                ".bmp",
+                ".gif",
+                ".exif",
+                ".jpg",
+                ".jpeg",
+                ".png",
+                ".tif",
+                ".tiff"
+            });
+
+            return extensions;
+
+        }
+
+        private static IEnumerable<IImageReader> GetImageReaders() {
+
+            List<IImageReader> imageReaders = new List<IImageReader> {
+                new NativeImageReader()
+            };
+
+            if (IsWebpSupportAvailable())
+                imageReaders.Add(new WebPImageReader());
+
+            return imageReaders;
+
+        }
+        private static IImageReader GetImageReader(string filePath) {
+
+            return GetImageReaders().FirstOrDefault(reader => reader.IsSupportedFileType(filePath));
+
+        }
         private static ImageFormat GetImageFormatForFileExtension(string fileExtension) {
 
             switch (fileExtension.ToLowerInvariant()) {
@@ -169,82 +185,30 @@ namespace Gsemac.Drawing.Imaging {
             }
 
         }
-        private static ImageCodecInfo GetEncoderForFileExtension(string fileExtension) {
-
-            ImageFormat format = GetImageFormatForFileExtension(fileExtension);
-
-            ImageCodecInfo decoder = ImageCodecInfo.GetImageDecoders()
-                .Where(codec => codec.FormatID == format.Guid)
-                .FirstOrDefault();
-
-            return decoder;
-
-        }
 
         private static Image OpenImageInternal(string filePath) {
 
-            string ext = Path.GetExtension(filePath).ToLowerInvariant();
+            IImageReader imageReader = GetImageReader(filePath);
 
-            if (!IsSupportedFileType(ext))
+            if (imageReader is null)
                 throw new FileFormatException("The image format is not supported.");
 
-            if (ext.Equals(".webp", StringComparison.OrdinalIgnoreCase)) {
-
-                return OpenWebpImage(filePath);
-
-            }
-            else {
-
-                return new Bitmap(filePath);
-
-            }
+            return imageReader.ReadImage(filePath);
 
         }
         private static void SaveImageInternal(Image image, string filePath, IImageEncoderOptions options) {
 
-            string ext = Path.GetExtension(filePath).ToLowerInvariant();
+            IImageReader imageReader = GetImageReader(filePath);
 
-            if (!IsSupportedFileType(ext))
+            if (imageReader is null)
                 throw new FileFormatException("The image format is not supported.");
 
-            if (ext.Equals(".webp", StringComparison.OrdinalIgnoreCase)) {
+            string ext = PathUtilities.GetFileExtension(filePath);
 
-                SaveWebpImage(image, filePath, options);
-
-            }
-            else {
-
-                using (EncoderParameters encoderParameters = new EncoderParameters(1))
-                using (EncoderParameter qualityParameter = new EncoderParameter(Encoder.Quality, options.Quality)) {
-
-                    encoderParameters.Param[0] = qualityParameter;
-
-                    ImageCodecInfo encoder = GetEncoderForFileExtension(ext);
-
-                    image.Save(filePath, encoder, encoderParameters);
-
-                }
-
-                image.Save(filePath);
-
-            }
-
-        }
-
-        private static Image OpenWebpImage(string filePath) {
-
-            // This is in a separate method so accessing WebPWrapper doesn't throw an exception when the DLL doen't exist.
-
-            using (WebPWrapper.WebP decoder = new WebPWrapper.WebP())
-                return decoder.Load(filePath);
-
-        }
-        private static void SaveWebpImage(Image image, string filePath, IImageEncoderOptions options) {
-
-            // This is in a separate method so accessing WebPWrapper doesn't throw an exception when the DLL doen't exist.
-
-            using (WebPWrapper.WebP encoder = new WebPWrapper.WebP())
-                encoder.Save(image as Bitmap, filePath, options.Quality);
+            if (imageReader is NativeImageReader nativeImageReader)
+                nativeImageReader.SaveImage(image, filePath, GetImageFormatForFileExtension(ext), options);
+            else
+                imageReader.SaveImage(image, filePath, options);
 
         }
 
