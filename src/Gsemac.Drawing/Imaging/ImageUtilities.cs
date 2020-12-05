@@ -15,9 +15,9 @@ namespace Gsemac.Drawing.Imaging {
 
         // Public members
 
-        public static IEnumerable<string> GetSupportedFileExtensions() {
+        public static IEnumerable<string> GetSupportedFileTypes() {
 
-            List<string> extensions = new List<string>(GetNativelySupportedFileExtensions());
+            List<string> extensions = new List<string>(GetNativelySupportedFileTypes());
 
             if (IsWebpSupportAvailable())
                 extensions.Add(".webp");
@@ -25,7 +25,7 @@ namespace Gsemac.Drawing.Imaging {
             return extensions;
 
         }
-        public static IEnumerable<string> GetNativelySupportedFileExtensions() {
+        public static IEnumerable<string> GetNativelySupportedFileTypes() {
 
             List<string> extensions = new List<string>(new[]{
                 ".bmp",
@@ -41,18 +41,18 @@ namespace Gsemac.Drawing.Imaging {
             return extensions;
 
         }
-        public static bool IsSupportedFileExtension(string filename) {
+        public static bool IsSupportedFileType(string filename) {
 
             string ext = PathUtilities.GetFileExtension(filename).ToLowerInvariant();
 
-            return GetSupportedFileExtensions().Any(supportedExt => supportedExt.Equals(ext, StringComparison.OrdinalIgnoreCase));
+            return GetSupportedFileTypes().Any(supportedExt => supportedExt.Equals(ext, StringComparison.OrdinalIgnoreCase));
 
         }
-        public static bool IsNativelySupportedFileExtension(string filename) {
+        public static bool IsNativelySupportedFileTypes(string filename) {
 
             string ext = PathUtilities.GetFileExtension(filename).ToLowerInvariant();
 
-            return GetNativelySupportedFileExtensions().Any(supportedExt => supportedExt.Equals(ext, StringComparison.OrdinalIgnoreCase));
+            return GetNativelySupportedFileTypes().Any(supportedExt => supportedExt.Equals(ext, StringComparison.OrdinalIgnoreCase));
 
         }
 
@@ -185,7 +185,7 @@ namespace Gsemac.Drawing.Imaging {
 
             string ext = Path.GetExtension(filePath).ToLowerInvariant();
 
-            if (!IsSupportedFileExtension(ext))
+            if (!IsSupportedFileType(ext))
                 throw new FileFormatException("The image format is not supported.");
 
             if (ext.Equals(".webp", StringComparison.OrdinalIgnoreCase)) {
@@ -204,7 +204,7 @@ namespace Gsemac.Drawing.Imaging {
 
             string ext = Path.GetExtension(filePath).ToLowerInvariant();
 
-            if (!IsSupportedFileExtension(ext))
+            if (!IsSupportedFileType(ext))
                 throw new FileFormatException("The image format is not supported.");
 
             if (ext.Equals(".webp", StringComparison.OrdinalIgnoreCase)) {
