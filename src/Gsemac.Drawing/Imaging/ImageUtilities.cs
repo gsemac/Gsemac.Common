@@ -1,5 +1,6 @@
 ﻿#if NETFRAMEWORK
 
+using Gsemac.Drawing.Extensions;
 using Gsemac.Drawing.Imaging.Extensions;
 using Gsemac.IO;
 using Gsemac.Reflection;
@@ -84,6 +85,21 @@ namespace Gsemac.Drawing.Imaging {
             }
 
             return new Bitmap(sourceImage, new Size(newWidth, newHeight));
+
+        }
+        public static Image ConvertToNonIndexedPixelFormat(Image image, bool disposeOriginal = false) {
+
+            // We can't create a graphics object from an image with an indexed pixel format, so we need to create a new bitmap.
+
+            if (!image.HasIndexedPixelFormat())
+                return image;
+
+            Bitmap resultImage = new Bitmap(image);
+
+            if (disposeOriginal)
+                image.Dispose();
+
+            return resultImage;
 
         }
 

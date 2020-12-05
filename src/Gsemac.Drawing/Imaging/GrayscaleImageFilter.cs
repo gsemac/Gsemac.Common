@@ -1,11 +1,7 @@
 ﻿#if NETFRAMEWORK
 
-using Gsemac.Drawing.Extensions;
-using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
-using System.Text;
 
 namespace Gsemac.Drawing.Imaging {
 
@@ -14,7 +10,7 @@ namespace Gsemac.Drawing.Imaging {
 
         public Image Apply(Image sourceImage) {
 
-            Image resultImage = sourceImage;
+            Image resultImage = ImageUtilities.ConvertToNonIndexedPixelFormat(sourceImage, disposeOriginal: true);
 
             ColorMatrix colorMatrix = new ColorMatrix(new float[][] {
                 new[]{0.3f, 0.3f, 0.3f, 0.0f, 0.0f},
@@ -27,15 +23,6 @@ namespace Gsemac.Drawing.Imaging {
             using (ImageAttributes attributes = new ImageAttributes()) {
 
                 attributes.SetColorMatrix(colorMatrix);
-
-                if (sourceImage.HasIndexedPixelFormat()) {
-
-                    // We can't create a graphics object from an image with an indexed pixel format, so we need to create a new bitmap.
-
-                    using (sourceImage)
-                        resultImage = new Bitmap(sourceImage);
-
-                }
 
                 // Draw the modified image directly on top of the original image.
 

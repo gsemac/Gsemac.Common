@@ -39,8 +39,7 @@ namespace Gsemac.Drawing.Imaging {
 
             using (image = ImageUtilities.OpenImage(sourceFilePath, openWithoutLocking: overwriteSourceFile)) {
 
-                foreach (IImageFilter filter in options.Filters)
-                    image = filter.Apply(image);
+                image = ImageFilter.ApplyAll(image, options.Filters);
 
                 ImageUtilities.SaveImage(image, destinationFilePath, options.EncoderOptions);
 
