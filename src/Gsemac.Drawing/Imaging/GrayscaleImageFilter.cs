@@ -10,7 +10,7 @@ namespace Gsemac.Drawing.Imaging {
 
         public Image Apply(Image sourceImage) {
 
-            Image resultImage = ImageUtilities.ConvertToNonIndexedPixelFormat(sourceImage, disposeOriginal: true);
+            Image resultImage = ImageUtilities.ConvertImageToNonIndexedPixelFormat(sourceImage, disposeOriginal: true);
 
             ColorMatrix colorMatrix = new ColorMatrix(new float[][] {
                 new[]{0.3f, 0.3f, 0.3f, 0.0f, 0.0f},

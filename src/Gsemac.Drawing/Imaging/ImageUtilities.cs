@@ -56,10 +56,10 @@ namespace Gsemac.Drawing.Imaging {
             SaveImageInternal(image, filePath, options ?? new ImageEncoderOptions());
 
         }
-        public static Image ResizeImage(Image sourceImage, int? width = null, int? height = null) {
+        public static Image ResizeImage(Image image, int? width = null, int? height = null, bool disposeOriginal = false) {
 
-            int newWidth = sourceImage.Width;
-            int newHeight = sourceImage.Height;
+            int newWidth = image.Width;
+            int newHeight = image.Height;
 
             if (width.HasValue && height.HasValue) {
 
@@ -69,25 +69,30 @@ namespace Gsemac.Drawing.Imaging {
             }
             else if (width.HasValue) {
 
-                float scaleFactor = (float)width.Value / sourceImage.Width;
+                float scaleFactor = (float)width.Value / image.Width;
 
                 newWidth = width.Value;
-                newHeight = (int)(sourceImage.Height * scaleFactor);
+                newHeight = (int)(image.Height * scaleFactor);
 
             }
             else if (height.HasValue) {
 
-                float scaleFactor = (float)height.Value / sourceImage.Height;
+                float scaleFactor = (float)height.Value / image.Height;
 
-                newWidth = (int)(sourceImage.Width * scaleFactor);
+                newWidth = (int)(image.Width * scaleFactor);
                 newHeight = height.Value;
 
             }
 
-            return new Bitmap(sourceImage, new Size(newWidth, newHeight));
+            Bitmap resultImage = new Bitmap(image, new Size(newWidth, newHeight));
+
+            if (disposeOriginal)
+                image.Dispose();
+
+            return resultImage;
 
         }
-        public static Image ConvertToNonIndexedPixelFormat(Image image, bool disposeOriginal = false) {
+        public static Image ConvertImageToNonIndexedPixelFormat(Image image, bool disposeOriginal = false) {
 
             // We can't create a graphics object from an image with an indexed pixel format, so we need to create a new bitmap.
 
