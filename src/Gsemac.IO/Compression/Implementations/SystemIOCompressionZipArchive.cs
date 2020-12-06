@@ -16,6 +16,7 @@ namespace Gsemac.IO.Compression.Implementations {
 
         public bool CanRead => archive.Mode == System.IO.Compression.ZipArchiveMode.Read || archive.Mode == System.IO.Compression.ZipArchiveMode.Update;
         public bool CanWrite => archive.Mode == System.IO.Compression.ZipArchiveMode.Create || archive.Mode == System.IO.Compression.ZipArchiveMode.Update;
+        public string Comment { get; set; }
         public CompressionLevel CompressionLevel { get; set; } = CompressionLevel.Maximum;
 
         public SystemIOCompressionZipArchive() :

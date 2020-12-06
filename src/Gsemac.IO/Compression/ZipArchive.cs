@@ -12,6 +12,10 @@ namespace Gsemac.IO.Compression {
 
         public bool CanRead => underlyingArchive.CanRead;
         public bool CanWrite => underlyingArchive.CanWrite;
+        public string Comment {
+            get => underlyingArchive.Comment;
+            set => underlyingArchive.Comment = value;
+        }
         public CompressionLevel CompressionLevel {
             get => underlyingArchive.CompressionLevel;
             set => underlyingArchive.CompressionLevel = value;

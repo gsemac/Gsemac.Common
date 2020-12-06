@@ -9,6 +9,7 @@ namespace Gsemac.IO.Compression {
 
         bool CanRead { get; }
         bool CanWrite { get; }
+        string Comment { get; set; }
         CompressionLevel CompressionLevel { get; set; }
 
         IArchiveEntry AddEntry(Stream stream, string entryName, bool leaveOpen = false);
