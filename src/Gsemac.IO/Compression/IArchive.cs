@@ -18,7 +18,7 @@ namespace Gsemac.IO.Compression {
         void ExtractEntry(IArchiveEntry entry, Stream outputStream);
         IEnumerable<IArchiveEntry> GetEntries();
 
-        void SaveTo(Stream outputStream);
+        void Close();
 
     }
 

@@ -1,4 +1,6 @@
-﻿namespace Gsemac.IO.Compression.Implementations.Internal {
+﻿using System;
+
+namespace Gsemac.IO.Compression.Implementations {
 
     internal class SharpCompressZipArchiveEntry :
         IArchiveEntry {
@@ -7,6 +9,7 @@
 
         public string Comment => BaseEntry.Comment;
         public long CompressedSize => BaseEntry.CompressedSize;
+        public DateTimeOffset LastModified => BaseEntry.LastModifiedTime ?? new DateTimeOffset();
         public string Path => BaseEntry.Key;
         public long Size => BaseEntry.Size;
 

@@ -1,6 +1,5 @@
-﻿#if NETFRAMEWORK45_OR_NEWER
+﻿#if NET45_OR_NEWER
 
-using Gsemac.IO.Compression.Implementations.Internal;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -16,17 +15,17 @@ namespace Gsemac.IO.Compression.Implementations {
 
         public bool CanRead => archive.Mode == System.IO.Compression.ZipArchiveMode.Read || archive.Mode == System.IO.Compression.ZipArchiveMode.Update;
         public bool CanWrite => archive.Mode == System.IO.Compression.ZipArchiveMode.Create || archive.Mode == System.IO.Compression.ZipArchiveMode.Update;
-        public string Comment { get; set; }
+        public string Comment {
+            get => throw ArchiveExceptions.CommentsNotSupported;
+            set => throw ArchiveExceptions.CommentsNotSupported;
+        }
         public CompressionLevel CompressionLevel { get; set; } = CompressionLevel.Maximum;
 
-        public SystemIOCompressionZipArchive() :
-            this(new MemoryStream(), false, FileAccess.ReadWrite) {
-        }
         public SystemIOCompressionZipArchive(string filePath, FileAccess fileAccess = FileAccess.ReadWrite) :
             this(new FileStream(filePath, FileMode.OpenOrCreate, fileAccess), false, fileAccess) {
         }
-        public SystemIOCompressionZipArchive(Stream stream) :
-            this(stream, true, FileAccess.ReadWrite) {
+        public SystemIOCompressionZipArchive(Stream stream, FileAccess fileAccess = FileAccess.ReadWrite) :
+            this(stream, true, fileAccess) {
         }
 
         public IArchiveEntry AddEntry(Stream stream, string entryName, bool leaveOpen = false) {
@@ -73,7 +72,7 @@ namespace Gsemac.IO.Compression.Implementations {
             if (entry is SystemIOCompressionZipArchiveEntry zipArchiveEntry && zipArchiveEntry.BaseEntry.Archive == archive)
                 zipArchiveEntry.BaseEntry.Delete();
             else
-                throw new ArgumentException("Entry does not belong to this archive.", nameof(entry));
+                throw ArchiveExceptions.EntryDoesNotBelongToThisArchive;
 
         }
         public void ExtractEntry(IArchiveEntry entry, Stream outputStream) {
@@ -91,7 +90,7 @@ namespace Gsemac.IO.Compression.Implementations {
 
             }
             else
-                throw new ArgumentException("Entry does not belong to this archive.", nameof(entry));
+                throw ArchiveExceptions.EntryDoesNotBelongToThisArchive;
 
         }
 
@@ -117,6 +116,7 @@ namespace Gsemac.IO.Compression.Implementations {
             stream.Seek(position, SeekOrigin.Begin);
 
         }
+        public void Close() { }
 
         public void Dispose() {
 
@@ -133,6 +133,8 @@ namespace Gsemac.IO.Compression.Implementations {
             if (!disposedValue) {
 
                 if (disposing) {
+
+                    Close();
 
                     archive.Dispose();
 

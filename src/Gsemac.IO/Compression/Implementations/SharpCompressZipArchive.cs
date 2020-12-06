@@ -1,5 +1,4 @@
-﻿using Gsemac.IO.Compression.Implementations.Internal;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -13,19 +12,23 @@ namespace Gsemac.IO.Compression.Implementations {
 
         public bool CanRead => fileAccess.HasFlag(FileAccess.Read);
         public bool CanWrite => fileAccess.HasFlag(FileAccess.Write);
-        public string Comment { get; set; } // SharpCompress offers no means to set the archive comment outside of ZipWriterOptions, which can't be passed to SaveTo
+        public string Comment {
+            get => throw ArchiveExceptions.CommentsNotSupported;
+            set => throw ArchiveExceptions.CommentsNotSupported;
+        } // SharpCompress offers no means to set the archive comment outside of ZipWriterOptions, which can't be passed to SaveTo
         public CompressionLevel CompressionLevel { get; set; } = CompressionLevel.Maximum;
 
-        public SharpCompressZipArchive() {
-
-            archive = SharpCompress.Archives.Zip.ZipArchive.Create();
-
-        }
         public SharpCompressZipArchive(string filePath, FileAccess fileAccess = FileAccess.ReadWrite) :
             this(new FileStream(filePath, FileAccess.ReadWrite.HasFlag(FileAccess.Write) ? FileMode.OpenOrCreate : FileMode.Open, fileAccess), leaveOpen: false) {
+
+            this.fileAccess = fileAccess;
+
         }
-        public SharpCompressZipArchive(Stream stream) :
+        public SharpCompressZipArchive(Stream stream, FileAccess fileAccess = FileAccess.ReadWrite) :
             this(stream, leaveOpen: true) {
+
+            this.fileAccess = fileAccess;
+
         }
 
         public IArchiveEntry AddEntry(Stream stream, string entryName, bool leaveOpen = false) {
@@ -65,7 +68,7 @@ namespace Gsemac.IO.Compression.Implementations {
             if (entry is SharpCompressZipArchiveEntry zipArchiveEntry && zipArchiveEntry.BaseEntry.Archive == archive)
                 archive.RemoveEntry(zipArchiveEntry.BaseEntry);
             else
-                throw new ArgumentException("Entry does not belong to this archive.", nameof(entry));
+                throw ArchiveExceptions.EntryDoesNotBelongToThisArchive;
 
             archiveModified = true;
 
@@ -85,7 +88,7 @@ namespace Gsemac.IO.Compression.Implementations {
 
             }
             else
-                throw new ArgumentException("Entry does not belong to this archive.", nameof(entry));
+                throw ArchiveExceptions.EntryDoesNotBelongToThisArchive;
 
         }
         public IEnumerable<IArchiveEntry> GetEntries() {
@@ -107,6 +110,11 @@ namespace Gsemac.IO.Compression.Implementations {
             });
 
         }
+        public void Close() {
+
+            FlushModifications();
+
+        }
 
         public void Dispose() {
 
@@ -124,7 +132,7 @@ namespace Gsemac.IO.Compression.Implementations {
 
                 if (disposing) {
 
-                    FlushModifications();
+                    Close();
 
                     archive.Dispose();
 

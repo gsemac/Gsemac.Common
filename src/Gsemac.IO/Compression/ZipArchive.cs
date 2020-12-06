@@ -21,16 +21,6 @@ namespace Gsemac.IO.Compression {
             set => underlyingArchive.CompressionLevel = value;
         }
 
-        public ZipArchive() {
-
-#if NETFRAMEWORK45_OR_NEWER
-
-            underlyingArchive = new SystemIOCompressionZipArchive();
-#else
-            underlyingArchive = new SharpCompressZipArchive();
-#endif
-
-        }
         public ZipArchive(string filePath, FileAccess fileAccess = FileAccess.ReadWrite) {
 
 #if NETFRAMEWORK45_OR_NEWER
@@ -56,7 +46,7 @@ namespace Gsemac.IO.Compression {
         public void ExtractEntry(IArchiveEntry entry, Stream outputStream) => underlyingArchive.ExtractEntry(entry, outputStream);
         public IEnumerable<IArchiveEntry> GetEntries() => underlyingArchive.GetEntries();
 
-        public void SaveTo(Stream outputStream) => underlyingArchive.SaveTo(outputStream);
+        public void Close() => underlyingArchive.Close();
 
         public void Dispose() {
 

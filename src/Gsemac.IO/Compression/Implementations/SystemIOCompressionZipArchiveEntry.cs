@@ -1,6 +1,8 @@
-﻿#if NETFRAMEWORK45_OR_NEWER
+﻿#if NET45_OR_NEWER
 
-namespace Gsemac.IO.Compression.Implementations.Internal {
+using System;
+
+namespace Gsemac.IO.Compression.Implementations {
 
     internal class SystemIOCompressionZipArchiveEntry :
         IArchiveEntry {
@@ -9,6 +11,7 @@ namespace Gsemac.IO.Compression.Implementations.Internal {
 
         public string Comment => string.Empty;
         public long CompressedSize => BaseEntry.CompressedLength;
+        public DateTimeOffset LastModified => BaseEntry.LastWriteTime;
         public string Path => BaseEntry.FullName;
         public long Size => BaseEntry.Length;
 
