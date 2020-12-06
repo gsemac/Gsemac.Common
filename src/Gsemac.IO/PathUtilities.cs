@@ -16,16 +16,16 @@ namespace Gsemac.IO {
         public const int MaxPathSegmentLength = 255;
         public const string ExtendedLengthPrefix = @"\\?\";
 
-        public static string GetRelativePath(string fullPath, string relativePath) {
+        public static string GetRelativePath(string fullPath, string relativeToPath) {
 
             if (string.IsNullOrEmpty(fullPath))
                 throw new ArgumentNullException(nameof(fullPath));
 
-            if (string.IsNullOrEmpty(relativePath))
+            if (string.IsNullOrEmpty(relativeToPath))
                 return fullPath;
 
             string fullInputPath = System.IO.Path.GetFullPath(fullPath);
-            string fullRelativeToPath = TrimDirectorySeparators(System.IO.Path.GetFullPath(relativePath)) + System.IO.Path.DirectorySeparatorChar;
+            string fullRelativeToPath = TrimDirectorySeparators(System.IO.Path.GetFullPath(relativeToPath)) + System.IO.Path.DirectorySeparatorChar;
 
             int index = fullInputPath.IndexOf(fullRelativeToPath);
 
