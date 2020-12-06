@@ -110,30 +110,28 @@ namespace Gsemac.Drawing.Imaging {
 
         // Private members
 
-        private static bool? isWebpSupportAvailable;
+        private static Lazy<bool> IsWebPSupportAvailable { get; } = new Lazy<bool>(GetIsWebPSupportAvailable);
 
-        private static bool IsWebpSupportAvailable() {
+        private static bool GetIsWebPSupportAvailable() {
 
-            if (!isWebpSupportAvailable.HasValue) {
+            AnyCpuFileSystemAssemblyResolver assemblyResolver = new AnyCpuFileSystemAssemblyResolver();
 
-                // #todo Not this?
+            // Check for the presence of the "WebPWrapper.WebP" class (in case something like ilmerge was used and the assembly is not present on disk).
 
-                AnyCpuFileSystemAssemblyResolver assemblyResolver = new AnyCpuFileSystemAssemblyResolver();
+            bool webPWrapperExists = AppDomain.CurrentDomain.GetAssemblies()
+                .Select(assembly => assembly.GetType("WebPWrapper.WebP") != null)
+                .FirstOrDefault();
 
-                bool webPWrapperExists = AppDomain.CurrentDomain.GetAssemblies()
-                    .Select(assembly => assembly.GetType("WebPWrapper.WebP") != null)
-                    .FirstOrDefault();
+            // Check for WebPWrapper on disk.
 
-                if (!webPWrapperExists)
-                    webPWrapperExists = assemblyResolver.AssemblyExists("WebPWrapper");
+            if (!webPWrapperExists)
+                webPWrapperExists = assemblyResolver.AssemblyExists("WebPWrapper");
 
-                bool libWebPExists = assemblyResolver.AssemblyExists(Environment.Is64BitProcess ? "libwebp_x64" : "libwebp_x86");
+            // Check for libwebp on disk.
 
-                isWebpSupportAvailable = webPWrapperExists && libWebPExists;
+            bool libWebPExists = assemblyResolver.AssemblyExists(Environment.Is64BitProcess ? "libwebp_x64" : "libwebp_x86");
 
-            }
-
-            return isWebpSupportAvailable.Value;
+            return webPWrapperExists && libWebPExists;
 
         }
 
@@ -165,7 +163,7 @@ namespace Gsemac.Drawing.Imaging {
                 new NativeImageReader()
             };
 
-            if (IsWebpSupportAvailable())
+            if (IsWebPSupportAvailable.Value)
                 imageReaders.Add(new WebPImageReader());
 
             return imageReaders;
