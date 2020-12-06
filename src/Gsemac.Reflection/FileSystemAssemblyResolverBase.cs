@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 
 namespace Gsemac.Reflection {
 
@@ -45,13 +47,10 @@ namespace Gsemac.Reflection {
 
         protected virtual IEnumerable<string> GetProbingPaths() {
 
-            foreach (string probingPath in ProbingPaths) {
-
-                yield return probingPath;
-
-            }
-
-            yield return new EntryAssemblyInfo().Directory;
+            return ProbingPaths.Concat(new[] {
+                Directory.GetCurrentDirectory(),
+                new EntryAssemblyInfo().Directory,
+            }).Distinct();
 
         }
 
