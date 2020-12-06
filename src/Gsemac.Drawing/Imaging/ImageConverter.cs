@@ -2,7 +2,6 @@
 
 using Gsemac.IO;
 using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 
@@ -12,8 +11,6 @@ namespace Gsemac.Drawing.Imaging {
             IImageConverter {
 
         // Public members
-
-        public IEnumerable<string> SupportedFileTypes => ImageUtilities.SupportedFileTypes;
 
         public void ConvertImage(string sourceFilePath, string destinationFilePath, IImageConversionOptions options) {
 
@@ -32,7 +29,7 @@ namespace Gsemac.Drawing.Imaging {
             string sourceExt = Path.GetExtension(sourceFilePath);
             bool overwriteSourceFile = sourceFilePath.Equals(destinationFilePath, StringComparison.OrdinalIgnoreCase);
 
-            if (!ImageUtilities.IsSupportedFileType(sourceExt))
+            if (!ImageReader.IsSupportedFileType(sourceExt))
                 throw new FileFormatException("The image format is not supported.");
 
             Image image;

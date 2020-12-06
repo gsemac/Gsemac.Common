@@ -12,7 +12,7 @@ namespace Gsemac.Drawing.Imaging {
     public class NativeImageReader :
         IImageReader {
 
-        public IEnumerable<string> SupportedFileTypes => ImageUtilities.NativelySupportedFileTypes;
+        public IEnumerable<string> SupportedFileTypes => ImageReader.NativelySupportedFileTypes;
 
         public Image ReadImage(Stream stream) {
 
