@@ -444,7 +444,10 @@ namespace Gsemac.IO {
         }
         public static bool AreEqual(string path1, string path2, StringComparison stringComparison = StringComparison.OrdinalIgnoreCase) {
 
-            return GetPathSegments(path1).SequenceEqual(GetPathSegments(path2), StringUtilities.GetStringComparer(stringComparison));
+            path1 = NormalizeDirectorySeparators(path1);
+            path2 = NormalizeDirectorySeparators(path2);
+
+            return path1.Equals(path2, stringComparison);
 
         }
 

@@ -370,6 +370,39 @@ namespace Gsemac.IO.Tests {
 
         }
 
+        // AreEqual
+
+        [TestMethod]
+        public void TestAreEqualWithEqualPathsWithSameDirectorySeparator() {
+
+            Assert.IsTrue(PathUtilities.AreEqual(@"C:\path\to\directory\", @"C:\path\to\directory\"));
+
+        }
+        [TestMethod]
+        public void TestAreEqualWithEqualPathsWithDifferentDirectorySeparator() {
+
+            Assert.IsTrue(PathUtilities.AreEqual(@"C:/path/to/directory/", @"C:\path\to\directory\"));
+
+        }
+        [TestMethod]
+        public void TestAreEqualWithEqualPathsWithMixedDirectorySeparator() {
+
+            Assert.IsTrue(PathUtilities.AreEqual(@"C:/path\to/directory\", @"C:/path/to\directory\"));
+
+        }
+        [TestMethod]
+        public void TestAreEqualWithEqualPathsWithMixedCase() {
+
+            Assert.IsTrue(PathUtilities.AreEqual(@"C:\path\TO\directory\", @"C:\path\to\DIRECTORY\"));
+
+        }
+        [TestMethod]
+        public void TestAreNotEqualWithUnequalPaths() {
+
+            Assert.IsFalse(PathUtilities.AreEqual(@"C:\path\to\", @"C:\path\to\directory\"));
+
+        }
+
     }
 
 }
