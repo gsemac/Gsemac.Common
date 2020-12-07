@@ -253,7 +253,7 @@ namespace Gsemac.IO {
         }
         public static string SanitizePath(string path, string invalidCharacterReplacement = "_") {
 
-            return ReplaceInvalidPathChars(path, invalidCharacterReplacement, InvalidPathCharacterOptions.Default | InvalidPathCharacterOptions.PreserveDirectoryStructure);
+            return ReplaceInvalidPathChars(path, invalidCharacterReplacement, InvalidPathCharsOptions.Default | InvalidPathCharsOptions.PreserveDirectoryStructure);
 
         }
 
@@ -262,28 +262,51 @@ namespace Gsemac.IO {
             return path?.Trim(System.IO.Path.DirectorySeparatorChar, System.IO.Path.AltDirectorySeparatorChar);
 
         }
-        public static string ReplaceInvalidPathChars(string path, InvalidPathCharacterOptions options = InvalidPathCharacterOptions.Default) {
+        public static string TrimLeadingDirectorySeparators(string path) {
+
+            return path?.TrimStart(System.IO.Path.DirectorySeparatorChar, System.IO.Path.AltDirectorySeparatorChar);
+
+        }
+        public static string TrimFollowingDirectorySeparators(string path) {
+
+            return path?.TrimEnd(System.IO.Path.DirectorySeparatorChar, System.IO.Path.AltDirectorySeparatorChar);
+
+        }
+        public static string NormalizeDirectorySeparators(string path) {
+
+            return NormalizeDirectorySeparators(path, System.IO.Path.DirectorySeparatorChar);
+
+        }
+        public static string NormalizeDirectorySeparators(string path, char directorySeparatorChar) {
+
+            path = string.Join(directorySeparatorChar.ToString(),
+                path.Split(System.IO.Path.DirectorySeparatorChar, System.IO.Path.AltDirectorySeparatorChar));
+
+            return path;
+
+        }
+        public static string ReplaceInvalidPathChars(string path, InvalidPathCharsOptions options = InvalidPathCharsOptions.Default) {
 
             return ReplaceInvalidPathChars(path, string.Empty, options);
 
         }
-        public static string ReplaceInvalidPathChars(string path, string replacement, InvalidPathCharacterOptions options = InvalidPathCharacterOptions.Default) {
+        public static string ReplaceInvalidPathChars(string path, string replacement, InvalidPathCharsOptions options = InvalidPathCharsOptions.Default) {
 
             string rootPath = string.Empty;
             IEnumerable<char> invalidCharacters = Enumerable.Empty<char>();
 
-            if (options.HasFlag(InvalidPathCharacterOptions.IncludeInvalidPathCharacters))
+            if (options.HasFlag(InvalidPathCharsOptions.ReplaceInvalidPathChars))
                 invalidCharacters = invalidCharacters.Concat(System.IO.Path.GetInvalidPathChars());
 
-            if (options.HasFlag(InvalidPathCharacterOptions.IncludeInvalidFileNameCharacters))
+            if (options.HasFlag(InvalidPathCharsOptions.ReplaceInvalidFileNameChars))
                 invalidCharacters = invalidCharacters.Concat(System.IO.Path.GetInvalidFileNameChars());
 
-            if (options.HasFlag(InvalidPathCharacterOptions.PreserveDirectoryStructure)) {
+            if (options.HasFlag(InvalidPathCharsOptions.PreserveDirectoryStructure)) {
 
                 // The root of the path might contain characters that would be invalid file name characters (e.g. ':' in "C:\").
                 // In order to preserve the root path information, we'll remove it for now and add it back later.
 
-                rootPath = System.IO.Path.GetPathRoot(ReplaceInvalidPathChars(path, InvalidPathCharacterOptions.IncludeInvalidPathCharacters));
+                rootPath = System.IO.Path.GetPathRoot(ReplaceInvalidPathChars(path, InvalidPathCharsOptions.ReplaceInvalidPathChars));
 
                 path = path.Substring(rootPath.Length);
 
@@ -376,7 +399,7 @@ namespace Gsemac.IO {
             // For the purpose of checking the length, replace all illegal characters in the path.
             // This will ensure Path methods don't throw.
 
-            path = ReplaceInvalidPathChars(path, " ", InvalidPathCharacterOptions.PreserveDirectoryStructure);
+            path = ReplaceInvalidPathChars(path, " ", InvalidPathCharsOptions.PreserveDirectoryStructure);
 
             path = System.IO.Path.GetFullPath(path);
 
@@ -417,6 +440,11 @@ namespace Gsemac.IO {
             return GetPathSegments(path)
                 .Select(segment => TrimDirectorySeparators(segment))
                 .Any(segment => segment.Equals(pathSegment, StringComparison.OrdinalIgnoreCase));
+
+        }
+        public static bool AreEqual(string path1, string path2) {
+
+            return GetPathSegments(path1).SequenceEqual(GetPathSegments(path2));
 
         }
 
