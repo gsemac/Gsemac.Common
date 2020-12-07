@@ -47,6 +47,7 @@
 	</Choose>
 
 	<ItemGroup>
+		<Content Include="Gsemac.IO.targets" PackagePath="build/Gsemac.IO.targets" />
 		<Content Include="licenses\*" Pack="true" PackagePath="contentFiles\licenses" />
 	</ItemGroup>
 
