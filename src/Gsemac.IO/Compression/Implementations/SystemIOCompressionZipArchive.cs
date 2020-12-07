@@ -21,8 +21,8 @@ namespace Gsemac.IO.Compression.Implementations {
         }
         public CompressionLevel CompressionLevel { get; set; } = CompressionLevel.Maximum;
 
-        public SystemIOCompressionZipArchive(Stream stream, FileAccess fileAccess = FileAccess.ReadWrite) :
-            this(stream, true, fileAccess) {
+        public SystemIOCompressionZipArchive(Stream stream, FileAccess fileAccess = FileAccess.ReadWrite, IArchiveOptions options = null) :
+            this(stream, true, fileAccess, options) {
         }
 
         public IArchiveEntry AddEntry(Stream stream, string entryName, bool leaveOpen = false) {
@@ -99,20 +99,6 @@ namespace Gsemac.IO.Compression.Implementations {
 
         }
 
-        public void SaveTo(Stream outputStream) {
-
-            if (outputStream is null)
-                throw new ArgumentNullException(nameof(outputStream));
-
-            long position = stream.Position;
-
-            stream.Seek(0, SeekOrigin.Begin);
-
-            stream.CopyTo(outputStream);
-
-            stream.Seek(position, SeekOrigin.Begin);
-
-        }
         public void Close() { }
 
         public void Dispose() {
@@ -145,14 +131,19 @@ namespace Gsemac.IO.Compression.Implementations {
 
         // Private members
 
-        private readonly Stream stream;
+        //private readonly Stream stream;
         private readonly System.IO.Compression.ZipArchive archive;
         private bool disposedValue = false;
 
-        private SystemIOCompressionZipArchive(Stream stream, bool leaveOpen, FileAccess fileAccess) {
+        private SystemIOCompressionZipArchive(Stream stream, bool leaveOpen, FileAccess fileAccess, IArchiveOptions options) {
 
-            this.stream = stream;
-            this.archive = new System.IO.Compression.ZipArchive(stream, GetZipArchiveMode(fileAccess), leaveOpen, Encoding.UTF8);
+            if (options is null)
+                options = new ArchiveOptions();
+
+            this.CompressionLevel = options.CompressionLevel;
+
+            //this.stream = stream;
+            this.archive = new System.IO.Compression.ZipArchive(stream, GetZipArchiveMode(fileAccess), leaveOpen, options.Encoding ?? Encoding.UTF8);
 
         }
 
@@ -194,6 +185,21 @@ namespace Gsemac.IO.Compression.Implementations {
             }
 
         }
+
+        //private void SaveTo(Stream outputStream) {
+
+        //    if (outputStream is null)
+        //        throw new ArgumentNullException(nameof(outputStream));
+
+        //    long position = stream.Position;
+
+        //    stream.Seek(0, SeekOrigin.Begin);
+
+        //    stream.CopyTo(outputStream);
+
+        //    stream.Seek(position, SeekOrigin.Begin);
+
+        //}
 
     }
 

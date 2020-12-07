@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 
 namespace Gsemac.IO.Compression.Implementations {
 
@@ -18,8 +19,8 @@ namespace Gsemac.IO.Compression.Implementations {
         } // SharpCompress offers no means to set the archive comment outside of ZipWriterOptions, which can't be passed to SaveTo
         public CompressionLevel CompressionLevel { get; set; } = CompressionLevel.Maximum;
 
-        public SharpCompressZipArchive(Stream stream, FileAccess fileAccess = FileAccess.ReadWrite) :
-            this(stream, leaveOpen: true) {
+        public SharpCompressZipArchive(Stream stream, FileAccess fileAccess = FileAccess.ReadWrite, IArchiveOptions options = null) :
+            this(stream, leaveOpen: true, options) {
 
             this.fileAccess = fileAccess;
 
@@ -92,18 +93,6 @@ namespace Gsemac.IO.Compression.Implementations {
 
         }
 
-        public void SaveTo(Stream outputStream) {
-
-            if (outputStream is null)
-                throw new ArgumentNullException(nameof(outputStream));
-
-            archive.DeflateCompressionLevel = GetDeflateCompressionLevel(CompressionLevel);
-
-            archive.SaveTo(outputStream, new SharpCompress.Writers.WriterOptions(GetCompressionType(CompressionLevel)) {
-                LeaveStreamOpen = true,
-            });
-
-        }
         public void Close() {
 
             if (!archiveIsClosed)
@@ -147,13 +136,20 @@ namespace Gsemac.IO.Compression.Implementations {
         private readonly bool canWriteDirectoryToSourceStream = false;
         private readonly SharpCompress.Archives.Zip.ZipArchive archive;
         private Stream sourceStream = null;
+        private readonly IArchiveOptions options;
         private bool archiveModified = false;
         private bool disposedValue = false;
         private bool archiveIsClosed = false;
 
-        private SharpCompressZipArchive(Stream stream, bool leaveOpen) {
+        private SharpCompressZipArchive(Stream stream, bool leaveOpen, IArchiveOptions options) {
+
+            if (options is null)
+                options = new ArchiveOptions();
+
+            this.CompressionLevel = options.CompressionLevel;
 
             sourceStream = stream;
+            this.options = options;
 
             // It will complain if we try to open a ZIP archive that doesn't exist (can't read headers).
             // Create an empty ZIP archive for it to open.
@@ -172,7 +168,10 @@ namespace Gsemac.IO.Compression.Implementations {
             }
 
             archive = SharpCompress.Archives.Zip.ZipArchive.Open(stream, new SharpCompress.Readers.ReaderOptions() {
-                LeaveStreamOpen = leaveOpen
+                LeaveStreamOpen = leaveOpen,
+                ArchiveEncoding = new SharpCompress.Common.ArchiveEncoding() {
+                    Default = options.Encoding ?? Encoding.UTF8,
+                }
             });
 
         }
@@ -214,6 +213,21 @@ namespace Gsemac.IO.Compression.Implementations {
 
         }
 
+        private void SaveTo(Stream outputStream) {
+
+            if (outputStream is null)
+                throw new ArgumentNullException(nameof(outputStream));
+
+            archive.DeflateCompressionLevel = GetDeflateCompressionLevel(CompressionLevel);
+
+            archive.SaveTo(outputStream, new SharpCompress.Writers.WriterOptions(GetCompressionType(CompressionLevel)) {
+                LeaveStreamOpen = true,
+                ArchiveEncoding = new SharpCompress.Common.ArchiveEncoding() {
+                    Default = options.Encoding ?? Encoding.UTF8,
+                }
+            });
+
+        }
         private void CommitChanges() {
 
             if (!fileAccess.HasFlag(FileAccess.Write) || sourceStream is null || !archiveModified)

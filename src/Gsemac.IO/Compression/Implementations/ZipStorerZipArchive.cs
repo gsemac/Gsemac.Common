@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
+using System.Text;
 
 namespace Gsemac.IO.Compression.Implementations {
 
@@ -18,7 +19,7 @@ namespace Gsemac.IO.Compression.Implementations {
             get => throw ArchiveExceptions.ReadingCommentsIsNotSupported;
             set {
 
-                if (archive.IsValueCreated)
+                if (archive?.IsValueCreated ?? false)
                     throw ArchiveExceptions.WritingCommentsIsNotSupported;
 
                 archiveComment = value;
@@ -27,8 +28,8 @@ namespace Gsemac.IO.Compression.Implementations {
         }
         public CompressionLevel CompressionLevel { get; set; } = CompressionLevel.Maximum;
 
-        public ZipStorerZipArchive(Stream stream, FileAccess fileAccess = FileAccess.ReadWrite) :
-            this(stream, leaveOpen: true, fileAccess) {
+        public ZipStorerZipArchive(Stream stream, FileAccess fileAccess = FileAccess.ReadWrite, IArchiveOptions options = null) :
+            this(stream, leaveOpen: true, fileAccess, options) {
         }
 
         public IArchiveEntry AddEntry(Stream stream, string entryName, bool leaveOpen = false) {
@@ -157,7 +158,13 @@ namespace Gsemac.IO.Compression.Implementations {
         private bool disposedValue = false;
         private bool archiveIsClosed = false;
 
-        private ZipStorerZipArchive(Stream stream, bool leaveOpen, FileAccess fileAccess) {
+        private ZipStorerZipArchive(Stream stream, bool leaveOpen, FileAccess fileAccess, IArchiveOptions options) {
+
+            if (options is null)
+                options = new ArchiveOptions();
+
+            this.Comment = options.Comment;
+            this.CompressionLevel = options.CompressionLevel;
 
             this.fileAccess = fileAccess;
             this.sourceStream = stream;
@@ -195,10 +202,17 @@ namespace Gsemac.IO.Compression.Implementations {
 
             this.archive = new Lazy<ZipStorer>(() => {
 
+                ZipStorer archive;
+
                 if (stream.Length <= 0)
-                    return ZipStorer.Create(stream, archiveComment, leaveOpen);
+                    archive = ZipStorer.Create(stream, archiveComment, leaveOpen);
                 else
-                    return ZipStorer.Open(stream, fileAccess, leaveOpen);
+                    archive = ZipStorer.Open(stream, fileAccess, leaveOpen);
+
+                if (options.Encoding == Encoding.UTF8)
+                    archive.EncodeUTF8 = true;
+
+                return archive;
 
             });
 

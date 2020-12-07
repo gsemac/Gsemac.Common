@@ -10,28 +10,30 @@ namespace Gsemac.IO.Compression {
 
         // Public members
 
-        public static IArchive Open(string filePath, FileAccess fileAccess = FileAccess.ReadWrite) {
+        public static IArchive Open(string filePath, FileAccess fileAccess = FileAccess.ReadWrite, IArchiveOptions options = null) {
 
             using (FileStream fs = new FileStream(filePath, FileMode.OpenOrCreate, fileAccess))
-                return FromStream(fs, fileAccess);
+                return FromStream(fs, fileAccess, options);
 
         }
-        public static IArchive FromStream(Stream stream, FileAccess fileAccess = FileAccess.ReadWrite) {
+        public static IArchive FromStream(Stream stream, FileAccess fileAccess = FileAccess.ReadWrite, IArchiveOptions options = null) {
 
 #if NET45_OR_NEWER
-            return new SystemIOCompressionZipArchive(stream, fileAccess);
+            return new SystemIOCompressionZipArchive(stream, fileAccess, options);
 #else
 
             if (IsSharpCompressAvailable.Value)
-                return new SharpCompressZipArchive(stream, fileAccess);
+                return new SharpCompressZipArchive(stream, fileAccess, options);
             else
-                return new ZipStorerZipArchive(stream, fileAccess);
+                return new ZipStorerZipArchive(stream, fileAccess, options);
 
 #endif
 
         }
 
         // Private members
+
+#if !NET45_OR_NEWER
 
         private static Lazy<bool> IsSharpCompressAvailable { get; } = new Lazy<bool>(GetIsSharpCompressAvailable);
 
@@ -53,6 +55,8 @@ namespace Gsemac.IO.Compression {
             return sharpCompressExists;
 
         }
+
+#endif
 
     }
 
