@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using System.Linq;
 
 namespace Gsemac.IO.Compression.Extensions {
 
@@ -32,14 +33,61 @@ namespace Gsemac.IO.Compression.Extensions {
         }
         public static void ExtractEntry(this IArchive archive, IArchiveEntry entry, string filePath) {
 
-            using (FileStream fs = File.OpenWrite(filePath))
-                archive.ExtractEntry(entry, fs);
+            // Some implementations do not create the file path's directory automatically.
+
+            string directoryPath = Path.GetDirectoryName(filePath);
+            bool createdDirectory = false;
+
+            if (!string.IsNullOrWhiteSpace(directoryPath) && !Directory.Exists(directoryPath)) {
+
+                Directory.CreateDirectory(directoryPath);
+
+                createdDirectory = true;
+
+            }
+
+            try {
+
+                using (FileStream fs = File.OpenWrite(filePath))
+                    archive.ExtractEntry(entry, fs);
+
+            }
+            finally {
+
+                // Delete the output directory if it is empty (we weren't able to extract the file).
+
+                if (createdDirectory && !Directory.EnumerateFileSystemEntries(directoryPath).Any())
+                    Directory.Delete(directoryPath);
+
+            }
 
         }
         public static void ExtractAllEntries(this IArchive archive, string directoryPath) {
 
-            foreach (IArchiveEntry entry in archive.GetEntries())
-                archive.ExtractEntry(entry, Path.Combine(directoryPath, entry.Name));
+            bool createdDirectory = false;
+
+            if (!string.IsNullOrWhiteSpace(directoryPath) && !Directory.Exists(directoryPath)) {
+
+                Directory.CreateDirectory(directoryPath);
+
+                createdDirectory = true;
+
+            }
+
+            try {
+
+                foreach (IArchiveEntry entry in archive.GetEntries())
+                    archive.ExtractEntry(entry, Path.Combine(directoryPath, PathUtilities.NormalizeDirectorySeparators(entry.Name)));
+
+            }
+            finally {
+
+                // Delete the output directory if it is empty (we weren't able to extract the files).
+
+                if (createdDirectory && !Directory.EnumerateFileSystemEntries(directoryPath).Any())
+                    Directory.Delete(directoryPath);
+
+            }
 
         }
 
