@@ -26,7 +26,7 @@ namespace Gsemac.IO.Compression.Implementations {
 
         }
 
-        public override IArchiveEntry AddEntry(Stream stream, string entryName, bool leaveOpen = false) {
+        public override IArchiveEntry AddEntry(Stream stream, string entryName, bool overwrite = true, bool leaveOpen = false, IArchiveEntryOptions options = null) {
 
             if (stream is null)
                 throw new ArgumentNullException(nameof(stream));
@@ -39,8 +39,14 @@ namespace Gsemac.IO.Compression.Implementations {
 
             IArchiveEntry existingEntry = GetEntry(entryName);
 
-            if (!(existingEntry is null))
-                DeleteEntry(existingEntry);
+            if (!(existingEntry is null)) {
+
+                if (overwrite)
+                    DeleteEntry(existingEntry);
+                else
+                    throw ArchiveExceptions.EntryAlreadyExists;
+
+            }
 
             archiveModified = true;
 
