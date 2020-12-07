@@ -258,7 +258,7 @@ namespace Gsemac.IO.Compression.Implementations {
                     sourceStream.SetLength(0);
 
                     using (ZipStorerZipArchive tempArchive = new ZipStorerZipArchive(sourceStream, FileAccess.Write))
-                        tempArchive.AddAllEntries(tempDirectory);
+                        tempArchive.AddAllFiles(tempDirectory);
 
                 }
                 finally {

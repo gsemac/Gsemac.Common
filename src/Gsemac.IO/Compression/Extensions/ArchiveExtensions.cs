@@ -4,20 +4,20 @@ namespace Gsemac.IO.Compression.Extensions {
 
     public static class ArchiveExtensions {
 
-        public static void AddEntry(this IArchive archive, string filePath) {
+        public static void AddFile(this IArchive archive, string filePath) {
 
-            archive.AddEntry(filePath, filePath);
+            archive.AddFile(filePath, filePath);
 
         }
-        public static void AddEntry(this IArchive archive, string filePath, string entryName) {
+        public static void AddFile(this IArchive archive, string filePath, string entryName) {
 
             archive.AddEntry(File.OpenRead(filePath), entryName, leaveOpen: false);
 
         }
-        public static void AddAllEntries(this IArchive archive, string directoryPath) {
+        public static void AddAllFiles(this IArchive archive, string directoryPath) {
 
             foreach (string filePath in Directory.EnumerateFiles(directoryPath, "*", SearchOption.AllDirectories))
-                archive.AddEntry(filePath, PathUtilities.GetRelativePath(filePath, directoryPath));
+                archive.AddFile(filePath, PathUtilities.GetRelativePath(filePath, directoryPath));
 
         }
         public static bool DeleteEntry(this IArchive archive, string entryName) {
