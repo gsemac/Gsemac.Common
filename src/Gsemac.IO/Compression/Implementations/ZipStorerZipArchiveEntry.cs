@@ -11,7 +11,7 @@ namespace Gsemac.IO.Compression.Implementations {
         public string Comment => string.Empty;
         public long CompressedSize => BaseEntry.CompressedSize;
         public DateTimeOffset LastModified => BaseEntry.ModifyTime;
-        public string Path => BaseEntry.FilenameInZip;
+        public string Name => BaseEntry.FilenameInZip;
         public long Size => BaseEntry.FileSize;
 
         public ZipStorer.ZipFileEntry BaseEntry { get; }

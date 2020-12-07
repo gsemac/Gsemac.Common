@@ -442,9 +442,9 @@ namespace Gsemac.IO {
                 .Any(segment => segment.Equals(pathSegment, StringComparison.OrdinalIgnoreCase));
 
         }
-        public static bool AreEqual(string path1, string path2) {
+        public static bool AreEqual(string path1, string path2, StringComparison stringComparison = StringComparison.OrdinalIgnoreCase) {
 
-            return GetPathSegments(path1).SequenceEqual(GetPathSegments(path2));
+            return GetPathSegments(path1).SequenceEqual(GetPathSegments(path2), StringUtilities.GetStringComparer(stringComparison));
 
         }
 

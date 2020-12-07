@@ -39,7 +39,7 @@ namespace Gsemac.IO.Compression.Extensions {
         public static void ExtractAllEntries(this IArchive archive, string directoryPath) {
 
             foreach (IArchiveEntry entry in archive.GetEntries())
-                archive.ExtractEntry(entry, Path.Combine(directoryPath, entry.Path));
+                archive.ExtractEntry(entry, Path.Combine(directoryPath, entry.Name));
 
         }
 

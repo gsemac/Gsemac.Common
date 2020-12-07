@@ -7,6 +7,8 @@ namespace Gsemac.IO.Compression {
     public abstract class ArchiveBase :
         IArchive {
 
+        // Public members
+
         public abstract bool CanRead { get; }
         public abstract bool CanWrite { get; }
         public abstract string Comment { get; set; }
@@ -30,6 +32,23 @@ namespace Gsemac.IO.Compression {
         IEnumerator IEnumerable.GetEnumerator() {
 
             return GetEnumerator();
+
+        }
+
+        // Protected members
+
+        protected string SanitizeEntryName(string entryName) {
+
+            // Entry names should always be relative paths, and should always be file paths (i.e. not directory paths).
+
+            entryName = PathUtilities.TrimDirectorySeparators(entryName);
+
+            // The ZIP specification states the forward-slash character should always be used as a path separator (for compatibility reasons).
+            // https://stackoverflow.com/a/44387973
+
+            entryName = PathUtilities.NormalizeDirectorySeparators(entryName, '/');
+
+            return entryName;
 
         }
 

@@ -12,7 +12,7 @@ namespace Gsemac.IO.Compression.Implementations {
         public string Comment => string.Empty;
         public long CompressedSize => BaseEntry.CompressedLength;
         public DateTimeOffset LastModified => BaseEntry.LastWriteTime;
-        public string Path => BaseEntry.FullName;
+        public string Name => BaseEntry.FullName;
         public long Size => BaseEntry.Length;
 
         public System.IO.Compression.ZipArchiveEntry BaseEntry { get; }

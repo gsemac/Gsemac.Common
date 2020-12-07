@@ -57,7 +57,7 @@ namespace Gsemac.IO.Compression.Implementations {
 
             }
 
-            ZipStorer.ZipFileEntry entry = archive.Value.AddStream(GetCompression(CompressionLevel), entryName, stream, DateTime.Now);
+            ZipStorer.ZipFileEntry entry = archive.Value.AddStream(GetCompression(CompressionLevel), SanitizeEntryName(entryName), stream, DateTime.Now);
 
             entries.Add(new ZipStorerZipArchiveEntry(entry));
 
@@ -71,7 +71,7 @@ namespace Gsemac.IO.Compression.Implementations {
         }
         public override IArchiveEntry GetEntry(string entryName) {
 
-            return GetEntries().Where(entry => entry.Path.Equals(entryName))
+            return GetEntries().Where(entry => PathUtilities.AreEqual(entry.Name, entryName))
                 .FirstOrDefault();
 
         }
@@ -266,8 +266,8 @@ namespace Gsemac.IO.Compression.Implementations {
                     sourceStream.Seek(0, SeekOrigin.Begin);
 
                     using (ZipStorerZipArchive tempArchive = new ZipStorerZipArchive(sourceStream, FileAccess.Read))
-                        foreach (IArchiveEntry entry in tempArchive.GetEntries().Where(e => !deletedEntries.Any(deletedEntry => deletedEntry.LastModified == e.LastModified && deletedEntry.Path.Equals(e.Path))))
-                            tempArchive.ExtractEntry(entry, Path.Combine(tempDirectory, entry.Path));
+                        foreach (IArchiveEntry entry in tempArchive.GetEntries().Where(e => !deletedEntries.Any(deletedEntry => deletedEntry.LastModified == e.LastModified && deletedEntry.Name.Equals(e.Name))))
+                            tempArchive.ExtractEntry(entry, Path.Combine(tempDirectory, entry.Name));
 
                     // Recreate the archive with only the non-deleted files.
 

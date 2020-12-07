@@ -50,15 +50,17 @@ namespace Gsemac.IO.Compression.Implementations {
 
             archiveModified = true;
 
-            return new SharpCompressZipArchiveEntry(archive.AddEntry(entryName, stream, closeStream: !leaveOpen));
+            return new SharpCompressZipArchiveEntry(archive.AddEntry(SanitizeEntryName(entryName), stream, closeStream: !leaveOpen));
 
         }
         public override IArchiveEntry GetEntry(string entryName) {
 
-            SharpCompress.Archives.Zip.ZipArchiveEntry entry = archive.Entries.Where(e => e.Key.Equals(entryName, StringComparison.OrdinalIgnoreCase))
+            entryName = SanitizeEntryName(entryName);
+
+            IArchiveEntry entry = GetEntries().Where(e => PathUtilities.AreEqual(e.Name, entryName))
                 .FirstOrDefault();
 
-            return entry is null ? null : new SharpCompressZipArchiveEntry(entry);
+            return entry;
 
         }
         public override void DeleteEntry(IArchiveEntry entry) {

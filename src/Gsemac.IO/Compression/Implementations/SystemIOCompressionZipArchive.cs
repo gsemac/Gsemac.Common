@@ -47,7 +47,7 @@ namespace Gsemac.IO.Compression.Implementations {
 
             }
 
-            System.IO.Compression.ZipArchiveEntry entry = archive.CreateEntry(entryName, GetCompressionLevel(CompressionLevel));
+            System.IO.Compression.ZipArchiveEntry entry = archive.CreateEntry(SanitizeEntryName(entryName), GetCompressionLevel(CompressionLevel));
 
             using (Stream entryStream = entry.Open())
                 stream.CopyTo(entryStream);
@@ -62,7 +62,7 @@ namespace Gsemac.IO.Compression.Implementations {
         }
         public override IArchiveEntry GetEntry(string entryName) {
 
-            System.IO.Compression.ZipArchiveEntry entry = archive.GetEntry(entryName);
+            System.IO.Compression.ZipArchiveEntry entry = archive.GetEntry(SanitizeEntryName(entryName));
 
             return entry is null ? null : new SystemIOCompressionZipArchiveEntry(entry);
 

@@ -311,6 +311,24 @@ namespace Gsemac.Text {
 
         }
 
+        public static StringComparer GetStringComparer(StringComparison stringComparison) {
+
+            Dictionary<StringComparison, StringComparer> dict = new Dictionary<StringComparison, StringComparer> {
+                { StringComparison.CurrentCulture, StringComparer.CurrentCulture },
+                { StringComparison.CurrentCultureIgnoreCase, StringComparer.CurrentCultureIgnoreCase },
+                { StringComparison.InvariantCulture, StringComparer.InvariantCulture },
+                { StringComparison.InvariantCultureIgnoreCase, StringComparer.InvariantCultureIgnoreCase },
+                { StringComparison.Ordinal, StringComparer.Ordinal },
+                { StringComparison.OrdinalIgnoreCase, StringComparer.OrdinalIgnoreCase }
+            };
+
+            if (dict.TryGetValue(stringComparison, out StringComparer stringComparer))
+                return stringComparer;
+
+            throw new ArgumentOutOfRangeException(nameof(stringComparison));
+
+        }
+
         // Private members
 
         private static string UnescapeEscapeSequence(string input) {

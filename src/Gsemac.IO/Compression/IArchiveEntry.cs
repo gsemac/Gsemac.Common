@@ -7,8 +7,8 @@ namespace Gsemac.IO.Compression {
         string Comment { get; }
         long CompressedSize { get; }
         DateTimeOffset LastModified { get; }
+        string Name { get; }
         long Size { get; }
-        string Path { get; }
 
     }
 
