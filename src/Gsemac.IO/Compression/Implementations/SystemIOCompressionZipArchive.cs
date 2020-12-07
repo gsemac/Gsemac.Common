@@ -21,8 +21,8 @@ namespace Gsemac.IO.Compression.Implementations {
         }
         public override CompressionLevel CompressionLevel { get; set; } = CompressionLevel.Maximum;
 
-        public SystemIOCompressionZipArchive(Stream stream, FileAccess fileAccess = FileAccess.ReadWrite, IArchiveOptions options = null) :
-            this(stream, true, fileAccess, options) {
+        public SystemIOCompressionZipArchive(Stream stream, FileAccess fileAccess = FileAccess.ReadWrite, bool leaveOpen = false, IArchiveOptions options = null) :
+            this(stream, leaveOpen, fileAccess, options) {
         }
 
         public override IArchiveEntry AddEntry(Stream stream, string entryName, bool overwrite = true, bool leaveOpen = false, IArchiveEntryOptions options = null) {
@@ -54,8 +54,12 @@ namespace Gsemac.IO.Compression.Implementations {
 
             // We can close the stream immediately since it's already copied to the archive.
 
-            if (!leaveOpen)
+            if (!leaveOpen) {
+
+                stream.Close();
                 stream.Dispose();
+
+            }
 
             return new SystemIOCompressionZipArchiveEntry(entry);
 

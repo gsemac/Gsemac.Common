@@ -12,20 +12,19 @@ namespace Gsemac.IO.Compression {
 
         public static IArchive Open(string filePath, FileAccess fileAccess = FileAccess.ReadWrite, IArchiveOptions options = null) {
 
-            using (FileStream fs = new FileStream(filePath, FileMode.OpenOrCreate, fileAccess))
-                return FromStream(fs, fileAccess, options);
+            return FromStream(new FileStream(filePath, FileMode.OpenOrCreate, fileAccess), fileAccess, leaveOpen: false, options);
 
         }
-        public static IArchive FromStream(Stream stream, FileAccess fileAccess = FileAccess.ReadWrite, IArchiveOptions options = null) {
+        public static IArchive FromStream(Stream stream, FileAccess fileAccess = FileAccess.ReadWrite, bool leaveOpen = false, IArchiveOptions options = null) {
 
 #if NET45_OR_NEWER
-            return new SystemIOCompressionZipArchive(stream, fileAccess, options);
+            return new SystemIOCompressionZipArchive(stream, fileAccess, leaveOpen, options);
 #else
 
             if (IsSharpCompressAvailable.Value)
-                return new SharpCompressZipArchive(stream, fileAccess, options);
+                return new SharpCompressZipArchive(stream, fileAccess, leaveOpen, options);
             else
-                return new ZipStorerZipArchive(stream, fileAccess, options);
+                return new ZipStorerZipArchive(stream, fileAccess, leaveOpen, options);
 
 #endif
 

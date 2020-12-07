@@ -28,8 +28,8 @@ namespace Gsemac.IO.Compression.Implementations {
         }
         public override CompressionLevel CompressionLevel { get; set; } = CompressionLevel.Maximum;
 
-        public ZipStorerZipArchive(Stream stream, FileAccess fileAccess = FileAccess.ReadWrite, IArchiveOptions options = null) :
-            this(stream, leaveOpen: true, fileAccess, options) {
+        public ZipStorerZipArchive(Stream stream, FileAccess fileAccess = FileAccess.ReadWrite, bool leaveOpen = false, IArchiveOptions options = null) :
+            this(stream, leaveOpen, fileAccess, options) {
         }
 
         public override IArchiveEntry AddEntry(Stream stream, string entryName, bool overwrite = true, bool leaveOpen = false, IArchiveEntryOptions options = null) {
@@ -63,8 +63,12 @@ namespace Gsemac.IO.Compression.Implementations {
 
             // We can close the stream immediately since it's already copied to the archive.
 
-            if (!leaveOpen)
+            if (!leaveOpen) {
+
+                stream.Close();
                 stream.Dispose();
+
+            }
 
             return entries.Last();
 
@@ -145,6 +149,13 @@ namespace Gsemac.IO.Compression.Implementations {
                     if (archive.IsValueCreated && !archiveIsClosed)
                         archive.Value.Dispose();
 
+                    if (!leaveStreamOpen) {
+
+                        sourceStream.Close();
+                        sourceStream.Dispose();
+
+                    }
+
                 }
 
                 disposedValue = true;
@@ -157,6 +168,7 @@ namespace Gsemac.IO.Compression.Implementations {
 
         private readonly FileAccess fileAccess = FileAccess.ReadWrite;
         private readonly Stream sourceStream;
+        private readonly bool leaveStreamOpen = false;
         private readonly Lazy<ZipStorer> archive;
         private readonly List<ZipStorerZipArchiveEntry> entries = new List<ZipStorerZipArchiveEntry>();
         private readonly List<ZipStorerZipArchiveEntry> deletedEntries = new List<ZipStorerZipArchiveEntry>();
@@ -174,6 +186,7 @@ namespace Gsemac.IO.Compression.Implementations {
 
             this.fileAccess = fileAccess;
             this.sourceStream = stream;
+            this.leaveStreamOpen = leaveOpen;
 
             if (stream.Length > 0) {
 
@@ -211,9 +224,9 @@ namespace Gsemac.IO.Compression.Implementations {
                 ZipStorer archive;
 
                 if (stream.Length <= 0)
-                    archive = ZipStorer.Create(stream, archiveComment, leaveOpen);
+                    archive = ZipStorer.Create(stream, archiveComment, _leaveOpen: true);
                 else
-                    archive = ZipStorer.Open(stream, fileAccess, leaveOpen);
+                    archive = ZipStorer.Open(stream, fileAccess, _leaveOpen: true);
 
                 if (options.Encoding == Encoding.UTF8)
                     archive.EncodeUTF8 = true;
@@ -270,7 +283,7 @@ namespace Gsemac.IO.Compression.Implementations {
 
                     sourceStream.Seek(0, SeekOrigin.Begin);
 
-                    using (ZipStorerZipArchive tempArchive = new ZipStorerZipArchive(sourceStream, FileAccess.Read))
+                    using (ZipStorerZipArchive tempArchive = new ZipStorerZipArchive(sourceStream, FileAccess.Read, leaveOpen: true))
                         foreach (IArchiveEntry entry in tempArchive.GetEntries().Where(e => !deletedEntries.Any(deletedEntry => AreEqual(deletedEntry, e))))
                             tempArchive.ExtractEntry(entry, Path.Combine(tempDirectory, entry.Name));
 
@@ -278,7 +291,7 @@ namespace Gsemac.IO.Compression.Implementations {
 
                     sourceStream.SetLength(0);
 
-                    using (ZipStorerZipArchive tempArchive = new ZipStorerZipArchive(sourceStream, FileAccess.Write))
+                    using (ZipStorerZipArchive tempArchive = new ZipStorerZipArchive(sourceStream, FileAccess.Write, leaveOpen: true))
                         tempArchive.AddAllFiles(tempDirectory);
 
                 }
