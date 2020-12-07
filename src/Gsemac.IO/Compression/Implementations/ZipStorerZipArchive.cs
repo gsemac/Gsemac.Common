@@ -27,9 +27,6 @@ namespace Gsemac.IO.Compression.Implementations {
         }
         public CompressionLevel CompressionLevel { get; set; } = CompressionLevel.Maximum;
 
-        public ZipStorerZipArchive(string filePath, FileAccess fileAccess = FileAccess.ReadWrite) :
-            this(new FileStream(filePath, FileMode.OpenOrCreate, fileAccess), leaveOpen: false, fileAccess) {
-        }
         public ZipStorerZipArchive(Stream stream, FileAccess fileAccess = FileAccess.ReadWrite) :
             this(stream, leaveOpen: true, fileAccess) {
         }

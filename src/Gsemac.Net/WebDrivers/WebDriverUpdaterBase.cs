@@ -51,7 +51,7 @@ namespace Gsemac.Net.WebDrivers {
 
                                 string filename = PathUtilities.GetFileName(webDriverFilePath);
 
-                                using (ZipArchive archive = new ZipArchive(downloadFilePath, FileAccess.Read))
+                                using (IArchive archive = ZipArchive.Open(downloadFilePath, FileAccess.Read))
                                 using (FileStream outputStream = File.OpenWrite(webDriverFilePath))
                                     archive.ExtractEntry(archive.GetEntry(filename), outputStream);
 

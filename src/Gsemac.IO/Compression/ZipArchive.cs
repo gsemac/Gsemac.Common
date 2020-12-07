@@ -1,83 +1,58 @@
 ﻿using Gsemac.IO.Compression.Implementations;
+using Gsemac.Reflection;
 using System;
-using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 namespace Gsemac.IO.Compression {
 
-    public class ZipArchive :
-        IArchive {
+    public static class ZipArchive {
 
         // Public members
 
-        public bool CanRead => underlyingArchive.CanRead;
-        public bool CanWrite => underlyingArchive.CanWrite;
-        public string Comment {
-            get => underlyingArchive.Comment;
-            set => underlyingArchive.Comment = value;
-        }
-        public CompressionLevel CompressionLevel {
-            get => underlyingArchive.CompressionLevel;
-            set => underlyingArchive.CompressionLevel = value;
-        }
+        public static IArchive Open(string filePath, FileAccess fileAccess = FileAccess.ReadWrite) {
 
-        public ZipArchive(string filePath, FileAccess fileAccess = FileAccess.ReadWrite) {
+            using (FileStream fs = new FileStream(filePath, FileMode.OpenOrCreate, fileAccess))
+                return FromStream(fs, fileAccess);
 
-#if NETFRAMEWORK45_OR_NEWER
-            underlyingArchive = new SystemIOCompressionZipArchive(filePath, fileAccess);
+        }
+        public static IArchive FromStream(Stream stream, FileAccess fileAccess = FileAccess.ReadWrite) {
+
+#if NET45_OR_NEWER
+            return new SystemIOCompressionZipArchive(stream, fileAccess);
 #else
-            underlyingArchive = new SharpCompressZipArchive(filePath, fileAccess);
+
+            if (IsSharpCompressAvailable.Value)
+                return new SharpCompressZipArchive(stream, fileAccess);
+            else
+                return new ZipStorerZipArchive(stream, fileAccess);
+
 #endif
-
-        }
-        public ZipArchive(Stream stream) {
-
-#if NETFRAMEWORK45_OR_NEWER
-            underlyingArchive = new SystemIOCompressionZipArchive(stream);
-#else
-            underlyingArchive = new SharpCompressZipArchive(stream);
-#endif
-
-        }
-
-        public IArchiveEntry AddEntry(Stream stream, string entryName, bool leaveOpen = false) => underlyingArchive.AddEntry(stream, entryName, leaveOpen);
-        public IArchiveEntry GetEntry(string entryName) => underlyingArchive.GetEntry(entryName);
-        public void DeleteEntry(IArchiveEntry entry) => underlyingArchive.DeleteEntry(entry);
-        public void ExtractEntry(IArchiveEntry entry, Stream outputStream) => underlyingArchive.ExtractEntry(entry, outputStream);
-        public IEnumerable<IArchiveEntry> GetEntries() => underlyingArchive.GetEntries();
-
-        public void Close() => underlyingArchive.Close();
-
-        public void Dispose() {
-
-            Dispose(disposing: true);
-
-            GC.SuppressFinalize(this);
-
-        }
-
-        // Protected members
-
-        protected virtual void Dispose(bool disposing) {
-
-            if (!disposedValue) {
-
-                if (disposing) {
-
-                    underlyingArchive.Dispose();
-
-                }
-
-                disposedValue = true;
-
-            }
 
         }
 
         // Private members
 
-        private readonly IArchive underlyingArchive;
-        private bool disposedValue = false;
+        private static Lazy<bool> IsSharpCompressAvailable { get; } = new Lazy<bool>(GetIsSharpCompressAvailable);
+
+        private static bool GetIsSharpCompressAvailable() {
+
+            AnyCpuFileSystemAssemblyResolver assemblyResolver = new AnyCpuFileSystemAssemblyResolver();
+
+            // Check for the presence of the "SharpCompress.Archives.Zip.ZipArchive" class (in case something like ilmerge was used and the assembly is not present on disk).
+
+            bool sharpCompressExists = AppDomain.CurrentDomain.GetAssemblies()
+                .Select(assembly => assembly.GetType("SharpCompress.Archives.Zip.ZipArchive") != null)
+                .FirstOrDefault();
+
+            // Check for WebPWrapper on disk.
+
+            if (!sharpCompressExists)
+                sharpCompressExists = assemblyResolver.AssemblyExists("SharpCompress");
+
+            return sharpCompressExists;
+
+        }
 
     }
 

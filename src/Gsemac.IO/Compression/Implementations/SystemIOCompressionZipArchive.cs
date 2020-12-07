@@ -21,9 +21,6 @@ namespace Gsemac.IO.Compression.Implementations {
         }
         public CompressionLevel CompressionLevel { get; set; } = CompressionLevel.Maximum;
 
-        public SystemIOCompressionZipArchive(string filePath, FileAccess fileAccess = FileAccess.ReadWrite) :
-            this(new FileStream(filePath, FileMode.OpenOrCreate, fileAccess), false, fileAccess) {
-        }
         public SystemIOCompressionZipArchive(Stream stream, FileAccess fileAccess = FileAccess.ReadWrite) :
             this(stream, true, fileAccess) {
         }

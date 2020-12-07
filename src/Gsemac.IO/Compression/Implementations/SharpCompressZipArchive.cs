@@ -18,12 +18,6 @@ namespace Gsemac.IO.Compression.Implementations {
         } // SharpCompress offers no means to set the archive comment outside of ZipWriterOptions, which can't be passed to SaveTo
         public CompressionLevel CompressionLevel { get; set; } = CompressionLevel.Maximum;
 
-        public SharpCompressZipArchive(string filePath, FileAccess fileAccess = FileAccess.ReadWrite) :
-            this(new FileStream(filePath, FileAccess.ReadWrite.HasFlag(FileAccess.Write) ? FileMode.OpenOrCreate : FileMode.Open, fileAccess), leaveOpen: false) {
-
-            this.fileAccess = fileAccess;
-
-        }
         public SharpCompressZipArchive(Stream stream, FileAccess fileAccess = FileAccess.ReadWrite) :
             this(stream, leaveOpen: true) {
 
