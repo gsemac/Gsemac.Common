@@ -5,6 +5,7 @@ using System.IO;
 namespace Gsemac.IO.Compression {
 
     public interface IArchive :
+        IEnumerable<IArchiveEntry>,
         IDisposable {
 
         bool CanRead { get; }

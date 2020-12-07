@@ -9,23 +9,23 @@ using System.Text;
 namespace Gsemac.IO.Compression.Implementations {
 
     public class SystemIOCompressionZipArchive :
-        IArchive {
+        ArchiveBase {
 
         // Public members
 
-        public bool CanRead => archive.Mode == System.IO.Compression.ZipArchiveMode.Read || archive.Mode == System.IO.Compression.ZipArchiveMode.Update;
-        public bool CanWrite => archive.Mode == System.IO.Compression.ZipArchiveMode.Create || archive.Mode == System.IO.Compression.ZipArchiveMode.Update;
-        public string Comment {
+        public override bool CanRead => archive.Mode == System.IO.Compression.ZipArchiveMode.Read || archive.Mode == System.IO.Compression.ZipArchiveMode.Update;
+        public override bool CanWrite => archive.Mode == System.IO.Compression.ZipArchiveMode.Create || archive.Mode == System.IO.Compression.ZipArchiveMode.Update;
+        public override string Comment {
             get => throw ArchiveExceptions.ReadingCommentsIsNotSupported;
             set => throw ArchiveExceptions.WritingCommentsIsNotSupported;
         }
-        public CompressionLevel CompressionLevel { get; set; } = CompressionLevel.Maximum;
+        public override CompressionLevel CompressionLevel { get; set; } = CompressionLevel.Maximum;
 
         public SystemIOCompressionZipArchive(Stream stream, FileAccess fileAccess = FileAccess.ReadWrite, IArchiveOptions options = null) :
             this(stream, true, fileAccess, options) {
         }
 
-        public IArchiveEntry AddEntry(Stream stream, string entryName, bool leaveOpen = false) {
+        public override IArchiveEntry AddEntry(Stream stream, string entryName, bool leaveOpen = false) {
 
             if (stream is null)
                 throw new ArgumentNullException(nameof(stream));
@@ -54,14 +54,14 @@ namespace Gsemac.IO.Compression.Implementations {
             return new SystemIOCompressionZipArchiveEntry(entry);
 
         }
-        public IArchiveEntry GetEntry(string entryName) {
+        public override IArchiveEntry GetEntry(string entryName) {
 
             System.IO.Compression.ZipArchiveEntry entry = archive.GetEntry(entryName);
 
             return entry is null ? null : new SystemIOCompressionZipArchiveEntry(entry);
 
         }
-        public void DeleteEntry(IArchiveEntry entry) {
+        public override void DeleteEntry(IArchiveEntry entry) {
 
             if (entry is null)
                 throw new ArgumentNullException(nameof(entry));
@@ -72,7 +72,7 @@ namespace Gsemac.IO.Compression.Implementations {
                 throw ArchiveExceptions.EntryDoesNotBelongToThisArchive;
 
         }
-        public void ExtractEntry(IArchiveEntry entry, Stream outputStream) {
+        public override void ExtractEntry(IArchiveEntry entry, Stream outputStream) {
 
             if (entry is null)
                 throw new ArgumentNullException(nameof(entry));
@@ -91,7 +91,7 @@ namespace Gsemac.IO.Compression.Implementations {
 
         }
 
-        public IEnumerable<IArchiveEntry> GetEntries() {
+        public override IEnumerable<IArchiveEntry> GetEntries() {
 
             return archive.Entries
                 .Where(entry => PathUtilities.IsFilePath(entry.FullName))
@@ -99,9 +99,9 @@ namespace Gsemac.IO.Compression.Implementations {
 
         }
 
-        public void Close() { }
+        public override void Close() { }
 
-        public void Dispose() {
+        public override void Dispose() {
 
             Dispose(disposing: true);
 

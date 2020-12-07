@@ -9,13 +9,13 @@ using System.Text;
 namespace Gsemac.IO.Compression.Implementations {
 
     public class ZipStorerZipArchive :
-      IArchive {
+      ArchiveBase {
 
         // Public members
 
-        public bool CanRead => fileAccess.HasFlag(FileAccess.Read);
-        public bool CanWrite => fileAccess.HasFlag(FileAccess.Write);
-        public string Comment {
+        public override bool CanRead => fileAccess.HasFlag(FileAccess.Read);
+        public override bool CanWrite => fileAccess.HasFlag(FileAccess.Write);
+        public override string Comment {
             get => throw ArchiveExceptions.ReadingCommentsIsNotSupported;
             set {
 
@@ -26,13 +26,13 @@ namespace Gsemac.IO.Compression.Implementations {
 
             }
         }
-        public CompressionLevel CompressionLevel { get; set; } = CompressionLevel.Maximum;
+        public override CompressionLevel CompressionLevel { get; set; } = CompressionLevel.Maximum;
 
         public ZipStorerZipArchive(Stream stream, FileAccess fileAccess = FileAccess.ReadWrite, IArchiveOptions options = null) :
             this(stream, leaveOpen: true, fileAccess, options) {
         }
 
-        public IArchiveEntry AddEntry(Stream stream, string entryName, bool leaveOpen = false) {
+        public override IArchiveEntry AddEntry(Stream stream, string entryName, bool leaveOpen = false) {
 
             if (!CanWrite)
                 throw ArchiveExceptions.ArchiveIsReadOnly;
@@ -63,13 +63,13 @@ namespace Gsemac.IO.Compression.Implementations {
             return entries.Last();
 
         }
-        public IArchiveEntry GetEntry(string entryName) {
+        public override IArchiveEntry GetEntry(string entryName) {
 
             return GetEntries().Where(entry => entry.Path.Equals(entryName))
                 .FirstOrDefault();
 
         }
-        public void DeleteEntry(IArchiveEntry entry) {
+        public override void DeleteEntry(IArchiveEntry entry) {
 
             if (!CanWrite)
                 throw ArchiveExceptions.ArchiveIsReadOnly;
@@ -87,7 +87,7 @@ namespace Gsemac.IO.Compression.Implementations {
                 throw ArchiveExceptions.EntryDoesNotBelongToThisArchive;
 
         }
-        public void ExtractEntry(IArchiveEntry entry, Stream outputStream) {
+        public override void ExtractEntry(IArchiveEntry entry, Stream outputStream) {
 
             if (entry is null)
                 throw new ArgumentNullException(nameof(entry));
@@ -102,20 +102,20 @@ namespace Gsemac.IO.Compression.Implementations {
 
         }
 
-        public IEnumerable<IArchiveEntry> GetEntries() {
+        public override IEnumerable<IArchiveEntry> GetEntries() {
 
             return entries;
 
         }
 
-        public void Close() {
+        public override void Close() {
 
             if (!archiveIsClosed)
                 CommitChanges();
 
         }
 
-        public void Dispose() {
+        public override void Dispose() {
 
             Dispose(disposing: true);
 

@@ -7,17 +7,17 @@ using System.Text;
 namespace Gsemac.IO.Compression.Implementations {
 
     public class SharpCompressZipArchive :
-        IArchive {
+        ArchiveBase {
 
         // Public members
 
-        public bool CanRead => fileAccess.HasFlag(FileAccess.Read);
-        public bool CanWrite => fileAccess.HasFlag(FileAccess.Write);
-        public string Comment {
+        public override bool CanRead => fileAccess.HasFlag(FileAccess.Read);
+        public override bool CanWrite => fileAccess.HasFlag(FileAccess.Write);
+        public override string Comment {
             get => throw ArchiveExceptions.ReadingCommentsIsNotSupported;
             set => throw ArchiveExceptions.WritingCommentsIsNotSupported;
         } // SharpCompress offers no means to set the archive comment outside of ZipWriterOptions, which can't be passed to SaveTo
-        public CompressionLevel CompressionLevel { get; set; } = CompressionLevel.Maximum;
+        public override CompressionLevel CompressionLevel { get; set; } = CompressionLevel.Maximum;
 
         public SharpCompressZipArchive(Stream stream, FileAccess fileAccess = FileAccess.ReadWrite, IArchiveOptions options = null) :
             this(stream, leaveOpen: true, options) {
@@ -26,7 +26,7 @@ namespace Gsemac.IO.Compression.Implementations {
 
         }
 
-        public IArchiveEntry AddEntry(Stream stream, string entryName, bool leaveOpen = false) {
+        public override IArchiveEntry AddEntry(Stream stream, string entryName, bool leaveOpen = false) {
 
             if (stream is null)
                 throw new ArgumentNullException(nameof(stream));
@@ -47,7 +47,7 @@ namespace Gsemac.IO.Compression.Implementations {
             return new SharpCompressZipArchiveEntry(archive.AddEntry(entryName, stream, closeStream: !leaveOpen));
 
         }
-        public IArchiveEntry GetEntry(string entryName) {
+        public override IArchiveEntry GetEntry(string entryName) {
 
             SharpCompress.Archives.Zip.ZipArchiveEntry entry = archive.Entries.Where(e => e.Key.Equals(entryName, StringComparison.OrdinalIgnoreCase))
                 .FirstOrDefault();
@@ -55,7 +55,7 @@ namespace Gsemac.IO.Compression.Implementations {
             return entry is null ? null : new SharpCompressZipArchiveEntry(entry);
 
         }
-        public void DeleteEntry(IArchiveEntry entry) {
+        public override void DeleteEntry(IArchiveEntry entry) {
 
             if (entry is null)
                 throw new ArgumentNullException(nameof(entry));
@@ -68,7 +68,7 @@ namespace Gsemac.IO.Compression.Implementations {
             archiveModified = true;
 
         }
-        public void ExtractEntry(IArchiveEntry entry, Stream outputStream) {
+        public override void ExtractEntry(IArchiveEntry entry, Stream outputStream) {
 
             if (entry is null)
                 throw new ArgumentNullException(nameof(entry));
@@ -86,14 +86,14 @@ namespace Gsemac.IO.Compression.Implementations {
                 throw ArchiveExceptions.EntryDoesNotBelongToThisArchive;
 
         }
-        public IEnumerable<IArchiveEntry> GetEntries() {
+        public override IEnumerable<IArchiveEntry> GetEntries() {
 
             return archive.Entries.Where(entry => !entry.IsDirectory)
                 .Select(entry => new SharpCompressZipArchiveEntry(entry));
 
         }
 
-        public void Close() {
+        public override void Close() {
 
             if (!archiveIsClosed)
                 CommitChanges();
@@ -102,7 +102,7 @@ namespace Gsemac.IO.Compression.Implementations {
 
         }
 
-        public void Dispose() {
+        public override void Dispose() {
 
             Dispose(disposing: true);
 
