@@ -13,8 +13,8 @@ namespace Gsemac.IO.Compression.Implementations {
         public bool CanRead => fileAccess.HasFlag(FileAccess.Read);
         public bool CanWrite => fileAccess.HasFlag(FileAccess.Write);
         public string Comment {
-            get => throw ArchiveExceptions.CommentsNotSupported;
-            set => throw ArchiveExceptions.CommentsNotSupported;
+            get => throw ArchiveExceptions.ReadingCommentsIsNotSupported;
+            set => throw ArchiveExceptions.WritingCommentsIsNotSupported;
         } // SharpCompress offers no means to set the archive comment outside of ZipWriterOptions, which can't be passed to SaveTo
         public CompressionLevel CompressionLevel { get; set; } = CompressionLevel.Maximum;
 
@@ -112,7 +112,10 @@ namespace Gsemac.IO.Compression.Implementations {
         }
         public void Close() {
 
-            FlushModifications();
+            if (!archiveIsClosed)
+                CommitChanges();
+
+            archiveIsClosed = true;
 
         }
 
@@ -152,6 +155,7 @@ namespace Gsemac.IO.Compression.Implementations {
         private Stream sourceStream = null;
         private bool archiveModified = false;
         private bool disposedValue = false;
+        private bool archiveIsClosed = false;
 
         private SharpCompressZipArchive(Stream stream, bool leaveOpen) {
 
@@ -216,7 +220,7 @@ namespace Gsemac.IO.Compression.Implementations {
 
         }
 
-        private void FlushModifications() {
+        private void CommitChanges() {
 
             if (!fileAccess.HasFlag(FileAccess.Write) || sourceStream is null || !archiveModified)
                 return;
