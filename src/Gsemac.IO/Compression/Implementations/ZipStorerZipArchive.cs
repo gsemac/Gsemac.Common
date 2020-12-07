@@ -195,7 +195,7 @@ namespace Gsemac.IO.Compression.Implementations {
 
                 long streamPosition = stream.Position;
 
-                using (ZipStorer archive = ZipStorer.Open(stream, FileAccess.Read, leaveOpen)) {
+                using (ZipStorer archive = ZipStorer.Open(stream, FileAccess.Read, _leaveOpen: true)) {
 
                     try {
 
