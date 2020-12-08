@@ -18,8 +18,6 @@ namespace Gsemac.Drawing.Imaging {
 
         public Image Apply(Image sourceImage) {
 
-            Image resultImage = ImageUtilities.ConvertImageToNonIndexedPixelFormat(sourceImage, disposeOriginal: true);
-
             ColorMatrix colorMatrix = new ColorMatrix() {
                 Matrix33 = opacity,
             };
@@ -30,16 +28,19 @@ namespace Gsemac.Drawing.Imaging {
 
                 // Draw the modified image directly on top of the original image.
 
-                using (Graphics graphics = Graphics.FromImage(resultImage)) {
+                Image imageWithAlphaChannel = new Bitmap(sourceImage.Width, sourceImage.Height, PixelFormat.Format32bppArgb);
+
+                using (sourceImage)
+                using (Graphics graphics = Graphics.FromImage(imageWithAlphaChannel)) {
 
                     graphics.Clear(Color.Transparent);
-                    graphics.DrawImage(resultImage, new Rectangle(0, 0, resultImage.Width, resultImage.Height), 0, 0, resultImage.Width, resultImage.Height, GraphicsUnit.Pixel, attributes);
+                    graphics.DrawImage(sourceImage, new Rectangle(0, 0, sourceImage.Width, sourceImage.Height), 0, 0, sourceImage.Width, sourceImage.Height, GraphicsUnit.Pixel, attributes);
 
                 }
 
-            }
+                return imageWithAlphaChannel;
 
-            return resultImage;
+            }
 
         }
 
