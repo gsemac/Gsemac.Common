@@ -3,7 +3,9 @@
     public class ImageEncoderOptions :
         IImageEncoderOptions {
 
-        public int Quality { get; set; } = 75;
+        public const int BestQuality = 100;
+
+        public int Quality { get; set; } = BestQuality;
 
     }
 
