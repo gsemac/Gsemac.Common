@@ -14,6 +14,7 @@ namespace Gsemac.Drawing {
         public int Width => image.Width;
         public int Height => image.Height;
         public Size Size => new Size(Width, Height);
+        public IImageFormat ImageFormat => throw new NotImplementedException();
 
         public MagickImage(ImageMagick.MagickImage image) {
 
@@ -45,7 +46,6 @@ namespace Gsemac.Drawing {
             GC.SuppressFinalize(this);
 
         }
-
 
 #if NETFRAMEWORK
         public Bitmap ToBitmap(bool disposeOriginal = false) {

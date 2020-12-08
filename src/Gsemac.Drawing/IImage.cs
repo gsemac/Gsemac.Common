@@ -11,6 +11,7 @@ namespace Gsemac.Drawing {
         int Width { get; }
         int Height { get; }
         Size Size { get; }
+        IImageFormat ImageFormat { get; }
 
         void Save(Stream stream);
         void Save(Stream stream, IImageFormat imageFormat, IImageEncoderOptions encoderOptions);

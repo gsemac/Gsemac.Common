@@ -31,12 +31,17 @@ namespace Gsemac.Drawing.Imaging {
             // Image requires that the stream be kept open, because it is read lazily.
             // By creating a new Bitmap from the image, we force it to read the stream immediately.
 
-            return new Bitmap(Image.FromStream(stream));
+            using (Image imageFromStream = Image.FromStream(stream))
+                return new Bitmap(imageFromStream);
 
         }
         IImage IImageDecoder.Decode(Stream stream) {
 
-            return new GdiImage(Decode(stream));
+            // When we create a new Bitmap from the Image, we lose information about its original format (it just becomes a memory Bitmap).
+            // This GdiImage constructor allows us to preserve the original format information.
+
+            using (Image imageFromStream = Image.FromStream(stream))
+                return new GdiImage(new Bitmap(imageFromStream), imageFromStream.RawFormat);
 
         }
         public void Encode(Image image, Stream stream, IImageEncoderOptions encoderOptions) {
@@ -61,7 +66,32 @@ namespace Gsemac.Drawing.Imaging {
         }
         private void Encode(IImage image, Stream stream, IImageFormat imageFormat, IImageEncoderOptions encoderOptions) {
 
-            image.Save(stream, imageFormat, encoderOptions);
+            if (image is GdiImage gdiImage) {
+
+                // If the image is aleady a GdiImage, we can save it directly.
+
+                if (imageFormat is null)
+                    gdiImage.Save(stream);
+                else
+                    gdiImage.Save(stream, imageFormat, encoderOptions);
+
+            }
+            else {
+
+                // If the image is not a GdiImage, save it to an intermediate stream and load it.
+
+                using (MemoryStream ms = new MemoryStream()) {
+
+                    image.Save(ms);
+
+                    ms.Seek(0, SeekOrigin.Begin);
+
+                    using (gdiImage = new GdiImage(new Bitmap(ms)))
+                        gdiImage.Save(stream, imageFormat, encoderOptions);
+
+                }
+
+            }
 
         }
 

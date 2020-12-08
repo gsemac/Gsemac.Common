@@ -45,11 +45,13 @@ namespace Gsemac.Drawing.Imaging {
 
         // Private members
 
+        private static Lazy<bool> IsImageMagickAvailable { get; } = new Lazy<bool>(GetIsImageMagickAvailable);
+
 #if NETFRAMEWORK
 
-        private static Lazy<bool> IsWebPSupportAvailable { get; } = new Lazy<bool>(GetIsWebPSupportAvailable);
+        private static Lazy<bool> IsWebPWrapperAvailable { get; } = new Lazy<bool>(GetIsWebPWrapperAvailable);
 
-        private static bool GetIsWebPSupportAvailable() {
+        private static bool GetIsWebPWrapperAvailable() {
 
             AnyCpuFileSystemAssemblyResolver assemblyResolver = new AnyCpuFileSystemAssemblyResolver();
 
@@ -74,14 +76,35 @@ namespace Gsemac.Drawing.Imaging {
 
 #endif
 
+        private static bool GetIsImageMagickAvailable() {
+
+            AnyCpuFileSystemAssemblyResolver assemblyResolver = new AnyCpuFileSystemAssemblyResolver();
+
+            // Check for the presence of the "ImageMagick.MagickImage" class (in case something like ilmerge was used and the assembly is not present on disk).
+
+            bool isAvailable = AppDomain.CurrentDomain.GetAssemblies()
+                .Select(assembly => assembly.GetType("ImageMagick.MagickImage") != null)
+                .FirstOrDefault();
+
+            // Check for ImageMagick on disk.
+
+            if (!isAvailable)
+                isAvailable = assemblyResolver.AssemblyExists("Magick.NET-Q16-AnyCPU");
+
+            return isAvailable;
+
+        }
+
         private static IEnumerable<string> GetSupportedFileTypes() {
 
-            return GetImageCodecs().SelectMany(codec => codec.SupportedFileTypes);
+            return GetImageCodecs().SelectMany(codec => codec.SupportedFileTypes)
+                .Distinct()
+                .OrderBy(type => type);
 
         }
         private static IEnumerable<string> GetNativelySupportedFileTypes() {
 
-            List<string> extensions = new List<string>(new[]{
+            IEnumerable<string> extensions = new List<string>(new[]{
                 ".bmp",
                 ".gif",
                 ".exif",
@@ -90,7 +113,8 @@ namespace Gsemac.Drawing.Imaging {
                 ".png",
                 ".tif",
                 ".tiff"
-            });
+            }).Distinct()
+            .OrderBy(type => type);
 
             return extensions;
 
@@ -99,6 +123,15 @@ namespace Gsemac.Drawing.Imaging {
 
             List<IImageCodec> imageCodecs = new List<IImageCodec>();
 
+            if (IsImageMagickAvailable.Value) {
+
+                if (string.IsNullOrEmpty(fileExtension))
+                    imageCodecs.Add(new MagickImageCodec());
+                else if (new MagickImageCodec().IsSupportedFileType(fileExtension))
+                    imageCodecs.Add(new MagickImageCodec(ImageFormat.FromFileExtension(fileExtension)));
+
+            }
+
 #if NETFRAMEWORK
 
             if (string.IsNullOrEmpty(fileExtension))
@@ -106,7 +139,7 @@ namespace Gsemac.Drawing.Imaging {
             else if (IsNativelySupportedFileType(fileExtension))
                 imageCodecs.Add(new GdiImageCodec(ImageFormat.FromFileExtension(fileExtension)));
 
-            if (IsWebPSupportAvailable.Value)
+            if (IsWebPWrapperAvailable.Value)
                 imageCodecs.Add(new WebPImageCodec());
 
 #endif
