@@ -35,7 +35,7 @@ namespace Gsemac.Drawing {
             Bitmap bitmap = (Bitmap)image.Clone();
 
             if (disposeOriginal)
-                image.Dispose();
+                Dispose();
 
             return bitmap;
 
@@ -53,8 +53,8 @@ namespace Gsemac.Drawing {
 
                 encoderParameters.Param[0] = qualityParameter;
 
-                System.Drawing.Imaging.ImageFormat format = imageFormat is null ? image.RawFormat : GetImageFormatForFileExtension(imageFormat.FileExtension);
-                ImageCodecInfo encoder = GetEncoderForImageFormat(format);
+                System.Drawing.Imaging.ImageFormat format = imageFormat is null ? image.RawFormat : GetImageFormatFromFileExtension(imageFormat.FileExtension);
+                ImageCodecInfo encoder = GetEncoderFromImageFormat(format);
 
                 if (encoder is null)
                     throw new ArgumentException(nameof(imageFormat));
@@ -95,7 +95,7 @@ namespace Gsemac.Drawing {
         private readonly Image image;
         private bool disposedValue = false;
 
-        private static System.Drawing.Imaging.ImageFormat GetImageFormatForFileExtension(string fileExtension) {
+        private static System.Drawing.Imaging.ImageFormat GetImageFormatFromFileExtension(string fileExtension) {
 
             switch (fileExtension.ToLowerInvariant()) {
 
@@ -125,7 +125,7 @@ namespace Gsemac.Drawing {
             }
 
         }
-        private ImageCodecInfo GetEncoderForImageFormat(System.Drawing.Imaging.ImageFormat imageFormat) {
+        private ImageCodecInfo GetEncoderFromImageFormat(System.Drawing.Imaging.ImageFormat imageFormat) {
 
             ImageCodecInfo decoder = ImageCodecInfo.GetImageDecoders()
                 .Where(codec => codec.FormatID == imageFormat.Guid)
