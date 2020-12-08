@@ -26,8 +26,6 @@ namespace Gsemac.Drawing.Imaging {
 
                 attributes.SetColorMatrix(colorMatrix, ColorMatrixFlag.Default, ColorAdjustType.Bitmap);
 
-                // Draw the modified image directly on top of the original image.
-
                 Image imageWithAlphaChannel = new Bitmap(sourceImage.Width, sourceImage.Height, PixelFormat.Format32bppArgb);
 
                 using (sourceImage)

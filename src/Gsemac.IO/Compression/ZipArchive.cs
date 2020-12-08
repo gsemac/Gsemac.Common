@@ -46,7 +46,7 @@ namespace Gsemac.IO.Compression {
                 .Select(assembly => assembly.GetType("SharpCompress.Archives.Zip.ZipArchive") != null)
                 .FirstOrDefault();
 
-            // Check for WebPWrapper on disk.
+            // Check for SharpCompress on disk.
 
             if (!sharpCompressExists)
                 sharpCompressExists = assemblyResolver.AssemblyExists("SharpCompress");
