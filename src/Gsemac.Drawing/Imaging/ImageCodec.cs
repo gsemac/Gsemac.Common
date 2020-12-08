@@ -9,7 +9,7 @@ using System.Linq;
 
 namespace Gsemac.Drawing.Imaging {
 
-    public static class ImageReader {
+    public static class ImageCodec {
 
         // Public members
 
@@ -31,22 +31,22 @@ namespace Gsemac.Drawing.Imaging {
 
         }
 
-        public static IEnumerable<IImageReader> GetImageReaders() {
+        public static IEnumerable<IImageCodec> GetImageCodecs() {
 
-            List<IImageReader> imageReaders = new List<IImageReader> {
-                new NativeImageReader(),
+            List<IImageCodec> imageReaders = new List<IImageCodec> {
+                new NativeImageCodec(),
             };
 
             if (IsWebPSupportAvailable.Value)
-                imageReaders.Add(new WebPImageReader());
+                imageReaders.Add(new WebPImageCodec());
 
             return imageReaders;
 
         }
 
-        public static IImageReader Create(string filePath) {
+        public static IImageCodec FromFileExtension(string filePath) {
 
-            return GetImageReaders().FirstOrDefault(reader => reader.IsSupportedFileType(filePath));
+            return GetImageCodecs().FirstOrDefault(codec => codec.IsSupportedFileType(filePath));
 
         }
 
@@ -79,7 +79,7 @@ namespace Gsemac.Drawing.Imaging {
 
         private static IEnumerable<string> GetSupportedFileTypes() {
 
-            return ImageReader.GetImageReaders().SelectMany(reader => reader.SupportedFileTypes);
+            return GetImageCodecs().SelectMany(codec => codec.SupportedFileTypes);
 
         }
         private static IEnumerable<string> GetNativelySupportedFileTypes() {

@@ -9,22 +9,22 @@ using System.Linq;
 
 namespace Gsemac.Drawing.Imaging {
 
-    public class NativeImageReader :
-        IImageReader {
+    public class NativeImageCodec :
+        IImageCodec {
 
-        public IEnumerable<string> SupportedFileTypes => ImageReader.NativelySupportedFileTypes;
+        public IEnumerable<string> SupportedFileTypes => ImageCodec.NativelySupportedFileTypes;
 
-        public Image ReadImage(Stream stream) {
+        public Image Decode(Stream stream) {
 
             return Image.FromStream(stream);
 
         }
-        public void SaveImage(Image image, Stream stream, IImageEncoderOptions options) {
+        public void Encode(Image image, Stream stream, IImageEncoderOptions options) {
 
-            SaveImage(image, stream, ImageFormat.Png, options);
+            Encode(image, stream, ImageFormat.Png, options);
 
         }
-        public void SaveImage(Image image, Stream stream, ImageFormat imageFormat, IImageEncoderOptions options) {
+        public void Encode(Image image, Stream stream, ImageFormat imageFormat, IImageEncoderOptions options) {
 
             using (EncoderParameters encoderParameters = new EncoderParameters(1))
             using (EncoderParameter qualityParameter = new EncoderParameter(Encoder.Quality, options.Quality)) {

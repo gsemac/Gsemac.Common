@@ -122,27 +122,27 @@ namespace Gsemac.Drawing.Imaging {
 
         private static Image OpenImageInternal(string filePath) {
 
-            IImageReader imageReader = ImageReader.Create(filePath);
+            IImageCodec imageCodec = ImageCodec.FromFileExtension(filePath);
 
-            if (imageReader is null)
+            if (imageCodec is null)
                 throw new FileFormatException("The image format is not supported.");
 
-            return imageReader.ReadImage(filePath);
+            return imageCodec.Decode(filePath);
 
         }
         private static void SaveImageInternal(Image image, string filePath, IImageEncoderOptions options) {
 
-            IImageReader imageReader = ImageReader.Create(filePath);
+            IImageCodec imageCodec = ImageCodec.FromFileExtension(filePath);
 
-            if (imageReader is null)
+            if (imageCodec is null)
                 throw new FileFormatException("The image format is not supported.");
 
             string ext = PathUtilities.GetFileExtension(filePath);
 
-            if (imageReader is NativeImageReader nativeImageReader)
-                nativeImageReader.SaveImage(image, filePath, GetImageFormatForFileExtension(ext), options);
+            if (imageCodec is NativeImageCodec nativeImageCodec)
+                nativeImageCodec.Encode(image, filePath, GetImageFormatForFileExtension(ext), options);
             else
-                imageReader.SaveImage(image, filePath, options);
+                imageCodec.Encode(image, filePath, options);
 
         }
 
