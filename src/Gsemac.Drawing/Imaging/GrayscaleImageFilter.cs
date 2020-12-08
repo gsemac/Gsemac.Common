@@ -8,7 +8,7 @@ namespace Gsemac.Drawing.Imaging {
     public class GrayscaleImageFilter :
         IImageFilter {
 
-        public Image Apply(Image sourceImage) {
+        public IImage Apply(IImage sourceImage) {
 
             Image resultImage = ImageUtilities.ConvertImageToNonIndexedPixelFormat(sourceImage, disposeOriginal: true);
 
@@ -24,14 +24,22 @@ namespace Gsemac.Drawing.Imaging {
 
                 attributes.SetColorMatrix(colorMatrix);
 
-                // Draw the modified image directly on top of the original image.
+                // Note that one of the reasons for drawing on top of new image is so that transluscent pixels from the old image aren't visible through the new one.
 
-                using (Graphics graphics = Graphics.FromImage(resultImage))
+                Image imageWithAlphaChannel = new Bitmap(resultImage.Width, resultImage.Height, PixelFormat.Format32bppArgb);
+
+                using (resultImage)
+                using (Graphics graphics = Graphics.FromImage(imageWithAlphaChannel)) {
+
+                    graphics.Clear(Color.Transparent);
+
                     graphics.DrawImage(resultImage, new Rectangle(0, 0, resultImage.Width, resultImage.Height), 0, 0, resultImage.Width, resultImage.Height, GraphicsUnit.Pixel, attributes);
 
-            }
+                }
 
-            return resultImage;
+                return new GdiImage(imageWithAlphaChannel);
+
+            }
 
         }
 

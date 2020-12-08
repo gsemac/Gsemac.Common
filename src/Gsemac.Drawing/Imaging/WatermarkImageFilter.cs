@@ -19,18 +19,9 @@ namespace Gsemac.Drawing.Imaging {
 
         }
 
-        public Image Apply(Image sourceImage) {
+        public IImage Apply(IImage sourceImage) {
 
-            Image resultImage = sourceImage;
-
-            if (sourceImage.HasIndexedPixelFormat()) {
-
-                // We can't create a graphics object from an image with an indexed pixel format, so we need to create a new bitmap.
-
-                using (sourceImage)
-                    resultImage = new Bitmap(sourceImage);
-
-            }
+            Image resultImage = ImageUtilities.ConvertImageToNonIndexedPixelFormat(sourceImage, disposeOriginal: true);
 
             // Draw the modified image directly on top of the original image.
 
@@ -45,7 +36,7 @@ namespace Gsemac.Drawing.Imaging {
 
             }
 
-            return resultImage;
+            return new GdiImage(resultImage);
 
         }
 

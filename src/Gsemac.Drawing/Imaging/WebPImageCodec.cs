@@ -20,11 +20,22 @@ namespace Gsemac.Drawing.Imaging {
                 return decoder.Decode(stream.ToArray());
 
         }
-        public void Encode(Image image, Stream stream, IImageEncoderOptions options) {
+        IImage IImageDecoder.Decode(Stream stream) {
+
+            return new GdiImage(Decode(stream));
+
+        }
+        public void Encode(Image image, Stream stream, IImageEncoderOptions encoderOptions) {
 
             using (WebPWrapper.WebP encoder = new WebPWrapper.WebP())
-            using (MemoryStream webPStream = new MemoryStream(encoder.EncodeLossy(image as Bitmap, options.Quality)))
+            using (MemoryStream webPStream = new MemoryStream(encoder.EncodeLossy(image as Bitmap, encoderOptions.Quality)))
                 webPStream.CopyTo(stream);
+
+        }
+        public void Encode(IImage image, Stream stream, IImageEncoderOptions encoderOptions) {
+
+            using (Bitmap bitmap = image.ToBitmap())
+                Encode(bitmap, stream, encoderOptions);
 
         }
 

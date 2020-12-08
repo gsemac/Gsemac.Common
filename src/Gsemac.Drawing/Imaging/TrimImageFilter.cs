@@ -46,9 +46,13 @@ namespace Gsemac.Drawing.Imaging {
 
         }
 
-        public Image Apply(Image sourceImage) {
+        public IImage Apply(IImage sourceImage) {
 
-            if (sourceImage is Bitmap sourceBitmap && sourceBitmap.Width > 0 && sourceBitmap.Height > 0) {
+            Bitmap sourceBitmap = sourceImage.ToBitmap(disposeOriginal: true);
+
+            sourceBitmap = (Bitmap)ImageUtilities.ConvertImageToNonIndexedPixelFormat(sourceBitmap, disposeOriginal: true);
+
+            if (sourceBitmap.Width > 0 && sourceBitmap.Height > 0) {
 
                 // Get the trim color if the user didn't specify one.
 
@@ -82,15 +86,6 @@ namespace Gsemac.Drawing.Imaging {
                 int width = right + 1 - x;
                 int height = bottom + 1 - y;
 
-                if (sourceImage.HasIndexedPixelFormat()) {
-
-                    // We can't create a graphics object from an image with an indexed pixel format, so we need to create a new bitmap.
-
-                    using (sourceImage)
-                        sourceBitmap = new Bitmap(sourceImage);
-
-                }
-
                 Bitmap result = new Bitmap(width, height);
 
                 using (sourceBitmap)
@@ -109,7 +104,7 @@ namespace Gsemac.Drawing.Imaging {
 
                     }
 
-                    return result;
+                    return new GdiImage(result);
 
                 }
 

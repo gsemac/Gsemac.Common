@@ -1,15 +1,11 @@
-﻿#if NETFRAMEWORK
-
-using Gsemac.IO;
+﻿using Gsemac.IO;
 using System;
-using System.Drawing;
-using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 
 namespace Gsemac.Drawing.Imaging.Extensions {
 
-    public static class ImageReaderExtensions {
+    public static class ImageCodecExtensions {
 
         public static bool IsSupportedFileType(this IImageCodec imageCodec, string filename) {
 
@@ -19,7 +15,7 @@ namespace Gsemac.Drawing.Imaging.Extensions {
 
         }
 
-        public static void Encode(this IImageCodec imageCodec, Image image, string filePath, IImageEncoderOptions options) {
+        public static void Encode(this IImageCodec imageCodec, IImage image, string filePath, IImageEncoderOptions options) {
 
             if (!imageCodec.IsSupportedFileType(filePath))
                 throw new FileFormatException("The image format is not supported.");
@@ -28,16 +24,7 @@ namespace Gsemac.Drawing.Imaging.Extensions {
                 imageCodec.Encode(image, fs, options);
 
         }
-        public static void Encode(this NativeImageCodec imageCodec, Image image, string filePath, ImageFormat imageFormat, IImageEncoderOptions options) {
-
-            if (!imageCodec.IsSupportedFileType(filePath))
-                throw new FileFormatException("The image format is not supported.");
-
-            using (FileStream fs = File.OpenWrite(filePath))
-                imageCodec.Encode(image, fs, imageFormat, options);
-
-        }
-        public static Image Decode(this IImageCodec imageCodec, string filePath) {
+        public static IImage Decode(this IImageCodec imageCodec, string filePath) {
 
             if (!imageCodec.IsSupportedFileType(filePath))
                 throw new FileFormatException("The image format is not supported.");
@@ -50,5 +37,3 @@ namespace Gsemac.Drawing.Imaging.Extensions {
     }
 
 }
-
-#endif

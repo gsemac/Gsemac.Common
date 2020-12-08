@@ -1,19 +1,16 @@
-﻿#if NETFRAMEWORK
-
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Drawing;
 
 namespace Gsemac.Drawing.Imaging {
 
     public static class ImageFilter {
 
-        public static Image ApplyAll(Image image, params IImageFilter[] filters) {
+        public static IImage ApplyAll(IImage image, params IImageFilter[] filters) {
 
             return ApplyAll(image, filters);
 
         }
-        public static Image ApplyAll(Image image, IEnumerable<IImageFilter> filters) {
+        public static IImage ApplyAll(IImage image, IEnumerable<IImageFilter> filters) {
 
             if (image is null)
                 throw new ArgumentNullException(nameof(image));
@@ -32,5 +29,3 @@ namespace Gsemac.Drawing.Imaging {
     }
 
 }
-
-#endif

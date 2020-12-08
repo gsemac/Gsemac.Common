@@ -1,6 +1,4 @@
-﻿#if NETFRAMEWORK
-
-using Gsemac.Drawing.Imaging.Extensions;
+﻿using Gsemac.Drawing.Imaging.Extensions;
 using Gsemac.IO;
 using Gsemac.Reflection;
 using System;
@@ -16,16 +14,16 @@ namespace Gsemac.Drawing.Imaging {
         public static IEnumerable<string> SupportedFileTypes => GetSupportedFileTypes();
         public static IEnumerable<string> NativelySupportedFileTypes => GetNativelySupportedFileTypes();
 
-        public static bool IsSupportedFileType(string filename) {
+        public static bool IsSupportedFileType(string filePath) {
 
-            string ext = PathUtilities.GetFileExtension(filename).ToLowerInvariant();
+            string ext = PathUtilities.GetFileExtension(filePath).ToLowerInvariant();
 
             return GetSupportedFileTypes().Any(supportedExt => supportedExt.Equals(ext, StringComparison.OrdinalIgnoreCase));
 
         }
-        public static bool IsNativelySupportedFileType(string filename) {
+        public static bool IsNativelySupportedFileType(string filePath) {
 
-            string ext = PathUtilities.GetFileExtension(filename).ToLowerInvariant();
+            string ext = PathUtilities.GetFileExtension(filePath).ToLowerInvariant();
 
             return GetNativelySupportedFileTypes().Any(supportedExt => supportedExt.Equals(ext, StringComparison.OrdinalIgnoreCase));
 
@@ -33,24 +31,21 @@ namespace Gsemac.Drawing.Imaging {
 
         public static IEnumerable<IImageCodec> GetImageCodecs() {
 
-            List<IImageCodec> imageReaders = new List<IImageCodec> {
-                new NativeImageCodec(),
-            };
-
-            if (IsWebPSupportAvailable.Value)
-                imageReaders.Add(new WebPImageCodec());
-
-            return imageReaders;
+            return GetImageCodecs(string.Empty);
 
         }
 
         public static IImageCodec FromFileExtension(string filePath) {
 
-            return GetImageCodecs().FirstOrDefault(codec => codec.IsSupportedFileType(filePath));
+            string ext = PathUtilities.GetFileExtension(filePath);
+
+            return GetImageCodecs(ext).FirstOrDefault(codec => codec.IsSupportedFileType(filePath));
 
         }
 
         // Private members
+
+#if NETFRAMEWORK
 
         private static Lazy<bool> IsWebPSupportAvailable { get; } = new Lazy<bool>(GetIsWebPSupportAvailable);
 
@@ -77,6 +72,8 @@ namespace Gsemac.Drawing.Imaging {
 
         }
 
+#endif
+
         private static IEnumerable<string> GetSupportedFileTypes() {
 
             return GetImageCodecs().SelectMany(codec => codec.SupportedFileTypes);
@@ -98,9 +95,26 @@ namespace Gsemac.Drawing.Imaging {
             return extensions;
 
         }
+        private static IEnumerable<IImageCodec> GetImageCodecs(string fileExtension) {
+
+            List<IImageCodec> imageCodecs = new List<IImageCodec>();
+
+#if NETFRAMEWORK
+
+            if (string.IsNullOrEmpty(fileExtension))
+                imageCodecs.Add(new GdiImageCodec());
+            else if (IsNativelySupportedFileType(fileExtension))
+                imageCodecs.Add(new GdiImageCodec(ImageFormat.FromFileExtension(fileExtension)));
+
+            if (IsWebPSupportAvailable.Value)
+                imageCodecs.Add(new WebPImageCodec());
+
+#endif
+
+            return imageCodecs;
+
+        }
 
     }
 
 }
-
-#endif

@@ -1,16 +1,11 @@
-﻿#if NETFRAMEWORK
-
-using System.Drawing;
-using System.IO;
+﻿using System.IO;
 
 namespace Gsemac.Drawing.Imaging {
 
     public interface IImageDecoder {
 
-        Image Decode(Stream stream);
+        IImage Decode(Stream stream);
 
     }
 
 }
-
-#endif

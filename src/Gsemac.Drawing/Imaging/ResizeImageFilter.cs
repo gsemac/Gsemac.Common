@@ -1,9 +1,6 @@
 ﻿#if NETFRAMEWORK
 
-using System;
-using System.Collections.Generic;
 using System.Drawing;
-using System.Text;
 
 namespace Gsemac.Drawing.Imaging {
 
@@ -19,10 +16,16 @@ namespace Gsemac.Drawing.Imaging {
             this.options = options;
 
         }
+        public ResizeImageFilter(float? horizontalScale = null, float? verticalScale = null) {
 
-        public Image Apply(Image sourceImage) {
+            this.horizontalScale = horizontalScale;
+            this.verticalScale = verticalScale;
 
-            if (!width.HasValue && !height.HasValue)
+        }
+
+        public IImage Apply(IImage sourceImage) {
+
+            if (!width.HasValue && !height.HasValue && !horizontalScale.HasValue && !verticalScale.HasValue)
                 return sourceImage;
 
             if (options == ImageSizingMode.ResizeIfLarger) {
@@ -39,8 +42,16 @@ namespace Gsemac.Drawing.Imaging {
 
             }
 
-            using (sourceImage)
-                return ImageUtilities.ResizeImage(sourceImage, width, height);
+            int? newWidth = width;
+            int? newHeight = height;
+
+            if (!newWidth.HasValue && horizontalScale.HasValue)
+                newWidth = (int)(sourceImage.Width * horizontalScale.Value);
+
+            if (!newHeight.HasValue && verticalScale.HasValue)
+                newHeight = (int)(sourceImage.Height * verticalScale.Value);
+
+            return new GdiImage(ImageUtilities.ResizeImage(sourceImage.ToBitmap(disposeOriginal: true), newWidth, newHeight, disposeOriginal: true));
 
         }
 
@@ -48,7 +59,9 @@ namespace Gsemac.Drawing.Imaging {
 
         private readonly int? width;
         private readonly int? height;
-        private readonly ImageSizingMode options;
+        private readonly float? horizontalScale;
+        private readonly float? verticalScale;
+        private readonly ImageSizingMode options = ImageSizingMode.None;
 
     }
 

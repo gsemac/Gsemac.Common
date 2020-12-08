@@ -15,7 +15,7 @@ namespace Gsemac.Drawing.Imaging {
 
         }
 
-        public Image Apply(Image sourceImage) {
+        public IImage Apply(IImage sourceImage) {
 
             Image resultImage = ImageUtilities.ConvertImageToNonIndexedPixelFormat(sourceImage, disposeOriginal: true);
 
@@ -23,7 +23,7 @@ namespace Gsemac.Drawing.Imaging {
             using (Brush brush = new SolidBrush(overlayColor))
                 graphics.FillRectangle(brush, new Rectangle(0, 0, resultImage.Width, resultImage.Height));
 
-            return resultImage;
+            return new GdiImage(resultImage);
 
         }
 

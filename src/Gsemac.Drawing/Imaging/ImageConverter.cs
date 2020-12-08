@@ -1,8 +1,5 @@
-﻿#if NETFRAMEWORK
-
-using Gsemac.IO;
+﻿using Gsemac.IO;
 using System;
-using System.Drawing;
 using System.IO;
 using System.Linq;
 
@@ -49,9 +46,9 @@ namespace Gsemac.Drawing.Imaging {
 
                 // Re-encode the image using the specified settings.
 
-                Image image;
+                IImage image;
 
-                using (image = ImageUtilities.OpenImage(sourceFilePath, openWithoutLocking: overwriteSourceFile)) {
+                using (image = ImageUtilities.OpenImage(sourceFilePath)) {
 
                     image = ImageFilter.ApplyAll(image, options.Filters);
 
@@ -66,5 +63,3 @@ namespace Gsemac.Drawing.Imaging {
     }
 
 }
-
-#endif

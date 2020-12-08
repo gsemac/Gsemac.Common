@@ -1,11 +1,7 @@
-﻿#if NETFRAMEWORK
-
-using Gsemac.Drawing.Extensions;
+﻿using Gsemac.Drawing.Extensions;
 using Gsemac.Drawing.Imaging.Extensions;
 using Gsemac.IO;
-using System;
 using System.Drawing;
-using System.Drawing.Imaging;
 
 namespace Gsemac.Drawing.Imaging {
 
@@ -13,26 +9,22 @@ namespace Gsemac.Drawing.Imaging {
 
         // Public members
 
-        public static Image OpenImage(string filePath, bool openWithoutLocking = false) {
+        public static IImage OpenImage(string filePath) {
 
-            if (openWithoutLocking) {
-
-                // This technique allows us to open the image without locking it, allowing the original image to be overwritten.
-
-                using (Image image = OpenImageInternal(filePath))
-                    return new Bitmap(image);
-
-            }
-            else {
-
-                return OpenImageInternal(filePath);
-
-            }
+            return OpenImageInternal(filePath);
 
         }
-        public static void SaveImage(Image image, string filePath, IImageEncoderOptions options = null) {
+        public static void SaveImage(IImage image, string filePath, IImageEncoderOptions options = null) {
 
             SaveImageInternal(image, filePath, options ?? new ImageEncoderOptions());
+
+        }
+
+#if NETFRAMEWORK
+
+        public static void SaveImage(Image image, string filePath, IImageEncoderOptions options = null) {
+
+            SaveImageInternal(new GdiImage(image), filePath, options ?? new ImageEncoderOptions());
 
         }
         public static Image ResizeImage(Image image, int? width = null, int? height = null, bool disposeOriginal = false) {
@@ -86,41 +78,22 @@ namespace Gsemac.Drawing.Imaging {
             return resultImage;
 
         }
+        public static Image ConvertImageToNonIndexedPixelFormat(IImage image, bool disposeOriginal = false) {
 
-        // Private members
+            Bitmap resultImage = image.ToBitmap();
 
-        private static ImageFormat GetImageFormatForFileExtension(string fileExtension) {
+            if (disposeOriginal)
+                image.Dispose();
 
-            switch (fileExtension.ToLowerInvariant()) {
-
-                case ".bmp":
-                    return ImageFormat.Bmp;
-
-                case ".gif":
-                    return ImageFormat.Gif;
-
-                case ".exif":
-                    return ImageFormat.Exif;
-
-                case ".jpg":
-                case ".jpeg":
-                    return ImageFormat.Jpeg;
-
-                case ".png":
-                    return ImageFormat.Png;
-
-                case ".tif":
-                case ".tiff":
-                    return ImageFormat.Tiff;
-
-                default:
-                    throw new ArgumentException("Unrecognized file extension.");
-
-            }
+            return ConvertImageToNonIndexedPixelFormat(resultImage, disposeOriginal: true);
 
         }
 
-        private static Image OpenImageInternal(string filePath) {
+#endif
+
+        // Private members
+
+        private static IImage OpenImageInternal(string filePath) {
 
             IImageCodec imageCodec = ImageCodec.FromFileExtension(filePath);
 
@@ -130,24 +103,17 @@ namespace Gsemac.Drawing.Imaging {
             return imageCodec.Decode(filePath);
 
         }
-        private static void SaveImageInternal(Image image, string filePath, IImageEncoderOptions options) {
+        private static void SaveImageInternal(IImage image, string filePath, IImageEncoderOptions options) {
 
             IImageCodec imageCodec = ImageCodec.FromFileExtension(filePath);
 
             if (imageCodec is null)
                 throw new FileFormatException("The image format is not supported.");
 
-            string ext = PathUtilities.GetFileExtension(filePath);
-
-            if (imageCodec is NativeImageCodec nativeImageCodec)
-                nativeImageCodec.Encode(image, filePath, GetImageFormatForFileExtension(ext), options);
-            else
-                imageCodec.Encode(image, filePath, options);
+            imageCodec.Encode(image, filePath, options);
 
         }
 
     }
 
 }
-
-#endif

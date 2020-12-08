@@ -16,7 +16,7 @@ namespace Gsemac.Drawing.Imaging {
 
         }
 
-        public Image Apply(Image sourceImage) {
+        public IImage Apply(IImage sourceImage) {
 
             ColorMatrix colorMatrix = new ColorMatrix() {
                 Matrix33 = opacity,
@@ -28,15 +28,15 @@ namespace Gsemac.Drawing.Imaging {
 
                 Image imageWithAlphaChannel = new Bitmap(sourceImage.Width, sourceImage.Height, PixelFormat.Format32bppArgb);
 
-                using (sourceImage)
+                using (Bitmap sourceBitmap = sourceImage.ToBitmap(disposeOriginal: true))
                 using (Graphics graphics = Graphics.FromImage(imageWithAlphaChannel)) {
 
                     graphics.Clear(Color.Transparent);
-                    graphics.DrawImage(sourceImage, new Rectangle(0, 0, sourceImage.Width, sourceImage.Height), 0, 0, sourceImage.Width, sourceImage.Height, GraphicsUnit.Pixel, attributes);
+                    graphics.DrawImage(sourceBitmap, new Rectangle(0, 0, sourceBitmap.Width, sourceBitmap.Height), 0, 0, sourceBitmap.Width, sourceBitmap.Height, GraphicsUnit.Pixel, attributes);
 
                 }
 
-                return imageWithAlphaChannel;
+                return new GdiImage(imageWithAlphaChannel);
 
             }
 
