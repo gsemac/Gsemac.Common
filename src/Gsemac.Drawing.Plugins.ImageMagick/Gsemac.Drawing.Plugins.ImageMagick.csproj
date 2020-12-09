@@ -1,0 +1,34 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFrameworks>netstandard2.0;net40-client</TargetFrameworks>
+		<RootNamespace>Gsemac.Drawing</RootNamespace>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)' == 'Release'">
+		<DebugType>none</DebugType>
+		<DebugSymbols>false</DebugSymbols>
+	</PropertyGroup>
+
+	<ItemGroup Condition="$(DefineConstants.Contains('NETFRAMEWORK'))">
+		<Reference Include="System.Drawing" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\Gsemac.Drawing\Gsemac.Drawing.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Magick.NET-Q16-AnyCPU" Version="7.22.2.2" />
+	</ItemGroup>
+
+	<ItemGroup Condition="$(DefineConstants.Contains('NETFRAMEWORK'))">
+		<PackageReference Include="Magick.NET.SystemDrawing" Version="2.0.8" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Content Include="Gsemac.Drawing.Imaging.ImageMagick.targets" PackagePath="build/Gsemac.Drawing.Imaging.ImageMagick.targets" />
+		<Content Include="licenses\*" Pack="true" PackagePath="contentFiles\licenses" />
+	</ItemGroup>
+
+</Project>
