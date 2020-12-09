@@ -1,0 +1,21 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFrameworks>net40-client</TargetFrameworks>
+		<RootNamespace>Gsemac.Drawing</RootNamespace>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)' == 'Release'">
+		<DebugType>none</DebugType>
+		<DebugSymbols>false</DebugSymbols>
+	</PropertyGroup>
+
+	<ItemGroup Condition="$(DefineConstants.Contains('NETFRAMEWORK'))">
+		<PackageReference Include="nQuant" Version="1.0.3" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\Gsemac.Drawing\Gsemac.Drawing.csproj" />
+	</ItemGroup>
+
+</Project>
