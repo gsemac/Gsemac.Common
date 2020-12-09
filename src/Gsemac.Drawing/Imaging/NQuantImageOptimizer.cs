@@ -15,19 +15,29 @@ namespace Gsemac.Drawing.Imaging {
 
         public IEnumerable<IImageFormat> SupportedImageFormats => GetSupportedImageFormats();
 
-        public void Optimize(Stream stream, ImageOptimizationMode optimizationMode) {
+        public bool Optimize(Stream stream, ImageOptimizationMode optimizationMode) {
 
-            WuQuantizer quantizer = new WuQuantizer();
+            if (stream.CanRead && stream.CanSeek) {
 
-            using (Bitmap bitmap = (Bitmap)Image.FromStream(stream)) {
+                WuQuantizer quantizer = new WuQuantizer();
 
-                using (Image quantized = quantizer.QuantizeImage(bitmap)) {
+                using (Bitmap bitmap = (Bitmap)Image.FromStream(stream)) {
 
-                    quantized.Save(stream, System.Drawing.Imaging.ImageFormat.Png);
+                    using (Image quantized = quantizer.QuantizeImage(bitmap)) {
+
+                        stream.Seek(0, SeekOrigin.Begin);
+
+                        quantized.Save(stream, System.Drawing.Imaging.ImageFormat.Png);
+
+                    }
 
                 }
 
+                return true;
+
             }
+
+            return false;
 
         }
 

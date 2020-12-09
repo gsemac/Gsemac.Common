@@ -1,4 +1,5 @@
 ﻿using Gsemac.Drawing.Imaging.Extensions;
+using Gsemac.Drawing.Imaging.Internal;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;

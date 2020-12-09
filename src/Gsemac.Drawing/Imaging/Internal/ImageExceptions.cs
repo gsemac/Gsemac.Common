@@ -1,7 +1,7 @@
 ﻿using Gsemac.IO;
 using System;
 
-namespace Gsemac.Drawing.Imaging {
+namespace Gsemac.Drawing.Imaging.Internal {
 
     internal static class ImageExceptions {
 

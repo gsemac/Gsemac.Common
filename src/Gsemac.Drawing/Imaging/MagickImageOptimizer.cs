@@ -1,5 +1,4 @@
-﻿using ImageMagick;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 
 namespace Gsemac.Drawing.Imaging {
@@ -9,23 +8,33 @@ namespace Gsemac.Drawing.Imaging {
 
         public IEnumerable<IImageFormat> SupportedImageFormats => new MagickImageCodec().SupportedImageFormats;
 
-        public void Optimize(Stream stream, ImageOptimizationMode optimizationMode) {
+        public bool Optimize(Stream stream, ImageOptimizationMode optimizationMode) {
 
-            if (optimizationMode != ImageOptimizationMode.None) {
+            if (stream.CanRead) {
 
-                ImageOptimizer optimizer = new ImageOptimizer {
-                    IgnoreUnsupportedFormats = true
-                };
+                if (optimizationMode != ImageOptimizationMode.None) {
 
-                if (optimizationMode == ImageOptimizationMode.Maximum)
-                    optimizer.OptimalCompression = true;
+                    ImageMagick.ImageOptimizer optimizer = new ImageMagick.ImageOptimizer {
+                        IgnoreUnsupportedFormats = true
+                    };
 
-                if (optimizationMode == ImageOptimizationMode.Lossless)
-                    optimizer.LosslessCompress(stream);
-                else
-                    optimizer.Compress(stream);
+                    if (optimizationMode == ImageOptimizationMode.Maximum)
+                        optimizer.OptimalCompression = true;
+
+                    bool result;
+
+                    if (optimizationMode == ImageOptimizationMode.Lossless)
+                        result = optimizer.LosslessCompress(stream);
+                    else
+                        result = optimizer.Compress(stream);
+
+                    return result;
+
+                }
 
             }
+
+            return false;
 
         }
 
