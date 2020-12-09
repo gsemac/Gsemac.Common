@@ -27,6 +27,7 @@ namespace Gsemac.Drawing.Imaging {
                     using (System.Drawing.Image quantized = quantizer.QuantizeImage(bitmap)) {
 
                         stream.Seek(0, SeekOrigin.Begin);
+                        stream.SetLength(0);
 
                         quantized.Save(stream, System.Drawing.Imaging.ImageFormat.Png);
 

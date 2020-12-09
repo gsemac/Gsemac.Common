@@ -94,13 +94,16 @@ namespace Gsemac.Drawing.Imaging {
 
             foreach (Type imageCodecType in imageCodecTypes.Value) {
 
-                IImageCodec imageCodec = (IImageCodec)Activator.CreateInstance(imageCodecType, imageFormat is null ? null : new object[] { imageFormat });
+                IImageCodec imageCodec = (IImageCodec)Activator.CreateInstance(imageCodecType);
+
+                if (!(imageCodec is null) && !(imageFormat is null) && imageCodec.IsSupportedImageFormat(imageFormat) && imageCodecType.GetConstructor(new[] { typeof(IImageFormat) }) != null)
+                    imageCodec = (IImageCodec)Activator.CreateInstance(imageCodecType, new object[] { imageFormat });
 
                 imageCodecs.Add(imageCodec);
 
             }
 
-            return imageCodecs.OrderBy(imageCodec => imageCodec.Priority);
+            return imageCodecs.OrderByDescending(imageCodec => imageCodec.Priority);
 
         }
 

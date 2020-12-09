@@ -27,6 +27,20 @@ namespace Gsemac.Drawing.Extensions {
 
             image.Codec.Encode(image, stream, encoderOptions);
 
+            if (stream.CanSeek && encoderOptions.OptimizationMode != ImageOptimizationMode.None) {
+
+                IImageOptimizer imageOptimizer = ImageOptimizer.FromImageFormat(imageFormat);
+
+                if (!(imageOptimizer is null)) {
+
+                    stream.Seek(0, SeekOrigin.Begin);
+
+                    imageOptimizer.Optimize(stream, encoderOptions.OptimizationMode);
+
+                }
+
+            }
+
         }
 
         public static void Save(this IImage image, string filePath) {

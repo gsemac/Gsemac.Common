@@ -70,7 +70,7 @@ namespace Gsemac.Drawing.Imaging {
 
             }
 
-            return imageOptimizers.OrderBy(imageOptimizer => imageOptimizer.Priority);
+            return imageOptimizers.OrderByDescending(imageOptimizer => imageOptimizer.Priority);
 
         }
 

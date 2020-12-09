@@ -16,7 +16,7 @@ namespace Gsemac.Drawing {
         public Size Size => image.Size;
         public IImageFormat Format => GetImageFormatFromImageFormat(originalFormat);
         public IImageCodec Codec { get; }
-        public System.Drawing.Image BaseImage { get; }
+        public System.Drawing.Image BaseImage => image;
 
         public GdiImage(System.Drawing.Image image, IImageCodec codec) {
 
