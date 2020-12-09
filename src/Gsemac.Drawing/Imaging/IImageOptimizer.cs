@@ -1,11 +1,9 @@
-﻿using System.Collections.Generic;
-using System.IO;
+﻿using System.IO;
 
 namespace Gsemac.Drawing.Imaging {
 
-    public interface IImageOptimizer {
-
-        IEnumerable<IImageFormat> SupportedImageFormats { get; }
+    public interface IImageOptimizer :
+        IHasSupportedImageFormats {
 
         void Optimize(Stream stream, ImageOptimizationMode optimizationMode);
 
