@@ -1,0 +1,40 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFrameworks>net40-client</TargetFrameworks>
+		<RootNamespace>Gsemac.Drawing</RootNamespace>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)' == 'Release'">
+		<DebugType>none</DebugType>
+		<DebugSymbols>false</DebugSymbols>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\Gsemac.Drawing\Gsemac.Drawing.csproj" />
+	</ItemGroup>
+
+	<ItemGroup Condition="$(DefineConstants.Contains('NETFRAMEWORK'))">
+		<Reference Include="System.Drawing" />
+		<Reference Include="WebPWrapper">
+			<HintPath>lib\managed\WebPWrapper.dll</HintPath>
+		</Reference>
+	</ItemGroup>
+
+	<ItemGroup>
+		<Content Include="Gsemac.Drawing.Imaging.WebP.targets" PackagePath="build/Gsemac.Drawing.Imaging.WebP.targets" />
+		<Content Include="lib\unmanaged\x86\*" Pack="true" PackagePath="contentFiles\x86">
+			<PackageCopyToOutput>true</PackageCopyToOutput>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<Link>x86\%(Filename)%(Extension)</Link>
+		</Content>
+		<Content Include="lib\unmanaged\x64\*" Pack="true" PackagePath="contentFiles\x64">
+			<PackageCopyToOutput>true</PackageCopyToOutput>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<Link>x64\%(Filename)%(Extension)</Link>
+		</Content>
+		<Content Include="lib\managed\*" Pack="true" PackagePath="contentFiles\" />
+		<Content Include="licenses\*" Pack="true" PackagePath="contentFiles\licenses" />
+	</ItemGroup>
+
+</Project>
