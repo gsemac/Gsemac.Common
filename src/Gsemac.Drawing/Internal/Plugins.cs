@@ -48,7 +48,7 @@ namespace Gsemac.Drawing.Internal {
 
                 FileSystemAssemblyResolver assemblyResolver = new FileSystemAssemblyResolver();
 
-                foreach (string filename in assemblyResolver.GetAssemblyPaths("Gsemac.Drawing.Plugins.*.dll"))
+                foreach (string filename in assemblyResolver.GetAssemblyPaths("Gsemac.Drawing.Imaging.*.dll"))
                     AppDomain.CurrentDomain.Load(File.ReadAllBytes(filename));
 
                 drawingImagingAssembliesLoaded = true;
