@@ -77,25 +77,11 @@ namespace Gsemac.Drawing.Imaging {
             }
             else {
 
-                // If the image is not a GdiImage, save it to an intermediate stream and load it.
+                // If the image is not a GdiImage, convert it to a bitmap and load it.
 
-                using (MemoryStream intermediateStream = new MemoryStream()) {
-
-                    // Make sure the intermediate image format is one that this codec knows how to read.
-
-                    IImageFormat intermediateFormat = image.ImageFormat;
-
-                    if (intermediateFormat is null || !this.IsSupportedImageFormat(intermediateFormat))
-                        intermediateFormat = ImageFormat.FromFileExtension(".png");
-
-                    image.Save(intermediateStream, intermediateFormat, ImageEncoderOptions.Default);
-
-                    intermediateStream.Seek(0, SeekOrigin.Begin);
-
-                    using (gdiImage = new GdiImage(new Bitmap(intermediateStream)))
-                        gdiImage.Save(stream, imageFormat, encoderOptions);
-
-                }
+                using (Bitmap intermediateBitmap = image.ToBitmap())
+                using (gdiImage = new GdiImage(intermediateBitmap))
+                    gdiImage.Save(stream, imageFormat, encoderOptions);
 
             }
 
