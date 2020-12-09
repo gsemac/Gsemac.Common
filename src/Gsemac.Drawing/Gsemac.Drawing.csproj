@@ -21,7 +21,7 @@
 	<ItemGroup Condition="$(DefineConstants.Contains('NETFRAMEWORK'))">
 		<Reference Include="System.Drawing" />
 		<Reference Include="WebPWrapper">
-			<HintPath>lib\net\WebPWrapper.dll</HintPath>
+			<HintPath>lib\managed\WebPWrapper.dll</HintPath>
 		</Reference>
 	</ItemGroup>
 
@@ -41,17 +41,17 @@
 
 	<ItemGroup>
 		<Content Include="Gsemac.Drawing.targets" PackagePath="build/Gsemac.Drawing.targets" />
-		<Content Include="lib\native\x86\*" Pack="true" PackagePath="contentFiles\x86">
+		<Content Include="lib\unmanaged\x86\*" Pack="true" PackagePath="contentFiles\x86">
 			<PackageCopyToOutput>true</PackageCopyToOutput>
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 			<Link>x86\%(Filename)%(Extension)</Link>
 		</Content>
-		<Content Include="lib\native\x64\*" Pack="true" PackagePath="contentFiles\x64">
+		<Content Include="lib\unmanaged\x64\*" Pack="true" PackagePath="contentFiles\x64">
 			<PackageCopyToOutput>true</PackageCopyToOutput>
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 			<Link>x64\%(Filename)%(Extension)</Link>
 		</Content>
-		<Content Include="lib\net\*" Pack="true" PackagePath="contentFiles\" />
+		<Content Include="lib\managed\*" Pack="true" PackagePath="contentFiles\" />
 		<Content Include="licenses\*" Pack="true" PackagePath="contentFiles\licenses" />
 	</ItemGroup>
 

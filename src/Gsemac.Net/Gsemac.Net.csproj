@@ -43,12 +43,12 @@
 
 	<ItemGroup>
 		<Content Include="Gsemac.Net.targets" PackagePath="build/Gsemac.Net.targets" />
-		<Content Include="lib\native\x86\*" Pack="true" PackagePath="contentFiles\x86">
+		<Content Include="lib\unmanaged\x86\*" Pack="true" PackagePath="contentFiles\x86">
 			<PackageCopyToOutput>true</PackageCopyToOutput>
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 			<Link>x86\%(Filename)%(Extension)</Link>
 		</Content>
-		<Content Include="lib\native\x64\*" Pack="true" PackagePath="contentFiles\x64">
+		<Content Include="lib\unmanaged\x64\*" Pack="true" PackagePath="contentFiles\x64">
 			<PackageCopyToOutput>true</PackageCopyToOutput>
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 			<Link>x64\%(Filename)%(Extension)</Link>
