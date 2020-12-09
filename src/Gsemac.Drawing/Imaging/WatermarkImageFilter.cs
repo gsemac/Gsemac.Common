@@ -13,7 +13,7 @@ namespace Gsemac.Drawing.Imaging {
 
         // Public members
 
-        public WatermarkImageFilter(Image overlayImage) {
+        public WatermarkImageFilter(System.Drawing.Image overlayImage) {
 
             this.overlayImage = overlayImage;
 
@@ -21,7 +21,7 @@ namespace Gsemac.Drawing.Imaging {
 
         public IImage Apply(IImage sourceImage) {
 
-            Image resultImage = ImageUtilities.ConvertImageToNonIndexedPixelFormat(sourceImage, disposeOriginal: true);
+            System.Drawing.Image resultImage = ImageUtilities.ConvertImageToNonIndexedPixelFormat(sourceImage, disposeOriginal: true);
 
             // Draw the modified image directly on top of the original image.
 
@@ -42,7 +42,7 @@ namespace Gsemac.Drawing.Imaging {
 
         // Private members
 
-        private readonly Image overlayImage;
+        private readonly System.Drawing.Image overlayImage;
 
     }
 

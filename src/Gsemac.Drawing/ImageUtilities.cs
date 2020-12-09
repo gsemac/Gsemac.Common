@@ -1,23 +1,17 @@
-﻿using Gsemac.Drawing.Extensions;
+﻿#if NETFRAMEWORK
+
+using Gsemac.Drawing.Extensions;
+using Gsemac.Drawing.Imaging;
 using Gsemac.Drawing.Imaging.Extensions;
 using Gsemac.Drawing.Imaging.Internal;
 using System.Drawing;
 
-namespace Gsemac.Drawing.Imaging {
+namespace Gsemac.Drawing {
 
     public static class ImageUtilities {
 
         // Public members
-
-        public static IImage OpenImage(string filePath) {
-
-            return OpenImageInternal(filePath);
-
-        }
-
-#if NETFRAMEWORK
-
-        public static Image ResizeImage(Image image, int? width = null, int? height = null, bool disposeOriginal = false) {
+        public static System.Drawing.Image ResizeImage(System.Drawing.Image image, int? width = null, int? height = null, bool disposeOriginal = false) {
 
             int newWidth = image.Width;
             int newHeight = image.Height;
@@ -53,7 +47,7 @@ namespace Gsemac.Drawing.Imaging {
             return resultImage;
 
         }
-        public static Image ConvertImageToNonIndexedPixelFormat(Image image, bool disposeOriginal = false) {
+        public static System.Drawing.Image ConvertImageToNonIndexedPixelFormat(System.Drawing.Image image, bool disposeOriginal = false) {
 
             // We can't create a graphics object from an image with an indexed pixel format, so we need to create a new bitmap.
 
@@ -68,7 +62,7 @@ namespace Gsemac.Drawing.Imaging {
             return resultImage;
 
         }
-        public static Image ConvertImageToNonIndexedPixelFormat(IImage image, bool disposeOriginal = false) {
+        public static System.Drawing.Image ConvertImageToNonIndexedPixelFormat(IImage image, bool disposeOriginal = false) {
 
             Bitmap resultImage = image.ToBitmap();
 
@@ -79,21 +73,8 @@ namespace Gsemac.Drawing.Imaging {
 
         }
 
-#endif
-
-        // Private members
-
-        private static IImage OpenImageInternal(string filePath) {
-
-            IImageCodec imageCodec = ImageCodec.FromFileExtension(filePath);
-
-            if (imageCodec is null)
-                throw ImageExceptions.UnsupportedImageFormat;
-
-            return imageCodec.Decode(filePath);
-
-        }
-
     }
 
 }
+
+#endif

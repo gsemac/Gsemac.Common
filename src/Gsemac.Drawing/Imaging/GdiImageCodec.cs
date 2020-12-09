@@ -30,12 +30,12 @@ namespace Gsemac.Drawing.Imaging {
 
         }
 
-        public Image Decode(Stream stream) {
+        public System.Drawing.Image Decode(Stream stream) {
 
             // Image requires that the stream be kept open, because it is read lazily.
             // By creating a new Bitmap from the image, we force it to read the stream immediately.
 
-            using (Image imageFromStream = Image.FromStream(stream))
+            using (System.Drawing.Image imageFromStream = System.Drawing.Image.FromStream(stream))
                 return new Bitmap(imageFromStream);
 
         }
@@ -44,11 +44,11 @@ namespace Gsemac.Drawing.Imaging {
             // When we create a new Bitmap from the Image, we lose information about its original format (it just becomes a memory Bitmap).
             // This GdiImage constructor allows us to preserve the original format information.
 
-            using (Image imageFromStream = Image.FromStream(stream))
+            using (System.Drawing.Image imageFromStream = System.Drawing.Image.FromStream(stream))
                 return new GdiImage(new Bitmap(imageFromStream), imageFromStream.RawFormat, this);
 
         }
-        public void Encode(Image image, Stream stream, IImageEncoderOptions encoderOptions) {
+        public void Encode(System.Drawing.Image image, Stream stream, IImageEncoderOptions encoderOptions) {
 
             Encode(new GdiImage(image, this), stream, encoderOptions);
 
@@ -78,7 +78,7 @@ namespace Gsemac.Drawing.Imaging {
 
         private readonly IImageFormat imageFormat;
 
-        private void Save(Image image, Stream stream, IImageEncoderOptions encoderOptions) {
+        private void Save(System.Drawing.Image image, Stream stream, IImageEncoderOptions encoderOptions) {
 
             using (EncoderParameters encoderParameters = new EncoderParameters(1))
             using (EncoderParameter qualityParameter = new EncoderParameter(Encoder.Quality, encoderOptions.Quality)) {

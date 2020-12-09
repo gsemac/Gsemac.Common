@@ -26,7 +26,7 @@ namespace Gsemac.Drawing.Imaging {
 
                 attributes.SetColorMatrix(colorMatrix, ColorMatrixFlag.Default, ColorAdjustType.Bitmap);
 
-                Image imageWithAlphaChannel = new Bitmap(sourceImage.Width, sourceImage.Height, PixelFormat.Format32bppArgb);
+                System.Drawing.Image imageWithAlphaChannel = new Bitmap(sourceImage.Width, sourceImage.Height, PixelFormat.Format32bppArgb);
 
                 using (Bitmap sourceBitmap = sourceImage.ToBitmap(disposeOriginal: true))
                 using (Graphics graphics = Graphics.FromImage(imageWithAlphaChannel)) {

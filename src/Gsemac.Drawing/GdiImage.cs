@@ -16,9 +16,9 @@ namespace Gsemac.Drawing {
         public Size Size => image.Size;
         public IImageFormat Format => GetImageFormatFromImageFormat(originalFormat);
         public IImageCodec Codec { get; }
-        public Image BaseImage { get; }
+        public System.Drawing.Image BaseImage { get; }
 
-        public GdiImage(Image image, IImageCodec codec) {
+        public GdiImage(System.Drawing.Image image, IImageCodec codec) {
 
             if (image is null)
                 throw new ArgumentNullException(nameof(image));
@@ -28,7 +28,7 @@ namespace Gsemac.Drawing {
             this.originalFormat = image.RawFormat;
 
         }
-        public GdiImage(Image image, System.Drawing.Imaging.ImageFormat originalFormat, IImageCodec codec) {
+        public GdiImage(System.Drawing.Image image, System.Drawing.Imaging.ImageFormat originalFormat, IImageCodec codec) {
 
             if (image is null)
                 throw new ArgumentNullException(nameof(image));
@@ -83,7 +83,7 @@ namespace Gsemac.Drawing {
 
         // Private members
 
-        private readonly Image image;
+        private readonly System.Drawing.Image image;
         private readonly System.Drawing.Imaging.ImageFormat originalFormat;
         private bool disposedValue = false;
 

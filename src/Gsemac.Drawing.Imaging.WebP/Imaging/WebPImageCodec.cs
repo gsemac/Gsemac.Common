@@ -16,7 +16,7 @@ namespace Gsemac.Drawing.Imaging {
         public IEnumerable<IImageFormat> SupportedImageFormats => GetSupportedImageFormats();
         public int Priority => 0;
 
-        public Image Decode(Stream stream) {
+        public System.Drawing.Image Decode(Stream stream) {
 
             using (WebPWrapper.WebP decoder = new WebPWrapper.WebP())
                 return decoder.Decode(stream.ToArray());
@@ -27,7 +27,7 @@ namespace Gsemac.Drawing.Imaging {
             return new GdiImage(Decode(stream), this);
 
         }
-        public void Encode(Image image, Stream stream, IImageEncoderOptions encoderOptions) {
+        public void Encode(System.Drawing.Image image, Stream stream, IImageEncoderOptions encoderOptions) {
 
             using (WebPWrapper.WebP encoder = new WebPWrapper.WebP())
             using (MemoryStream webPStream = new MemoryStream(encoder.EncodeLossy(image as Bitmap, encoderOptions.Quality)))

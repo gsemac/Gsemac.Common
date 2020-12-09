@@ -49,7 +49,7 @@ namespace Gsemac.Drawing.Imaging {
 
                 IImage image;
 
-                using (image = ImageUtilities.OpenImage(sourceFilePath)) {
+                using (image = Image.FromFile(sourceFilePath)) {
 
                     image = ImageFilter.ApplyAll(image, options.Filters);
 

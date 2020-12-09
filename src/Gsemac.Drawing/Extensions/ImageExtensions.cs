@@ -1,6 +1,5 @@
 ﻿using Gsemac.Drawing.Imaging;
 using Gsemac.Drawing.Imaging.Internal;
-using System.Drawing;
 using System.IO;
 
 namespace Gsemac.Drawing.Extensions {
@@ -49,7 +48,7 @@ namespace Gsemac.Drawing.Extensions {
 
 #if NETFRAMEWORK
 
-        public static bool HasIndexedPixelFormat(this Image image) {
+        public static bool HasIndexedPixelFormat(this System.Drawing.Image image) {
 
             return image.PixelFormat == System.Drawing.Imaging.PixelFormat.Format1bppIndexed ||
                 image.PixelFormat == System.Drawing.Imaging.PixelFormat.Format4bppIndexed ||

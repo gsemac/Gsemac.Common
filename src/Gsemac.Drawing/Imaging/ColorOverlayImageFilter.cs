@@ -17,7 +17,7 @@ namespace Gsemac.Drawing.Imaging {
 
         public IImage Apply(IImage sourceImage) {
 
-            Image resultImage = ImageUtilities.ConvertImageToNonIndexedPixelFormat(sourceImage, disposeOriginal: true);
+            System.Drawing.Image resultImage = ImageUtilities.ConvertImageToNonIndexedPixelFormat(sourceImage, disposeOriginal: true);
 
             using (Graphics graphics = Graphics.FromImage(resultImage))
             using (Brush brush = new SolidBrush(overlayColor))

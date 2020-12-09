@@ -22,9 +22,9 @@ namespace Gsemac.Drawing.Imaging {
 
                 WuQuantizer quantizer = new WuQuantizer();
 
-                using (Bitmap bitmap = (Bitmap)Image.FromStream(stream)) {
+                using (Bitmap bitmap = (Bitmap)System.Drawing.Image.FromStream(stream)) {
 
-                    using (Image quantized = quantizer.QuantizeImage(bitmap)) {
+                    using (System.Drawing.Image quantized = quantizer.QuantizeImage(bitmap)) {
 
                         stream.Seek(0, SeekOrigin.Begin);
 
