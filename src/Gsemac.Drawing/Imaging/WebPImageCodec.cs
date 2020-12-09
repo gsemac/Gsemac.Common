@@ -4,6 +4,7 @@ using Gsemac.IO.Extensions;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 
 namespace Gsemac.Drawing.Imaging {
 
@@ -12,7 +13,7 @@ namespace Gsemac.Drawing.Imaging {
 
         // Public members
 
-        public IEnumerable<string> SupportedFileTypes => GetSupportedFileTypes();
+        public IEnumerable<IImageFormat> SupportedImageFormats => GetSupportedImageFormats();
 
         public Image Decode(Stream stream) {
 
@@ -41,13 +42,11 @@ namespace Gsemac.Drawing.Imaging {
 
         // Private members
 
-        private IEnumerable<string> GetSupportedFileTypes() {
+        private IEnumerable<IImageFormat> GetSupportedImageFormats() {
 
-            List<string> extensions = new List<string>(new[]{
+            return new[]{
                 ".webp"
-            });
-
-            return extensions;
+            }.Select(ext => ImageFormat.FromFileExtension(ext));
 
         }
 

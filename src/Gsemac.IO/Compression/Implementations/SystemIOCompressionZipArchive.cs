@@ -1,5 +1,6 @@
 ﻿#if NET45_OR_NEWER
 
+using Gsemac.IO.Compression;
 using System;
 using System.Collections.Generic;
 using System.IO;

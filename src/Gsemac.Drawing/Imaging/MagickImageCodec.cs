@@ -1,8 +1,7 @@
 ﻿using Gsemac.Drawing.Imaging.Extensions;
-using Gsemac.IO;
-using ImageMagick;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 namespace Gsemac.Drawing.Imaging {
 
@@ -11,14 +10,14 @@ namespace Gsemac.Drawing.Imaging {
 
         // Public members
 
-        public IEnumerable<string> SupportedFileTypes => GetSupportedFileTypes();
+        public IEnumerable<IImageFormat> SupportedImageFormats => GetSupportedImageFormats();
 
         public MagickImageCodec() {
         }
         public MagickImageCodec(IImageFormat imageFormat) {
 
-            if (!this.IsSupportedFileType(imageFormat.FileExtension))
-                throw new FileFormatException("The image format is not supported.");
+            if (!this.IsSupportedImageFormat(imageFormat))
+                throw ImageExceptions.UnsupportedImageFormat;
 
             this.imageFormat = imageFormat;
 
@@ -64,7 +63,7 @@ namespace Gsemac.Drawing.Imaging {
 
         private readonly IImageFormat imageFormat;
 
-        private static IEnumerable<string> GetSupportedFileTypes() {
+        private static IEnumerable<IImageFormat> GetSupportedImageFormats() {
 
             return new[] {
                 ".avif",
@@ -76,7 +75,9 @@ namespace Gsemac.Drawing.Imaging {
                 ".tif",
                 ".tiff",
                 ".webp",
-            };
+            }.OrderBy(ext => ext)
+            .Select(ext => ImageFormat.FromFileExtension(ext))
+            .Distinct(new ImageFormatComparer());
 
         }
 

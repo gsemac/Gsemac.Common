@@ -6,7 +6,7 @@ namespace Gsemac.Drawing.Imaging {
         IImageEncoder,
         IImageDecoder {
 
-        IEnumerable<string> SupportedFileTypes { get; }
+        IEnumerable<IImageFormat> SupportedImageFormats { get; }
 
     }
 

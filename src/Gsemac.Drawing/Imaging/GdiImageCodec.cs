@@ -1,7 +1,6 @@
 ﻿#if NETFRAMEWORK
 
 using Gsemac.Drawing.Imaging.Extensions;
-using Gsemac.IO;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
@@ -13,14 +12,14 @@ namespace Gsemac.Drawing.Imaging {
 
         // Public members
 
-        public IEnumerable<string> SupportedFileTypes => ImageCodec.NativelySupportedFileTypes;
+        public IEnumerable<IImageFormat> SupportedImageFormats => ImageCodec.NativelySupportedImageFormats;
 
         public GdiImageCodec() {
         }
         public GdiImageCodec(IImageFormat imageFormat) {
 
-            if (!this.IsSupportedFileType(imageFormat.FileExtension))
-                throw new FileFormatException("The image format is not supported.");
+            if (!this.IsSupportedImageFormat(imageFormat.FileExtension))
+                throw ImageExceptions.UnsupportedImageFormat;
 
             this.imageFormat = imageFormat;
 
@@ -80,13 +79,20 @@ namespace Gsemac.Drawing.Imaging {
 
                 // If the image is not a GdiImage, save it to an intermediate stream and load it.
 
-                using (MemoryStream ms = new MemoryStream()) {
+                using (MemoryStream intermediateStream = new MemoryStream()) {
 
-                    image.Save(ms);
+                    // Make sure the intermediate image format is one that this codec knows how to read.
 
-                    ms.Seek(0, SeekOrigin.Begin);
+                    IImageFormat intermediateFormat = image.ImageFormat;
 
-                    using (gdiImage = new GdiImage(new Bitmap(ms)))
+                    if (intermediateFormat is null || !this.IsSupportedImageFormat(intermediateFormat))
+                        intermediateFormat = ImageFormat.FromFileExtension(".png");
+
+                    image.Save(intermediateStream, intermediateFormat, ImageEncoderOptions.Default);
+
+                    intermediateStream.Seek(0, SeekOrigin.Begin);
+
+                    using (gdiImage = new GdiImage(new Bitmap(intermediateStream)))
                         gdiImage.Save(stream, imageFormat, encoderOptions);
 
                 }

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 
-namespace Gsemac.IO.Compression.Implementations {
+namespace Gsemac.IO.Compression {
 
     internal static class ArchiveExceptions {
 

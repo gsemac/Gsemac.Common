@@ -1,5 +1,4 @@
 ﻿using Gsemac.IO;
-using System;
 using System.IO;
 using System.Linq;
 
@@ -7,18 +6,23 @@ namespace Gsemac.Drawing.Imaging.Extensions {
 
     public static class ImageCodecExtensions {
 
-        public static bool IsSupportedFileType(this IImageCodec imageCodec, string filename) {
+        public static bool IsSupportedImageFormat(this IImageCodec imageCodec, string filePath) {
 
-            string ext = PathUtilities.GetFileExtension(filename).ToLowerInvariant();
+            string ext = PathUtilities.GetFileExtension(filePath).ToLowerInvariant();
 
-            return imageCodec.SupportedFileTypes.Any(supportedExt => supportedExt.Equals(ext, StringComparison.OrdinalIgnoreCase));
+            return imageCodec.IsSupportedImageFormat(ImageFormat.FromFileExtension(ext));
+
+        }
+        public static bool IsSupportedImageFormat(this IImageCodec imageCodec, IImageFormat imageFormat) {
+
+            return imageCodec.SupportedImageFormats.Any(supportedImageFormat => supportedImageFormat.Equals(imageFormat));
 
         }
 
         public static void Encode(this IImageCodec imageCodec, IImage image, string filePath, IImageEncoderOptions options) {
 
-            if (!imageCodec.IsSupportedFileType(filePath))
-                throw new FileFormatException("The image format is not supported.");
+            if (!imageCodec.IsSupportedImageFormat(filePath))
+                throw ImageExceptions.UnsupportedImageFormat;
 
             using (FileStream fs = File.OpenWrite(filePath))
                 imageCodec.Encode(image, fs, options);
@@ -26,8 +30,8 @@ namespace Gsemac.Drawing.Imaging.Extensions {
         }
         public static IImage Decode(this IImageCodec imageCodec, string filePath) {
 
-            if (!imageCodec.IsSupportedFileType(filePath))
-                throw new FileFormatException("The image format is not supported.");
+            if (!imageCodec.IsSupportedImageFormat(filePath))
+                throw ImageExceptions.UnsupportedImageFormat;
 
             using (FileStream fs = File.OpenRead(filePath))
                 return imageCodec.Decode(fs);
