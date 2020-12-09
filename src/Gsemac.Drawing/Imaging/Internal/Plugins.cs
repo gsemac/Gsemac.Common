@@ -10,11 +10,56 @@ namespace Gsemac.Drawing.Imaging.Internal {
 
         // Public members
 
-        public static Lazy<bool> IsWebPWrapperAvailable { get; } = new Lazy<bool>(GetIsWebPWrapperAvailable);
         public static Lazy<bool> IsImageMagickAvailable { get; } = new Lazy<bool>(GetIsImageMagickAvailable);
+        public static Lazy<bool> IsNQuantAvailable { get; } = new Lazy<bool>(GetIsNQuantAvailable);
+        public static Lazy<bool> IsWebPWrapperAvailable { get; } = new Lazy<bool>(GetIsWebPWrapperAvailable);
 
         // Private members
 
+        private static bool GetIsImageMagickAvailable() {
+
+            AnyCpuFileSystemAssemblyResolver assemblyResolver = new AnyCpuFileSystemAssemblyResolver();
+
+            // Check for the presence of the "ImageMagick.MagickImage" class (in case something like ilmerge was used and the assembly is not present on disk).
+
+            bool isAvailable = AppDomain.CurrentDomain.GetAssemblies()
+                .Select(assembly => assembly.GetType("ImageMagick.MagickImage") != null)
+                .FirstOrDefault();
+
+            // Check for ImageMagick on disk.
+
+            if (!isAvailable)
+                isAvailable = assemblyResolver.AssemblyExists("Magick.NET-Q16-AnyCPU");
+
+            return isAvailable;
+
+        }
+        private static bool GetIsNQuantAvailable() {
+
+#if NETFRAMEWORK
+
+            AnyCpuFileSystemAssemblyResolver assemblyResolver = new AnyCpuFileSystemAssemblyResolver();
+
+            // Check for the presence of the "ImageMagick.MagickImage" class (in case something like ilmerge was used and the assembly is not present on disk).
+
+            bool isAvailable = AppDomain.CurrentDomain.GetAssemblies()
+                .Select(assembly => assembly.GetType("nQuant.WuQuantizer") != null)
+                .FirstOrDefault();
+
+            // Check for nQuant.Core on disk.
+
+            if (!isAvailable)
+                isAvailable = assemblyResolver.AssemblyExists("nQuant.Core");
+
+            return isAvailable;
+
+#else
+
+            return false;
+
+#endif
+
+        }
         private static bool GetIsWebPWrapperAvailable() {
 
 #if NETFRAMEWORK
@@ -43,24 +88,6 @@ namespace Gsemac.Drawing.Imaging.Internal {
             return false;
 
 #endif
-
-        }
-        private static bool GetIsImageMagickAvailable() {
-
-            AnyCpuFileSystemAssemblyResolver assemblyResolver = new AnyCpuFileSystemAssemblyResolver();
-
-            // Check for the presence of the "ImageMagick.MagickImage" class (in case something like ilmerge was used and the assembly is not present on disk).
-
-            bool isAvailable = AppDomain.CurrentDomain.GetAssemblies()
-                .Select(assembly => assembly.GetType("ImageMagick.MagickImage") != null)
-                .FirstOrDefault();
-
-            // Check for ImageMagick on disk.
-
-            if (!isAvailable)
-                isAvailable = assemblyResolver.AssemblyExists("Magick.NET-Q16-AnyCPU");
-
-            return isAvailable;
 
         }
 

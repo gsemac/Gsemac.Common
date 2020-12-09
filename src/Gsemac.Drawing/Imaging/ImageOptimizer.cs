@@ -57,6 +57,15 @@ namespace Gsemac.Drawing.Imaging {
 
             List<IImageOptimizer> imageOptimizers = new List<IImageOptimizer>();
 
+#if NETFRAMEWORK
+
+            // The NQuantImageOptimizer provides better performance for PNGs, so prioritize it over the MagickImageOptimizer.
+
+            if (Plugins.IsNQuantAvailable.Value)
+                imageOptimizers.Add(new NQuantImageOptimizer());
+
+#endif
+
             if (Plugins.IsImageMagickAvailable.Value)
                 imageOptimizers.Add(new MagickImageOptimizer());
 
