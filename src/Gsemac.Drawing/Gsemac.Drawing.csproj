@@ -26,6 +26,20 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<PackageReference Include="Magick.NET-Q16-AnyCPU" Version="7.22.2.2" />
+	</ItemGroup>
+
+	<ItemGroup Condition="$(DefineConstants.Contains('NETFRAMEWORK'))">
+		<PackageReference Include="Magick.NET.SystemDrawing" Version="2.0.8" />
+		<PackageReference Include="nQuant" Version="1.0.3" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\Gsemac.IO\Gsemac.IO.csproj" />
+		<ProjectReference Include="..\Gsemac.Reflection\Gsemac.Reflection.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<Content Include="Gsemac.Drawing.targets" PackagePath="build/Gsemac.Drawing.targets" />
 		<Content Include="lib\native\x86\*" Pack="true" PackagePath="contentFiles\x86">
 			<PackageCopyToOutput>true</PackageCopyToOutput>
@@ -39,16 +53,6 @@
 		</Content>
 		<Content Include="lib\net\*" Pack="true" PackagePath="contentFiles\" />
 		<Content Include="licenses\*" Pack="true" PackagePath="contentFiles\licenses" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <PackageReference Include="Magick.NET-Q16-AnyCPU" Version="7.22.2.2" />
-	  <PackageReference Include="Magick.NET.SystemDrawing" Version="2.0.8" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<ProjectReference Include="..\Gsemac.IO\Gsemac.IO.csproj" />
-		<ProjectReference Include="..\Gsemac.Reflection\Gsemac.Reflection.csproj" />
 	</ItemGroup>
 
 </Project>

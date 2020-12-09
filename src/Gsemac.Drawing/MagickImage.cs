@@ -41,17 +41,7 @@ namespace Gsemac.Drawing {
 
                 stream.Seek(0, SeekOrigin.Begin);
 
-                ImageOptimizer optimizer = new ImageOptimizer {
-                    IgnoreUnsupportedFormats = true
-                };
-
-                if (encoderOptions.OptimizationMode == ImageOptimizationMode.Maximum)
-                    optimizer.OptimalCompression = true;
-
-                if (encoderOptions.OptimizationMode == ImageOptimizationMode.Lossless)
-                    optimizer.LosslessCompress(stream);
-                else
-                    optimizer.Compress(stream);
+                new MagickImageOptimizer().Optimize(stream, encoderOptions.OptimizationMode);
 
             }
 
