@@ -36,7 +36,7 @@ namespace Gsemac.Drawing.Imaging {
 
             }
 
-            return new GdiImage(resultImage);
+            return new GdiImage(resultImage, sourceImage.Codec);
 
         }
 

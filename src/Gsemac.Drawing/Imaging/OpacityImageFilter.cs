@@ -36,7 +36,7 @@ namespace Gsemac.Drawing.Imaging {
 
                 }
 
-                return new GdiImage(imageWithAlphaChannel);
+                return new GdiImage(imageWithAlphaChannel, sourceImage.Codec);
 
             }
 

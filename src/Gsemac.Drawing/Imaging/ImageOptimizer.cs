@@ -1,6 +1,8 @@
 ﻿using Gsemac.Drawing.Imaging.Extensions;
 using Gsemac.Drawing.Imaging.Internal;
+using Gsemac.Drawing.Internal;
 using Gsemac.IO;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -10,7 +12,7 @@ namespace Gsemac.Drawing.Imaging {
 
         // Public members
 
-        public static IEnumerable<IImageFormat> SupportedImageFormats => GetSupportedImageFormats();
+        public static IEnumerable<IImageFormat> SupportedImageFormats => supportedImageFormats.Value;
 
         public static bool IsSupportedImageFormat(string filePath) {
 
@@ -46,6 +48,9 @@ namespace Gsemac.Drawing.Imaging {
 
         // Private members
 
+        private static readonly Lazy<IEnumerable<Type>> imageOptimizerTypes = new Lazy<IEnumerable<Type>>(Plugins.GetImageOptimizers);
+        private static readonly Lazy<IEnumerable<IImageFormat>> supportedImageFormats = new Lazy<IEnumerable<IImageFormat>>(GetSupportedImageFormats);
+
         private static IEnumerable<IImageFormat> GetSupportedImageFormats() {
 
             return GetImageOptimizers().SelectMany(optimizer => optimizer.SupportedImageFormats)
@@ -57,19 +62,15 @@ namespace Gsemac.Drawing.Imaging {
 
             List<IImageOptimizer> imageOptimizers = new List<IImageOptimizer>();
 
-#if NETFRAMEWORK
+            foreach (Type imageOptimizerType in imageOptimizerTypes.Value) {
 
-            // The NQuantImageOptimizer provides better performance for PNGs, so prioritize it over the MagickImageOptimizer.
+                IImageOptimizer imageOptimizer = (IImageOptimizer)Activator.CreateInstance(imageOptimizerType);
 
-            if (Plugins.IsNQuantAvailable.Value)
-                imageOptimizers.Add(new NQuantImageOptimizer());
+                imageOptimizers.Add(imageOptimizer);
 
-#endif
+            }
 
-            if (Plugins.IsImageMagickAvailable.Value)
-                imageOptimizers.Add(new MagickImageOptimizer());
-
-            return imageOptimizers;
+            return imageOptimizers.OrderBy(imageOptimizer => imageOptimizer.Priority);
 
         }
 

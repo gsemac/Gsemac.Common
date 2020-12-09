@@ -1,7 +1,6 @@
 ﻿using Gsemac.Drawing.Extensions;
 using Gsemac.Drawing.Imaging.Extensions;
 using Gsemac.Drawing.Imaging.Internal;
-using Gsemac.IO;
 using System.Drawing;
 
 namespace Gsemac.Drawing.Imaging {
@@ -15,19 +14,9 @@ namespace Gsemac.Drawing.Imaging {
             return OpenImageInternal(filePath);
 
         }
-        public static void SaveImage(IImage image, string filePath, IImageEncoderOptions options = null) {
-
-            SaveImageInternal(image, filePath, options ?? new ImageEncoderOptions());
-
-        }
 
 #if NETFRAMEWORK
 
-        public static void SaveImage(Image image, string filePath, IImageEncoderOptions options = null) {
-
-            SaveImageInternal(new GdiImage(image), filePath, options ?? new ImageEncoderOptions());
-
-        }
         public static Image ResizeImage(Image image, int? width = null, int? height = null, bool disposeOriginal = false) {
 
             int newWidth = image.Width;
@@ -102,16 +91,6 @@ namespace Gsemac.Drawing.Imaging {
                 throw ImageExceptions.UnsupportedImageFormat;
 
             return imageCodec.Decode(filePath);
-
-        }
-        private static void SaveImageInternal(IImage image, string filePath, IImageEncoderOptions options) {
-
-            IImageCodec imageCodec = ImageCodec.FromFileExtension(filePath);
-
-            if (imageCodec is null)
-                throw ImageExceptions.UnsupportedImageFormat;
-
-            imageCodec.Encode(image, filePath, options);
 
         }
 

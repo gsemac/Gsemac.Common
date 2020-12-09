@@ -4,6 +4,9 @@
         IImageEncoder,
         IImageDecoder,
         IHasSupportedImageFormats {
+
+        int Priority { get; }
+
     }
 
 }

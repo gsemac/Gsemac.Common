@@ -1,4 +1,5 @@
-﻿using Gsemac.Drawing.Imaging.Internal;
+﻿using Gsemac.Drawing.Extensions;
+using Gsemac.Drawing.Imaging.Internal;
 using System;
 using System.IO;
 using System.Linq;
@@ -52,7 +53,7 @@ namespace Gsemac.Drawing.Imaging {
 
                     image = ImageFilter.ApplyAll(image, options.Filters);
 
-                    ImageUtilities.SaveImage(image, destinationFilePath, options.EncoderOptions);
+                    image.Save(destinationFilePath, options.EncoderOptions);
 
                 }
 

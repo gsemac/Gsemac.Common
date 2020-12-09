@@ -104,7 +104,7 @@ namespace Gsemac.Drawing.Imaging {
 
                     }
 
-                    return new GdiImage(result);
+                    return new GdiImage(result, sourceImage.Codec);
 
                 }
 

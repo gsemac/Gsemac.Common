@@ -1,10 +1,11 @@
 ﻿using Gsemac.Drawing.Imaging.Extensions;
-using Gsemac.Drawing.Imaging.Internal;
+using Gsemac.Drawing.Internal;
 using Gsemac.IO;
 using Gsemac.Reflection;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 
 namespace Gsemac.Drawing.Imaging {
 
@@ -12,7 +13,7 @@ namespace Gsemac.Drawing.Imaging {
 
         // Public members
 
-        public static IEnumerable<IImageFormat> SupportedImageFormats => GetSupportedImageFormats();
+        public static IEnumerable<IImageFormat> SupportedImageFormats => supportedImageFormats.Value;
         public static IEnumerable<IImageFormat> NativelySupportedImageFormats => GetNativelySupportedImageFormats();
 
         public static bool IsSupportedImageFormat(string filePath) {
@@ -61,6 +62,9 @@ namespace Gsemac.Drawing.Imaging {
 
         // Private members
 
+        private static readonly Lazy<IEnumerable<Type>> imageCodecTypes = new Lazy<IEnumerable<Type>>(Plugins.GetImageCodecs);
+        private static readonly Lazy<IEnumerable<IImageFormat>> supportedImageFormats = new Lazy<IEnumerable<IImageFormat>>(GetSupportedImageFormats);
+
         private static IEnumerable<IImageFormat> GetSupportedImageFormats() {
 
             return GetImageCodecs().SelectMany(codec => codec.SupportedImageFormats)
@@ -88,28 +92,15 @@ namespace Gsemac.Drawing.Imaging {
 
             List<IImageCodec> imageCodecs = new List<IImageCodec>();
 
-            if (Plugins.IsImageMagickAvailable.Value) {
+            foreach (Type imageCodecType in imageCodecTypes.Value) {
 
-                if (imageFormat is null)
-                    imageCodecs.Add(new MagickImageCodec());
-                else if (new MagickImageCodec().IsSupportedImageFormat(imageFormat))
-                    imageCodecs.Add(new MagickImageCodec(imageFormat));
+                IImageCodec imageCodec = (IImageCodec)Activator.CreateInstance(imageCodecType, imageFormat is null ? null : new object[] { imageFormat });
+
+                imageCodecs.Add(imageCodec);
 
             }
 
-#if NETFRAMEWORK
-
-            if (imageFormat is null)
-                imageCodecs.Add(new GdiImageCodec());
-            else if (IsNativelySupportedImageFormat(imageFormat))
-                imageCodecs.Add(new GdiImageCodec(imageFormat));
-
-            if (Plugins.IsWebPWrapperAvailable.Value)
-                imageCodecs.Add(new WebPImageCodec());
-
-#endif
-
-            return imageCodecs;
+            return imageCodecs.OrderBy(imageCodec => imageCodec.Priority);
 
         }
 

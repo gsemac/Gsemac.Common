@@ -51,7 +51,7 @@ namespace Gsemac.Drawing.Imaging {
             if (!newHeight.HasValue && verticalScale.HasValue)
                 newHeight = (int)(sourceImage.Height * verticalScale.Value);
 
-            return new GdiImage(ImageUtilities.ResizeImage(sourceImage.ToBitmap(disposeOriginal: true), newWidth, newHeight, disposeOriginal: true));
+            return new GdiImage(ImageUtilities.ResizeImage(sourceImage.ToBitmap(disposeOriginal: true), newWidth, newHeight, disposeOriginal: true), sourceImage.Codec);
 
         }
 

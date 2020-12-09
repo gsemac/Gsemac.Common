@@ -23,7 +23,7 @@ namespace Gsemac.Drawing.Imaging {
             using (Brush brush = new SolidBrush(overlayColor))
                 graphics.FillRectangle(brush, new Rectangle(0, 0, resultImage.Width, resultImage.Height));
 
-            return new GdiImage(resultImage);
+            return new GdiImage(resultImage, sourceImage.Codec);
 
         }
 

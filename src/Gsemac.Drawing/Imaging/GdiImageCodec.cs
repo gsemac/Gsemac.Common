@@ -2,9 +2,12 @@
 
 using Gsemac.Drawing.Imaging.Extensions;
 using Gsemac.Drawing.Imaging.Internal;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.Drawing.Imaging;
 using System.IO;
+using System.Linq;
 
 namespace Gsemac.Drawing.Imaging {
 
@@ -14,6 +17,7 @@ namespace Gsemac.Drawing.Imaging {
         // Public members
 
         public IEnumerable<IImageFormat> SupportedImageFormats => ImageCodec.NativelySupportedImageFormats;
+        public int Priority => 0;
 
         public GdiImageCodec() {
         }
@@ -41,39 +45,21 @@ namespace Gsemac.Drawing.Imaging {
             // This GdiImage constructor allows us to preserve the original format information.
 
             using (Image imageFromStream = Image.FromStream(stream))
-                return new GdiImage(new Bitmap(imageFromStream), imageFromStream.RawFormat);
+                return new GdiImage(new Bitmap(imageFromStream), imageFromStream.RawFormat, this);
 
         }
         public void Encode(Image image, Stream stream, IImageEncoderOptions encoderOptions) {
 
-            Encode(image, stream, imageFormat, encoderOptions);
+            Encode(new GdiImage(image, this), stream, encoderOptions);
 
         }
         public void Encode(IImage image, Stream stream, IImageEncoderOptions encoderOptions) {
-
-            Encode(image, stream, imageFormat, encoderOptions);
-
-        }
-
-        // Private members
-
-        private readonly IImageFormat imageFormat;
-
-        private void Encode(Image image, Stream stream, IImageFormat imageFormat, IImageEncoderOptions encoderOptions) {
-
-            new GdiImage(image).Save(stream, imageFormat, encoderOptions);
-
-        }
-        private void Encode(IImage image, Stream stream, IImageFormat imageFormat, IImageEncoderOptions encoderOptions) {
 
             if (image is GdiImage gdiImage) {
 
                 // If the image is aleady a GdiImage, we can save it directly.
 
-                if (imageFormat is null)
-                    gdiImage.Save(stream);
-                else
-                    gdiImage.Save(stream, imageFormat, encoderOptions);
+                Save(gdiImage.BaseImage, stream, encoderOptions);
 
             }
             else {
@@ -81,10 +67,73 @@ namespace Gsemac.Drawing.Imaging {
                 // If the image is not a GdiImage, convert it to a bitmap and load it.
 
                 using (Bitmap intermediateBitmap = image.ToBitmap())
-                using (gdiImage = new GdiImage(intermediateBitmap))
-                    gdiImage.Save(stream, imageFormat, encoderOptions);
+                using (gdiImage = new GdiImage(intermediateBitmap, this))
+                    Save(gdiImage.BaseImage, stream, encoderOptions);
 
             }
+
+        }
+
+        // Private members
+
+        private readonly IImageFormat imageFormat;
+
+        private void Save(Image image, Stream stream, IImageEncoderOptions encoderOptions) {
+
+            using (EncoderParameters encoderParameters = new EncoderParameters(1))
+            using (EncoderParameter qualityParameter = new EncoderParameter(Encoder.Quality, encoderOptions.Quality)) {
+
+                encoderParameters.Param[0] = qualityParameter;
+
+                System.Drawing.Imaging.ImageFormat format = imageFormat is null ? image.RawFormat : GetImageFormatFromFileExtension(imageFormat.FileExtension);
+                ImageCodecInfo encoder = GetEncoderFromImageFormat(format);
+
+                if (encoder is null)
+                    encoder = GetEncoderFromImageFormat(System.Drawing.Imaging.ImageFormat.Png);
+
+                image.Save(stream, encoder, encoderParameters);
+
+            }
+
+        }
+
+        private static System.Drawing.Imaging.ImageFormat GetImageFormatFromFileExtension(string fileExtension) {
+
+            switch (fileExtension.ToLowerInvariant()) {
+
+                case ".bmp":
+                    return System.Drawing.Imaging.ImageFormat.Bmp;
+
+                case ".gif":
+                    return System.Drawing.Imaging.ImageFormat.Gif;
+
+                case ".exif":
+                    return System.Drawing.Imaging.ImageFormat.Exif;
+
+                case ".jpg":
+                case ".jpeg":
+                    return System.Drawing.Imaging.ImageFormat.Jpeg;
+
+                case ".png":
+                    return System.Drawing.Imaging.ImageFormat.Png;
+
+                case ".tif":
+                case ".tiff":
+                    return System.Drawing.Imaging.ImageFormat.Tiff;
+
+                default:
+                    throw new ArgumentException("The file extension was not recognized.");
+
+            }
+
+        }
+        private ImageCodecInfo GetEncoderFromImageFormat(System.Drawing.Imaging.ImageFormat imageFormat) {
+
+            ImageCodecInfo encoder = ImageCodecInfo.GetImageDecoders()
+                .Where(codec => codec.FormatID == imageFormat.Guid)
+                .FirstOrDefault();
+
+            return encoder;
 
         }
 

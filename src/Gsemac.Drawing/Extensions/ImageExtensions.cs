@@ -1,8 +1,51 @@
-﻿using System.Drawing;
+﻿using Gsemac.Drawing.Imaging;
+using Gsemac.Drawing.Imaging.Internal;
+using System.Drawing;
+using System.IO;
 
 namespace Gsemac.Drawing.Extensions {
 
     public static class ImageExtensions {
+
+        // Public members
+
+        public static void Save(this IImage image, Stream stream) {
+
+            image.Codec.Encode(image, stream, ImageEncoderOptions.Default);
+
+        }
+        public static void Save(this IImage image, Stream stream, IImageFormat imageFormat) {
+
+            image.Save(stream, imageFormat, ImageEncoderOptions.Default);
+
+        }
+        public static void Save(this IImage image, Stream stream, IImageFormat imageFormat, IImageEncoderOptions encoderOptions) {
+
+            IImageEncoder encoder = ImageCodec.FromImageFormat(imageFormat);
+
+            if (encoder is null)
+                throw ImageExceptions.UnsupportedImageFormat;
+
+            image.Codec.Encode(image, stream, encoderOptions);
+
+        }
+
+        public static void Save(this IImage image, string filePath) {
+
+            image.Save(filePath, ImageEncoderOptions.Default);
+
+        }
+        public static void Save(this IImage image, string filePath, IImageEncoderOptions encoderOptions) {
+
+            IImageFormat imageFormat = ImageFormat.FromFileExtension(filePath);
+
+            if (imageFormat is null)
+                throw ImageExceptions.UnsupportedImageFormat;
+
+            using (FileStream stream = File.Open(filePath, FileMode.OpenOrCreate))
+                image.Save(stream, imageFormat, encoderOptions);
+
+        }
 
 #if NETFRAMEWORK
 

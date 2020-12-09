@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Gsemac.IO;
+using System;
 
 namespace Gsemac.Drawing.Imaging {
 
@@ -11,17 +12,24 @@ namespace Gsemac.Drawing.Imaging {
 
         public string FileExtension => fileExtension;
 
-        public static IImageFormat FromFileExtension(string fileExtension) {
+        public static IImageFormat FromFileExtension(string filePath) {
 
-            if (string.IsNullOrWhiteSpace(fileExtension))
-                throw new ArgumentNullException(nameof(fileExtension));
+            // Accepts full file paths, or plain image extensions (with or without leading period, e.g. ".jpeg" and "jpeg").
 
-            if (!fileExtension.StartsWith("."))
-                fileExtension = "." + fileExtension;
+            if (string.IsNullOrWhiteSpace(filePath))
+                throw new ArgumentNullException(nameof(filePath));
 
-            fileExtension = fileExtension.Trim().ToLowerInvariant();
+            string ext = PathUtilities.GetFileExtension(filePath);
 
-            return new ImageFormat(fileExtension);
+            if (string.IsNullOrWhiteSpace(ext))
+                ext = filePath;
+
+            if (!ext.StartsWith("."))
+                ext = "." + ext;
+
+            ext = ext.Trim().ToLowerInvariant();
+
+            return new ImageFormat(ext);
 
         }
 
