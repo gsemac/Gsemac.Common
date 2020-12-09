@@ -24,7 +24,7 @@ namespace Gsemac.Drawing.Imaging.Extensions {
             if (!imageCodec.IsSupportedImageFormat(filePath))
                 throw ImageExceptions.UnsupportedImageFormat;
 
-            using (FileStream fs = File.OpenWrite(filePath))
+            using (FileStream fs = File.Open(filePath, FileMode.OpenOrCreate))
                 imageCodec.Encode(image, fs, options);
 
         }

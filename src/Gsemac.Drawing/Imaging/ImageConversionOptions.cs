@@ -5,7 +5,7 @@ namespace Gsemac.Drawing.Imaging {
     public class ImageConversionOptions :
         IImageConversionOptions {
 
-        public IImageEncoderOptions EncoderOptions { get; } = new ImageEncoderOptions();
+        public IImageEncoderOptions EncoderOptions { get; set; } = new ImageEncoderOptions();
         public ICollection<IImageFilter> Filters { get; } = new List<IImageFilter>();
 
 

@@ -31,7 +31,7 @@ namespace Gsemac.Drawing.Imaging {
                 throw ImageExceptions.UnsupportedImageFormat;
 
             if (sourceExt.Equals(destinationExt, StringComparison.OrdinalIgnoreCase) &&
-                options.EncoderOptions.Quality == ImageEncoderOptions.BestQuality &&
+                options.EncoderOptions.Equals(ImageEncoderOptions.Default) &&
                 !options.Filters.Any()) {
 
                 // The image is being converted to the same format without any changes.
