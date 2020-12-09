@@ -2,7 +2,7 @@
 
     public interface IImageEncoderOptions {
 
-        ImageCompressionMode CompressionMode { get; set; }
+        ImageOptimizationMode OptimizationMode { get; set; }
         int Quality { get; set; }
 
     }

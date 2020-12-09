@@ -1,6 +1,6 @@
 ﻿namespace Gsemac.Drawing.Imaging {
 
-    public enum ImageCompressionMode {
+    public enum ImageOptimizationMode {
         None = 0,
         Fastest,
         Maximum,

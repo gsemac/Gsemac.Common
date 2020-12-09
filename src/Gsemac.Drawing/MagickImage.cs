@@ -37,7 +37,7 @@ namespace Gsemac.Drawing {
 
             image.Write(stream);
 
-            if (stream.CanRead && stream.CanSeek && encoderOptions.CompressionMode != ImageCompressionMode.None) {
+            if (stream.CanRead && stream.CanSeek && encoderOptions.OptimizationMode != ImageOptimizationMode.None) {
 
                 stream.Seek(0, SeekOrigin.Begin);
 
@@ -45,10 +45,10 @@ namespace Gsemac.Drawing {
                     IgnoreUnsupportedFormats = true
                 };
 
-                if (encoderOptions.CompressionMode == ImageCompressionMode.Maximum)
+                if (encoderOptions.OptimizationMode == ImageOptimizationMode.Maximum)
                     optimizer.OptimalCompression = true;
 
-                if (encoderOptions.CompressionMode == ImageCompressionMode.Lossless)
+                if (encoderOptions.OptimizationMode == ImageOptimizationMode.Lossless)
                     optimizer.LosslessCompress(stream);
                 else
                     optimizer.Compress(stream);

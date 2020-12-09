@@ -7,14 +7,14 @@
 
         public static ImageEncoderOptions Default => new ImageEncoderOptions();
 
-        public ImageCompressionMode CompressionMode { get; set; } = ImageCompressionMode.None;
+        public ImageOptimizationMode OptimizationMode { get; set; } = ImageOptimizationMode.None;
         public int Quality { get; set; } = BestQuality;
 
         public override bool Equals(object obj) {
 
             if (obj is IImageEncoderOptions other) {
 
-                return CompressionMode == other.CompressionMode &&
+                return OptimizationMode == other.OptimizationMode &&
                     Quality == other.Quality;
 
             }
