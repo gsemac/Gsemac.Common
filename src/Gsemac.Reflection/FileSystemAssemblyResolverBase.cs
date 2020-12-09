@@ -41,7 +41,19 @@ namespace Gsemac.Reflection {
             return !string.IsNullOrEmpty(GetAssemblyPath(assemblyName));
 
         }
+
         public abstract string GetAssemblyPath(string assemblyName);
+        public IEnumerable<string> GetAssemblyPaths(string searchPattern = "*.dll") {
+
+            List<string> assemblyPaths = new List<string>();
+
+            foreach (string probingPath in GetProbingPaths())
+                if (Directory.Exists(probingPath))
+                    assemblyPaths.AddRange(Directory.GetFiles(probingPath, searchPattern, SearchOption.TopDirectoryOnly));
+
+            return assemblyPaths;
+
+        }
 
         // Protected members
 
