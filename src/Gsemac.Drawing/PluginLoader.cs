@@ -13,16 +13,12 @@ namespace Gsemac.Drawing.Internal {
 
         public static IEnumerable<Type> GetImageCodecs() {
 
-            LoadPluginAssemblies();
-
-            return TypeUtilities.GetTypesImplementingInterface<IImageCodec>();
+            return imageCodecTypes.Value;
 
         }
         public static IEnumerable<Type> GetImageOptimizers() {
 
-            LoadPluginAssemblies();
-
-            return TypeUtilities.GetTypesImplementingInterface<IImageOptimizer>();
+            return imageOptimizerTypes.Value;
 
         }
 
@@ -30,6 +26,9 @@ namespace Gsemac.Drawing.Internal {
 
         private static bool drawingImagingAssembliesLoaded = false;
         private static readonly object drawingImagingAssemblyLoadLock = new object();
+
+        private static readonly Lazy<IEnumerable<Type>> imageCodecTypes = new Lazy<IEnumerable<Type>>(GetImageCodecsInternal);
+        private static readonly Lazy<IEnumerable<Type>> imageOptimizerTypes = new Lazy<IEnumerable<Type>>(GetImageOptimizersInternal);
 
         private static void LoadPluginAssemblies() {
 
@@ -51,6 +50,21 @@ namespace Gsemac.Drawing.Internal {
                 drawingImagingAssembliesLoaded = true;
 
             }
+
+        }
+
+        private static IEnumerable<Type> GetImageCodecsInternal() {
+
+            LoadPluginAssemblies();
+
+            return TypeUtilities.GetTypesImplementingInterface<IImageCodec>();
+
+        }
+        private static IEnumerable<Type> GetImageOptimizersInternal() {
+
+            LoadPluginAssemblies();
+
+            return TypeUtilities.GetTypesImplementingInterface<IImageOptimizer>();
 
         }
 

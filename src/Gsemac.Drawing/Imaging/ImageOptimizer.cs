@@ -47,7 +47,6 @@ namespace Gsemac.Drawing.Imaging {
 
         // Private members
 
-        private static readonly Lazy<IEnumerable<Type>> imageOptimizerTypes = new Lazy<IEnumerable<Type>>(PluginLoader.GetImageOptimizers);
         private static readonly Lazy<IEnumerable<IImageFormat>> supportedImageFormats = new Lazy<IEnumerable<IImageFormat>>(GetSupportedImageFormats);
 
         private static IEnumerable<IImageFormat> GetSupportedImageFormats() {
@@ -61,7 +60,7 @@ namespace Gsemac.Drawing.Imaging {
 
             List<IImageOptimizer> imageOptimizers = new List<IImageOptimizer>();
 
-            foreach (Type imageOptimizerType in imageOptimizerTypes.Value) {
+            foreach (Type imageOptimizerType in PluginLoader.GetImageOptimizers()) {
 
                 IImageOptimizer imageOptimizer = (IImageOptimizer)Activator.CreateInstance(imageOptimizerType);
 

@@ -1,11 +1,9 @@
 ﻿using Gsemac.Drawing.Imaging.Extensions;
 using Gsemac.Drawing.Internal;
 using Gsemac.IO;
-using Gsemac.Reflection;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 
 namespace Gsemac.Drawing.Imaging {
 
@@ -62,7 +60,6 @@ namespace Gsemac.Drawing.Imaging {
 
         // Private members
 
-        private static readonly Lazy<IEnumerable<Type>> imageCodecTypes = new Lazy<IEnumerable<Type>>(PluginLoader.GetImageCodecs);
         private static readonly Lazy<IEnumerable<IImageFormat>> supportedImageFormats = new Lazy<IEnumerable<IImageFormat>>(GetSupportedImageFormats);
 
         private static IEnumerable<IImageFormat> GetSupportedImageFormats() {
@@ -92,7 +89,7 @@ namespace Gsemac.Drawing.Imaging {
 
             List<IImageCodec> imageCodecs = new List<IImageCodec>();
 
-            foreach (Type imageCodecType in imageCodecTypes.Value) {
+            foreach (Type imageCodecType in PluginLoader.GetImageCodecs()) {
 
                 IImageCodec imageCodec = (IImageCodec)Activator.CreateInstance(imageCodecType);
 
