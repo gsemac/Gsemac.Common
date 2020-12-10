@@ -6,7 +6,7 @@ using System.Linq;
 namespace Gsemac.Reflection {
 
     public abstract class FileSystemAssemblyResolverBase :
-        IAssemblyResolver {
+        IFileSystemAssemblyResolver {
 
         // Public members
 
@@ -42,7 +42,45 @@ namespace Gsemac.Reflection {
 
         }
 
-        public abstract string GetAssemblyPath(string assemblyName);
+        public virtual string GetAssemblyPath(string assemblyName) {
+
+            string assemblyPath = string.Empty;
+
+            // Attempt to find the assembly relative to one of the probing paths.
+
+            foreach (string probingPath in GetProbingPaths()) {
+
+                string candidatePath = probingPath;
+
+                if (AddExtension && !assemblyName.ToLowerInvariant().EndsWith(".dll"))
+                    assemblyName += ".dll";
+
+                // If the probing path is relative, make it rooted relative to the entry assembly.
+
+                if (!string.IsNullOrEmpty(candidatePath) && !Path.IsPathRooted(candidatePath))
+                    candidatePath = Path.Combine(new EntryAssemblyInfo().Directory, candidatePath);
+
+                // Attempt to find the assembly in the probing path.
+
+                if (!string.IsNullOrEmpty(candidatePath)) {
+
+                    candidatePath = Path.Combine(candidatePath, assemblyName);
+
+                    if (File.Exists(candidatePath)) {
+
+                        assemblyPath = candidatePath;
+
+                        break;
+
+                    }
+
+                }
+
+            }
+
+            return assemblyPath;
+
+        }
         public IEnumerable<string> GetAssemblyPaths(string searchPattern = "*.dll") {
 
             List<string> assemblyPaths = new List<string>();
