@@ -1,7 +1,8 @@
 ﻿#if NETFRAMEWORK
 
+using Gsemac.Drawing.Imaging;
 using Gsemac.Drawing.Imaging.Extensions;
-using Gsemac.Drawing.Imaging.Internal;
+using Gsemac.Drawing.Internal;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -24,22 +25,33 @@ namespace Gsemac.Drawing.Imaging {
         public GdiImageCodec(IImageFormat imageFormat) {
 
             if (!this.IsSupportedImageFormat(imageFormat.FileExtension))
-                throw ImageExceptions.UnsupportedImageFormat;
+                throw new ImageFormatException();
 
             this.imageFormat = imageFormat;
 
         }
 
-        public System.Drawing.Image Decode(Stream stream) {
+        public void Encode(IImage image, Stream stream, IImageEncoderOptions encoderOptions) {
 
-            // Image requires that the stream be kept open, because it is read lazily.
-            // By creating a new Bitmap from the image, we force it to read the stream immediately.
+            if (image is GdiImage gdiImage) {
 
-            using (System.Drawing.Image imageFromStream = System.Drawing.Image.FromStream(stream))
-                return new Bitmap(imageFromStream);
+                // If the image is aleady a GdiImage, we can save it directly.
+
+                EncodeBitmap(gdiImage.BaseImage, stream, encoderOptions);
+
+            }
+            else {
+
+                // If the image is not a GdiImage, convert it to a bitmap and load it.
+
+                using (Bitmap intermediateBitmap = image.ToBitmap())
+                using (gdiImage = new GdiImage(intermediateBitmap, intermediateBitmap.RawFormat, this))
+                    EncodeBitmap(gdiImage.BaseImage, stream, encoderOptions);
+
+            }
 
         }
-        IImage IImageDecoder.Decode(Stream stream) {
+        public IImage Decode(Stream stream) {
 
             // When we create a new Bitmap from the Image, we lose information about its original format (it just becomes a memory Bitmap).
             // This GdiImage constructor allows us to preserve the original format information.
@@ -48,37 +60,12 @@ namespace Gsemac.Drawing.Imaging {
                 return new GdiImage(new Bitmap(imageFromStream), imageFromStream.RawFormat, this);
 
         }
-        public void Encode(System.Drawing.Image image, Stream stream, IImageEncoderOptions encoderOptions) {
-
-            Encode(new GdiImage(image, this), stream, encoderOptions);
-
-        }
-        public void Encode(IImage image, Stream stream, IImageEncoderOptions encoderOptions) {
-
-            if (image is GdiImage gdiImage) {
-
-                // If the image is aleady a GdiImage, we can save it directly.
-
-                Save(gdiImage.BaseImage, stream, encoderOptions);
-
-            }
-            else {
-
-                // If the image is not a GdiImage, convert it to a bitmap and load it.
-
-                using (Bitmap intermediateBitmap = image.ToBitmap())
-                using (gdiImage = new GdiImage(intermediateBitmap, this))
-                    Save(gdiImage.BaseImage, stream, encoderOptions);
-
-            }
-
-        }
 
         // Private members
 
         private readonly IImageFormat imageFormat;
 
-        private void Save(System.Drawing.Image image, Stream stream, IImageEncoderOptions encoderOptions) {
+        private void EncodeBitmap(System.Drawing.Image image, Stream stream, IImageEncoderOptions encoderOptions) {
 
             using (EncoderParameters encoderParameters = new EncoderParameters(1))
             using (EncoderParameter qualityParameter = new EncoderParameter(Encoder.Quality, encoderOptions.Quality)) {

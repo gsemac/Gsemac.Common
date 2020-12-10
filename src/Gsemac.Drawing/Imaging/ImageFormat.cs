@@ -12,6 +12,9 @@ namespace Gsemac.Drawing.Imaging {
 
         public string FileExtension => fileExtension;
 
+        public static IImageFormat Jpeg => FromFileExtension(".jpeg");
+        public static IImageFormat Png => FromFileExtension(".png");
+
         public static IImageFormat FromFileExtension(string filePath) {
 
             // Accepts full file paths, or plain image extensions (with or without leading period, e.g. ".jpeg" and "jpeg").

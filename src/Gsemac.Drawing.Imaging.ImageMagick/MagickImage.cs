@@ -5,7 +5,7 @@ using System.Drawing;
 
 namespace Gsemac.Drawing {
 
-    public class MagickImage :
+    internal class MagickImage :
         IImage {
 
         // Public members
@@ -13,9 +13,9 @@ namespace Gsemac.Drawing {
         public int Width => image.Width;
         public int Height => image.Height;
         public Size Size => new Size(Width, Height);
-        public IImageFormat Format => throw new NotImplementedException();
+        public IImageFormat Format { get; }
         public IImageCodec Codec { get; }
-        public ImageMagick.MagickImage BaseImage => image;
+        internal ImageMagick.MagickImage BaseImage => image;
 
         public MagickImage(ImageMagick.MagickImage image, IImageCodec codec) {
 
@@ -23,6 +23,7 @@ namespace Gsemac.Drawing {
                 throw new ArgumentNullException(nameof(image));
 
             this.image = image;
+            this.Format = GetImageFormatFromMagickFormat(image.Format);
             this.Codec = codec;
 
         }
@@ -69,6 +70,17 @@ namespace Gsemac.Drawing {
 
         private readonly ImageMagick.MagickImage image;
         private bool disposedValue = false;
+
+        private static IImageFormat GetImageFormatFromMagickFormat(MagickFormat magickFormat) {
+
+            string ext = ImageMagickUtilities.GetFileExtensionFromMagickFormat(magickFormat);
+
+            if (string.IsNullOrEmpty(ext))
+                throw new ImageFormatException();
+
+            return ImageFormat.FromFileExtension(ext);
+
+        }
 
     }
 

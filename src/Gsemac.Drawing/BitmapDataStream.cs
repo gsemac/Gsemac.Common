@@ -2,6 +2,7 @@
 
 using Gsemac.Drawing.Extensions;
 using Gsemac.Drawing.Imaging;
+using Gsemac.Drawing.Imaging.Extensions;
 using System;
 using System.Drawing;
 using System.Drawing.Imaging;
@@ -29,7 +30,7 @@ namespace Gsemac.Drawing {
             if (bitmap is null)
                 throw new ArgumentNullException(nameof(bitmap));
 
-            if (bitmap.HasIndexedPixelFormat()) {
+            if (ImageUtilities.HasIndexedPixelFormat(bitmap)) {
 
                 this.bitmap = (Bitmap)ImageUtilities.ConvertImageToNonIndexedPixelFormat(bitmap, disposeOriginal: false);
                 this.disposeBitmap = true;

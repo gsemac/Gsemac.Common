@@ -1,8 +1,6 @@
-﻿using Gsemac.Drawing.Imaging;
-using Gsemac.Drawing.Imaging.Internal;
-using System.IO;
+﻿using System.IO;
 
-namespace Gsemac.Drawing.Extensions {
+namespace Gsemac.Drawing.Imaging.Extensions {
 
     public static class ImageExtensions {
 
@@ -23,7 +21,7 @@ namespace Gsemac.Drawing.Extensions {
             IImageEncoder encoder = ImageCodec.FromImageFormat(imageFormat);
 
             if (encoder is null)
-                throw ImageExceptions.UnsupportedImageFormat;
+                throw new ImageFormatException();
 
             image.Codec.Encode(image, stream, encoderOptions);
 
@@ -53,25 +51,12 @@ namespace Gsemac.Drawing.Extensions {
             IImageFormat imageFormat = ImageFormat.FromFileExtension(filePath);
 
             if (imageFormat is null)
-                throw ImageExceptions.UnsupportedImageFormat;
+                throw new ImageFormatException();
 
             using (FileStream stream = File.Open(filePath, FileMode.OpenOrCreate))
                 image.Save(stream, imageFormat, encoderOptions);
 
         }
-
-#if NETFRAMEWORK
-
-        public static bool HasIndexedPixelFormat(this System.Drawing.Image image) {
-
-            return image.PixelFormat == System.Drawing.Imaging.PixelFormat.Format1bppIndexed ||
-                image.PixelFormat == System.Drawing.Imaging.PixelFormat.Format4bppIndexed ||
-                image.PixelFormat == System.Drawing.Imaging.PixelFormat.Format8bppIndexed ||
-                image.PixelFormat == System.Drawing.Imaging.PixelFormat.Indexed;
-
-        }
-
-#endif
 
     }
 

@@ -1,12 +1,11 @@
 ﻿#if NETFRAMEWORK
 
-using Gsemac.Drawing.Imaging;
 using System;
 using System.Drawing;
 
-namespace Gsemac.Drawing {
+namespace Gsemac.Drawing.Imaging {
 
-    public class GdiImage :
+    internal class GdiImage :
         IImage {
 
         // Public members
@@ -14,32 +13,25 @@ namespace Gsemac.Drawing {
         public int Width => image.Width;
         public int Height => image.Height;
         public Size Size => image.Size;
-        public IImageFormat Format => GetImageFormatFromImageFormat(originalFormat);
+        public IImageFormat Format { get; }
         public IImageCodec Codec { get; }
-        public System.Drawing.Image BaseImage => image;
+        internal System.Drawing.Image BaseImage => image;
 
-        public GdiImage(System.Drawing.Image image, IImageCodec codec) {
+        public GdiImage(System.Drawing.Image image, IImageFormat imageFormat, IImageCodec imageCodec) {
 
             if (image is null)
                 throw new ArgumentNullException(nameof(image));
 
+            if (imageFormat is null)
+                imageFormat = GetImageFormatFromImageFormat(image.RawFormat);
+
             this.image = image;
-            this.Codec = codec;
-            this.originalFormat = image.RawFormat;
+            this.Format = imageFormat;
+            this.Codec = imageCodec ?? (imageFormat is null ? new GdiImageCodec() : new GdiImageCodec(imageFormat));
 
         }
-        public GdiImage(System.Drawing.Image image, System.Drawing.Imaging.ImageFormat originalFormat, IImageCodec codec) {
-
-            if (image is null)
-                throw new ArgumentNullException(nameof(image));
-
-            if (originalFormat is null)
-                throw new ArgumentNullException(nameof(originalFormat));
-
-            this.image = image;
-            this.Codec = codec;
-            this.originalFormat = originalFormat;
-
+        public GdiImage(System.Drawing.Image image, System.Drawing.Imaging.ImageFormat imageFormat, IImageCodec imageCodec) :
+            this(image, GetImageFormatFromImageFormat(imageFormat), imageCodec) {
         }
 
         public Bitmap ToBitmap(bool disposeOriginal = false) {
@@ -84,23 +76,22 @@ namespace Gsemac.Drawing {
         // Private members
 
         private readonly System.Drawing.Image image;
-        private readonly System.Drawing.Imaging.ImageFormat originalFormat;
         private bool disposedValue = false;
 
         private static IImageFormat GetImageFormatFromImageFormat(System.Drawing.Imaging.ImageFormat imageFormat) {
 
             if (imageFormat.Equals(System.Drawing.Imaging.ImageFormat.Bmp))
-                return Imaging.ImageFormat.FromFileExtension(".bmp");
+                return ImageFormat.FromFileExtension(".bmp");
             else if (imageFormat.Equals(System.Drawing.Imaging.ImageFormat.Gif))
-                return Imaging.ImageFormat.FromFileExtension(".gif");
+                return ImageFormat.FromFileExtension(".gif");
             else if (imageFormat.Equals(System.Drawing.Imaging.ImageFormat.Exif))
-                return Imaging.ImageFormat.FromFileExtension(".exif");
+                return ImageFormat.FromFileExtension(".exif");
             else if (imageFormat.Equals(System.Drawing.Imaging.ImageFormat.Jpeg))
-                return Imaging.ImageFormat.FromFileExtension(".jpeg");
+                return ImageFormat.Jpeg;
             else if (imageFormat.Equals(System.Drawing.Imaging.ImageFormat.Png))
-                return Imaging.ImageFormat.FromFileExtension(".png");
+                return ImageFormat.Png;
             else if (imageFormat.Equals(System.Drawing.Imaging.ImageFormat.Tiff))
-                return Imaging.ImageFormat.FromFileExtension(".tiff");
+                return ImageFormat.FromFileExtension(".tiff");
             else
                 return null;
 

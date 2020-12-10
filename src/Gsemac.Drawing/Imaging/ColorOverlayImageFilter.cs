@@ -1,5 +1,6 @@
 ﻿#if NETFRAMEWORK
 
+using Gsemac.Drawing.Imaging;
 using System.Drawing;
 
 namespace Gsemac.Drawing.Imaging {
@@ -23,7 +24,7 @@ namespace Gsemac.Drawing.Imaging {
             using (Brush brush = new SolidBrush(overlayColor))
                 graphics.FillRectangle(brush, new Rectangle(0, 0, resultImage.Width, resultImage.Height));
 
-            return new GdiImage(resultImage, sourceImage.Codec);
+            return Image.FromBitmap(resultImage);
 
         }
 

@@ -62,7 +62,7 @@ namespace Gsemac.Drawing.Imaging {
 
         // Private members
 
-        private static readonly Lazy<IEnumerable<Type>> imageCodecTypes = new Lazy<IEnumerable<Type>>(Plugins.GetImageCodecs);
+        private static readonly Lazy<IEnumerable<Type>> imageCodecTypes = new Lazy<IEnumerable<Type>>(PluginLoader.GetImageCodecs);
         private static readonly Lazy<IEnumerable<IImageFormat>> supportedImageFormats = new Lazy<IEnumerable<IImageFormat>>(GetSupportedImageFormats);
 
         private static IEnumerable<IImageFormat> GetSupportedImageFormats() {

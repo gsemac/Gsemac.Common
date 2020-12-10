@@ -3,10 +3,9 @@
 using Gsemac.Drawing.Extensions;
 using Gsemac.Drawing.Imaging;
 using Gsemac.Drawing.Imaging.Extensions;
-using Gsemac.Drawing.Imaging.Internal;
 using System.Drawing;
 
-namespace Gsemac.Drawing {
+namespace Gsemac.Drawing.Imaging {
 
     public static class ImageUtilities {
 
@@ -47,11 +46,19 @@ namespace Gsemac.Drawing {
             return resultImage;
 
         }
+        public static bool HasIndexedPixelFormat(System.Drawing.Image image) {
+
+            return image.PixelFormat == System.Drawing.Imaging.PixelFormat.Format1bppIndexed ||
+                image.PixelFormat == System.Drawing.Imaging.PixelFormat.Format4bppIndexed ||
+                image.PixelFormat == System.Drawing.Imaging.PixelFormat.Format8bppIndexed ||
+                image.PixelFormat == System.Drawing.Imaging.PixelFormat.Indexed;
+
+        }
         public static System.Drawing.Image ConvertImageToNonIndexedPixelFormat(System.Drawing.Image image, bool disposeOriginal = false) {
 
             // We can't create a graphics object from an image with an indexed pixel format, so we need to create a new bitmap.
 
-            if (!image.HasIndexedPixelFormat())
+            if (!HasIndexedPixelFormat(image))
                 return image;
 
             Bitmap resultImage = new Bitmap(image);
@@ -72,6 +79,7 @@ namespace Gsemac.Drawing {
             return ConvertImageToNonIndexedPixelFormat(resultImage, disposeOriginal: true);
 
         }
+
 
     }
 

@@ -4,13 +4,10 @@ using Gsemac.Reflection;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 
 namespace Gsemac.Drawing.Internal {
 
-    // #todo Proper plugin architecture
-
-    internal static class Plugins {
+    internal static class PluginLoader {
 
         // Public members
 

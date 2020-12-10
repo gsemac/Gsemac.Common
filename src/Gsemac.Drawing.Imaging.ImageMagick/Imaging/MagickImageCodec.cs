@@ -1,5 +1,4 @@
 ﻿using Gsemac.Drawing.Imaging.Extensions;
-using Gsemac.Drawing.Imaging.Internal;
 using ImageMagick;
 using System.Collections.Generic;
 using System.IO;
@@ -20,7 +19,7 @@ namespace Gsemac.Drawing.Imaging {
         public MagickImageCodec(IImageFormat imageFormat) {
 
             if (!this.IsSupportedImageFormat(imageFormat))
-                throw ImageExceptions.UnsupportedImageFormat;
+                throw new ImageFormatException();
 
             this.imageFormat = imageFormat;
 
@@ -50,10 +49,8 @@ namespace Gsemac.Drawing.Imaging {
 
                     ms.Seek(0, SeekOrigin.Begin);
 
-                    using (magickImage = new MagickImage(new ImageMagick.MagickImage(ms), this)) {
+                    using (magickImage = new MagickImage(new ImageMagick.MagickImage(ms), this))
                         Save(magickImage.BaseImage, stream, encoderOptions);
-
-                    }
 
                 }
 
@@ -84,39 +81,12 @@ namespace Gsemac.Drawing.Imaging {
         }
         private static MagickFormat GetMagickFormatForFileExtension(string fileExtension) {
 
-            switch (fileExtension.ToLowerInvariant()) {
+            MagickFormat? key = ImageMagickUtilities.GetMagickFormatFromFileExtension(fileExtension.ToLowerInvariant());
 
-                case ".avif":
-                    return MagickFormat.Avif;
+            if (!key.HasValue)
+                throw new ImageFormatException();
 
-                case ".bmp":
-                    return MagickFormat.Bmp;
-
-                case ".gif":
-                    return MagickFormat.Gif;
-
-                case ".jpg":
-                    return MagickFormat.Jpg;
-
-                case ".jpeg":
-                    return MagickFormat.Jpeg;
-
-                case ".png":
-                    return MagickFormat.Png;
-
-                case ".tif":
-                    return MagickFormat.Tif;
-
-                case ".tiff":
-                    return MagickFormat.Tiff;
-
-                case ".webp":
-                    return MagickFormat.WebP;
-
-                default:
-                    throw ImageExceptions.UnsupportedImageFormat;
-
-            }
+            return key.Value;
 
         }
 

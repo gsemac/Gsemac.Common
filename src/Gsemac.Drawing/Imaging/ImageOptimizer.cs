@@ -1,5 +1,4 @@
 ﻿using Gsemac.Drawing.Imaging.Extensions;
-using Gsemac.Drawing.Imaging.Internal;
 using Gsemac.Drawing.Internal;
 using Gsemac.IO;
 using System;
@@ -48,7 +47,7 @@ namespace Gsemac.Drawing.Imaging {
 
         // Private members
 
-        private static readonly Lazy<IEnumerable<Type>> imageOptimizerTypes = new Lazy<IEnumerable<Type>>(Plugins.GetImageOptimizers);
+        private static readonly Lazy<IEnumerable<Type>> imageOptimizerTypes = new Lazy<IEnumerable<Type>>(PluginLoader.GetImageOptimizers);
         private static readonly Lazy<IEnumerable<IImageFormat>> supportedImageFormats = new Lazy<IEnumerable<IImageFormat>>(GetSupportedImageFormats);
 
         private static IEnumerable<IImageFormat> GetSupportedImageFormats() {

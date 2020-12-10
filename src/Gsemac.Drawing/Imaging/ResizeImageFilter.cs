@@ -1,5 +1,6 @@
 ﻿#if NETFRAMEWORK
 
+using Gsemac.Drawing.Imaging;
 using System.Drawing;
 
 namespace Gsemac.Drawing.Imaging {
@@ -51,7 +52,7 @@ namespace Gsemac.Drawing.Imaging {
             if (!newHeight.HasValue && verticalScale.HasValue)
                 newHeight = (int)(sourceImage.Height * verticalScale.Value);
 
-            return new GdiImage(ImageUtilities.ResizeImage(sourceImage.ToBitmap(disposeOriginal: true), newWidth, newHeight, disposeOriginal: true), sourceImage.Codec);
+            return Image.FromBitmap(ImageUtilities.ResizeImage(sourceImage.ToBitmap(disposeOriginal: true), newWidth, newHeight, disposeOriginal: true));
 
         }
 
