@@ -17,6 +17,14 @@ namespace Gsemac.Core {
             return types;
 
         }
+        public static Type GetType(string typeName) {
+
+            return AppDomain.CurrentDomain.GetAssemblies()
+                .Select(assembly => assembly.GetType(typeName))
+                .Where(type => !(type is null))
+                .FirstOrDefault();
+
+        }
 
     }
 
