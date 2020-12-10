@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 
 namespace Gsemac.Drawing.Imaging.Extensions {
 
@@ -52,6 +53,14 @@ namespace Gsemac.Drawing.Imaging.Extensions {
 
             if (imageFormat is null)
                 throw new ImageFormatException();
+
+            image.Save(filePath, imageFormat, encoderOptions);
+
+        }
+        public static void Save(this IImage image, string filePath, IImageFormat imageFormat, IImageEncoderOptions encoderOptions) {
+
+            if (imageFormat is null)
+                throw new ArgumentNullException(nameof(imageFormat));
 
             using (FileStream stream = File.Open(filePath, FileMode.OpenOrCreate))
                 image.Save(stream, imageFormat, encoderOptions);
