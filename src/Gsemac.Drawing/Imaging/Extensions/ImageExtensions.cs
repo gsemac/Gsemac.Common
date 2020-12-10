@@ -24,7 +24,7 @@ namespace Gsemac.Drawing.Imaging.Extensions {
             if (encoder is null)
                 throw new ImageFormatException();
 
-            image.Codec.Encode(image, stream, encoderOptions);
+            encoder.Encode(image, stream, encoderOptions);
 
             if (stream.CanSeek && encoderOptions.OptimizationMode != ImageOptimizationMode.None) {
 
