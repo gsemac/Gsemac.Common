@@ -2,7 +2,7 @@
 
     public static class AssemblyResolver {
 
-        public static IAssemblyResolver Default { get; } = new AnyCpuFileSystemAssemblyResolver();
+        public static IAssemblyResolver Default { get; set; } = new AnyCpuFileSystemAssemblyResolver();
 
     }
 
