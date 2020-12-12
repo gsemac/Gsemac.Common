@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 namespace Gsemac.Reflection {
 
@@ -13,16 +14,25 @@ namespace Gsemac.Reflection {
 
             string archPath = Environment.Is64BitProcess ? "x64" : "x86";
 
-            foreach (string probingPath in base.GetProbingPaths()) {
+            return base.GetProbingPaths().Concat(base.GetProbingPaths()
+                .Where(path => !IsArchitectureDependentPath(path))
+                .Select(path => Path.Combine(path, archPath)));
 
-                // Only generate architecture-dependent paths if the current path is not already architecture-dependent.
+        }
 
-                if (!probingPath.EndsWith(Path.DirectorySeparatorChar + archPath) && !probingPath.EndsWith(Path.AltDirectorySeparatorChar + archPath))
-                    yield return Path.Combine(probingPath, archPath);
+        // Private members
 
-                yield return probingPath;
+        private string GetArchitectureSubdirectory() {
 
-            }
+            return Environment.Is64BitProcess ? "x64" : "x86";
+
+        }
+        private bool IsArchitectureDependentPath(string path) {
+
+            string archPath = GetArchitectureSubdirectory();
+
+            return path.EndsWith(Path.DirectorySeparatorChar + archPath) ||
+                path.EndsWith(Path.AltDirectorySeparatorChar + archPath);
 
         }
 

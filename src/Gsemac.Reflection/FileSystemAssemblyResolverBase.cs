@@ -100,7 +100,7 @@ namespace Gsemac.Reflection {
             return ProbingPaths.Concat(new[] {
                 Directory.GetCurrentDirectory(),
                 new EntryAssemblyInfo().Directory,
-            }).Distinct();
+            }).Distinct().Select(path => Path.GetFullPath(path));
 
         }
 
