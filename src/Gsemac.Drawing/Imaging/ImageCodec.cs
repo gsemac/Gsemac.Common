@@ -11,7 +11,7 @@ namespace Gsemac.Drawing.Imaging {
 
         // Public members
 
-        public static IEnumerable<IImageFormat> SupportedImageFormats => supportedImageFormats.Value;
+        public static IEnumerable<IImageFormat> SupportedImageFormats => GetSupportedImageFormats();
         public static IEnumerable<IImageFormat> NativelySupportedImageFormats => GetNativelySupportedImageFormats();
 
         public static bool IsSupportedImageFormat(string filePath) {
@@ -60,8 +60,6 @@ namespace Gsemac.Drawing.Imaging {
 
         // Private members
 
-        private static readonly Lazy<IEnumerable<IImageFormat>> supportedImageFormats = new Lazy<IEnumerable<IImageFormat>>(GetSupportedImageFormats);
-
         private static IEnumerable<IImageFormat> GetSupportedImageFormats() {
 
             return GetImageCodecs().SelectMany(codec => codec.SupportedImageFormats)
@@ -89,14 +87,15 @@ namespace Gsemac.Drawing.Imaging {
 
             List<IImageCodec> imageCodecs = new List<IImageCodec>();
 
-            foreach (Type imageCodecType in PluginLoader.GetImageCodecs()) {
+            foreach (IImageCodec imageCodec in PluginLoader.GetImageCodecs()) {
 
-                IImageCodec imageCodec = (IImageCodec)Activator.CreateInstance(imageCodecType);
+                IImageCodec nextImageCodec = imageCodec;
+                Type nextImageCodecType = imageCodec.GetType();
 
-                if (!(imageCodec is null) && !(imageFormat is null) && imageCodec.IsSupportedImageFormat(imageFormat) && imageCodecType.GetConstructor(new[] { typeof(IImageFormat) }) != null)
-                    imageCodec = (IImageCodec)Activator.CreateInstance(imageCodecType, new object[] { imageFormat });
+                if (!(nextImageCodec is null) && !(imageFormat is null) && nextImageCodec.IsSupportedImageFormat(imageFormat) && nextImageCodecType.GetConstructor(new[] { typeof(IImageFormat) }) != null)
+                    nextImageCodec = (IImageCodec)Activator.CreateInstance(nextImageCodecType, new object[] { imageFormat });
 
-                imageCodecs.Add(imageCodec);
+                imageCodecs.Add(nextImageCodec);
 
             }
 

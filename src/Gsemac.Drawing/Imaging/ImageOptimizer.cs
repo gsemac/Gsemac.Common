@@ -11,7 +11,7 @@ namespace Gsemac.Drawing.Imaging {
 
         // Public members
 
-        public static IEnumerable<IImageFormat> SupportedImageFormats => supportedImageFormats.Value;
+        public static IEnumerable<IImageFormat> SupportedImageFormats => GetSupportedImageFormats();
 
         public static bool IsSupportedImageFormat(string filePath) {
 
@@ -47,8 +47,6 @@ namespace Gsemac.Drawing.Imaging {
 
         // Private members
 
-        private static readonly Lazy<IEnumerable<IImageFormat>> supportedImageFormats = new Lazy<IEnumerable<IImageFormat>>(GetSupportedImageFormats);
-
         private static IEnumerable<IImageFormat> GetSupportedImageFormats() {
 
             return GetImageOptimizers().SelectMany(optimizer => optimizer.SupportedImageFormats)
@@ -58,17 +56,7 @@ namespace Gsemac.Drawing.Imaging {
         }
         private static IEnumerable<IImageOptimizer> GetImageOptimizersInternal() {
 
-            List<IImageOptimizer> imageOptimizers = new List<IImageOptimizer>();
-
-            foreach (Type imageOptimizerType in PluginLoader.GetImageOptimizers()) {
-
-                IImageOptimizer imageOptimizer = (IImageOptimizer)Activator.CreateInstance(imageOptimizerType);
-
-                imageOptimizers.Add(imageOptimizer);
-
-            }
-
-            return imageOptimizers.OrderByDescending(imageOptimizer => imageOptimizer.Priority);
+            return PluginLoader.GetImageOptimizers().OrderByDescending(imageOptimizer => imageOptimizer.Priority);
 
         }
 

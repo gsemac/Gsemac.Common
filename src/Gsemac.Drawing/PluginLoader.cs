@@ -1,9 +1,10 @@
-﻿using Gsemac.Core;
-using Gsemac.Drawing.Imaging;
+﻿using Gsemac.Drawing.Imaging;
 using Gsemac.Reflection;
+using Gsemac.Reflection.Extensions;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 namespace Gsemac.Drawing.Internal {
 
@@ -11,14 +12,16 @@ namespace Gsemac.Drawing.Internal {
 
         // Public members
 
-        public static IEnumerable<Type> GetImageCodecs() {
+        public static IEnumerable<IImageCodec> GetImageCodecs() {
 
-            return imageCodecTypes.Value;
+            return imageCodecs.Value
+                .Where(codec => TypeUtilities.TestRequirementAttributes(codec.GetType()));
 
         }
-        public static IEnumerable<Type> GetImageOptimizers() {
+        public static IEnumerable<IImageOptimizer> GetImageOptimizers() {
 
-            return imageOptimizerTypes.Value;
+            return imageOptimizers.Value
+                .Where(optimizer => TypeUtilities.TestRequirementAttributes(optimizer.GetType()));
 
         }
 
@@ -27,8 +30,8 @@ namespace Gsemac.Drawing.Internal {
         private static bool drawingImagingAssembliesLoaded = false;
         private static readonly object drawingImagingAssemblyLoadLock = new object();
 
-        private static readonly Lazy<IEnumerable<Type>> imageCodecTypes = new Lazy<IEnumerable<Type>>(GetImageCodecsInternal);
-        private static readonly Lazy<IEnumerable<Type>> imageOptimizerTypes = new Lazy<IEnumerable<Type>>(GetImageOptimizersInternal);
+        private static readonly Lazy<IEnumerable<IImageCodec>> imageCodecs = new Lazy<IEnumerable<IImageCodec>>(GetImageCodecsInternal);
+        private static readonly Lazy<IEnumerable<IImageOptimizer>> imageOptimizers = new Lazy<IEnumerable<IImageOptimizer>>(GetImageOptimizersInternal);
 
         private static void LoadPluginAssemblies() {
 
@@ -53,18 +56,22 @@ namespace Gsemac.Drawing.Internal {
 
         }
 
-        private static IEnumerable<Type> GetImageCodecsInternal() {
+        private static IEnumerable<IImageCodec> GetImageCodecsInternal() {
 
             LoadPluginAssemblies();
 
-            return TypeUtilities.GetTypesImplementingInterface<IImageCodec>();
+            return TypeUtilities.GetTypesImplementingInterface<IImageCodec>()
+                .Where(type => type.IsDefaultConstructable())
+                .Select(type => (IImageCodec)Activator.CreateInstance(type));
 
         }
-        private static IEnumerable<Type> GetImageOptimizersInternal() {
+        private static IEnumerable<IImageOptimizer> GetImageOptimizersInternal() {
 
             LoadPluginAssemblies();
 
-            return TypeUtilities.GetTypesImplementingInterface<IImageOptimizer>();
+            return TypeUtilities.GetTypesImplementingInterface<IImageOptimizer>()
+                .Where(type => type.IsDefaultConstructable())
+                .Select(type => (IImageOptimizer)Activator.CreateInstance(type));
 
         }
 
