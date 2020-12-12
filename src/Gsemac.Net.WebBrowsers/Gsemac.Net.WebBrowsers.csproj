@@ -1,16 +1,7 @@
-﻿<Project Sdk="MSBuild.Sdk.Extras/2.0.54">
+<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
 		<TargetFrameworks>netstandard2.0;net40-client</TargetFrameworks>
-		<Company />
-		<Authors>gsemac</Authors>
-		<Version>0.1.3</Version>
-		<GeneratePackageOnBuild>false</GeneratePackageOnBuild>
-		<PackageProjectUrl>https://github.com/gsemac/Gsemac.Common</PackageProjectUrl>
-		<RepositoryUrl>https://github.com/gsemac/Gsemac.Common</RepositoryUrl>
-		<RepositoryType>git</RepositoryType>
-		<PackageLicenseExpression>MIT</PackageLicenseExpression>
-		<Copyright></Copyright>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)' == 'Release'">
@@ -19,7 +10,6 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
 		<PackageReference Include="Portable.BouncyCastle" Version="1.8.8" />
 		<PackageReference Include="Selenium.WebDriver" Version="3.141.0" />
 		<PackageReference Include="System.Data.SQLite" Version="1.0.113.6" />
@@ -29,10 +19,6 @@
 		<Reference Include="System.Security" />
 	</ItemGroup>
 
-	<ItemGroup>
-		<Content Include="Gsemac.Net.targets" PackagePath="build/Gsemac.Net.targets" />
-	</ItemGroup>
-
 	<ItemGroup Condition="$(DefineConstants.Contains('NETSTANDARD'))">
 		<PackageReference Include="System.Security.Cryptography.ProtectedData">
 			<Version>5.0.0</Version>
@@ -40,9 +26,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="..\Gsemac.Drawing\Gsemac.Drawing.csproj" />
 	  <ProjectReference Include="..\Gsemac.IO\Gsemac.IO.csproj" />
-	  <ProjectReference Include="..\Gsemac.Text\Gsemac.Text.csproj" />
+	  <ProjectReference Include="..\Gsemac.Net\Gsemac.Net.csproj" />
+	  <ProjectReference Include="..\Gsemac.Threading\Gsemac.Threading.csproj" />
 	</ItemGroup>
 
 </Project>
