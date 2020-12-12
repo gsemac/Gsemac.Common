@@ -1,12 +1,11 @@
-﻿using Gsemac.Drawing.Imaging;
-using Gsemac.Reflection;
+﻿using Gsemac.Reflection;
 using Gsemac.Reflection.Extensions;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
-namespace Gsemac.Drawing.Internal {
+namespace Gsemac.Drawing.Imaging {
 
     internal static class PluginLoader {
 

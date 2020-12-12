@@ -2,7 +2,6 @@
 
 using Gsemac.Drawing.Imaging;
 using Gsemac.Drawing.Imaging.Extensions;
-using Gsemac.Drawing.Internal;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
