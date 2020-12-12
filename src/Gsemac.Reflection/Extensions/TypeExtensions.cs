@@ -1,9 +1,14 @@
 ﻿using System;
 
-namespace Gsemac.Core.Extensions {
+namespace Gsemac.Reflection.Extensions {
 
     public static class TypeExtensions {
 
+        public static bool IsDefaultConstructable(this Type type) {
+
+            return type.GetConstructor(Type.EmptyTypes) != null;
+
+        }
         public static bool IsNullableType(this Type type) {
 
             return type != null &&

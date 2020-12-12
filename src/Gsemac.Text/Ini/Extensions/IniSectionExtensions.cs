@@ -1,4 +1,4 @@
-﻿using Gsemac.Core.Extensions;
+﻿using Gsemac.Reflection.Extensions;
 using System;
 using System.Globalization;
 
