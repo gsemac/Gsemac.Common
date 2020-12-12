@@ -18,48 +18,14 @@
 		<DebugSymbols>false</DebugSymbols>
 	</PropertyGroup>
 
-	<PropertyGroup Condition="$([System.Text.RegularExpressions.Regex]::IsMatch('$(TargetFramework)', '^net\d'))">
-		<DefineConstants>$(DefineConstants);NETFRAMEWORK</DefineConstants>
-	</PropertyGroup>
-	<PropertyGroup Condition="$([System.Text.RegularExpressions.Regex]::IsMatch('$(TargetFramework)', '^netstandard\d'))">
-		<DefineConstants>$(DefineConstants);NETSTANDARD</DefineConstants>
-	</PropertyGroup>
-	<PropertyGroup Condition="$([System.Text.RegularExpressions.Regex]::IsMatch('$(TargetFramework)', '^netcoreapp\d'))">
-		<DefineConstants>$(DefineConstants);NETCORE</DefineConstants>
-	</PropertyGroup>
-
-	<PropertyGroup Condition="$(DefineConstants.Contains('NETCOREAPP')) Or $(DefineConstants.Contains('NETSTANDARD')) Or $([System.Text.RegularExpressions.Regex]::IsMatch('$(TargetFramework)', '^net4[5-8]'))">
-		<DefineConstants>$(DefineConstants);NET45_OR_NEWER</DefineConstants>
-	</PropertyGroup>
-
-	<ItemGroup Condition="$(DefineConstants.Contains('NETFRAMEWORK')) And $(DefineConstants.Contains('NET45_OR_NEWER'))">
-		<Reference Include="System.IO.Compression" />
-	</ItemGroup>
-
-	<Choose>
-		<When Condition="$(DefineConstants.Contains('NET45_OR_NEWER'))">
-		</When>
-		<Otherwise>
-			<PropertyGroup>
-				<DefineConstants>$(DefineConstants);NOASYNC</DefineConstants>
-			</PropertyGroup>
-		</Otherwise>
-	</Choose>
-
 	<ItemGroup>
 		<Content Include="Gsemac.IO.targets" PackagePath="build/Gsemac.IO.targets" />
-		<Content Include="licenses\*" Pack="true" PackagePath="contentFiles\licenses" />
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\Gsemac.Collections\Gsemac.Collections.csproj" />
-		<ProjectReference Include="..\Gsemac.Core\Gsemac.Core.csproj" />
-		<ProjectReference Include="..\Gsemac.Reflection\Gsemac.Reflection.csproj" />
-		<ProjectReference Include="..\Gsemac.Text\Gsemac.Text.csproj" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<PackageReference Include="SharpCompress" Version="0.24.0" />
+	  <ProjectReference Include="..\Gsemac.Collections\Gsemac.Collections.csproj" />
+	  <ProjectReference Include="..\Gsemac.Core\Gsemac.Core.csproj" />
+	  <ProjectReference Include="..\Gsemac.Text\Gsemac.Text.csproj" />
 	</ItemGroup>
 
 </Project>

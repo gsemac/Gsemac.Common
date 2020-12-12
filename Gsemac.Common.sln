@@ -47,7 +47,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Gsemac.Net.Curl", "src\Gsem
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Gsemac.Net.WebDrivers", "src\Gsemac.Net.WebDrivers\Gsemac.Net.WebDrivers.csproj", "{35E35039-9336-4B0E-BDD6-380EEFBC3600}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gsemac.Net.WebBrowsers", "src\Gsemac.Net.WebBrowsers\Gsemac.Net.WebBrowsers.csproj", "{EA395B31-78FE-44A0-AD8B-00AAEA028A95}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Gsemac.Net.WebBrowsers", "src\Gsemac.Net.WebBrowsers\Gsemac.Net.WebBrowsers.csproj", "{EA395B31-78FE-44A0-AD8B-00AAEA028A95}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gsemac.IO.Compression", "src\Gsemac.IO.Compression\Gsemac.IO.Compression.csproj", "{70620B11-DB02-438E-AE6D-0D5F2D2449BE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -139,6 +141,10 @@ Global
 		{EA395B31-78FE-44A0-AD8B-00AAEA028A95}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EA395B31-78FE-44A0-AD8B-00AAEA028A95}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EA395B31-78FE-44A0-AD8B-00AAEA028A95}.Release|Any CPU.Build.0 = Release|Any CPU
+		{70620B11-DB02-438E-AE6D-0D5F2D2449BE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{70620B11-DB02-438E-AE6D-0D5F2D2449BE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{70620B11-DB02-438E-AE6D-0D5F2D2449BE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{70620B11-DB02-438E-AE6D-0D5F2D2449BE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -165,6 +171,7 @@ Global
 		{3D16594C-F474-4E13-8D07-AFA7C8179FEC} = {559AE943-A0A6-43B1-ACF0-BE305C5B4FCE}
 		{35E35039-9336-4B0E-BDD6-380EEFBC3600} = {559AE943-A0A6-43B1-ACF0-BE305C5B4FCE}
 		{EA395B31-78FE-44A0-AD8B-00AAEA028A95} = {559AE943-A0A6-43B1-ACF0-BE305C5B4FCE}
+		{70620B11-DB02-438E-AE6D-0D5F2D2449BE} = {559AE943-A0A6-43B1-ACF0-BE305C5B4FCE}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {D040AD76-9C92-4D4E-99AD-45B26C068360}

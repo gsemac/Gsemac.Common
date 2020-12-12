@@ -1,0 +1,53 @@
+<Project Sdk="MSBuild.Sdk.Extras/2.0.54">
+
+	<PropertyGroup>
+		<TargetFrameworks>netstandard2.0;net40-client;net45</TargetFrameworks>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)' == 'Release'">
+		<DebugType>none</DebugType>
+		<DebugSymbols>false</DebugSymbols>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="$([System.Text.RegularExpressions.Regex]::IsMatch('$(TargetFramework)', '^net\d'))">
+		<DefineConstants>$(DefineConstants);NETFRAMEWORK</DefineConstants>
+	</PropertyGroup>
+	<PropertyGroup Condition="$([System.Text.RegularExpressions.Regex]::IsMatch('$(TargetFramework)', '^netstandard\d'))">
+		<DefineConstants>$(DefineConstants);NETSTANDARD</DefineConstants>
+	</PropertyGroup>
+	<PropertyGroup Condition="$([System.Text.RegularExpressions.Regex]::IsMatch('$(TargetFramework)', '^netcoreapp\d'))">
+		<DefineConstants>$(DefineConstants);NETCORE</DefineConstants>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="$(DefineConstants.Contains('NETCOREAPP')) Or $(DefineConstants.Contains('NETSTANDARD')) Or $([System.Text.RegularExpressions.Regex]::IsMatch('$(TargetFramework)', '^net4[5-8]'))">
+		<DefineConstants>$(DefineConstants);NET45_OR_NEWER</DefineConstants>
+	</PropertyGroup>
+
+	<ItemGroup Condition="$(DefineConstants.Contains('NETFRAMEWORK')) And $(DefineConstants.Contains('NET45_OR_NEWER'))">
+		<Reference Include="System.IO.Compression" />
+	</ItemGroup>
+
+	<Choose>
+		<When Condition="$(DefineConstants.Contains('NET45_OR_NEWER'))">
+		</When>
+		<Otherwise>
+			<PropertyGroup>
+				<DefineConstants>$(DefineConstants);NOASYNC</DefineConstants>
+			</PropertyGroup>
+		</Otherwise>
+	</Choose>
+
+	<ItemGroup>
+		<Content Include="Gsemac.IO.Compression.targets" PackagePath="build/Gsemac.IO.Compression.targets" />
+		<Content Include="licenses\*" Pack="true" PackagePath="contentFiles\licenses" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="SharpCompress" Version="0.24.0" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\Gsemac.IO\Gsemac.IO.csproj" />
+	</ItemGroup>
+
+</Project>

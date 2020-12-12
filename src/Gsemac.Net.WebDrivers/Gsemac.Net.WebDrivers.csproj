@@ -19,6 +19,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<ProjectReference Include="..\Gsemac.IO.Compression\Gsemac.IO.Compression.csproj" />
 		<ProjectReference Include="..\Gsemac.Net.WebBrowsers\Gsemac.Net.WebBrowsers.csproj" />
 		<ProjectReference Include="..\Gsemac.Net\Gsemac.Net.csproj" />
 	</ItemGroup>
