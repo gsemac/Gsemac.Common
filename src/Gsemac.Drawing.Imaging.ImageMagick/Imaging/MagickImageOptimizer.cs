@@ -1,8 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using Gsemac.Reflection;
+using System.Collections.Generic;
 using System.IO;
 
 namespace Gsemac.Drawing.Imaging {
 
+    [RequiresAssemblies("Magick.NET-Q16-AnyCPU")]
+    [RequiresAssemblyOrType("Magick.NET.Core", "ImageMagick.ImageOptimizer")]
     public class MagickImageOptimizer :
         IImageOptimizer {
 

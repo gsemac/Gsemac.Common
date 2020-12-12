@@ -1,6 +1,7 @@
 ﻿#if NETFRAMEWORK
 
 using Gsemac.IO.Extensions;
+using Gsemac.Reflection;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
@@ -8,6 +9,9 @@ using System.Linq;
 
 namespace Gsemac.Drawing.Imaging {
 
+    [RequiresAssemblies("libwebp_x86", X86 = true)]
+    [RequiresAssemblies("libwebp_x64", X64 = true)]
+    [RequiresAssemblyOrType("WebPWrapper", "WebPWrapper.WebP")]
     public class WebPImageCodec :
         IImageCodec {
 

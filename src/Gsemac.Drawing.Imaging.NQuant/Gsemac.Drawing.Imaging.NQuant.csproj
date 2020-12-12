@@ -16,6 +16,7 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\Gsemac.Drawing\Gsemac.Drawing.csproj" />
+		<ProjectReference Include="..\Gsemac.Reflection\Gsemac.Reflection.csproj" />
 	</ItemGroup>
 
 </Project>

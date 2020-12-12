@@ -1,4 +1,5 @@
 ﻿using Gsemac.Drawing.Imaging.Extensions;
+using Gsemac.Reflection;
 using ImageMagick;
 using System.Collections.Generic;
 using System.IO;
@@ -6,6 +7,8 @@ using System.Linq;
 
 namespace Gsemac.Drawing.Imaging {
 
+    [RequiresAssemblyOrType("Magick.NET.Core", "ImageMagick.IMagickImage")]
+    [RequiresAssemblyOrType("Magick.NET-Q16-AnyCPU", "ImageMagick.MagickImage")]
     public class MagickImageCodec :
         IImageCodec {
 
