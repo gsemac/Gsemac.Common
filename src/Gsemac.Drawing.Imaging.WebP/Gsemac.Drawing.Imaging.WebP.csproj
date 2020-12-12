@@ -2,7 +2,7 @@
 
 	<PropertyGroup>
 		<TargetFrameworks>net40-client</TargetFrameworks>
-		<RootNamespace>Gsemac.Drawing</RootNamespace>
+		<RootNamespace>Gsemac.Drawing.Imaging</RootNamespace>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)' == 'Release'">
