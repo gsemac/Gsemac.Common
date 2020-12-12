@@ -1,0 +1,31 @@
+﻿<Project Sdk="MSBuild.Sdk.Extras/2.0.54">
+
+	<PropertyGroup>
+		<TargetFrameworks>netstandard2.0;net40-client</TargetFrameworks>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)' == 'Release'">
+		<DebugType>none</DebugType>
+		<DebugSymbols>false</DebugSymbols>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<Content Include="Gsemac.Net.Curl.targets" PackagePath="build/Gsemac.Net.Curl.targets" />
+		<Content Include="lib\unmanaged\x86\*" Pack="true" PackagePath="contentFiles\x86">
+			<PackageCopyToOutput>true</PackageCopyToOutput>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<Link>x86\%(Filename)%(Extension)</Link>
+		</Content>
+		<Content Include="lib\unmanaged\x64\*" Pack="true" PackagePath="contentFiles\x64">
+			<PackageCopyToOutput>true</PackageCopyToOutput>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+			<Link>x64\%(Filename)%(Extension)</Link>
+		</Content>
+		<Content Include="licenses\*" Pack="true" PackagePath="contentFiles\licenses" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\Gsemac.Net\Gsemac.Net.csproj" />
+	</ItemGroup>
+
+</Project>

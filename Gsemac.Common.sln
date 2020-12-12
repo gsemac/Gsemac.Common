@@ -43,6 +43,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Gsemac.Drawing.Imaging.Imag
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Gsemac.Drawing.Imaging.NQuant", "src\Gsemac.Drawing.Imaging.NQuant\Gsemac.Drawing.Imaging.NQuant.csproj", "{FC17F94D-7B7B-4D75-8943-17100BF4E9BA}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Gsemac.Net.Curl", "src\Gsemac.Net.Curl\Gsemac.Net.Curl.csproj", "{3D16594C-F474-4E13-8D07-AFA7C8179FEC}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Gsemac.Net.WebDrivers", "src\Gsemac.Net.WebDrivers\Gsemac.Net.WebDrivers.csproj", "{35E35039-9336-4B0E-BDD6-380EEFBC3600}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -121,6 +125,14 @@ Global
 		{FC17F94D-7B7B-4D75-8943-17100BF4E9BA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FC17F94D-7B7B-4D75-8943-17100BF4E9BA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FC17F94D-7B7B-4D75-8943-17100BF4E9BA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3D16594C-F474-4E13-8D07-AFA7C8179FEC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3D16594C-F474-4E13-8D07-AFA7C8179FEC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3D16594C-F474-4E13-8D07-AFA7C8179FEC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3D16594C-F474-4E13-8D07-AFA7C8179FEC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{35E35039-9336-4B0E-BDD6-380EEFBC3600}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{35E35039-9336-4B0E-BDD6-380EEFBC3600}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{35E35039-9336-4B0E-BDD6-380EEFBC3600}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{35E35039-9336-4B0E-BDD6-380EEFBC3600}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -144,6 +156,8 @@ Global
 		{4B82375A-E75C-4273-8299-473BBE6483C9} = {559AE943-A0A6-43B1-ACF0-BE305C5B4FCE}
 		{19E8B8A5-0372-4268-82DB-8A85F76121C0} = {559AE943-A0A6-43B1-ACF0-BE305C5B4FCE}
 		{FC17F94D-7B7B-4D75-8943-17100BF4E9BA} = {559AE943-A0A6-43B1-ACF0-BE305C5B4FCE}
+		{3D16594C-F474-4E13-8D07-AFA7C8179FEC} = {559AE943-A0A6-43B1-ACF0-BE305C5B4FCE}
+		{35E35039-9336-4B0E-BDD6-380EEFBC3600} = {559AE943-A0A6-43B1-ACF0-BE305C5B4FCE}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {D040AD76-9C92-4D4E-99AD-45B26C068360}
