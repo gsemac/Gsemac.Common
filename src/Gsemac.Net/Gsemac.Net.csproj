@@ -37,12 +37,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<Compile Update="Properties\Resources.Designer.cs">
-			<DesignTime>True</DesignTime>
-		</Compile>
-	</ItemGroup>
-
-	<ItemGroup>
 		<Content Include="Gsemac.Net.targets" PackagePath="build/Gsemac.Net.targets" />
 	</ItemGroup>
 
