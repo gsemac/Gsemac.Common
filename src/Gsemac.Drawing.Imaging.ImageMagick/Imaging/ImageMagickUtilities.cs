@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Gsemac.Drawing {
+namespace Gsemac.Drawing.Imaging {
 
     internal static class ImageMagickUtilities {
 

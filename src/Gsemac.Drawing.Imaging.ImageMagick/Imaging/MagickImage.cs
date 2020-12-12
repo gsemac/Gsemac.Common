@@ -1,9 +1,8 @@
-﻿using Gsemac.Drawing.Imaging;
-using ImageMagick;
+﻿using ImageMagick;
 using System;
 using System.Drawing;
 
-namespace Gsemac.Drawing {
+namespace Gsemac.Drawing.Imaging {
 
     internal class MagickImage :
         IImage {
@@ -23,8 +22,8 @@ namespace Gsemac.Drawing {
                 throw new ArgumentNullException(nameof(image));
 
             this.image = image;
-            this.Format = GetImageFormatFromMagickFormat(image.Format);
-            this.Codec = codec;
+            Format = GetImageFormatFromMagickFormat(image.Format);
+            Codec = codec;
 
         }
 
