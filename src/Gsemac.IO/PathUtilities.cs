@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Text;
 using System.Text.RegularExpressions;
 
 namespace Gsemac.IO {
@@ -287,10 +288,20 @@ namespace Gsemac.IO {
         }
         public static string ReplaceInvalidPathChars(string path, InvalidPathCharsOptions options = InvalidPathCharsOptions.Default) {
 
-            return ReplaceInvalidPathChars(path, string.Empty, options);
+            return ReplaceInvalidPathChars(path, "_", options);
 
         }
         public static string ReplaceInvalidPathChars(string path, string replacement, InvalidPathCharsOptions options = InvalidPathCharsOptions.Default) {
+
+            return ReplaceInvalidPathChars(path, _ => replacement, options);
+
+        }
+        public static string ReplaceInvalidPathChars(string path, ICharReplacementEvaluator replacementEvaluator, InvalidPathCharsOptions options = InvalidPathCharsOptions.Default) {
+
+            return ReplaceInvalidPathChars(path, replacementEvaluator.GetReplacement, options);
+
+        }
+        public static string ReplaceInvalidPathChars(string path, CharReplacementEvaluatorDelegate replacementEvaluator, InvalidPathCharsOptions options = InvalidPathCharsOptions.Default) {
 
             string rootPath = string.Empty;
             IEnumerable<char> invalidCharacters = Enumerable.Empty<char>();
@@ -314,12 +325,29 @@ namespace Gsemac.IO {
 
             }
 
-            path = string.Join(replacement, path.Split(invalidCharacters.ToArray()));
+            HashSet<char> invalidCharacterLookup = new HashSet<char>(invalidCharacters);
+            StringBuilder pathBuilder = new StringBuilder();
+
+            foreach (char c in path.ToCharArray()) {
+
+                if (invalidCharacterLookup.Contains(c))
+                    pathBuilder.Append(replacementEvaluator(c));
+                else
+                    pathBuilder.Append(c);
+
+            }
+
+            path = pathBuilder.ToString();
 
             if (!string.IsNullOrEmpty(rootPath))
                 path = System.IO.Path.Combine(rootPath, path);
 
             return path;
+
+        }
+        public static string GetEquivalentValidPathChar(char inputChar) {
+
+            return new EquivalentValidPathCharEvaluator().GetReplacement(inputChar);
 
         }
 

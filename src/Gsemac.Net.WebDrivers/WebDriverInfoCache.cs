@@ -18,7 +18,7 @@ namespace Gsemac.Net.WebDrivers {
 
                 // Look up the web driver by file hash.
 
-                string md5Hash = FileUtilities.CalculateMd5Hash(webDriverFilePath).ToLowerInvariant();
+                string md5Hash = FileUtilities.CalculateMD5Hash(webDriverFilePath).ToLowerInvariant();
 
                 if (fileHashDict.TryGetValue(md5Hash, out IWebDriverInfo webDriverInfo))
                     return webDriverInfo;

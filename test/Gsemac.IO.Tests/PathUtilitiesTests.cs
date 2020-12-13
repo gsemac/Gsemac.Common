@@ -1,4 +1,4 @@
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 
 namespace Gsemac.IO.Tests {
@@ -178,6 +178,42 @@ namespace Gsemac.IO.Tests {
             string anonymizedPath = PathUtilities.AnonymizePath(path);
 
             Assert.AreEqual(@"%USERPROFILE%\test", anonymizedPath);
+
+        }
+
+        // ReplaceInvalidPathChars
+
+        [TestMethod]
+        public void TestReplaceInvalidPathCharsWithRootedPath() {
+
+            // ReplaceInvalidPathChars does not attempt to maintain the directory structure.
+
+            Assert.AreEqual(@"C__Users_Admin_Documents", PathUtilities.ReplaceInvalidPathChars(@"C:\Users\Admin\Documents"));
+
+        }
+        [TestMethod]
+        public void TestReplaceInvalidPathCharsWithReplacement() {
+
+            Assert.AreEqual(@"C++Users+Admin+Documents", PathUtilities.ReplaceInvalidPathChars(@"C:\Users\Admin\Documents", "+"));
+
+        }
+        [TestMethod]
+        public void TestReplaceInvalidPathCharsWithEmptyReplacement() {
+
+            Assert.AreEqual(@"CUsersAdminDocuments", PathUtilities.ReplaceInvalidPathChars(@"C:\Users\Admin\Documents", string.Empty));
+
+        }
+        [TestMethod]
+        public void TestReplaceInvalidPathCharsWithReplacementEvaluatorDelegate() {
+
+            Assert.AreEqual(@"C++Users+Admin+Documents", PathUtilities.ReplaceInvalidPathChars(@"C:\Users\Admin\Documents", _ => "+"));
+
+        }
+        [TestMethod]
+        public void TestReplaceInvalidPathCharsWithICharReplacementEvaluator() {
+
+            Assert.AreEqual(@"“C∶＼Users＼Admin＼Documents”",
+                PathUtilities.ReplaceInvalidPathChars(@"""C:\Users\Admin\Documents""", new EquivalentValidPathCharEvaluator()));
 
         }
 

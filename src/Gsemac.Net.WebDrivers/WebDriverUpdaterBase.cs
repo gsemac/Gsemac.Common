@@ -85,7 +85,7 @@ namespace Gsemac.Net.WebDrivers {
                         // Update the web driver info.
 
                         webDriverInfo = new WebDriverInfo(webDriverInfo) {
-                            Md5Hash = FileUtilities.CalculateMd5Hash(webDriverFilePath),
+                            Md5Hash = FileUtilities.CalculateMD5Hash(webDriverFilePath),
                             LastUpdated = DateTimeOffset.Now,
                         };
 
