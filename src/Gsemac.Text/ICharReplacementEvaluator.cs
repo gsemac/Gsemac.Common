@@ -4,7 +4,7 @@
 
     public interface ICharReplacementEvaluator {
 
-        string GetReplacement(char inputChar);
+        string Replace(char inputChar);
 
     }
 

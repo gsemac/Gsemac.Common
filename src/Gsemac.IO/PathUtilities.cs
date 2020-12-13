@@ -298,7 +298,7 @@ namespace Gsemac.IO {
         }
         public static string ReplaceInvalidPathChars(string path, ICharReplacementEvaluator replacementEvaluator, InvalidPathCharsOptions options = InvalidPathCharsOptions.Default) {
 
-            return ReplaceInvalidPathChars(path, replacementEvaluator.GetReplacement, options);
+            return ReplaceInvalidPathChars(path, replacementEvaluator.Replace, options);
 
         }
         public static string ReplaceInvalidPathChars(string path, CharReplacementEvaluatorDelegate replacementEvaluator, InvalidPathCharsOptions options = InvalidPathCharsOptions.Default) {
@@ -347,7 +347,7 @@ namespace Gsemac.IO {
         }
         public static string GetEquivalentValidPathChar(char inputChar) {
 
-            return new EquivalentValidPathCharEvaluator().GetReplacement(inputChar);
+            return new EquivalentValidPathCharEvaluator().Replace(inputChar);
 
         }
 

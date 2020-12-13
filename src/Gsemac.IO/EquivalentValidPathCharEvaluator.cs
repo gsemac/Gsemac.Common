@@ -8,7 +8,7 @@ namespace Gsemac.IO {
 
         // Public members
 
-        public string GetReplacement(char inputChar) {
+        public string Replace(char inputChar) {
 
             switch (inputChar) {
 
