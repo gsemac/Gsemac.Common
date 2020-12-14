@@ -178,7 +178,7 @@ namespace Gsemac.Net.Curl {
         private void SetProxy(CurlEasyHandle easyHandle) {
 
             if (!(Proxy is null) && !Proxy.IsBypassed(RequestUri))
-                LibCurl.EasySetOpt(easyHandle, CurlOption.Proxy, Proxy.ToProxyString(RequestUri));
+                LibCurl.EasySetOpt(easyHandle, CurlOption.Proxy, Proxy.GetProxyString(RequestUri));
 
         }
 
