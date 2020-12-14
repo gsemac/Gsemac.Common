@@ -3,9 +3,9 @@ using System.Threading.Tasks;
 
 namespace Gsemac.Threading.Tasks {
 
-    public static class TaskUtilities {
+    public static class Task {
 
-        public static Task Delay(double milliseconds) {
+        public static System.Threading.Tasks.Task Delay(double milliseconds) {
 
             // .NET Framework 4.0 an earlier do not have Task.Delay defined
 

@@ -1,15 +1,10 @@
 ﻿using Gsemac.Net.Extensions;
-using Gsemac.Threading.Tasks;
 using System;
-using System.Data;
-using System.Data.SQLite;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Net;
 using System.Reflection;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace Gsemac.Net.WebBrowsers {
 
@@ -35,7 +30,7 @@ namespace Gsemac.Net.WebBrowsers {
                 throw new ArgumentNullException(nameof(webBrowserInfo));
 
             if (!File.Exists(webBrowserInfo?.ExecutablePath))
-                throw new FileNotFoundException("Cannot locate then web browser.");
+                throw new FileNotFoundException();
 
             // Start an HTTP server on a random port.
 
@@ -60,11 +55,7 @@ namespace Gsemac.Net.WebBrowsers {
 
                     listenForRequests = false;
 
-                    HttpListenerContext context = null;
-
-                    IAsyncResult asyncResult = listener.BeginGetContext(_ => { }, null);
-
-                    Task.WaitAny(Task.Factory.StartNew(() => context = listener.EndGetContext(asyncResult)), TaskUtilities.Delay(timeout.TotalMilliseconds));
+                    HttpListenerContext context = listener.GetContext(timeout);
 
                     if (!(context is null)) {
 
