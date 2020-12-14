@@ -31,14 +31,11 @@ namespace Gsemac.IO {
                 return true;
 
             }
-#pragma warning disable CA1031 // Do not catch general exception types
             catch (Exception) {
 
                 return false;
 
             }
-#pragma warning restore CA1031 // Do not catch general exception types
-
         }
 
     }

@@ -1,4 +1,5 @@
-﻿using Gsemac.Net.WebDrivers.Extensions;
+﻿using Gsemac.Net.WebBrowsers;
+using Gsemac.Net.WebDrivers.Extensions;
 using OpenQA.Selenium;
 using System;
 using System.Collections.Generic;
@@ -12,9 +13,10 @@ namespace Gsemac.Net.WebDrivers {
 
         // Public members
 
-        public FixedCapacityWebDriverPool(IWebDriverOptions webDriverOptions, int poolSize) {
+        public FixedCapacityWebDriverPool(IWebBrowserInfo webBrowserInfo, IWebDriverOptions webDriverOptions, int poolSize) {
 
-            driverOptions = webDriverOptions;
+            this.webBrowserInfo = webBrowserInfo;
+            this.webDriverOptions = webDriverOptions;
             this.poolSize = poolSize;
 
             if (poolSize < 1)
@@ -86,7 +88,8 @@ namespace Gsemac.Net.WebDrivers {
         // Private members
 
         private readonly int poolSize;
-        private readonly IWebDriverOptions driverOptions;
+        private readonly IWebBrowserInfo webBrowserInfo;
+        private readonly IWebDriverOptions webDriverOptions;
         private readonly Queue<IWebDriver> pool = new Queue<IWebDriver>();
         private readonly List<IWebDriver> spawnedDrivers = new List<IWebDriver>();
         private readonly object poolLock = new object();
@@ -173,7 +176,7 @@ namespace Gsemac.Net.WebDrivers {
 
                         // If we haven't spawned the maximum amount of drivers yet, create a new one to use.
 
-                        webDriver = WebDriverUtilities.CreateWebDriver(driverOptions);
+                        webDriver = WebDriver.Create(webBrowserInfo, webDriverOptions);
 
                         spawnedDrivers.Add(webDriver);
 

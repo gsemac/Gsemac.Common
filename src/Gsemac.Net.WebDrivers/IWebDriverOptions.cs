@@ -6,17 +6,17 @@ namespace Gsemac.Net.WebDrivers {
 
     public interface IWebDriverOptions {
 
-        IWebProxy Proxy { get; set; }
-        TimeSpan Timeout { get; set; }
-        string UserAgent { get; set; }
-        string WebDriverExecutablePath { get; set; }
-        string BrowserExecutablePath { get; set; }
-        bool Headless { get; set; }
-        Point WindowPosition { get; set; }
-        Size WindowSize { get; set; }
+        Uri Uri { get; }
+        IWebProxy Proxy { get; }
+        TimeSpan Timeout { get; }
+        string UserAgent { get; }
+        string WebDriverExecutablePath { get; }
+        bool Headless { get; }
+        Point WindowPosition { get; }
+        Size WindowSize { get; }
 
-        PageLoadStrategy PageLoadStrategy { get; set; }
-        bool DisablePopUps { get; set; }
+        PageLoadStrategy PageLoadStrategy { get; }
+        bool DisablePopUps { get; }
 
     }
 
