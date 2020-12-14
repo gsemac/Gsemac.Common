@@ -17,6 +17,7 @@ namespace Gsemac.Net.WebDrivers {
 
         PageLoadStrategy PageLoadStrategy { get; }
         bool DisablePopUps { get; }
+        bool Stealth { get; }
 
     }
 

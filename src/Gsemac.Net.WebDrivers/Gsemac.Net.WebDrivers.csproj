@@ -15,10 +15,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Selenium.WebDriver" Version="3.141.0" />
-	</ItemGroup>
-
-	<ItemGroup>
 		<ProjectReference Include="..\Gsemac.IO.Compression\Gsemac.IO.Compression.csproj" />
 		<ProjectReference Include="..\Gsemac.Net.WebBrowsers\Gsemac.Net.WebBrowsers.csproj" />
 		<ProjectReference Include="..\Gsemac.Net\Gsemac.Net.csproj" />
@@ -37,6 +33,10 @@
 			<Generator>ResXFileCodeGenerator</Generator>
 			<LastGenOutput>Resources.Designer.cs</LastGenOutput>
 		</EmbeddedResource>
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Selenium.WebDriver" Version="3.141.0" />
 	</ItemGroup>
 
 </Project>

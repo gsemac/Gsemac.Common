@@ -1,5 +1,6 @@
 ﻿using Gsemac.Net.Extensions;
 using Gsemac.Net.WebBrowsers;
+using Gsemac.Net.WebDrivers.Extensions;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Firefox;
@@ -76,8 +77,8 @@ namespace Gsemac.Net.WebDrivers {
             if (!string.IsNullOrEmpty(webDriverOptions.UserAgent))
                 driverOptions.AddArgument($"--user-agent={webDriverOptions.UserAgent}");
 
-            if (!(webDriverOptions.Proxy is null))
-                driverOptions.AddArgument($"--proxy-server={webDriverOptions.Proxy.GetProxy().AbsoluteUri}");
+            if (!webDriverOptions.Proxy.IsEmpty())
+                driverOptions.AddArgument($"--proxy-server={webDriverOptions.Proxy.GetProxyString()}");
 
             driverOptions.PageLoadStrategy = (OpenQA.Selenium.PageLoadStrategy)webDriverOptions.PageLoadStrategy;
 
@@ -90,7 +91,26 @@ namespace Gsemac.Net.WebDrivers {
 
             driverOptions.AddArgument("--disable-blink-features=AutomationControlled");
 
-            IWebDriver driver = new ChromeDriver(driverService, driverOptions);
+            ChromeDriver driver = new ChromeDriver(driverService, driverOptions);
+
+            if (webDriverOptions.Stealth) {
+
+                driver.AddScriptToEvaluateOnNewDocument(Properties.Resources.utils);
+                driver.AddScriptToEvaluateOnNewDocument(Properties.Resources.chrome_app);
+                driver.AddScriptToEvaluateOnNewDocument(Properties.Resources.chrome_runtime);
+                driver.AddScriptToEvaluateOnNewDocument(Properties.Resources.iframe_contentWindow);
+                driver.AddScriptToEvaluateOnNewDocument(Properties.Resources.media_codecs);
+                driver.AddScriptToEvaluateOnNewDocument(Properties.Resources.navigator_languages);
+                driver.AddScriptToEvaluateOnNewDocument(Properties.Resources.navigator_permissions);
+                driver.AddScriptToEvaluateOnNewDocument(Properties.Resources.navigator_plugins);
+                driver.AddScriptToEvaluateOnNewDocument(Properties.Resources.navigator_vendor);
+                driver.AddScriptToEvaluateOnNewDocument(Properties.Resources.navigator_webdriver);
+                driver.AddScriptToEvaluateOnNewDocument(Properties.Resources.webgl_vendor);
+                driver.AddScriptToEvaluateOnNewDocument(Properties.Resources.window_outerdimensions);
+                driver.AddScriptToEvaluateOnNewDocument(Properties.Resources.navigator_hardwareConcurrency);
+                //driver.AddScriptToEvaluateOnNewDocument("(() => { utils = undefined; })();");
+
+            }
 
             return driver;
 
@@ -125,9 +145,9 @@ namespace Gsemac.Net.WebDrivers {
 
             // If the user specified a proxy, apply the proxy.
 
-            if (!(webDriverOptions.Proxy is null)) {
+            if (webDriverOptions.Proxy.IsEmpty()) {
 
-                string proxyAbsoluteUri = webDriverOptions.Proxy.GetProxy().AbsoluteUri;
+                string proxyAbsoluteUri = webDriverOptions.Proxy.GetProxyString();
 
                 Proxy proxy = new Proxy {
                     HttpProxy = proxyAbsoluteUri,

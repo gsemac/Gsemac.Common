@@ -61,6 +61,113 @@ namespace Gsemac.Net.WebDrivers.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to // https://github.com/berstend/puppeteer-extra/blob/c44c8bb0224c6bba2554017bfb9d7a1d0119f92f/packages/puppeteer-extra-plugin-stealth/evasions/chrome.app/index.js
+        ///
+        ///(() =&gt; {
+        ///  if (!window.chrome) {
+        ///    // Use the exact property descriptor found in headful Chrome
+        ///    // fetch it via `Object.getOwnPropertyDescriptor(window, &apos;chrome&apos;)`
+        ///    Object.defineProperty(window, &apos;chrome&apos;, {
+        ///      writable: true,
+        ///      enumerable: true,
+        ///      configurable: false, // note!
+        ///      value: {} // We&apos;ll extend that later
+        ///    })
+        ///  [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string chrome_app {
+            get {
+                return ResourceManager.GetString("chrome_app", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to // https://github.com/berstend/puppeteer-extra/blob/c44c8bb0224c6bba2554017bfb9d7a1d0119f92f/packages/puppeteer-extra-plugin-stealth/evasions/chrome.csi/index.js
+        ///
+        ///(() =&gt; {
+        ///  if (!window.chrome) {
+        ///    // Use the exact property descriptor found in headful Chrome
+        ///    // fetch it via `Object.getOwnPropertyDescriptor(window, &apos;chrome&apos;)`
+        ///    Object.defineProperty(window, &apos;chrome&apos;, {
+        ///      writable: true,
+        ///      enumerable: true,
+        ///      configurable: false, // note!
+        ///      value: {} // We&apos;ll extend that later
+        ///    })
+        ///  [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string chrome_csi {
+            get {
+                return ResourceManager.GetString("chrome_csi", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to // https://github.com/berstend/puppeteer-extra/blob/c44c8bb0224c6bba2554017bfb9d7a1d0119f92f/packages/puppeteer-extra-plugin-stealth/evasions/chrome.loadTimes/index.js
+        ///
+        ///(() =&gt; {
+        ///  if (!window.chrome) {
+        ///    // Use the exact property descriptor found in headful Chrome
+        ///    // fetch it via `Object.getOwnPropertyDescriptor(window, &apos;chrome&apos;)`
+        ///    Object.defineProperty(window, &apos;chrome&apos;, {
+        ///      writable: true,
+        ///      enumerable: true,
+        ///      configurable: false, // note!
+        ///      value: {} // We&apos;ll extend that later
+        ///   [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string chrome_loadTimes {
+            get {
+                return ResourceManager.GetString("chrome_loadTimes", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to // https://github.com/berstend/puppeteer-extra/blob/c44c8bb0224c6bba2554017bfb9d7a1d0119f92f/packages/puppeteer-extra-plugin-stealth/evasions/chrome.runtime/index.js
+        ///
+        ///((runOnInsecureOrigins) =&gt; {
+        ///  const STATIC_DATA = {
+        ///    &quot;OnInstalledReason&quot;: {
+        ///      &quot;CHROME_UPDATE&quot;: &quot;chrome_update&quot;,
+        ///      &quot;INSTALL&quot;: &quot;install&quot;,
+        ///      &quot;SHARED_MODULE_UPDATE&quot;: &quot;shared_module_update&quot;,
+        ///      &quot;UPDATE&quot;: &quot;update&quot;
+        ///    },
+        ///    &quot;OnRestartRequiredReason&quot;: {
+        ///      &quot;APP_UPDATE&quot;: &quot;app_update&quot;,
+        ///      &quot;OS_UPDATE&quot;: &quot;os_update&quot;,
+        ///      &quot;PERIO [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string chrome_runtime {
+            get {
+                return ResourceManager.GetString("chrome_runtime", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to (()=&gt;{
+        ///	// store the existing descriptor
+        ///	const elementDescriptor = Object.getOwnPropertyDescriptor(HTMLElement.prototype, &apos;offsetHeight&apos;);
+        ///
+        ///	// redefine the property with a patched descriptor
+        ///	Object.defineProperty(HTMLDivElement.prototype, &apos;offsetHeight&apos;, {
+        ///	...elementDescriptor,
+        ///	get: function() {
+        ///		if (this.id === &apos;modernizr&apos;) {
+        ///			return 1;
+        ///		}
+        ///		return elementDescriptor.get.apply(this);
+        ///		},
+        ///	});
+        ///})();.
+        /// </summary>
+        internal static string hairline_fix {
+            get {
+                return ResourceManager.GetString("hairline_fix", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to function hideOtherElements(xPath) {
         ///
         ///    // This implementation was adapted from https://stackoverflow.com/a/44877057/5383169 (RobG)
@@ -79,6 +186,219 @@ namespace Gsemac.Net.WebDrivers.Properties {
         internal static string HideOtherElementsJs {
             get {
                 return ResourceManager.GetString("HideOtherElementsJs", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to // https://github.com/berstend/puppeteer-extra/blob/c44c8bb0224c6bba2554017bfb9d7a1d0119f92f/packages/puppeteer-extra-plugin-stealth/evasions/iframe.contentWindow/index.js
+        ///
+        ///(() =&gt; {
+        ///      try {
+        ///        // Adds a contentWindow proxy to the provided iframe element
+        ///        const addContentWindowProxy = iframe =&gt; {
+        ///          const contentWindowProxy = {
+        ///            get(target, key) {
+        ///              // Now to the interesting part:
+        ///              // We actually make this thing behave like a regular iframe window,
+        ///  [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string iframe_contentWindow {
+            get {
+                return ResourceManager.GetString("iframe_contentWindow", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to // https://github.com/berstend/puppeteer-extra/blob/c44c8bb0224c6bba2554017bfb9d7a1d0119f92f/packages/puppeteer-extra-plugin-stealth/evasions/media.codecs/index.js
+        ///
+        ///(() =&gt; {
+        ///  /**
+        ///   * Input might look funky, we need to normalize it so e.g. whitespace isn&apos;t an issue for our spoofing.
+        ///   *
+        ///   * @example
+        ///   * video/webm; codecs=&quot;vp8, vorbis&quot;
+        ///   * video/mp4; codecs=&quot;avc1.42E01E&quot;
+        ///   * audio/x-m4a;
+        ///   * audio/ogg; codecs=&quot;vorbis&quot;
+        ///   * @param {String} arg
+        ///   */
+        ///  const parseInput = arg =&gt; {
+        ///    const [mime, codec [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string media_codecs {
+            get {
+                return ResourceManager.GetString("media_codecs", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to // https://github.com/berstend/puppeteer-extra/blob/master/packages/puppeteer-extra-plugin-stealth/evasions/navigator.hardwareConcurrency/index.js
+        ///
+        ///(() =&gt; {
+        ///
+        ///const patchNavigator = (name, value) =&gt;
+        ///        utils.replaceProperty(Object.getPrototypeOf(navigator), name, {
+        ///          get() {
+        ///            return value
+        ///          }
+        ///        })
+        ///
+        ///      patchNavigator(&apos;hardwareConcurrency&apos;, opts.hardwareConcurrency || 4)
+        ///
+        ///})();.
+        /// </summary>
+        internal static string navigator_hardwareConcurrency {
+            get {
+                return ResourceManager.GetString("navigator_hardwareConcurrency", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to // https://github.com/berstend/puppeteer-extra/blob/c44c8bb0224c6bba2554017bfb9d7a1d0119f92f/packages/puppeteer-extra-plugin-stealth/evasions/navigator.languages/index.js
+        ///
+        ///((languages) =&gt; {
+        ///  // Overwrite the `languages` property to use a custom getter.
+        ///  Object.defineProperty(Object.getPrototypeOf(navigator), &apos;languages&apos;, {
+        ///    get: () =&gt; languages || [&apos;en-US&apos;, &apos;en&apos;]
+        ///  })
+        ///})();.
+        /// </summary>
+        internal static string navigator_languages {
+            get {
+                return ResourceManager.GetString("navigator_languages", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to // https://github.com/berstend/puppeteer-extra/blob/c44c8bb0224c6bba2554017bfb9d7a1d0119f92f/packages/puppeteer-extra-plugin-stealth/evasions/navigator.permissions/index.js
+        ///
+        ///(() =&gt; {
+        ///  const handler = {
+        ///    apply: function (target, ctx, args) {
+        ///      const param = (args || [])[0]
+        ///
+        ///      if (param &amp;&amp; param.name &amp;&amp; param.name === &apos;notifications&apos;) {
+        ///        const result = { state: Notification.permission }
+        ///        Object.setPrototypeOf(result, PermissionStatus.prototype)
+        ///        return Promise.resolve(result)
+        /// [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string navigator_permissions {
+            get {
+                return ResourceManager.GetString("navigator_permissions", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to // https://github.com/berstend/puppeteer-extra/tree/c44c8bb0224c6bba2554017bfb9d7a1d0119f92f/packages/puppeteer-extra-plugin-stealth/evasions/navigator.plugins
+        ///
+        ///(() =&gt; {
+        ///  const fns = {};
+        ///  fns.generatePluginArray = (utils, fns) =&gt; pluginsData =&gt; {
+        ///    return fns.generateMagicArray(utils, fns)(
+        ///      pluginsData,
+        ///      PluginArray.prototype,
+        ///      Plugin.prototype,
+        ///      &apos;name&apos;
+        ///    )
+        ///  }
+        ///  fns.generateFunctionMocks = utils =&gt; (
+        ///    proto,
+        ///    itemMainProp,
+        ///    dataArray
+        ///  ) =&gt; ({
+        ///    /** Returns the MimeTyp [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string navigator_plugins {
+            get {
+                return ResourceManager.GetString("navigator_plugins", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to // https://github.com/berstend/puppeteer-extra/blob/c44c8bb0224c6bba2554017bfb9d7a1d0119f92f/packages/puppeteer-extra-plugin-stealth/evasions/navigator.vendor/index.js
+        ///
+        ///(vendor =&gt; {
+        ///  // Overwrite the `vendor` property to use a custom getter.
+        ///  Object.defineProperty(Object.getPrototypeOf(navigator), &apos;vendor&apos;, {
+        ///    get: () =&gt; vendor || &apos;Google Inc.&apos;
+        ///  })
+        ///})();.
+        /// </summary>
+        internal static string navigator_vendor {
+            get {
+                return ResourceManager.GetString("navigator_vendor", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to // https://github.com/berstend/puppeteer-extra/blob/c44c8bb0224c6bba2554017bfb9d7a1d0119f92f/packages/puppeteer-extra-plugin-stealth/evasions/navigator.webdriver/index.js
+        ///
+        ///(() =&gt; {
+        ///  delete Object.getPrototypeOf(navigator).webdriver
+        ///})();.
+        /// </summary>
+        internal static string navigator_webdriver {
+            get {
+                return ResourceManager.GetString("navigator_webdriver", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to // https://github.com/berstend/puppeteer-extra/blob/c44c8bb0224c6bba2554017bfb9d7a1d0119f92f/packages/puppeteer-extra-plugin-stealth/evasions/_utils/index.js
+        ///
+        ///(() =&gt; {
+        ///  /**
+        ///   * A set of shared utility functions specifically for the purpose of modifying native browser APIs without leaving traces.
+        ///   *
+        ///   * Meant to be passed down in puppeteer and used in the context of the page (everything in here runs in NodeJS as well as a browser).
+        ///   *
+        ///   * Note: If for whatever reason you need to use this outside of ` [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string utils {
+            get {
+                return ResourceManager.GetString("utils", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to // https://github.com/berstend/puppeteer-extra/blob/c44c8bb0224c6bba2554017bfb9d7a1d0119f92f/packages/puppeteer-extra-plugin-stealth/evasions/webgl.vendor/index.js
+        ///
+        ///((vendor, renderer) =&gt; {
+        ///  const getParameterProxyHandler = {
+        ///    apply: function (target, ctx, args) {
+        ///      const param = (args || [])[0]
+        ///      // UNMASKED_VENDOR_WEBGL
+        ///      if (param === 37445) {
+        ///        return vendor || &apos;Intel Inc.&apos; // default in headless: Google Inc.
+        ///      }
+        ///      // UNMASKED_RENDERER_WEBGL
+        ///      if (param === 37446) {
+        ///    [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string webgl_vendor {
+            get {
+                return ResourceManager.GetString("webgl_vendor", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to // https://github.com/berstend/puppeteer-extra/blob/c44c8bb0224c6bba2554017bfb9d7a1d0119f92f/packages/puppeteer-extra-plugin-stealth/evasions/window.outerdimensions/index.js
+        ///
+        ///(() =&gt; {
+        ///  try {
+        ///    if (window.outerWidth &amp;&amp; window.outerHeight) {
+        ///      return // nothing to do here
+        ///    }
+        ///    const windowFrame = 85 // probably OS and WM dependent
+        ///    window.outerWidth = window.innerWidth
+        ///    window.outerHeight = window.innerHeight + windowFrame
+        ///  } catch (err) { }
+        ///})();.
+        /// </summary>
+        internal static string window_outerdimensions {
+            get {
+                return ResourceManager.GetString("window_outerdimensions", resourceCulture);
             }
         }
     }

@@ -118,7 +118,55 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="chrome_app" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\stealth\chrome.app.js;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="chrome_csi" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\stealth\chrome.csi.js;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="chrome_loadTimes" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\stealth\chrome.loadtimes.js;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="chrome_runtime" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\stealth\chrome.runtime.js;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="hairline_fix" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\stealth\hairline.fix.js;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
   <data name="HideOtherElementsJs" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\hideotherelements.js;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="iframe_contentWindow" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\stealth\iframe.contentwindow.js;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="media_codecs" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\stealth\media.codecs.js;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="navigator_hardwareConcurrency" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\stealth\navigator.hardwareconcurrency.js;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+  </data>
+  <data name="navigator_languages" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\stealth\navigator.languages.js;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="navigator_permissions" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\stealth\navigator.permissions.js;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="navigator_plugins" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\stealth\navigator.plugins.js;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="navigator_vendor" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\stealth\navigator.vendor.js;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="navigator_webdriver" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\stealth\navigator.webdriver.js;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="utils" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\stealth\utils.js;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="webgl_vendor" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\stealth\webgl.vendor.js;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+  </data>
+  <data name="window_outerdimensions" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\stealth\window.outerdimensions.js;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
   </data>
 </root>
