@@ -51,8 +51,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Gsemac.Net.WebBrowsers", "s
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Gsemac.IO.Compression", "src\Gsemac.IO.Compression\Gsemac.IO.Compression.csproj", "{70620B11-DB02-438E-AE6D-0D5F2D2449BE}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConsoleApp1", "C:\Users\gsemac\source\repos\Gsemac.Common\src\ConsoleApp1\ConsoleApp1.csproj", "{D906109D-AC1B-49D9-ACE5-B8B378707EA8}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -147,10 +145,6 @@ Global
 		{70620B11-DB02-438E-AE6D-0D5F2D2449BE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{70620B11-DB02-438E-AE6D-0D5F2D2449BE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{70620B11-DB02-438E-AE6D-0D5F2D2449BE}.Release|Any CPU.Build.0 = Release|Any CPU
-		{D906109D-AC1B-49D9-ACE5-B8B378707EA8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D906109D-AC1B-49D9-ACE5-B8B378707EA8}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{D906109D-AC1B-49D9-ACE5-B8B378707EA8}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{D906109D-AC1B-49D9-ACE5-B8B378707EA8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -178,7 +172,6 @@ Global
 		{35E35039-9336-4B0E-BDD6-380EEFBC3600} = {559AE943-A0A6-43B1-ACF0-BE305C5B4FCE}
 		{EA395B31-78FE-44A0-AD8B-00AAEA028A95} = {559AE943-A0A6-43B1-ACF0-BE305C5B4FCE}
 		{70620B11-DB02-438E-AE6D-0D5F2D2449BE} = {559AE943-A0A6-43B1-ACF0-BE305C5B4FCE}
-		{D906109D-AC1B-49D9-ACE5-B8B378707EA8} = {559AE943-A0A6-43B1-ACF0-BE305C5B4FCE}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {D040AD76-9C92-4D4E-99AD-45B26C068360}
