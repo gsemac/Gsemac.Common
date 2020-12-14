@@ -1,11 +1,16 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Net;
 using System.Text;
 
 namespace Gsemac.Net.Extensions {
 
     public static class WebProxyExtensions {
+
+        public static Uri GetProxy(this IWebProxy proxy) {
+
+            return proxy.GetProxy(new Uri("http://example.com"));
+
+        }
 
         public static string ToProxyString(this IWebProxy proxy) {
 
