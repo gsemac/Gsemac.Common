@@ -1,4 +1,4 @@
-﻿namespace Gsemac.Net {
+﻿namespace Gsemac.Net.JavaScript {
 
     public static class JsOperators {
 
