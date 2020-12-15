@@ -1,18 +1,16 @@
 ﻿using System;
-using System.Diagnostics;
+using System.Reflection;
 
 namespace Gsemac.Reflection {
 
     public class EntryAssemblyInfo :
-        IAssemblyInfo {
+        AssemblyInfo {
 
         // Public members
 
-        public string Location => GetAssembly().Location;
-        public string Filename => System.IO.Path.GetFileName(Location);
-        public string Directory => System.IO.Path.GetDirectoryName(Location);
-        public Version Version => GetAssembly().GetName().Version;
-        public Version FileVersion => Version.Parse(FileVersionInfo.GetVersionInfo(Location).ProductVersion);
+        public EntryAssemblyInfo() :
+            base(Assembly.GetEntryAssembly()) {
+        }
 
         public static string GetLocation() {
 
@@ -29,24 +27,28 @@ namespace Gsemac.Reflection {
             return new EntryAssemblyInfo().Directory;
 
         }
+        public static string GetName() {
+
+            return new EntryAssemblyInfo().Name;
+
+        }
         public static Version GetVersion() {
 
             return new EntryAssemblyInfo().Version;
 
         }
-        public static Version GetFileVersion() {
+        public static string GetProductName() {
 
-            return new EntryAssemblyInfo().FileVersion;
+            return new EntryAssemblyInfo().ProductName;
+
+        }
+        public static Version GetProductVersion() {
+
+            return new EntryAssemblyInfo().ProductVersion;
 
         }
 
-        // Private members
 
-        System.Reflection.Assembly GetAssembly() {
-
-            return System.Reflection.Assembly.GetEntryAssembly();
-
-        }
 
     }
 
