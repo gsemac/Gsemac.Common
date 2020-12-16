@@ -6,16 +6,26 @@ namespace Gsemac.Core {
 
         // Public members
 
-        public static DateTimeOffset MinimumUnixDate => new DateTimeOffset(new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc));
+        public static DateTimeOffset UnixEpoch => new DateTimeOffset(new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc));
 
         public static long ToUnixTimeSeconds(DateTimeOffset input) {
 
-            return (long)input.ToUniversalTime().Subtract(MinimumUnixDate).TotalSeconds;
+            return (long)input.ToUniversalTime().Subtract(UnixEpoch).TotalSeconds;
 
         }
         public static DateTimeOffset FromUnixTimeSeconds(long timestamp) {
 
-            return MinimumUnixDate.AddSeconds(timestamp);
+            return UnixEpoch.AddSeconds(timestamp);
+
+        }
+        public static long ToUnixTimeMilliseconds(DateTimeOffset input) {
+
+            return (long)input.ToUniversalTime().Subtract(UnixEpoch).TotalMilliseconds;
+
+        }
+        public static DateTimeOffset FromUnixTimeMilliseconds(long timestamp) {
+
+            return UnixEpoch.AddMilliseconds(timestamp);
 
         }
         public static long CurrentUnixTimeSeconds() {

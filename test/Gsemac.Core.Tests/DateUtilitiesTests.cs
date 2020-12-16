@@ -15,7 +15,7 @@ namespace Gsemac.Core.Tests {
         [TestMethod]
         public void TestToUnixTimeSecondsWithMinimumUnixDateTime() {
 
-            Assert.AreEqual(0, DateUtilities.ToUnixTimeSeconds(DateUtilities.MinimumUnixDate));
+            Assert.AreEqual(0, DateUtilities.ToUnixTimeSeconds(DateUtilities.UnixEpoch));
 
         }
 
