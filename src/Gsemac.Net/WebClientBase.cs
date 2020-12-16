@@ -22,15 +22,30 @@ namespace Gsemac.Net {
 
         protected override WebRequest GetWebRequest(Uri address) {
 
-            IHttpWebRequest httpWebRequest = webRequestFactory.CreateHttpWebRequest(address);
+            // The only way to get the method is to call base.GetWebRequest() and copy its properties.
+            // Note that calling this method also clears most headers from the WebClient.
 
-            httpWebRequest.Headers.Clear();
+            WebRequest baseWebRequest = base.GetWebRequest(address);
 
-            httpWebRequest.Credentials = Credentials;
-            Headers.CopyTo(httpWebRequest);
-            httpWebRequest.Proxy = Proxy;
+            if (baseWebRequest is HttpWebRequest baseHttpWebRequest) {
 
-            return httpWebRequest as WebRequest;
+                IHttpWebRequest httpWebRequest = webRequestFactory.CreateHttpWebRequest(address);
+
+                httpWebRequest.Credentials = baseHttpWebRequest.Credentials;
+                httpWebRequest.Method = baseHttpWebRequest.Method;
+                httpWebRequest.Proxy = baseHttpWebRequest.Proxy;
+
+                httpWebRequest.Headers.Clear();
+                baseHttpWebRequest.Headers.CopyTo(httpWebRequest);
+
+                return httpWebRequest as WebRequest;
+
+            }
+            else {
+
+                return baseWebRequest;
+
+            }
 
         }
 
