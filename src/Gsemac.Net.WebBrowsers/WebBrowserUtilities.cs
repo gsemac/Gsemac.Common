@@ -34,18 +34,16 @@ namespace Gsemac.Net.WebBrowsers {
 
             // Start an HTTP server on a random port.
 
-            Uri uri = new Uri($"http://localhost:{SocketUtilities.GetUnusedPort()}/");
+            Uri requestUri = new Uri($"http://localhost:{SocketUtilities.GetUnusedPort()}/");
             bool listenForRequests = true;
 
             using (HttpListener listener = new HttpListener()) {
 
-                listener.Prefixes.Add(uri.AbsoluteUri);
+                listener.Prefixes.Add(requestUri.AbsoluteUri);
 
                 listener.Start();
 
                 // Open the HTTP server in the user's web browser.
-
-                Uri requestUri = new Uri(uri, Path.Combine(Assembly.GetExecutingAssembly().GetName().Name, nameof(GetWebBrowserRequestHeaders)));
 
                 Process.Start(webBrowserInfo.ExecutablePath, requestUri.AbsoluteUri);
 
