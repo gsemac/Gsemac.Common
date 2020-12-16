@@ -12,7 +12,7 @@ namespace Gsemac.Net.Extensions {
 
             IAsyncResult asyncResult = httpListener.BeginGetContext(_ => { }, null);
 
-            Task.WaitAny(Task.Factory.StartNew(() => context = httpListener.EndGetContext(asyncResult)), Threading.Tasks.Task.Delay(timeout.TotalMilliseconds));
+            Task.WaitAny(Task.Factory.StartNew(() => context = httpListener.EndGetContext(asyncResult)), Threading.Tasks.TaskUtilities.Delay(timeout.TotalMilliseconds));
 
             return context;
 
