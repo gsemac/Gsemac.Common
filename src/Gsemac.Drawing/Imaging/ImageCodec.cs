@@ -99,7 +99,7 @@ namespace Gsemac.Drawing.Imaging {
 
             }
 
-            return imageCodecs.OrderByDescending(imageCodec => (imageCodec as IPlugin)?.Priority ?? 0);
+            return imageCodecs;
 
         }
 

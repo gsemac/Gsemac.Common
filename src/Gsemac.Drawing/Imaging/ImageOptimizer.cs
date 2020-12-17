@@ -56,7 +56,7 @@ namespace Gsemac.Drawing.Imaging {
         }
         private static IEnumerable<IImageOptimizer> GetImageOptimizersInternal() {
 
-            return ImagingPluginLoader.GetImageOptimizers().OrderByDescending(imageOptimizer => (imageOptimizer as IPlugin)?.Priority ?? 0);
+            return ImagingPluginLoader.GetImageOptimizers();
 
         }
 
