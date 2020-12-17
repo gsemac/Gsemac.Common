@@ -34,6 +34,22 @@ namespace Gsemac.Core {
 
         }
 
+        public static string ToIso8601(DateTimeOffset input) {
+
+            return ToIso8601(input.DateTime);
+
+        }
+        public static string ToIso8601(DateTime input) {
+
+            // This overload for DateTime is provided so that dates that cannot be represented by DateTimeOffset can still be formatted.
+
+            if (input.Kind == DateTimeKind.Utc)
+                return input.ToString("yyyy-MM-ddTHH\\:mm\\:ss", System.Globalization.CultureInfo.InvariantCulture) + "+00:00";
+            else
+                return input.ToString("yyyy-MM-ddTHH\\:mm\\:sszzz", System.Globalization.CultureInfo.InvariantCulture);
+
+        }
+
         public static bool TryFormat(DateTimeOffset input, string format, out string result) {
 
 #pragma warning disable CA1031 // Do not catch general exception types
