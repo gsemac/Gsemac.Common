@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
 namespace Gsemac.Net {
@@ -10,7 +9,9 @@ namespace Gsemac.Net {
 
         public CookieDomainPattern(string domain) {
 
-            domain = domain.TrimStart('.');
+            domain = domain.TrimStart('.').TrimEnd('/');
+
+            // Domain cannot be a lone TLD.
 
             if (!domain.Contains("."))
                 throw new ArgumentException("The given pattern is invalid.", nameof(domain));
