@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using Gsemac.Net.Extensions;
+using System.Net;
 
 namespace Gsemac.Net {
 
@@ -13,15 +14,13 @@ namespace Gsemac.Net {
         public IWebProxy Proxy { get; set; } = WebProxyUtilities.GetDefaultProxy();
         public string UserAgent { get; set; } = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.66 Safari/537.36";
 
-        public HttpWebRequestOptions() { }
-        public HttpWebRequestOptions(IHttpWebRequestOptions other) {
+        public static HttpWebRequestOptions Default => new HttpWebRequestOptions();
 
-            this.Accept = other.Accept;
-            this.AcceptLanguage = other.AcceptLanguage;
-            this.Cookies = other.Cookies;
-            this.Credentials = other.Credentials;
-            this.Proxy = other.Proxy;
-            this.UserAgent = other.UserAgent;
+        public HttpWebRequestOptions() {
+        }
+        public HttpWebRequestOptions(IHttpWebRequestOptions other, bool copyIfNull = true) {
+
+            other.CopyTo(this, copyIfNull);
 
         }
 

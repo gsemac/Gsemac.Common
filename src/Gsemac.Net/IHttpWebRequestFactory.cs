@@ -4,7 +4,10 @@ namespace Gsemac.Net {
 
     public interface IHttpWebRequestFactory {
 
-        IHttpWebRequestOptions Options { get; set; }
+        IHttpWebRequestOptions GetOptions();
+        IHttpWebRequestOptions GetOptions(Uri uri);
+        void SetOptions(IHttpWebRequestOptions options);
+        void SetOptions(string domain, IHttpWebRequestOptions options);
 
         IHttpWebRequest CreateHttpWebRequest(Uri requestUri);
 

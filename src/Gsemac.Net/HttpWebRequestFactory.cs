@@ -1,31 +1,24 @@
-﻿using Gsemac.Net.Extensions;
-using System;
+﻿using System;
 
 namespace Gsemac.Net {
 
     public class HttpWebRequestFactory :
-        IHttpWebRequestFactory {
+        HttpWebRequestFactoryBase {
 
         // Public members
 
-        public IHttpWebRequestOptions Options { get; set; }
-
         public HttpWebRequestFactory() :
-            this(new HttpWebRequestOptions()) {
+            this(HttpWebRequestOptions.Default) {
         }
-        public HttpWebRequestFactory(IHttpWebRequestOptions options) {
-
-            this.Options = options;
-
+        public HttpWebRequestFactory(IHttpWebRequestOptions options) :
+            base(options) {
         }
 
-        public IHttpWebRequest CreateHttpWebRequest(Uri requestUri) {
+        // Protected members
 
-            IHttpWebRequest httpWebRequest = new HttpWebRequestWrapper(requestUri);
+        protected override IHttpWebRequest CreateHttpWebRequestInternal(Uri requestUri) {
 
-            Options.CopyTo(httpWebRequest);
-
-            return httpWebRequest;
+            return new HttpWebRequestWrapper(requestUri);
 
         }
 

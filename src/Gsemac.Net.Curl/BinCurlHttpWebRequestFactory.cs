@@ -1,17 +1,14 @@
-﻿using Gsemac.Net.Extensions;
-using System;
+﻿using System;
 
 namespace Gsemac.Net.Curl {
 
     public class BinCurlHttpWebRequestFactory :
-        IHttpWebRequestFactory {
+        HttpWebRequestFactoryBase {
 
         // Public members
 
-        public IHttpWebRequestOptions Options { get; set; }
-
         public BinCurlHttpWebRequestFactory() :
-            this(new HttpWebRequestOptions()) {
+            this(HttpWebRequestOptions.Default) {
         }
         public BinCurlHttpWebRequestFactory(string curlExecutablePath) :
             this() {
@@ -19,10 +16,8 @@ namespace Gsemac.Net.Curl {
             this.curlExecutablePath = curlExecutablePath;
 
         }
-        public BinCurlHttpWebRequestFactory(IHttpWebRequestOptions options) {
-
-            this.Options = options;
-
+        public BinCurlHttpWebRequestFactory(IHttpWebRequestOptions options) :
+            base(options) {
         }
         public BinCurlHttpWebRequestFactory(IHttpWebRequestOptions options, string curlExecutablePath) :
             this(options) {
@@ -31,15 +26,13 @@ namespace Gsemac.Net.Curl {
 
         }
 
-        public IHttpWebRequest CreateHttpWebRequest(Uri requestUri) {
+        // Protected members
 
-            IHttpWebRequest httpWebRequest = string.IsNullOrWhiteSpace(curlExecutablePath) ?
+        protected override IHttpWebRequest CreateHttpWebRequestInternal(Uri requestUri) {
+
+            return string.IsNullOrWhiteSpace(curlExecutablePath) ?
                 new BinCurlHttpWebRequest(requestUri) :
                 new BinCurlHttpWebRequest(requestUri, curlExecutablePath);
-
-            Options.CopyTo(httpWebRequest);
-
-            return httpWebRequest;
 
         }
 

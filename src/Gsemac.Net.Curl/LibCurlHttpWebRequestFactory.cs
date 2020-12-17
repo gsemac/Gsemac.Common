@@ -1,31 +1,24 @@
-﻿using Gsemac.Net.Extensions;
-using System;
+﻿using System;
 
 namespace Gsemac.Net.Curl {
 
     public class LibCurlHttpWebRequestFactory :
-        IHttpWebRequestFactory {
+        HttpWebRequestFactoryBase {
 
         // Public members
 
-        public IHttpWebRequestOptions Options { get; set; }
-
         public LibCurlHttpWebRequestFactory() :
-            this(new HttpWebRequestOptions()) {
+            this(HttpWebRequestOptions.Default) {
         }
-        public LibCurlHttpWebRequestFactory(IHttpWebRequestOptions options) {
-
-            this.Options = options;
-
+        public LibCurlHttpWebRequestFactory(IHttpWebRequestOptions options) :
+            base(options) {
         }
 
-        public IHttpWebRequest CreateHttpWebRequest(Uri requestUri) {
+        // Protected members
 
-            IHttpWebRequest httpWebRequest = new LibCurlHttpWebRequest(requestUri);
+        protected override IHttpWebRequest CreateHttpWebRequestInternal(Uri requestUri) {
 
-            Options.CopyTo(httpWebRequest);
-
-            return httpWebRequest;
+            return new LibCurlHttpWebRequest(requestUri);
 
         }
 

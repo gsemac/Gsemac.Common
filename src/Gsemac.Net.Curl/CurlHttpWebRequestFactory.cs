@@ -8,9 +8,25 @@ namespace Gsemac.Net.Curl {
 
         // Public members
 
-        public IHttpWebRequestOptions Options {
-            get => webRequestFactory.Options;
-            set => webRequestFactory.Options = value;
+        public IHttpWebRequestOptions GetOptions() {
+
+            return webRequestFactory.GetOptions();
+
+        }
+        public IHttpWebRequestOptions GetOptions(Uri uri) {
+
+            return webRequestFactory.GetOptions(uri);
+
+        }
+        public void SetOptions(IHttpWebRequestOptions options) {
+
+            webRequestFactory.SetOptions(options);
+
+        }
+        public void SetOptions(string domain, IHttpWebRequestOptions options) {
+
+            webRequestFactory.SetOptions(domain, options);
+
         }
 
         public CurlHttpWebRequestFactory() :
