@@ -1,9 +1,9 @@
-﻿namespace Gsemac.Drawing.Imaging {
+﻿using Gsemac.IO;
 
-    public interface IImageFormat {
+namespace Gsemac.Drawing.Imaging {
 
-        string FileExtension { get; }
-
+    public interface IImageFormat :
+        IFileFormat {
     }
 
 }
