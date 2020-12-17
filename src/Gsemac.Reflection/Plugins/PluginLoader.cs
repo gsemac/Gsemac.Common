@@ -94,6 +94,7 @@ namespace Gsemac.Reflection.Plugins {
 
             plugins = plugins.Concat(GetPluginsInternal()
                 .Where(plugin => !plugins.Any(p => p.GetType().Equals(plugin.GetType()))))
+                .OrderByDescending(plugin => plugin.Priority)
                 .ToArray();
 
             pluginsLoaded = true;
