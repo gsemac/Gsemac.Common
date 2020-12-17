@@ -4,9 +4,9 @@ using System.IO;
 using System.Linq;
 using System.Text;
 
-namespace Gsemac.IO.Compression.Implementations {
+namespace Gsemac.IO.Compression {
 
-    public class SharpCompressZipArchive :
+    internal class SharpCompressZipArchive :
         ArchiveBase {
 
         // Public members
@@ -14,8 +14,8 @@ namespace Gsemac.IO.Compression.Implementations {
         public override bool CanRead => fileAccess.HasFlag(FileAccess.Read);
         public override bool CanWrite => fileAccess.HasFlag(FileAccess.Write);
         public override string Comment {
-            get => throw ArchiveExceptions.ReadingCommentsIsNotSupported;
-            set => throw ArchiveExceptions.WritingCommentsIsNotSupported;
+            get => throw new NotSupportedException("Archive does not support reading archive-level comments.");
+            set => throw new NotSupportedException("Archive does not support writing archive-level comments.");
         } // SharpCompress offers no means to set the archive comment outside of ZipWriterOptions, which can't be passed to SaveTo
         public override CompressionLevel CompressionLevel { get; set; } = CompressionLevel.Maximum;
 
@@ -44,7 +44,7 @@ namespace Gsemac.IO.Compression.Implementations {
                 if (overwrite)
                     DeleteEntry(existingEntry);
                 else
-                    throw ArchiveExceptions.EntryAlreadyExists;
+                    throw new ArchiveEntryAlreadyExistsException();
 
             }
 
@@ -71,7 +71,7 @@ namespace Gsemac.IO.Compression.Implementations {
             if (entry is SharpCompressZipArchiveEntry zipArchiveEntry && zipArchiveEntry.BaseEntry.Archive == archive)
                 archive.RemoveEntry(zipArchiveEntry.BaseEntry);
             else
-                throw ArchiveExceptions.EntryDoesNotBelongToThisArchive;
+                throw new ArchiveEntryDoesNotExistException();
 
             archiveModified = true;
 
@@ -91,7 +91,7 @@ namespace Gsemac.IO.Compression.Implementations {
 
             }
             else
-                throw ArchiveExceptions.EntryDoesNotBelongToThisArchive;
+                throw new ArchiveEntryDoesNotExistException();
 
         }
         public override IEnumerable<IArchiveEntry> GetEntries() {

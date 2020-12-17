@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Gsemac.IO.Compression.Implementations {
+namespace Gsemac.IO.Compression {
 
     internal class SharpCompressZipArchiveEntry :
         IArchiveEntry {

@@ -6,9 +6,9 @@ using System.IO.Compression;
 using System.Linq;
 using System.Text;
 
-namespace Gsemac.IO.Compression.Implementations {
+namespace Gsemac.IO.Compression {
 
-    public class ZipStorerZipArchive :
+    internal class ZipStorerZipArchive :
       ArchiveBase {
 
         // Public members
@@ -16,11 +16,11 @@ namespace Gsemac.IO.Compression.Implementations {
         public override bool CanRead => fileAccess.HasFlag(FileAccess.Read);
         public override bool CanWrite => fileAccess.HasFlag(FileAccess.Write);
         public override string Comment {
-            get => throw ArchiveExceptions.ReadingCommentsIsNotSupported;
+            get => throw new NotSupportedException("Archive does not support reading archive-level comments.");
             set {
 
                 if (archive?.IsValueCreated ?? false)
-                    throw ArchiveExceptions.WritingCommentsIsNotSupported;
+                    throw new InvalidOperationException("Archive does not support writing archive-level comments.");
 
                 archiveComment = value;
 
@@ -35,7 +35,7 @@ namespace Gsemac.IO.Compression.Implementations {
         public override IArchiveEntry AddEntry(Stream stream, string entryName, bool overwrite = true, bool leaveOpen = false, IArchiveEntryOptions options = null) {
 
             if (!CanWrite)
-                throw ArchiveExceptions.ArchiveIsReadOnly;
+                throw new UnauthorizedAccessException("This archive is read-only.");
 
             if (stream is null)
                 throw new ArgumentNullException(nameof(stream));
@@ -53,7 +53,7 @@ namespace Gsemac.IO.Compression.Implementations {
                 if (overwrite)
                     DeleteEntry(existingEntry);
                 else
-                    throw ArchiveExceptions.EntryAlreadyExists;
+                    throw new ArchiveEntryAlreadyExistsException();
 
             }
 
@@ -82,7 +82,7 @@ namespace Gsemac.IO.Compression.Implementations {
         public override void DeleteEntry(IArchiveEntry entry) {
 
             if (!CanWrite)
-                throw ArchiveExceptions.ArchiveIsReadOnly;
+                throw new UnauthorizedAccessException("This archive is read-only.");
 
             if (entry is null)
                 throw new ArgumentNullException(nameof(entry));
@@ -94,7 +94,7 @@ namespace Gsemac.IO.Compression.Implementations {
 
             }
             else
-                throw ArchiveExceptions.EntryDoesNotBelongToThisArchive;
+                throw new ArchiveEntryDoesNotExistException();
 
         }
         public override void ExtractEntry(IArchiveEntry entry, Stream outputStream) {

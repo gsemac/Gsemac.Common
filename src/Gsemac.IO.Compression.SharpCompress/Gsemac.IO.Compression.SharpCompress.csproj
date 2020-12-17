@@ -1,0 +1,27 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFrameworks>netstandard2.0;net40-client</TargetFrameworks>
+		<RootNamespace>Gsemac.IO.Compression</RootNamespace>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)' == 'Release'">
+		<DebugType>none</DebugType>
+		<DebugSymbols>false</DebugSymbols>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<Content Include="Gsemac.IO.Compression.SharpCompress.targets" PackagePath="buildGsemac.IO.Compression.SharpCompress.targets" />
+		<Content Include="licenses\*" Pack="true" PackagePath="contentFiles\licenses" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="SharpCompress" Version="0.24.0" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\Gsemac.IO.Compression\Gsemac.IO.Compression.csproj" />
+		<ProjectReference Include="..\Gsemac.Reflection\Gsemac.Reflection.csproj" />
+	</ItemGroup>
+
+</Project>

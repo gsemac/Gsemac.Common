@@ -2,9 +2,9 @@
 
 using System;
 
-namespace Gsemac.IO.Compression.Implementations {
+namespace Gsemac.IO.Compression {
 
-    internal class SystemIOCompressionZipArchiveEntry :
+    internal class NetFrameworkZipArchiveEntry :
         IArchiveEntry {
 
         // Public members
@@ -17,7 +17,7 @@ namespace Gsemac.IO.Compression.Implementations {
 
         public System.IO.Compression.ZipArchiveEntry BaseEntry { get; }
 
-        public SystemIOCompressionZipArchiveEntry(System.IO.Compression.ZipArchiveEntry entry) {
+        public NetFrameworkZipArchiveEntry(System.IO.Compression.ZipArchiveEntry entry) {
 
             this.BaseEntry = entry;
 

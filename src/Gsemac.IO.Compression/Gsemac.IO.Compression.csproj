@@ -1,4 +1,4 @@
-<Project Sdk="MSBuild.Sdk.Extras/2.0.54">
+﻿<Project Sdk="MSBuild.Sdk.Extras/2.0.54">
 
 	<PropertyGroup>
 		<TargetFrameworks>netstandard2.0;net40-client;net45</TargetFrameworks>
@@ -43,11 +43,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="SharpCompress" Version="0.24.0" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <ProjectReference Include="..\Gsemac.IO\Gsemac.IO.csproj" />
+		<ProjectReference Include="..\Gsemac.IO\Gsemac.IO.csproj" />
 	</ItemGroup>
 
 </Project>
