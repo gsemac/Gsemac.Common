@@ -1,7 +1,7 @@
 ﻿<Project Sdk="MSBuild.Sdk.Extras/2.0.54">
 
 	<PropertyGroup>
-		<TargetFrameworks>netstandard2.0;net40-client;net45</TargetFrameworks>
+		<TargetFrameworks>netstandard2.0;net40-client</TargetFrameworks>
 		<Company />
 		<Authors>gsemac</Authors>
 		<Version>0.3.3</Version>
@@ -23,9 +23,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="..\Gsemac.Collections\Gsemac.Collections.csproj" />
-	  <ProjectReference Include="..\Gsemac.Core\Gsemac.Core.csproj" />
-	  <ProjectReference Include="..\Gsemac.Text\Gsemac.Text.csproj" />
+		<ProjectReference Include="..\Gsemac.Collections\Gsemac.Collections.csproj" />
+		<ProjectReference Include="..\Gsemac.Core\Gsemac.Core.csproj" />
+		<ProjectReference Include="..\Gsemac.Text\Gsemac.Text.csproj" />
 	</ItemGroup>
 
 </Project>
