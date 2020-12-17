@@ -1,9 +1,11 @@
 ﻿using Gsemac.IO;
+using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace Gsemac.Net.WebBrowsers {
 
@@ -58,6 +60,27 @@ namespace Gsemac.Net.WebBrowsers {
             return GetWebBrowserInfo().Where(info => info.Id == webBrowserId)
                 .OrderByDescending(info => info.Is64Bit)
                 .FirstOrDefault();
+
+        }
+        public static IWebBrowserInfo GetDefaultWebBrowserInfo() {
+
+            // From Windows 8 forward, this seems to be the most reliable location for finding the default browser.
+            // https://stackoverflow.com/a/17599201
+
+            IWebBrowserInfo webBrowserInfo = GetWebBrowserInfoFromUserChoiceKey();
+
+            // For Windows 7 and previous, the UserChoice key may be empty.
+            // https://stackoverflow.com/a/56707674
+
+            if (webBrowserInfo is null)
+                webBrowserInfo = GetWebBrowserInfoFromClassesRootCommandKey();
+
+            // Default to Internet Explorer if we can't find the default web browser.
+
+            if (webBrowserInfo is null)
+                webBrowserInfo = GetWebBrowserInfo(WebBrowserId.InternetExplorer);
+
+            return webBrowserInfo;
 
         }
 
@@ -127,6 +150,86 @@ namespace Gsemac.Net.WebBrowsers {
 
             return Environment.Is64BitOperatingSystem &&
                 PathUtilities.PathContainsSegment(browserExecutablePath, "Program Files");
+
+        }
+
+        private static IWebBrowserInfo GetWebBrowserInfoFromUserChoiceKey() {
+
+            WebBrowserId id = WebBrowserId.Unidentified;
+
+            using (RegistryKey userChoiceKey = Registry.CurrentUser.OpenSubKey(@"Software\Microsoft\Windows\Shell\Associations\UrlAssociations\http\UserChoice", writable: false)) {
+
+                if (!(userChoiceKey is null)) {
+
+                    string progId = (string)userChoiceKey.GetValue("Progid");
+
+                    if (!string.IsNullOrEmpty(progId)) {
+
+                        switch (progId) {
+
+                            case "AppXq0fevzme2pys62n3e0fbqa7peapykr8v":
+                                id = WebBrowserId.Edge;
+                                break;
+
+                            case "ChromeHTML":
+                                id = WebBrowserId.Chrome;
+                                break;
+
+                            case "FirefoxURL":
+                                id = WebBrowserId.Firefox;
+                                break;
+
+                            case "IE.HTTP":
+                                id = WebBrowserId.InternetExplorer;
+                                break;
+
+                            case "OperaStable":
+                                id = WebBrowserId.Opera;
+                                break;
+
+                            case "SafariHTML":
+                                id = WebBrowserId.Safari;
+                                break;
+
+                            default:
+                                id = WebBrowserId.Unidentified;
+                                break;
+
+                        }
+
+                    }
+
+                }
+
+            }
+
+            return id == WebBrowserId.Unidentified ? null : GetWebBrowserInfo(id);
+
+        }
+        private static IWebBrowserInfo GetWebBrowserInfoFromClassesRootCommandKey() {
+
+            string webBrowserPath = string.Empty;
+
+            using (RegistryKey commandKey = Registry.ClassesRoot.OpenSubKey(@"https\shell\open\command", writable: false)) {
+
+                if (!(commandKey is null)) {
+
+                    string defaultValue = (string)commandKey.GetValue("");
+
+                    if (!string.IsNullOrEmpty(defaultValue)) {
+
+                        Match webBrowserPathMatch = Regex.Match(defaultValue, "^\"([^\"]+)\"");
+
+                        if (webBrowserPathMatch.Success)
+                            webBrowserPath = webBrowserPathMatch.Groups[1].Value;
+
+                    }
+
+                }
+
+            }
+
+            return string.IsNullOrWhiteSpace(webBrowserPath) ? null : new WebBrowserInfo(webBrowserPath);
 
         }
 
