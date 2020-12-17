@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 
 namespace Gsemac.Core {
 
@@ -44,9 +45,9 @@ namespace Gsemac.Core {
             // This overload for DateTime is provided so that dates that cannot be represented by DateTimeOffset can still be formatted.
 
             if (input.Kind == DateTimeKind.Utc)
-                return input.ToString("yyyy-MM-ddTHH\\:mm\\:ss", System.Globalization.CultureInfo.InvariantCulture) + "+00:00";
+                return input.ToString("yyyy-MM-ddTHH\\:mm\\:ss", CultureInfo.InvariantCulture) + "+00:00";
             else
-                return input.ToString("yyyy-MM-ddTHH\\:mm\\:sszzz", System.Globalization.CultureInfo.InvariantCulture);
+                return input.ToString("yyyy-MM-ddTHH\\:mm\\:sszzz", CultureInfo.InvariantCulture);
 
         }
 
@@ -68,6 +69,20 @@ namespace Gsemac.Core {
 
             }
 #pragma warning restore CA1031 // Do not catch general exception types
+
+        }
+
+        public static DateTimeOffset ParseHttpDateHeader(string dateHeader) {
+
+            if (TryParseHttpDateHeader(dateHeader, out DateTimeOffset result))
+                return result;
+
+            throw new FormatException();
+
+        }
+        public static bool TryParseHttpDateHeader(string dateHeader, out DateTimeOffset result) {
+
+            return DateTimeOffset.TryParseExact(dateHeader, "ddd, dd MMM yyyy HH:mm:ss 'GMT'", CultureInfo.InvariantCulture.DateTimeFormat, DateTimeStyles.AssumeUniversal, out result);
 
         }
 
