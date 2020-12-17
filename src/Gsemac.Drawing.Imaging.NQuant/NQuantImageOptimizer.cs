@@ -1,6 +1,7 @@
 ﻿#if NETFRAMEWORK
 
 using Gsemac.Reflection;
+using Gsemac.Reflection.Plugins;
 using nQuant;
 using System.Collections.Generic;
 using System.Drawing;
@@ -11,12 +12,16 @@ namespace Gsemac.Drawing.Imaging {
 
     [RequiresAssemblyOrType("nQuant.Core", "nQuant.WuQuantizer")]
     public class NQuantImageOptimizer :
+        PluginBase,
         IImageOptimizer {
 
         // Public members
 
         public IEnumerable<IImageFormat> SupportedImageFormats => GetSupportedImageFormats();
-        public int Priority => 1;
+
+        public NQuantImageOptimizer() :
+            base(1) {
+        }
 
         public bool Optimize(Stream stream, ImageOptimizationMode optimizationMode) {
 

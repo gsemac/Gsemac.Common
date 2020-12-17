@@ -2,6 +2,7 @@
 
 using Gsemac.IO.Extensions;
 using Gsemac.Reflection;
+using Gsemac.Reflection.Plugins;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
@@ -13,12 +14,12 @@ namespace Gsemac.Drawing.Imaging {
     [RequiresAssemblies("libwebp_x64", X64 = true)]
     [RequiresAssemblyOrType("WebPWrapper", "WebPWrapper.WebP")]
     public class WebPImageCodec :
+        PluginBase,
         IImageCodec {
 
         // Public members
 
         public IEnumerable<IImageFormat> SupportedImageFormats => GetSupportedImageFormats();
-        public int Priority => 0;
 
         public void Encode(IImage image, Stream stream, IImageEncoderOptions encoderOptions) {
 

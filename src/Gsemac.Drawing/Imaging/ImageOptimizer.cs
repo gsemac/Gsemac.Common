@@ -1,5 +1,6 @@
 ﻿using Gsemac.Drawing.Imaging.Extensions;
 using Gsemac.IO;
+using Gsemac.Reflection.Plugins;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -55,7 +56,7 @@ namespace Gsemac.Drawing.Imaging {
         }
         private static IEnumerable<IImageOptimizer> GetImageOptimizersInternal() {
 
-            return PluginLoader.GetImageOptimizers().OrderByDescending(imageOptimizer => imageOptimizer.Priority);
+            return ImagingPluginLoader.GetImageOptimizers().OrderByDescending(imageOptimizer => (imageOptimizer as IPlugin)?.Priority ?? 0);
 
         }
 

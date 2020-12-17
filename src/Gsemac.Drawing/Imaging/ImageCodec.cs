@@ -1,5 +1,6 @@
 ﻿using Gsemac.Drawing.Imaging.Extensions;
 using Gsemac.IO;
+using Gsemac.Reflection.Plugins;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -86,7 +87,7 @@ namespace Gsemac.Drawing.Imaging {
 
             List<IImageCodec> imageCodecs = new List<IImageCodec>();
 
-            foreach (IImageCodec imageCodec in PluginLoader.GetImageCodecs()) {
+            foreach (IImageCodec imageCodec in ImagingPluginLoader.GetImageCodecs()) {
 
                 IImageCodec nextImageCodec = imageCodec;
                 Type nextImageCodecType = imageCodec.GetType();
@@ -98,7 +99,7 @@ namespace Gsemac.Drawing.Imaging {
 
             }
 
-            return imageCodecs.OrderByDescending(imageCodec => imageCodec.Priority);
+            return imageCodecs.OrderByDescending(imageCodec => (imageCodec as IPlugin)?.Priority ?? 0);
 
         }
 

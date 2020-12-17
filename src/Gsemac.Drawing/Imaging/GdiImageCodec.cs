@@ -2,6 +2,7 @@
 
 using Gsemac.Drawing.Imaging;
 using Gsemac.Drawing.Imaging.Extensions;
+using Gsemac.Reflection.Plugins;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -12,12 +13,12 @@ using System.Linq;
 namespace Gsemac.Drawing.Imaging {
 
     public class GdiImageCodec :
+        PluginBase,
         IImageCodec {
 
         // Public members
 
         public IEnumerable<IImageFormat> SupportedImageFormats => ImageCodec.NativelySupportedImageFormats;
-        public int Priority => 0;
 
         public GdiImageCodec() {
         }

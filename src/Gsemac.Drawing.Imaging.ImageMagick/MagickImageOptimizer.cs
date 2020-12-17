@@ -1,4 +1,5 @@
 ﻿using Gsemac.Reflection;
+using Gsemac.Reflection.Plugins;
 using System.Collections.Generic;
 using System.IO;
 
@@ -6,10 +7,10 @@ namespace Gsemac.Drawing.Imaging {
 
     [RequiresAssemblyOrType("Magick.NET-Q16-AnyCPU", "ImageMagick.IImageOptimizer")]
     public class MagickImageOptimizer :
+        PluginBase,
         IImageOptimizer {
 
         public IEnumerable<IImageFormat> SupportedImageFormats => new MagickImageCodec().SupportedImageFormats;
-        public int Priority => 0;
 
         public bool Optimize(Stream stream, ImageOptimizationMode optimizationMode) {
 

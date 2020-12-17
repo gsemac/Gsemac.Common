@@ -1,5 +1,6 @@
 ﻿using Gsemac.Drawing.Imaging.Extensions;
 using Gsemac.Reflection;
+using Gsemac.Reflection.Plugins;
 using ImageMagick;
 using System.Collections.Generic;
 using System.IO;
@@ -10,16 +11,18 @@ namespace Gsemac.Drawing.Imaging {
     [RequiresAssemblyOrType("Magick.NET.Core", "ImageMagick.IMagickImage")]
     [RequiresAssemblyOrType("Magick.NET-Q16-AnyCPU", "ImageMagick.MagickImage")]
     public class MagickImageCodec :
+        PluginBase,
         IImageCodec {
 
         // Public members
 
         public IEnumerable<IImageFormat> SupportedImageFormats => GetSupportedImageFormats();
-        public int Priority => 1;
 
-        public MagickImageCodec() {
+        public MagickImageCodec() :
+            base(1) {
         }
-        public MagickImageCodec(IImageFormat imageFormat) {
+        public MagickImageCodec(IImageFormat imageFormat) :
+            base(1) {
 
             if (!this.IsSupportedImageFormat(imageFormat))
                 throw new ImageFormatException();
