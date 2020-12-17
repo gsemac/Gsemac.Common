@@ -1,8 +1,10 @@
-﻿using Gsemac.Reflection.Plugins;
+﻿using Gsemac.Reflection;
+using Gsemac.Reflection.Plugins;
 using System.IO;
 
 namespace Gsemac.IO.Compression {
 
+    [RequiresAssemblyOrType("SharpCompress", "SharpCompress.Archives.Zip.ZipArchive")]
     public class SharpCompressZipArchiveReader :
         PluginBase,
         IArchiveReader {
