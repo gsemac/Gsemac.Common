@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Gsemac.Reflection.Extensions;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -6,23 +7,22 @@ namespace Gsemac.Reflection {
 
     public static class TypeUtilities {
 
-        public static IEnumerable<Type> GetTypesImplementingInterface<T>() {
-
-            Type interfaceType = typeof(T);
-
-            IEnumerable<Type> types = AppDomain.CurrentDomain.GetAssemblies()
-                .SelectMany(assembly => assembly.GetTypes())
-                .Where(type => interfaceType.IsAssignableFrom(type) && !type.IsAbstract);
-
-            return types;
-
-        }
         public static Type GetType(string typeName) {
 
             return AppDomain.CurrentDomain.GetAssemblies()
                 .Select(assembly => assembly.GetType(typeName))
                 .Where(type => !(type is null))
                 .FirstOrDefault();
+
+        }
+        public static IEnumerable<Type> GetTypes() {
+
+            return AppDomain.CurrentDomain.GetAssemblies().SelectMany(assembly => assembly.GetLoadableTypes());
+
+        }
+        public static IEnumerable<Type> GetTypesImplementingInterface<T>() {
+
+            return GetTypes().Where(type => type.ImplementsInterface<T>());
 
         }
         public static bool TypeExists(string typeName) {

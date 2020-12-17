@@ -1,6 +1,4 @@
 ﻿using Gsemac.IO.Compression.Extensions;
-using Gsemac.Reflection;
-using System;
 using System.IO;
 using System.Linq;
 

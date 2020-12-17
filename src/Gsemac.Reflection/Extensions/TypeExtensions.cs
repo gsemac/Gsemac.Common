@@ -9,6 +9,13 @@ namespace Gsemac.Reflection.Extensions {
             return type.GetConstructor(Type.EmptyTypes) != null;
 
         }
+        public static bool ImplementsInterface<T>(this Type type) {
+
+            Type interfaceType = typeof(T);
+
+            return interfaceType.IsAssignableFrom(type) && !type.IsAbstract;
+
+        }
         public static bool IsNullableType(this Type type) {
 
             return type != null &&
