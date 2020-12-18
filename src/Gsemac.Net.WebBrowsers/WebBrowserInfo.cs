@@ -100,7 +100,8 @@ namespace Gsemac.Net.WebBrowsers {
             .Distinct();
 
             IEnumerable<string> webBrowserExecutablePaths = new string[]{
-                @"Google\Chrome\Application\chrome.exe",
+                @"Google\Chrome\Application\chrome.exe", // Windows 8.1+
+                @"Google\Application\chrome.exe", // Windows 7
                 @"Internet Explorer\iexplore.exe",
                 @"Mozilla Firefox\firefox.exe",
                 @"Opera\launcher.exe",
