@@ -13,7 +13,7 @@ namespace Gsemac.Collections {
             x = x ?? "";
             y = y ?? "";
 
-            return SHLWAPI.StrCmpLogicalW(x, y);
+            return Shlwapi.StrCmpLogicalW(x, y);
 
         }
         public int Compare(FileInfo x, FileInfo y) {
