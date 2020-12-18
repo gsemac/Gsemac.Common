@@ -22,7 +22,7 @@ namespace Gsemac.Reflection.Extensions {
 
             }
 
-            return result.Where(type => type != null && type.TypeInitializer != null);
+            return result.Where(type => type != null);
 
         }
 
