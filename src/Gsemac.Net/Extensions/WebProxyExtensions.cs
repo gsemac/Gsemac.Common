@@ -8,6 +8,9 @@ namespace Gsemac.Net.Extensions {
 
         public static bool IsEmpty(this IWebProxy proxy) {
 
+            if (proxy is null)
+                return true;
+
             return string.IsNullOrWhiteSpace(proxy.GetProxyString());
 
         }
