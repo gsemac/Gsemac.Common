@@ -1,10 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 
 namespace Gsemac.Collections {
 
     public class NaturalSortComparer :
-        IComparer<string> {
+        IComparer<string>,
+        IComparer<FileInfo> {
 
         // Public members
 
@@ -38,6 +40,11 @@ namespace Gsemac.Collections {
             // If we get here, the strings are either equal, or one of them is null/empty.
 
             return cultureInfo.CompareInfo.Compare(x, y, CompareOptions.IgnoreCase);
+
+        }
+        public int Compare(FileInfo x, FileInfo y) {
+
+            return Compare(x.FullName, y.FullName);
 
         }
 
