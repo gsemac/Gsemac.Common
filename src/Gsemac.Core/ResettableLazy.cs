@@ -34,54 +34,28 @@ namespace Gsemac.Core {
 
         public void Reset() {
 
-            if (lazyThreadSafetyMode == LazyThreadSafetyMode.None) {
+            // Reference writes are guaranteed atomic, so we don't need to lock around this.
+            // Threads either get the latest value, or they don't (but they should, given that lazy is volatile).
 
-                lazy = lazyFactory();
-
-            }
-            else {
-
-                lock (mutex) {
-
-                    lazy = lazyFactory();
-
-                }
-
-            }
+            lazy = lazyFactory();
 
         }
 
         // Private members
 
-        private Lazy<T> lazy;
+        private volatile Lazy<T> lazy;
         private readonly Func<Lazy<T>> lazyFactory;
-        private readonly object mutex = new object();
-        private readonly LazyThreadSafetyMode lazyThreadSafetyMode = LazyThreadSafetyMode.ExecutionAndPublication;
 
         private ResettableLazy(Func<Lazy<T>> lazyFactory, LazyThreadSafetyMode mode) {
 
             this.lazyFactory = lazyFactory;
             lazy = lazyFactory();
-            lazyThreadSafetyMode = mode;
 
         }
 
         private T GetValue() {
 
-            if (lazyThreadSafetyMode == LazyThreadSafetyMode.None) {
-
-                return lazy.Value;
-
-            }
-            else {
-
-                lock (mutex) {
-
-                    return lazy.Value;
-
-                }
-
-            }
+            return lazy.Value;
 
         }
         private bool GetIsValueCreated() {
