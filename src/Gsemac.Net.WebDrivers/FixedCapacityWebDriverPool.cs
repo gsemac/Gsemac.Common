@@ -15,6 +15,12 @@ namespace Gsemac.Net.WebDrivers {
 
         public FixedCapacityWebDriverPool(IWebBrowserInfo webBrowserInfo, IWebDriverOptions webDriverOptions, int poolSize) {
 
+            if (webBrowserInfo is null)
+                throw new ArgumentNullException(nameof(webBrowserInfo));
+
+            if (webDriverOptions is null)
+                throw new ArgumentNullException(nameof(webDriverOptions));
+
             this.webBrowserInfo = webBrowserInfo;
             this.webDriverOptions = webDriverOptions;
             this.poolSize = poolSize;
