@@ -1,4 +1,5 @@
 ﻿using Gsemac.Drawing.Imaging.Extensions;
+using System.Drawing;
 
 namespace Gsemac.Drawing.Imaging {
 
