@@ -13,12 +13,13 @@ namespace Gsemac.IO.Logging {
 
         public FileLogger() {
         }
-        public FileLogger(string directory) {
+        public FileLogger(string directory) :
+            this(directory, true) {
+        }
+        public FileLogger(string directory, bool enabled) :
+            base(enabled) {
 
-            if (string.IsNullOrWhiteSpace(directory))
-                throw new ArgumentNullException(nameof(directory));
-
-            Directory = directory;
+            this.Directory = directory;
 
         }
 

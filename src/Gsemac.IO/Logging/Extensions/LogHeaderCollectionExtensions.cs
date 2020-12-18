@@ -2,33 +2,33 @@
 
 namespace Gsemac.IO.Logging.Extensions {
 
-    public static class LogHeaderExtensions {
+    public static class LogHeaderCollectionExtensions {
 
         // Public members
 
-        public static void Add(this ILogHeader logHeader, LogHeaderKey key, Func<string> getter) {
+        public static void Add(this ILogHeaderCollection headers, LogHeaderKey key, Func<string> getter) {
 
-            logHeader.Add(LogHeaderKeyToString(key), getter);
-
-        }
-        public static void Add(this ILogHeader logHeader, LogHeaderKey key, string value) {
-
-            logHeader.Add(key, () => value);
+            headers.Add(LogHeaderKeyToString(key), getter);
 
         }
-        public static bool Remove(this ILogHeader logHeader, LogHeaderKey key) {
+        public static void Add(this ILogHeaderCollection headers, LogHeaderKey key, string value) {
 
-            return logHeader.Remove(LogHeaderKeyToString(key));
-
-        }
-        public static bool ContainsKey(this ILogHeader logHeader, LogHeaderKey key) {
-
-            return logHeader.ContainsKey(LogHeaderKeyToString(key));
+            headers.Add(key, () => value);
 
         }
-        public static bool TryGetValue(this ILogHeader logHeader, LogHeaderKey key, out string value) {
+        public static bool Remove(this ILogHeaderCollection headers, LogHeaderKey key) {
 
-            return logHeader.TryGetValue(LogHeaderKeyToString(key), out value);
+            return headers.Remove(LogHeaderKeyToString(key));
+
+        }
+        public static bool ContainsKey(this ILogHeaderCollection headers, LogHeaderKey key) {
+
+            return headers.ContainsKey(LogHeaderKeyToString(key));
+
+        }
+        public static bool TryGetValue(this ILogHeaderCollection headers, LogHeaderKey key, out string value) {
+
+            return headers.TryGetValue(LogHeaderKeyToString(key), out value);
 
         }
 

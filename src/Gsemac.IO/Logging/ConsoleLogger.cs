@@ -5,6 +5,14 @@ namespace Gsemac.IO.Logging {
     public class ConsoleLogger :
         SynchronizedLoggerBase {
 
+        // Public members
+
+        public ConsoleLogger() {
+        }
+        public ConsoleLogger(bool enabled) :
+            base(enabled) {
+        }
+
         // Protected members
 
         protected override void Log(ILogMessage logMessage, string formattedMessage) {

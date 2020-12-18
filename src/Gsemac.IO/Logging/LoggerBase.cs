@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Reflection;
 
 namespace Gsemac.IO.Logging {
@@ -8,30 +9,48 @@ namespace Gsemac.IO.Logging {
 
         // Public members
 
-        public event LogEventHandler Logged;
+        public event LogEventHandler Logged {
+            add {
 
-        public bool Enabled { get; set; } = true;
+                lock (loggedEventMutex) {
+                    loggedEvent += value;
+                }
+
+                // Write log headers to the new handler immediately.
+
+                WriteHeaders(value);
+
+            }
+            remove {
+
+                lock (loggedEventMutex) {
+                    loggedEvent -= value;
+                }
+
+            }
+        }
+
+        public bool Enabled {
+            get => enabled;
+            set {
+
+                enabled = value;
+
+                if (enabled)
+                    WriteHeaders();
+
+            }
+        }
+        public ILogHeaderCollection Headers { get; set; } = new LogHeaderCollection();
         public bool IgnoreExceptions { get; set; } = true;
-        public ILogHeader Header { get; set; } = new LogHeader();
         public ILogMessageFormatter LogMessageFormatter { get; set; } = new LogMessageFormatter();
 
         public virtual void Log(ILogMessage message) {
 
             try {
 
-                if (Enabled) {
-
-                    if (firstWrite) {
-
-                        firstWrite = false;
-
-                        WriteHeader();
-
-                    }
-
+                if (Enabled)
                     Log(message, LogMessageFormatter.Format(message));
-
-                }
 
                 // Event handlers are always invoked, even when the logger is disabled.
 
@@ -49,22 +68,56 @@ namespace Gsemac.IO.Logging {
 
         // Protected members
 
+        protected LoggerBase() :
+            this(true) {
+        }
+        protected LoggerBase(bool enabled) {
+
+            this.enabled = enabled;
+
+            if (enabled)
+                WriteHeaders();
+
+        }
+
         protected void OnLogged(ILogMessage message) {
 
-            Logged?.Invoke(this, new LogEventArgs(message));
+            loggedEvent?.Invoke(this, new LogEventArgs(message));
 
         }
 
         protected abstract void Log(ILogMessage logMessage, string formattedMessage);
 
-        protected virtual void WriteHeader() {
+        protected virtual void WriteHeaders() {
 
-            foreach (string key in Header.Keys)
-                Log(new LogMessage(LogLevel.Info, Assembly.GetEntryAssembly().GetName().Name, $"{key}: {Header[key]}"));
+            // These headers should be written as soon as the logger is enabled.
+            // This will not trigger the event handlers, and they will have headers written separately (when they add event handlers).
+
+            if (!wroteHeaders)
+                WriteHeaders((sender, e) => Log(e.Message, LogMessageFormatter.Format(e.Message)));
+
+            wroteHeaders = true;
+
+        }
+        protected virtual void WriteHeaders(LogEventHandler eventHandler) {
+
+            // Keys are copied into an array so we don't run into trouble if the headers are modified in another thread.
+
+            foreach (string key in Headers?.Keys.ToArray()) {
+
+                ILogMessage logMessage = new LogMessage(LogLevel.Info, Assembly.GetEntryAssembly().GetName().Name, $"{key}: {Headers[key]}");
+                LogEventArgs logEventArgs = new LogEventArgs(logMessage);
+
+                eventHandler.Invoke(this, logEventArgs);
+
+            }
 
         }
 
-        private bool firstWrite = true;
+        private readonly object loggedEventMutex = new object();
+        private bool enabled = true;
+        private LogEventHandler loggedEvent;
+        private bool wroteHeaders = false;
 
     }
 

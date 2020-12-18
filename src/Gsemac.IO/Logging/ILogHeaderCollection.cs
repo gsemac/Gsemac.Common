@@ -13,7 +13,7 @@ namespace Gsemac.IO.Logging {
         Timestamp
     }
 
-    public interface ILogHeader :
+    public interface ILogHeaderCollection :
         IDictionary<string, string> {
 
         void Add(string key, Func<string> getter);

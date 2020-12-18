@@ -8,8 +8,8 @@ using System.Reflection;
 
 namespace Gsemac.IO.Logging {
 
-    public class LogHeader :
-        ILogHeader {
+    public class LogHeaderCollection :
+        ILogHeaderCollection {
 
         // Public members
 
@@ -24,10 +24,10 @@ namespace Gsemac.IO.Logging {
         public int Count => dict.Count;
         public bool IsReadOnly => false;
 
-        public LogHeader() :
+        public LogHeaderCollection() :
             this(true) {
         }
-        public LogHeader(bool addDefaultHeaders) {
+        public LogHeaderCollection(bool addDefaultHeaders) {
 
             if (addDefaultHeaders) {
 
@@ -122,7 +122,7 @@ namespace Gsemac.IO.Logging {
 
         }
 
-        public static LogHeader Empty => new LogHeader(false);
+        public static LogHeaderCollection Empty => new LogHeaderCollection(false);
 
         // Private members
 
