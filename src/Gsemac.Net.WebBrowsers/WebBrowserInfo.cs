@@ -1,4 +1,5 @@
-﻿using Gsemac.IO;
+﻿using Gsemac.Core;
+using Gsemac.IO;
 using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
@@ -46,18 +47,17 @@ namespace Gsemac.Net.WebBrowsers {
 
         }
 
-        public static IEnumerable<IWebBrowserInfo> GetWebBrowserInfo() {
+        public static IEnumerable<IWebBrowserInfo> GetWebBrowserInfo(bool useCachedResult = true) {
 
-            return GetWebBrowserExecutablePaths()
-                .Select(path => new WebBrowserInfo(path))
-                .OrderBy(info => info.Name)
-                .ThenBy(info => info.Version)
-                .ThenBy(info => info.Is64Bit);
+            if (!useCachedResult)
+                webBrowserInfoCache.Reset();
+
+            return webBrowserInfoCache.Value;
 
         }
-        public static IWebBrowserInfo GetWebBrowserInfo(WebBrowserId webBrowserId) {
+        public static IWebBrowserInfo GetWebBrowserInfo(WebBrowserId webBrowserId, bool useCachedResult = true) {
 
-            return GetWebBrowserInfo().Where(info => info.Id == webBrowserId)
+            return GetWebBrowserInfo(useCachedResult).Where(info => info.Id == webBrowserId)
                 .OrderByDescending(info => info.Is64Bit)
                 .FirstOrDefault();
 
@@ -86,6 +86,8 @@ namespace Gsemac.Net.WebBrowsers {
 
         // Private members
 
+        private static readonly ResettableLazy<IEnumerable<IWebBrowserInfo>> webBrowserInfoCache = new ResettableLazy<IEnumerable<IWebBrowserInfo>>(GetWebBrowserInfoInternal);
+
         private static IEnumerable<string> GetWebBrowserExecutablePaths() {
 
             // A better way of detecting installed web browsers might be looking up their associated keys in the registry.
@@ -110,6 +112,15 @@ namespace Gsemac.Net.WebBrowsers {
             .Distinct();
 
             return webBrowserExecutablePaths.Where(path => System.IO.File.Exists(path));
+
+        }
+        private static IEnumerable<IWebBrowserInfo> GetWebBrowserInfoInternal() {
+
+            return GetWebBrowserExecutablePaths()
+                .Select(path => new WebBrowserInfo(path))
+                .OrderBy(info => info.Name)
+                .ThenBy(info => info.Version)
+                .ThenBy(info => info.Is64Bit);
 
         }
 
