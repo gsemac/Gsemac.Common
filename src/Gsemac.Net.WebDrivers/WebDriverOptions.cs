@@ -20,6 +20,8 @@ namespace Gsemac.Net.WebDrivers {
         public bool DisablePopUps { get; set; } = false;
         public bool Stealth { get; set; } = false;
 
+        public static WebDriverOptions Default => new WebDriverOptions();
+
     }
 
 }
