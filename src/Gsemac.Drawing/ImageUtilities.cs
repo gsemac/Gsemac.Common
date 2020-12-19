@@ -5,7 +5,7 @@ using Gsemac.Drawing.Imaging;
 using Gsemac.Drawing.Imaging.Extensions;
 using System.Drawing;
 
-namespace Gsemac.Drawing.Imaging {
+namespace Gsemac.Drawing {
 
     public static class ImageUtilities {
 
