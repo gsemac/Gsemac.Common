@@ -6,6 +6,11 @@ namespace Gsemac.Win32 {
 
         // Public members
 
+        public static bool AddDllDirectory(string newDirectory) {
+
+            return AddDllDirectoryNative(newDirectory);
+
+        } // Requires Windows 8+, or Windows Vista+ with KB2533623 
         public static bool SetDllDirectory(string lpPathName) {
 
             return SetDllDirectoryNative(lpPathName);
@@ -14,6 +19,8 @@ namespace Gsemac.Win32 {
 
         // Private members
 
+        [DllImport("kernel32", EntryPoint = "AddDllDirectory", CharSet = CharSet.Auto, SetLastError = true)]
+        private static extern bool AddDllDirectoryNative(string newDirectory);
         [DllImport("kernel32", EntryPoint = "SetDllDirectory", CharSet = CharSet.Auto, SetLastError = true)]
         private static extern bool SetDllDirectoryNative(string lpPathName);
 
