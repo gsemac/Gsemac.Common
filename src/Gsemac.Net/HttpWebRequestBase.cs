@@ -2,7 +2,9 @@
 using System.Globalization;
 using System.IO;
 using System.Net;
+using System.Net.Security;
 using System.Security.Cryptography.X509Certificates;
+using System.Security.Principal;
 using System.Text;
 
 namespace Gsemac.Net {
@@ -37,8 +39,16 @@ namespace Gsemac.Net {
         public override Uri RequestUri { get; }
         public override int Timeout { get; set; } = (int)TimeSpan.FromSeconds(100).TotalMilliseconds; // 100 seconds is the default for HttpWebRequest
 
-        public override Stream GetRequestStream() => GetRequestStream(validateMethod: true);
+        public new AuthenticationLevel AuthenticationLevel {
+            get => base.AuthenticationLevel;
+            set => base.AuthenticationLevel = value;
+        }
+        public new TokenImpersonationLevel ImpersonationLevel {
+            get => base.ImpersonationLevel;
+            set => base.ImpersonationLevel = value;
+        }
 
+        public override Stream GetRequestStream() => GetRequestStream(validateMethod: true);
         public override IAsyncResult BeginGetResponse(AsyncCallback callback, object state) {
 
             return getResponseDelegate.BeginInvoke(callback, state);

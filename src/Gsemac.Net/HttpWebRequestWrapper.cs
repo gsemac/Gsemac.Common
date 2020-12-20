@@ -2,7 +2,9 @@
 using System.IO;
 using System.Net;
 using System.Net.Cache;
+using System.Net.Security;
 using System.Security.Cryptography.X509Certificates;
+using System.Security.Principal;
 
 namespace Gsemac.Net {
 
@@ -89,6 +91,16 @@ namespace Gsemac.Net {
             get => httpWebRequest.UseDefaultCredentials;
             set => httpWebRequest.UseDefaultCredentials = value;
         }
+
+        public new AuthenticationLevel AuthenticationLevel {
+            get => base.AuthenticationLevel;
+            set => base.AuthenticationLevel = value;
+        }
+        public new TokenImpersonationLevel ImpersonationLevel {
+            get => base.ImpersonationLevel;
+            set => base.ImpersonationLevel = value;
+        }
+
         public override void Abort() => httpWebRequest.Abort();
         public override IAsyncResult BeginGetRequestStream(AsyncCallback callback, object state) => httpWebRequest.BeginGetRequestStream(callback, state);
         public override IAsyncResult BeginGetResponse(AsyncCallback callback, object state) => httpWebRequest.BeginGetResponse(callback, state);
