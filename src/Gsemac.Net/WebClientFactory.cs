@@ -16,7 +16,7 @@
 
         }
 
-        public System.Net.WebClient CreateWebClient() {
+        public System.Net.WebClient Create() {
 
             return webRequestFactory is null ?
                 new System.Net.WebClient() :

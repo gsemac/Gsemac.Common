@@ -29,7 +29,7 @@ namespace Gsemac.Net.WebDrivers {
 
             Uri releasesUri = new Uri("https://github.com/mozilla/geckodriver/releases/latest");
 
-            using (WebClient webClient = new WebClientFactory(webRequestFactory).CreateWebClient()) {
+            using (WebClient webClient = new WebClientFactory(webRequestFactory).Create()) {
 
                 // Get download URLs from the latest release.
 

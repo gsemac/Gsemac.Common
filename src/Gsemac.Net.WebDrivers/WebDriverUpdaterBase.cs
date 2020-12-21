@@ -38,7 +38,7 @@ namespace Gsemac.Net.WebDrivers {
                         string downloadFilePath = Path.GetTempFileName();
                         string downloadFileExt = PathUtilities.GetFileExtension(latestWebDriverInfo.DownloadUri.AbsoluteUri);
 
-                        using (WebClient webClient = new WebClientFactory(webRequestFactory).CreateWebClient())
+                        using (WebClient webClient = new WebClientFactory(webRequestFactory).Create())
                             webClient.DownloadFile(latestWebDriverInfo.DownloadUri, downloadFilePath);
 
                         try {

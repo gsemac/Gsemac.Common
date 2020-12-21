@@ -4,7 +4,7 @@ namespace Gsemac.Net {
 
     public interface IWebClientFactory {
 
-        WebClient CreateWebClient();
+        WebClient Create();
 
     }
 
