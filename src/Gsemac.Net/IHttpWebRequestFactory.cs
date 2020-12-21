@@ -9,7 +9,7 @@ namespace Gsemac.Net {
         void SetOptions(IHttpWebRequestOptions options);
         void SetOptions(string domain, IHttpWebRequestOptions options);
 
-        IHttpWebRequest CreateHttpWebRequest(Uri requestUri);
+        IHttpWebRequest Create(Uri requestUri);
 
     }
 

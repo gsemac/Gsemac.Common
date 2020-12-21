@@ -28,7 +28,7 @@ namespace Gsemac.Net.Curl {
 
         // Protected members
 
-        protected override IHttpWebRequest CreateHttpWebRequestInternal(Uri requestUri) {
+        protected override IHttpWebRequest CreateInternal(Uri requestUri) {
 
             return string.IsNullOrWhiteSpace(curlExecutablePath) ?
                 new BinCurlHttpWebRequest(requestUri) :

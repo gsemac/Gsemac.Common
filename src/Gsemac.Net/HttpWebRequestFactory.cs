@@ -16,7 +16,7 @@ namespace Gsemac.Net {
 
         // Protected members
 
-        protected override IHttpWebRequest CreateHttpWebRequestInternal(Uri requestUri) {
+        protected override IHttpWebRequest CreateInternal(Uri requestUri) {
 
             return new HttpWebRequestWrapper(requestUri);
 

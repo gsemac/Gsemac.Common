@@ -41,9 +41,9 @@ namespace Gsemac.Net.Curl {
 
         }
 
-        public IHttpWebRequest CreateHttpWebRequest(Uri requestUri) {
+        public IHttpWebRequest Create(Uri requestUri) {
 
-            IHttpWebRequest httpWebRequest = webRequestFactory.CreateHttpWebRequest(requestUri);
+            IHttpWebRequest httpWebRequest = webRequestFactory.Create(requestUri);
 
             return httpWebRequest;
 

@@ -29,7 +29,7 @@ namespace Gsemac.Net {
 
             if (baseWebRequest is HttpWebRequest baseHttpWebRequest) {
 
-                IHttpWebRequest httpWebRequest = webRequestFactory.CreateHttpWebRequest(address);
+                IHttpWebRequest httpWebRequest = webRequestFactory.Create(address);
 
                 httpWebRequest.Credentials = baseHttpWebRequest.Credentials;
                 httpWebRequest.Method = baseHttpWebRequest.Method;

@@ -55,9 +55,9 @@ namespace Gsemac.Net {
 
         }
 
-        public virtual IHttpWebRequest CreateHttpWebRequest(Uri requestUri) {
+        public virtual IHttpWebRequest Create(Uri requestUri) {
 
-            IHttpWebRequest httpWebRequest = CreateHttpWebRequestInternal(requestUri);
+            IHttpWebRequest httpWebRequest = CreateInternal(requestUri);
 
             GetOptions(requestUri).CopyTo(httpWebRequest);
 
@@ -79,7 +79,7 @@ namespace Gsemac.Net {
 
         }
 
-        protected abstract IHttpWebRequest CreateHttpWebRequestInternal(Uri requestUri);
+        protected abstract IHttpWebRequest CreateInternal(Uri requestUri);
 
         // Private members
 
