@@ -107,7 +107,7 @@ namespace Gsemac.Net {
         public override Stream EndGetRequestStream(IAsyncResult asyncResult) => httpWebRequest.EndGetRequestStream(asyncResult);
         public override WebResponse EndGetResponse(IAsyncResult asyncResult) => httpWebRequest.EndGetResponse(asyncResult);
         public override Stream GetRequestStream() => httpWebRequest.GetRequestStream();
-        public override WebResponse GetResponse() => httpWebRequest.GetResponse();
+        public override WebResponse GetResponse() => new HttpWebResponseWrapper(httpWebRequest.GetResponse());
 
         // Inherited from IHttpWebRequest
 
