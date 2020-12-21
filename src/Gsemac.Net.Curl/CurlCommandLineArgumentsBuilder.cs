@@ -13,6 +13,20 @@ namespace Gsemac.Net.Curl {
 
         // Public members
 
+        public new CurlCommandLineArgumentsBuilder WithArgument(string argumentValue) {
+
+            base.AddArgument(argumentValue);
+
+            return this;
+
+        }
+        public new CurlCommandLineArgumentsBuilder WithArgument(string argumentName, string argumentValue) {
+
+            base.AddArgument(argumentName, argumentValue);
+
+            return this;
+
+        }
         public CurlCommandLineArgumentsBuilder WithAutomaticDecompression(DecompressionMethods decompressionMethods) {
 
             if (decompressionMethods != DecompressionMethods.None) {
@@ -77,7 +91,7 @@ namespace Gsemac.Net.Curl {
             return this;
 
         }
-        public CurlCommandLineArgumentsBuilder WithConsoleOutput() => AddArgument("--output", "-"); // output binary data directly to standard output
+        public CurlCommandLineArgumentsBuilder WithConsoleOutput() => WithArgument("--output", "-"); // output binary data directly to standard output
         public CurlCommandLineArgumentsBuilder WithCredentials(ICredentials credentials, Uri requestUri = null) {
 
             // Argument should be of the following form:
@@ -92,7 +106,7 @@ namespace Gsemac.Net.Curl {
             return this;
 
         }
-        public CurlCommandLineArgumentsBuilder WithHeaderOutput() => AddArgument("--include"); // include response headers in output
+        public CurlCommandLineArgumentsBuilder WithHeaderOutput() => WithArgument("--include"); // include response headers in output
         public CurlCommandLineArgumentsBuilder WithHeaders(WebHeaderCollection headers) {
 
             for (int i = 0; i < headers.Count; ++i) {
@@ -190,21 +204,6 @@ namespace Gsemac.Net.Curl {
             this.uri = uri;
 
             AddArgument(uri.AbsoluteUri);
-
-            return this;
-
-        }
-
-        public new CurlCommandLineArgumentsBuilder AddArgument(string argumentValue) {
-
-            base.AddArgument(argumentValue);
-
-            return this;
-
-        }
-        public new CurlCommandLineArgumentsBuilder AddArgument(string argumentName, string argumentValue) {
-
-            base.AddArgument(argumentName, argumentValue);
 
             return this;
 

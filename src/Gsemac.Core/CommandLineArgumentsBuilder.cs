@@ -10,7 +10,7 @@ namespace Gsemac.Core {
 
         // Public members
 
-        public CommandLineArgumentsBuilder AddArgument(string argumentValue) {
+        public CommandLineArgumentsBuilder WithArgument(string argumentValue) {
 
             if (string.IsNullOrWhiteSpace(argumentValue))
                 throw new ArgumentNullException(nameof(argumentValue));
@@ -20,7 +20,7 @@ namespace Gsemac.Core {
             return this;
 
         }
-        public CommandLineArgumentsBuilder AddArgument(string argumentName, string argumentValue) {
+        public CommandLineArgumentsBuilder WithArgument(string argumentName, string argumentValue) {
 
             argumentName = argumentName?.Trim();
 
@@ -44,6 +44,16 @@ namespace Gsemac.Core {
             return this;
 
         }
+        public void AddArgument(string argumentValue) {
+
+            WithArgument(argumentValue);
+
+        }
+        public void AddArgument(string argumentName, string argumentValue) {
+
+            WithArgument(argumentName, argumentValue);
+
+        }
 
         public void Clear() {
 
@@ -56,10 +66,6 @@ namespace Gsemac.Core {
             return string.Join(" ", arguments);
 
         }
-
-        ICommandLineArgumentsBuilder ICommandLineArgumentsBuilder.AddArgument(string argumentValue) => AddArgument(argumentValue);
-        ICommandLineArgumentsBuilder ICommandLineArgumentsBuilder.AddArgument(string argumentName, string argumentValue) => AddArgument(argumentName, argumentValue);
-
 
         // Private members
 
