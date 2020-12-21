@@ -1,4 +1,5 @@
-﻿using Gsemac.Net.WebBrowsers;
+﻿using Gsemac.Net.Extensions;
+using Gsemac.Net.WebBrowsers;
 using System;
 using System.Net;
 
@@ -35,7 +36,7 @@ namespace Gsemac.Net.WebDrivers {
             if (!(browserVersion is null))
                 versionUri = new Uri(versionUri.AbsoluteUri + $"_{browserVersion.Major}.{browserVersion.Minor}.{browserVersion.Build}");
 
-            using (WebClient webClient = new WebClientFactory(webRequestFactory).Create()) {
+            using (WebClient webClient = webRequestFactory.ToWebClientFactory().Create()) {
 
                 // Get the latest web driver version.
 

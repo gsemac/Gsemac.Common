@@ -1,5 +1,6 @@
 ﻿using Gsemac.IO;
 using Gsemac.IO.Compression;
+using Gsemac.Net.Extensions;
 using System;
 using System.IO;
 using System.Net;
@@ -38,7 +39,7 @@ namespace Gsemac.Net.WebDrivers {
                         string downloadFilePath = Path.GetTempFileName();
                         string downloadFileExt = PathUtilities.GetFileExtension(latestWebDriverInfo.DownloadUri.AbsoluteUri);
 
-                        using (WebClient webClient = new WebClientFactory(webRequestFactory).Create())
+                        using (WebClient webClient = webRequestFactory.ToWebClientFactory().Create())
                             webClient.DownloadFile(latestWebDriverInfo.DownloadUri, downloadFilePath);
 
                         try {
