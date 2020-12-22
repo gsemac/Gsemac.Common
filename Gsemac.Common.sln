@@ -9,7 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Gsemac.Win32", "src\Gsemac.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Gsemac.Core", "src\Gsemac.Core\Gsemac.Core.csproj", "{46F3DE15-F452-4EAA-A886-C6BD1CBA7976}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Gsemac.IO.Tests", "test\Gsemac.IO.Tests\Gsemac.IO.Tests.csproj", "{50EC3802-35C1-476C-8AD6-4C7A6AEA7079}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Gsemac.IO.Tests", "tests\Gsemac.IO.Tests\Gsemac.IO.Tests.csproj", "{50EC3802-35C1-476C-8AD6-4C7A6AEA7079}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Gsemac.Forms", "src\Gsemac.Forms\Gsemac.Forms.csproj", "{E9B26DE4-5B88-40E9-AB7E-43048A965586}"
 EndProject
@@ -17,23 +17,23 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Gsemac.Net", "src\Gsemac.Ne
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{559AE943-A0A6-43B1-ACF0-BE305C5B4FCE}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{742EDB7B-BAAD-43E2-82B6-2ECAA2D28338}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{742EDB7B-BAAD-43E2-82B6-2ECAA2D28338}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Gsemac.IO", "src\Gsemac.IO\Gsemac.IO.csproj", "{97A040D8-3023-44B4-B85B-CC351F44BC92}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Gsemac.Drawing", "src\Gsemac.Drawing\Gsemac.Drawing.csproj", "{8014AEC9-1A1C-403F-9030-CDA5BC921D91}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Gsemac.Core.Tests", "test\Gsemac.Core.Tests\Gsemac.Core.Tests.csproj", "{45BBC45F-484A-4473-BEB7-1C9651F42119}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Gsemac.Core.Tests", "tests\Gsemac.Core.Tests\Gsemac.Core.Tests.csproj", "{45BBC45F-484A-4473-BEB7-1C9651F42119}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Gsemac.Collections.Tests", "test\Gsemac.Collections.Tests\Gsemac.Collections.Tests.csproj", "{DB17A8E1-9F7A-40F8-8122-88E6EDC49B4D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Gsemac.Collections.Tests", "tests\Gsemac.Collections.Tests\Gsemac.Collections.Tests.csproj", "{DB17A8E1-9F7A-40F8-8122-88E6EDC49B4D}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Gsemac.Reflection", "src\Gsemac.Reflection\Gsemac.Reflection.csproj", "{2A0FF2DC-5815-41F1-A9CC-F4C1C7166637}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Gsemac.Net.Tests", "test\Gsemac.Net.Tests\Gsemac.Net.Tests.csproj", "{D720B6A0-3105-4190-B502-D24EEFE0BB76}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Gsemac.Net.Tests", "tests\Gsemac.Net.Tests\Gsemac.Net.Tests.csproj", "{D720B6A0-3105-4190-B502-D24EEFE0BB76}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Gsemac.Text", "src\Gsemac.Text\Gsemac.Text.csproj", "{214407BF-4C1D-4502-96E6-325FF4A42C8D}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Gsemac.Text.Tests", "test\Gsemac.Text.Tests\Gsemac.Text.Tests.csproj", "{9B9113A6-C103-41BE-89D1-5A8F9CAA0EAD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Gsemac.Text.Tests", "tests\Gsemac.Text.Tests\Gsemac.Text.Tests.csproj", "{9B9113A6-C103-41BE-89D1-5A8F9CAA0EAD}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Gsemac.Threading", "src\Gsemac.Threading\Gsemac.Threading.csproj", "{5F0D871C-9DFD-4F17-ADDD-4BFB46D154A3}"
 EndProject
