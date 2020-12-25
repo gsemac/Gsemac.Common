@@ -19,8 +19,11 @@ namespace Gsemac.Drawing.Imaging {
 
             // Accepts full file paths, or plain image extensions (with or without leading period, e.g. ".jpeg" and "jpeg").
 
-            if (string.IsNullOrWhiteSpace(filePath))
+            if (filePath is null)
                 throw new ArgumentNullException(nameof(filePath));
+
+            if (string.IsNullOrWhiteSpace(filePath))
+                throw new ArgumentException(filePath);
 
             string ext = PathUtilities.GetFileExtension(filePath);
 

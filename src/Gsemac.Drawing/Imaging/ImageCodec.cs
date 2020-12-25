@@ -18,6 +18,9 @@ namespace Gsemac.Drawing.Imaging {
 
             string ext = PathUtilities.GetFileExtension(filePath).ToLowerInvariant();
 
+            if (string.IsNullOrWhiteSpace(ext))
+                return false;
+
             return IsSupportedImageFormat(ImageFormat.FromFileExtension(ext));
 
         }
@@ -29,6 +32,9 @@ namespace Gsemac.Drawing.Imaging {
         public static bool IsNativelySupportedImageFormat(string filePath) {
 
             string ext = PathUtilities.GetFileExtension(filePath).ToLowerInvariant();
+
+            if (string.IsNullOrWhiteSpace(ext))
+                return false;
 
             return IsNativelySupportedImageFormat(ImageFormat.FromFileExtension(ext));
 
@@ -48,6 +54,9 @@ namespace Gsemac.Drawing.Imaging {
         public static IImageCodec FromFileExtension(string filePath) {
 
             string ext = PathUtilities.GetFileExtension(filePath);
+
+            if (string.IsNullOrWhiteSpace(ext))
+                return null;
 
             return FromImageFormat(ImageFormat.FromFileExtension(ext));
 

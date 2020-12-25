@@ -9,6 +9,9 @@ namespace Gsemac.Drawing.Imaging.Extensions {
 
             string ext = PathUtilities.GetFileExtension(filePath).ToLowerInvariant();
 
+            if (string.IsNullOrWhiteSpace(ext))
+                return false;
+
             return obj.IsSupportedImageFormat(ImageFormat.FromFileExtension(ext));
 
         }
