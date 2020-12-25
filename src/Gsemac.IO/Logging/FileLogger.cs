@@ -22,6 +22,16 @@ namespace Gsemac.IO.Logging {
             this.Directory = directory;
 
         }
+        public FileLogger(string directory, ILogFilenameFormatter filenameFormatter) :
+          this(directory, false) {
+
+            this.FilenameFormatter = filenameFormatter;
+
+            // Enable the logger after initializing the filename formatter so the headers are written to the correct path.
+
+            Enabled = true;
+
+        }
 
         public void SetLogRetentionPolicy(ILogRetentionPolicy retentionPolicy) {
 
