@@ -10,6 +10,8 @@ namespace Gsemac.Core {
 
             if (MSVersion.TryParse(input, out MSVersion msVersion))
                 result = msVersion;
+            else if (SemVersion.TryParse(input, out SemVersion semVersion))
+                result = semVersion;
 
             return result != null;
 

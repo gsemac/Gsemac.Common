@@ -8,8 +8,9 @@ namespace Gsemac.Core {
     // Documentation for Microsoft's version format:
     // https://docs.microsoft.com/en-us/previous-versions/dotnet/articles/ms973869(v=msdn.10)?redirectedfrom=MSDN
 
-    class MSVersion :
-        IVersion {
+    public class MSVersion :
+        IVersion,
+        IComparable<MSVersion> {
 
         // Public members
 
@@ -50,6 +51,16 @@ namespace Gsemac.Core {
             this.Revision = revision;
 
         }
+        public MSVersion(string versionString) {
+
+            MSVersion version = Parse(versionString);
+
+            Major = version.Major;
+            Minor = version.Minor;
+            Build = version.Build;
+            Revision = version.Revision;
+
+        }
 
         public int CompareTo(object obj) {
 
@@ -58,10 +69,12 @@ namespace Gsemac.Core {
 
             if (obj is MSVersion msVersion)
                 return CompareTo(msVersion);
-            if (obj is IVersion version)
+            else if (obj is IVersion version)
                 return CompareTo(version);
+            else if (obj is string versionString && Version.TryParse(versionString, out IVersion parsedVersion))
+                return CompareTo(parsedVersion);
             else
-                throw new ArgumentException("The given object cannot be compared.", nameof(obj));
+                throw new ArgumentException("The given object is not a valid version.", nameof(obj));
 
         }
         public int CompareTo(MSVersion obj) {
