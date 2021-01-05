@@ -66,6 +66,12 @@ namespace Gsemac.Core {
             this.revisionNumbers = version.revisionNumbers;
 
         }
+        public MSVersion(MSVersion other) :
+            this(other.revisionNumbers.ToArray()) {
+        }
+        public MSVersion(System.Version other) :
+            this(SystemVersionToMSVersion(other)) {
+        }
 
         public int CompareTo(object obj) {
 
@@ -230,6 +236,18 @@ namespace Gsemac.Core {
         private MSVersion(int[] revisionNumbers) {
 
             this.revisionNumbers = revisionNumbers;
+
+        }
+
+        private static MSVersion SystemVersionToMSVersion(System.Version systemVersion) {
+
+            if (systemVersion.Build >= 0)
+                if (systemVersion.Revision >= 0)
+                    return new MSVersion(systemVersion.Major, systemVersion.Minor, systemVersion.Build, systemVersion.Revision);
+                else
+                    return new MSVersion(systemVersion.Major, systemVersion.Minor, systemVersion.Build);
+
+            return new MSVersion(systemVersion.Major, systemVersion.Minor);
 
         }
 
