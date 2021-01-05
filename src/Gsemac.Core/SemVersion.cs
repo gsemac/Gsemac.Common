@@ -23,9 +23,6 @@ namespace Gsemac.Core {
         public string PreRelease { get; private set; } = string.Empty;
         public string Build { get; private set; } = string.Empty;
 
-        public SemVersion(int major, int minor) :
-            this(major, minor, 0) {
-        }
         public SemVersion(int major, int minor, int patch) {
 
             if (major < 0)
@@ -70,10 +67,20 @@ namespace Gsemac.Core {
             if (other is null)
                 throw new ArgumentNullException(nameof(other));
 
-            if (Major < other.Major || Minor < other.Minor || Patch < other.Patch)
-                return -1;
-            else if (Major > other.Major || Minor > other.Minor || Patch > other.Patch)
-                return 1;
+            // Compare revision numbers.
+
+            int[] lhsRevisionNumbers = this.ToArray();
+            int[] rhsRevisionNumbers = other.ToArray();
+
+            for (int i = 0; i < Math.Min(lhsRevisionNumbers.Length, rhsRevisionNumbers.Length); ++i) {
+
+                if (lhsRevisionNumbers[i] > rhsRevisionNumbers[i])
+                    return 1;
+
+                if (lhsRevisionNumbers[i] < rhsRevisionNumbers[i])
+                    return -1;
+
+            }
 
             // If we get here, the major/minor/patch are all equal.
 
@@ -86,11 +93,11 @@ namespace Gsemac.Core {
             // If we get here, both versions are pre-release versions.
 
             string[] preReleaseParts = PreRelease?.Split('.') ?? new string[] { };
-            string[] objPreReleaseParts = other.PreRelease?.Split('.') ?? new string[] { };
+            string[] otherPreReleaseParts = other.PreRelease?.Split('.') ?? new string[] { };
 
-            for (int i = 0; i < preReleaseParts.Count() && i < objPreReleaseParts.Count(); ++i) {
+            for (int i = 0; i < preReleaseParts.Count() && i < otherPreReleaseParts.Count(); ++i) {
 
-                int compareResult = ComparePreReleaseIdentifiers(preReleaseParts[i], objPreReleaseParts[i]);
+                int compareResult = ComparePreReleaseIdentifiers(preReleaseParts[i], otherPreReleaseParts[i]);
 
                 if (compareResult != 0)
                     return compareResult;
@@ -99,9 +106,9 @@ namespace Gsemac.Core {
 
             // If we get here, all pre-release identifiers were identical.
 
-            if (preReleaseParts.Count() > objPreReleaseParts.Count())
+            if (preReleaseParts.Count() > otherPreReleaseParts.Count())
                 return 1;
-            else if (preReleaseParts.Count() < objPreReleaseParts.Count())
+            else if (preReleaseParts.Count() < otherPreReleaseParts.Count())
                 return -1;
 
             // If we get here, the versions were exactly equal.
