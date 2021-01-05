@@ -1,0 +1,11 @@
+﻿using System.Collections.Generic;
+
+namespace Gsemac.Net.GitHub {
+
+    public interface IGitHubClient {
+
+        IEnumerable<IRelease> GetReleases(IRepositoryUrl repositoryUrl, int numberOfReleases);
+
+    }
+
+}

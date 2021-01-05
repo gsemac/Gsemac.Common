@@ -1,0 +1,21 @@
+<Project Sdk="MSBuild.Sdk.Extras/2.0.54">
+
+  <PropertyGroup>
+    <TargetFrameworks>netstandard2.0;net40-client</TargetFrameworks>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)' == 'Release'">
+    <DebugType>none</DebugType>
+    <DebugSymbols>false</DebugSymbols>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="HtmlAgilityPack" Version="1.11.29" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\src\Gsemac.Core\Gsemac.Core.csproj" />
+    <ProjectReference Include="..\src\Gsemac.Net\Gsemac.Net.csproj" />
+  </ItemGroup>
+
+</Project>

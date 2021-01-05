@@ -53,6 +53,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Gsemac.IO.Compression", "sr
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Gsemac.IO.Compression.SharpCompress", "src\Gsemac.IO.Compression.SharpCompress\Gsemac.IO.Compression.SharpCompress.csproj", "{3FD1BB15-8F3F-448F-89CB-B65E39EAE4FA}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gsemac.Net.GitHub", "Gsemac.Net.GitHub\Gsemac.Net.GitHub.csproj", "{72F6D9B7-A0CF-4D20-8CAA-CB89DD9EE47C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -151,6 +153,10 @@ Global
 		{3FD1BB15-8F3F-448F-89CB-B65E39EAE4FA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3FD1BB15-8F3F-448F-89CB-B65E39EAE4FA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3FD1BB15-8F3F-448F-89CB-B65E39EAE4FA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{72F6D9B7-A0CF-4D20-8CAA-CB89DD9EE47C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{72F6D9B7-A0CF-4D20-8CAA-CB89DD9EE47C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{72F6D9B7-A0CF-4D20-8CAA-CB89DD9EE47C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{72F6D9B7-A0CF-4D20-8CAA-CB89DD9EE47C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -179,6 +185,7 @@ Global
 		{EA395B31-78FE-44A0-AD8B-00AAEA028A95} = {559AE943-A0A6-43B1-ACF0-BE305C5B4FCE}
 		{70620B11-DB02-438E-AE6D-0D5F2D2449BE} = {559AE943-A0A6-43B1-ACF0-BE305C5B4FCE}
 		{3FD1BB15-8F3F-448F-89CB-B65E39EAE4FA} = {559AE943-A0A6-43B1-ACF0-BE305C5B4FCE}
+		{72F6D9B7-A0CF-4D20-8CAA-CB89DD9EE47C} = {559AE943-A0A6-43B1-ACF0-BE305C5B4FCE}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {D040AD76-9C92-4D4E-99AD-45B26C068360}
