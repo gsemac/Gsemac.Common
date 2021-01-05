@@ -137,9 +137,9 @@ namespace Gsemac.Core {
 
             result = null;
 
-            // The input string must not be null.
+            // The input string must not be empty.
 
-            if (string.IsNullOrEmpty(input))
+            if (string.IsNullOrWhiteSpace(input))
                 return false;
 
             // Version strings are of the form major.minor[.build[.revision]].

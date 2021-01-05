@@ -161,9 +161,9 @@ namespace Gsemac.Core {
 
             result = null;
 
-            // The input string must not be null.
+            // The input string must not be empty.
 
-            if (string.IsNullOrEmpty(input))
+            if (string.IsNullOrWhiteSpace(input))
                 return false;
 
             // Split the version into its numeric (e.g. "1.0.0") and pre-release/build (e.g. "alpha+build") parts.
