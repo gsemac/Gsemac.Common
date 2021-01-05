@@ -1,5 +1,4 @@
-﻿using Gsemac.Core;
-using Gsemac.Net.Extensions;
+﻿using Gsemac.Net.Extensions;
 using HtmlAgilityPack;
 using System;
 using System.Collections.Generic;
@@ -23,6 +22,25 @@ namespace Gsemac.Net.GitHub {
 
         }
 
+        public IRepository GetRepository(IRepositoryUrl repositoryUrl) {
+
+            using (WebClient webClient = CreateWebClient()) {
+
+                HtmlDocument htmlDocument = new HtmlDocument();
+
+                htmlDocument.LoadHtml(webClient.DownloadString(repositoryUrl.CodeUrl));
+
+                string defaultDownloadUrl = $"{GitHubUtilities.RootUrl}{repositoryUrl.Owner}/{repositoryUrl.RepositoryName}/archive/{(string.IsNullOrWhiteSpace(repositoryUrl.BranchName) ? "master" : repositoryUrl.BranchName)}.zip";
+                string downloadUrl = GitHubUtilities.RootUrl.TrimEnd('/') + htmlDocument.DocumentNode.SelectNodes(@"//a[contains(.,'Download ZIP')]").FirstOrDefault()?.GetAttributeValue("href", string.Empty);
+
+                return new Repository() {
+                    Url = repositoryUrl,
+                    DownloadUrl = downloadUrl.EndsWith("/") ? defaultDownloadUrl : downloadUrl,
+                };
+
+            }
+
+        }
         public IEnumerable<IRelease> GetReleases(IRepositoryUrl repositoryUrl, int numberOfReleases) {
 
             string nextPageUrl = repositoryUrl.ReleasesUrl;

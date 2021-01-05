@@ -10,6 +10,11 @@ namespace Gsemac.Net.GitHub.Extensions {
             return gitHubClient.GetReleases(new RepositoryUrl(repositoryUrl), numberOfReleases);
 
         }
+        public static IEnumerable<IRelease> GetReleases(this IGitHubClient gitHubClient, IRepository repository, int numberOfReleases) {
+
+            return gitHubClient.GetReleases(repository.Url, numberOfReleases);
+
+        }
 
         public static IRelease GetLatestRelease(this IGitHubClient gitHubClient, string repositoryUrl) {
 
@@ -19,6 +24,11 @@ namespace Gsemac.Net.GitHub.Extensions {
         public static IRelease GetLatestRelease(this IGitHubClient gitHubClient, IRepositoryUrl repositoryUrl) {
 
             return gitHubClient.GetReleases(repositoryUrl, 1).FirstOrDefault();
+
+        }
+        public static IRelease GetLatestRelease(this IGitHubClient gitHubClient, IRepository repository) {
+
+            return GetLatestRelease(gitHubClient, repository.Url);
 
         }
 
