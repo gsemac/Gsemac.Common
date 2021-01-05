@@ -59,7 +59,7 @@ namespace Gsemac.Net.GitHub {
 
             }
 
-            return releases;
+            return releases.Take(numberOfReleases);
 
         }
 
