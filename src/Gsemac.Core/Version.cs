@@ -6,6 +6,8 @@ namespace Gsemac.Core {
 
     public static class Version {
 
+        // Public members
+
         public static bool TryParse(string input, out IVersion result) {
 
             return TryParse(input, strict: true, out result);
@@ -25,7 +27,7 @@ namespace Gsemac.Core {
 
             if (MSVersion.TryParse(input, strict, out MSVersion msVersion))
                 result = msVersion;
-            else if (SemVersion.TryParse(input, out SemVersion semVersion))
+            else if (SemVersion.TryParse(input, strict, out SemVersion semVersion))
                 result = semVersion;
 
             return result != null;
@@ -90,13 +92,22 @@ namespace Gsemac.Core {
 
             // Otherwise, perform a generic comparison.
 
-            int length = Math.Max(lhs.Count(), rhs.Count());
+            return Compare(lhs.ToArray(), rhs.ToArray());
+
+        }
+
+        internal static int Compare(int[] lhs, int[] rhs) {
+
+            // Compare revision numbers in order.
+            // This works for any number of revision numbers.
+
+            int length = Math.Max(lhs.Length, rhs.Length);
 
             int[] lhsRevisionNumbers = new int[length];
             int[] rhsRevisionNumbers = new int[length];
 
-            Array.Copy(lhs.ToArray(), lhsRevisionNumbers, lhs.Count());
-            Array.Copy(rhs.ToArray(), rhsRevisionNumbers, rhs.Count());
+            Array.Copy(lhs, lhsRevisionNumbers, lhs.Length);
+            Array.Copy(rhs, rhsRevisionNumbers, rhs.Length);
 
             for (int i = 0; i < length; ++i) {
 

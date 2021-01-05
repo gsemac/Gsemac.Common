@@ -17,9 +17,9 @@ namespace Gsemac.Core {
 
         public bool IsPreRelease => !string.IsNullOrEmpty(PreRelease);
 
-        public int Major { get; } = 0;
-        public int Minor { get; } = 0;
-        public int Patch { get; } = 0;
+        public int Major => revisionNumbers[0];
+        public int Minor => revisionNumbers.Length > 1 ? revisionNumbers[1] : 0;
+        public int Patch => revisionNumbers.Length > 2 ? revisionNumbers[2] : 0;
         public string PreRelease { get; private set; } = string.Empty;
         public string Build { get; private set; } = string.Empty;
 
@@ -34,21 +34,45 @@ namespace Gsemac.Core {
             if (patch < 0)
                 throw new ArgumentOutOfRangeException(nameof(patch));
 
-            this.Major = major;
-            this.Minor = minor;
-            this.Patch = patch;
+            this.revisionNumbers = new int[] {
+                major,
+                minor,
+                patch
+            };
 
         }
-        public SemVersion(string versionString) {
+        public SemVersion(int major, int minor, int patch, string preRelease) :
+            this(major, minor, patch) {
 
-            SemVersion version = Parse(versionString);
+            if (string.IsNullOrEmpty(preRelease))
+                throw new ArgumentNullException(nameof(preRelease));
 
-            Major = version.Major;
-            Minor = version.Minor;
-            Build = version.Build;
-            Patch = version.Patch;
-            PreRelease = version.PreRelease;
-            Build = version.Build;
+            if (string.IsNullOrWhiteSpace(preRelease))
+                throw new ArgumentException("Pre-release string cannot be empty.", nameof(preRelease));
+
+            this.PreRelease = preRelease;
+
+        }
+        public SemVersion(int major, int minor, int patch, string preRelease, string build) :
+            this(major, minor, patch, preRelease) {
+
+            if (string.IsNullOrEmpty(build))
+                throw new ArgumentNullException(nameof(build));
+
+            if (string.IsNullOrWhiteSpace(build))
+                throw new ArgumentException("Build string cannot be empty.", nameof(build));
+
+            this.Build = build;
+
+        }
+        public SemVersion(string versionString) :
+            this(Parse(versionString)) {
+        }
+        public SemVersion(SemVersion other) :
+            this(other.revisionNumbers) {
+
+            PreRelease = other.PreRelease;
+            Build = other.Build;
 
         }
 
@@ -69,18 +93,10 @@ namespace Gsemac.Core {
 
             // Compare revision numbers.
 
-            int[] lhsRevisionNumbers = this.ToArray();
-            int[] rhsRevisionNumbers = other.ToArray();
+            int revisionNumbersComparisonResult = Version.Compare(this.revisionNumbers, other.revisionNumbers);
 
-            for (int i = 0; i < Math.Min(lhsRevisionNumbers.Length, rhsRevisionNumbers.Length); ++i) {
-
-                if (lhsRevisionNumbers[i] > rhsRevisionNumbers[i])
-                    return 1;
-
-                if (lhsRevisionNumbers[i] < rhsRevisionNumbers[i])
-                    return -1;
-
-            }
+            if (revisionNumbersComparisonResult != 0)
+                return revisionNumbersComparisonResult;
 
             // If we get here, the major/minor/patch are all equal.
 
@@ -168,9 +184,7 @@ namespace Gsemac.Core {
 
         public IEnumerator<int> GetEnumerator() {
 
-            yield return Major;
-            yield return Minor;
-            yield return Patch;
+            return ((IEnumerable<int>)revisionNumbers).GetEnumerator();
 
         }
         IEnumerator IEnumerable.GetEnumerator() {
@@ -183,11 +197,7 @@ namespace Gsemac.Core {
 
             StringBuilder sb = new StringBuilder();
 
-            sb.Append(Major);
-            sb.Append('.');
-            sb.Append(Minor);
-            sb.Append('.');
-            sb.Append(Patch);
+            sb.Append(string.Join(".", revisionNumbers));
 
             if (!string.IsNullOrEmpty(PreRelease)) {
 
@@ -209,6 +219,11 @@ namespace Gsemac.Core {
 
         public static bool TryParse(string input, out SemVersion result) {
 
+            return TryParse(input, strict: true, out result);
+
+        }
+        public static bool TryParse(string input, bool strict, out SemVersion result) {
+
             result = null;
 
             // The input string must not be empty.
@@ -225,16 +240,20 @@ namespace Gsemac.Core {
             if (!parts.Any())
                 return false;
 
-            int?[] numericParts = parts.First().Split('.')
+            int?[] revisionNumbers = parts.First().Split('.')
                 .Select(part => int.TryParse(part, out int parsedInt) ? (int?)parsedInt : null)
                 .ToArray();
 
             // The numeric part must have exactly 3 parts, and they must all be > 0.
+            // If strict is false, we will allow any number of revision numbers (at least one).
 
-            if (numericParts.Count() != 3 || numericParts.Any(part => !part.HasValue || part.Value < 0))
+            if (!revisionNumbers.Any() || revisionNumbers.Any(part => !part.HasValue || part.Value < 0))
                 return false;
 
-            result = new SemVersion(numericParts[0].Value, numericParts[1].Value, numericParts[2].Value);
+            if (strict && revisionNumbers.Count() != 3)
+                return false;
+
+            result = new SemVersion(revisionNumbers.Select(i => i.Value).ToArray());
 
             if (parts.Count() > 1) {
 
@@ -265,10 +284,15 @@ namespace Gsemac.Core {
         }
         public static SemVersion Parse(string input) {
 
+            return Parse(input, strict: true);
+
+        }
+        public static SemVersion Parse(string input, bool strict) {
+
             if (input is null)
                 throw new ArgumentNullException(nameof(input));
 
-            if (!TryParse(input, out SemVersion result))
+            if (!TryParse(input, strict: strict, out SemVersion result))
                 throw new FormatException("The version string was not in the correct format.");
 
             return result;
@@ -276,6 +300,14 @@ namespace Gsemac.Core {
         }
 
         // Private members
+
+        private readonly int[] revisionNumbers;
+
+        private SemVersion(int[] revisionNumbers) {
+
+            this.revisionNumbers = revisionNumbers;
+
+        }
 
         private static int ComparePreReleaseIdentifiers(string lhs, string rhs) {
 

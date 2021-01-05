@@ -27,6 +27,7 @@ namespace Gsemac.Core.Tests {
             Assert.AreEqual(new MSVersion(1, 2, 3, 4), MSVersion.Parse("1.2.3.4"));
 
         }
+
         [TestMethod]
         public void TestParseMsVersionWithMajorAndStrict() {
 

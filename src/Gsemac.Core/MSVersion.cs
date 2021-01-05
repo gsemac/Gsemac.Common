@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
-using System.Text;
 
 namespace Gsemac.Core {
 
@@ -66,8 +64,8 @@ namespace Gsemac.Core {
             this.revisionNumbers = version.revisionNumbers;
 
         }
-        public MSVersion(MSVersion other) :
-            this(other.revisionNumbers.ToArray()) {
+        public MSVersion(IVersion other) :
+            this(other.ToArray()) {
         }
         public MSVersion(System.Version other) :
             this(SystemVersionToMSVersion(other)) {
@@ -85,28 +83,7 @@ namespace Gsemac.Core {
         }
         public int CompareTo(MSVersion other) {
 
-            // Compare revision numbers in order.
-            // This works for any number of revision numbers.
-
-            int length = Math.Max(this.Count(), other.Count());
-
-            int[] lhsRevisionNumbers = new int[length];
-            int[] rhsRevisionNumbers = new int[length];
-
-            Array.Copy(this.revisionNumbers, lhsRevisionNumbers, this.Count());
-            Array.Copy(other.revisionNumbers, rhsRevisionNumbers, other.Count());
-
-            for (int i = 0; i < length; ++i) {
-
-                if (lhsRevisionNumbers[i] > rhsRevisionNumbers[i])
-                    return 1;
-
-                if (lhsRevisionNumbers[i] < rhsRevisionNumbers[i])
-                    return -1;
-
-            }
-
-            return 0;
+            return Version.Compare(this.revisionNumbers, other.revisionNumbers);
 
         }
 

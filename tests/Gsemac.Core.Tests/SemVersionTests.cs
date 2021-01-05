@@ -27,6 +27,38 @@ namespace Gsemac.Core.Tests {
             Assert.AreEqual("1.2.3-alpha+abc123", SemVersion.Parse("1.2.3-alpha+abc123").ToString());
 
         }
+
+        [TestMethod]
+        public void TestParseSemVersionWithMajorAndStrict() {
+
+            Assert.ThrowsException<FormatException>(() => SemVersion.Parse("1"));
+
+        }
+        [TestMethod]
+        public void TestParseSemVersionWithMajorAndNotStrict() {
+
+            Assert.AreEqual("1", SemVersion.Parse("1", strict: false).ToString());
+
+        }
+        [TestMethod]
+        public void TestParseSemVersionWithMoreThanThreeNumbersAndStrict() {
+
+            Assert.ThrowsException<FormatException>(() => SemVersion.Parse("1.2.3.4"));
+
+        }
+        [TestMethod]
+        public void TestParseSemVersionWithMoreThanThreeNumbersAndNotStrict() {
+
+            Assert.AreEqual("1.2.3.4", SemVersion.Parse("1.2.3.4", strict: false).ToString());
+
+        }
+        [TestMethod]
+        public void TestParseSemVersionWithMoreThanThreeNumbersAndPreReleaseAndNotStrict() {
+
+            Assert.AreEqual("1.2.3.4-alpha", SemVersion.Parse("1.2.3.4-alpha", strict: false).ToString());
+
+        }
+
         [TestMethod]
         public void TestParseSemVersionThrowsWithTooFewNumbers() {
 
