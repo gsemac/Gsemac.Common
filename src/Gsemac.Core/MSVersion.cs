@@ -106,8 +106,8 @@ namespace Gsemac.Core {
 
         public static bool operator ==(MSVersion left, MSVersion right) {
 
-            if (ReferenceEquals(left, null))
-                return ReferenceEquals(right, null);
+            if (left is null)
+                return right is null;
 
             return left.Equals(right);
 
@@ -119,22 +119,22 @@ namespace Gsemac.Core {
         }
         public static bool operator <(MSVersion left, MSVersion right) {
 
-            return ReferenceEquals(left, null) ? !ReferenceEquals(right, null) : left.CompareTo(right) < 0;
+            return left is null ? right is object : left.CompareTo(right) < 0;
 
         }
         public static bool operator <=(MSVersion left, MSVersion right) {
 
-            return ReferenceEquals(left, null) || left.CompareTo(right) <= 0;
+            return left is null || left.CompareTo(right) <= 0;
 
         }
         public static bool operator >(MSVersion left, MSVersion right) {
 
-            return !ReferenceEquals(left, null) && left.CompareTo(right) > 0;
+            return left is object && left.CompareTo(right) > 0;
 
         }
         public static bool operator >=(MSVersion left, MSVersion right) {
 
-            return ReferenceEquals(left, null) ? ReferenceEquals(right, null) : left.CompareTo(right) >= 0;
+            return left is null ? right is null : left.CompareTo(right) >= 0;
 
         }
 
