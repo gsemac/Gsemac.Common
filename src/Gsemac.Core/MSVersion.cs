@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Text;
@@ -18,8 +20,8 @@ namespace Gsemac.Core {
 
         public int Major { get; } = -1;
         public int Minor { get; } = -1;
-        public int Build { get; } = -1;
-        public int Revision { get; } = -1;
+        public int Build => build < 0 ? 0 : build;
+        public int Revision => revision < 0 ? 0 : revision;
 
         public MSVersion(int major, int minor) {
 
@@ -39,7 +41,7 @@ namespace Gsemac.Core {
             if (build < 0)
                 throw new ArgumentOutOfRangeException(nameof(build));
 
-            this.Build = build;
+            this.build = build;
 
         }
         public MSVersion(int major, int minor, int build, int revision) :
@@ -48,62 +50,115 @@ namespace Gsemac.Core {
             if (revision < 0)
                 throw new ArgumentOutOfRangeException(nameof(revision));
 
-            this.Revision = revision;
+            this.revision = revision;
 
         }
         public MSVersion(string versionString) {
 
             MSVersion version = Parse(versionString);
 
-            Major = version.Major;
-            Minor = version.Minor;
-            Build = version.Build;
-            Revision = version.Revision;
+            this.Major = version.Major;
+            this.Minor = version.Minor;
+            this.build = version.build;
+            this.revision = version.revision;
 
         }
 
         public int CompareTo(object obj) {
 
-            if (obj is null)
-                throw new ArgumentNullException(nameof(obj));
-
-            if (obj is MSVersion msVersion)
-                return CompareTo(msVersion);
-            else if (obj is IVersion version)
-                return CompareTo(version);
-            else if (obj is string versionString && Version.TryParse(versionString, out IVersion parsedVersion))
-                return CompareTo(parsedVersion);
-            else
-                throw new ArgumentException("The given object is not a valid version.", nameof(obj));
+            return Version.Compare(this, obj);
 
         }
-        public int CompareTo(MSVersion obj) {
+        public int CompareTo(IVersion other) {
 
-            if (obj is null)
-                throw new ArgumentNullException(nameof(obj));
-
-            if (Major < obj.Major || Minor < obj.Minor || Build < obj.Build || Revision < obj.Revision)
-                return -1;
-            else if (Major > obj.Major || Minor > obj.Minor || Build > obj.Build || Revision > obj.Revision)
-                return 1;
-            else
-                return 0;
+            return Version.Compare(this, other);
 
         }
-        public int CompareTo(IVersion obj) {
+        public int CompareTo(MSVersion other) {
+
+            int[] lhsRevisionNumbers = new int[] { Major, Minor, Build, Revision };
+            int[] rhsRevisionNumbers = new int[] { other.Major, other.Minor, other.Build, other.Revision };
+
+            for (int i = 0; i < Math.Min(lhsRevisionNumbers.Length, rhsRevisionNumbers.Length); ++i) {
+
+                if (lhsRevisionNumbers[i] > rhsRevisionNumbers[i])
+                    return 1;
+
+                if (lhsRevisionNumbers[i] < rhsRevisionNumbers[i])
+                    return -1;
+
+            }
+
+            return 0;
+
+        }
+
+        public override bool Equals(object obj) {
+
+            if (ReferenceEquals(this, obj))
+                return true;
 
             if (obj is null)
-                throw new ArgumentNullException(nameof(obj));
+                return false;
 
-            if (obj is MSVersion msVersion)
-                return CompareTo(msVersion);
+            return CompareTo(obj) == 0;
 
-            if (Major < obj.Major || Minor < obj.Minor)
-                return -1;
-            else if (obj.IsPreRelease || Major > obj.Major || Minor > obj.Minor)
-                return 1;
-            else
-                return 0;
+        }
+        public override int GetHashCode() {
+
+            return ToString().GetHashCode();
+
+        }
+
+        public static bool operator ==(MSVersion left, MSVersion right) {
+
+            if (ReferenceEquals(left, null))
+                return ReferenceEquals(right, null);
+
+            return left.Equals(right);
+
+        }
+        public static bool operator !=(MSVersion left, MSVersion right) {
+
+            return !(left == right);
+
+        }
+        public static bool operator <(MSVersion left, MSVersion right) {
+
+            return ReferenceEquals(left, null) ? !ReferenceEquals(right, null) : left.CompareTo(right) < 0;
+
+        }
+        public static bool operator <=(MSVersion left, MSVersion right) {
+
+            return ReferenceEquals(left, null) || left.CompareTo(right) <= 0;
+
+        }
+        public static bool operator >(MSVersion left, MSVersion right) {
+
+            return !ReferenceEquals(left, null) && left.CompareTo(right) > 0;
+
+        }
+        public static bool operator >=(MSVersion left, MSVersion right) {
+
+            return ReferenceEquals(left, null) ? ReferenceEquals(right, null) : left.CompareTo(right) >= 0;
+
+        }
+
+        public IEnumerator<int> GetEnumerator() {
+
+            yield return Major;
+            yield return Minor;
+
+            if (build >= 0)
+                yield return Build;
+
+            if (revision >= 0)
+                yield return Revision;
+
+        }
+        IEnumerator IEnumerable.GetEnumerator() {
+
+            return GetEnumerator();
 
         }
 
@@ -115,14 +170,14 @@ namespace Gsemac.Core {
             sb.Append('.');
             sb.Append(Minor);
 
-            if (Build >= 0) {
+            if (build >= 0) {
 
                 sb.Append('.');
                 sb.Append(Build);
 
             }
 
-            if (Revision >= 0) {
+            if (revision >= 0) {
 
                 sb.Append('.');
                 sb.Append(Revision);
@@ -150,7 +205,7 @@ namespace Gsemac.Core {
 
             // There must be at least two parts, they must all be numeric, and they must all be > 0.
 
-            if (parts.Count() < 2 || parts.Any(part => !part.HasValue || part.Value < 0))
+            if (parts.Count() < 2 || parts.Count() > 4 || parts.Any(part => !part.HasValue || part.Value < 0))
                 return false;
 
             if (parts.Count() == 4)
@@ -174,6 +229,11 @@ namespace Gsemac.Core {
             return result;
 
         }
+
+        // Private members
+
+        private readonly int build = -1;
+        private readonly int revision = -1;
 
     }
 

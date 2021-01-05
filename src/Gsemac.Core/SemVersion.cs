@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Text;
@@ -55,41 +57,36 @@ namespace Gsemac.Core {
 
         public int CompareTo(object obj) {
 
-            if (obj is null)
-                throw new ArgumentNullException(nameof(obj));
-
-            if (obj is SemVersion semVersion)
-                return CompareTo(semVersion);
-            else if (obj is IVersion version)
-                return CompareTo(version);
-            else if (obj is string versionString && Version.TryParse(versionString, out IVersion parsedVersion))
-                return CompareTo(parsedVersion);
-            else
-                throw new ArgumentException("The given object is not a valid version.", nameof(obj));
+            return Version.Compare(this, obj);
 
         }
-        public int CompareTo(SemVersion obj) {
+        public int CompareTo(IVersion other) {
 
-            if (obj is null)
-                throw new ArgumentNullException(nameof(obj));
+            return Version.Compare(this, other);
 
-            if (Major < obj.Major || Minor < obj.Minor || Patch < obj.Patch)
+        }
+        public int CompareTo(SemVersion other) {
+
+            if (other is null)
+                throw new ArgumentNullException(nameof(other));
+
+            if (Major < other.Major || Minor < other.Minor || Patch < other.Patch)
                 return -1;
-            else if (Major > obj.Major || Minor > obj.Minor || Patch > obj.Patch)
+            else if (Major > other.Major || Minor > other.Minor || Patch > other.Patch)
                 return 1;
 
             // If we get here, the major/minor/patch are all equal.
 
-            if (IsPreRelease && !obj.IsPreRelease)
+            if (IsPreRelease && !other.IsPreRelease)
                 return -1;
 
-            if (!IsPreRelease && obj.IsPreRelease)
+            if (!IsPreRelease && other.IsPreRelease)
                 return 1;
 
             // If we get here, both versions are pre-release versions.
 
             string[] preReleaseParts = PreRelease?.Split('.') ?? new string[] { };
-            string[] objPreReleaseParts = obj.PreRelease?.Split('.') ?? new string[] { };
+            string[] objPreReleaseParts = other.PreRelease?.Split('.') ?? new string[] { };
 
             for (int i = 0; i < preReleaseParts.Count() && i < objPreReleaseParts.Count(); ++i) {
 
@@ -112,20 +109,66 @@ namespace Gsemac.Core {
             return 0;
 
         }
-        public int CompareTo(IVersion obj) {
 
-            if (obj is null)
-                throw new ArgumentNullException(nameof(obj));
+        public override bool Equals(object obj) {
 
-            if (obj is SemVersion semVersion)
-                return CompareTo(semVersion);
+            if (ReferenceEquals(this, obj))
+                return true;
 
-            if (Major < obj.Major || Minor < obj.Minor)
-                return -1;
-            else if (Major > obj.Major || Minor > obj.Minor || (!IsPreRelease && obj.IsPreRelease))
-                return 1;
-            else
-                return 0;
+            if (ReferenceEquals(obj, null))
+                return false;
+
+            return CompareTo(obj) == 0;
+        }
+        public override int GetHashCode() {
+
+            return ToString().GetHashCode();
+
+        }
+
+        public static bool operator ==(SemVersion left, SemVersion right) {
+
+            if (ReferenceEquals(left, null))
+                return ReferenceEquals(right, null);
+
+            return left.Equals(right);
+        }
+        public static bool operator !=(SemVersion left, SemVersion right) {
+
+            return !(left == right);
+
+        }
+        public static bool operator <(SemVersion left, SemVersion right) {
+
+            return ReferenceEquals(left, null) ? !ReferenceEquals(right, null) : left.CompareTo(right) < 0;
+
+        }
+        public static bool operator <=(SemVersion left, SemVersion right) {
+
+            return ReferenceEquals(left, null) || left.CompareTo(right) <= 0;
+
+        }
+        public static bool operator >(SemVersion left, SemVersion right) {
+
+            return !ReferenceEquals(left, null) && left.CompareTo(right) > 0;
+
+        }
+        public static bool operator >=(SemVersion left, SemVersion right) {
+
+            return ReferenceEquals(left, null) ? ReferenceEquals(right, null) : left.CompareTo(right) >= 0;
+
+        }
+
+        public IEnumerator<int> GetEnumerator() {
+
+            yield return Major;
+            yield return Minor;
+            yield return Patch;
+
+        }
+        IEnumerator IEnumerable.GetEnumerator() {
+
+            return GetEnumerator();
 
         }
 
