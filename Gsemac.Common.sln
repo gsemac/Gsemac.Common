@@ -53,7 +53,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Gsemac.IO.Compression", "sr
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Gsemac.IO.Compression.SharpCompress", "src\Gsemac.IO.Compression.SharpCompress\Gsemac.IO.Compression.SharpCompress.csproj", "{3FD1BB15-8F3F-448F-89CB-B65E39EAE4FA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gsemac.Net.GitHub", "Gsemac.Net.GitHub\Gsemac.Net.GitHub.csproj", "{72F6D9B7-A0CF-4D20-8CAA-CB89DD9EE47C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gsemac.Net.GitHub", "src\Gsemac.Net.GitHub\Gsemac.Net.GitHub.csproj", "{72F6D9B7-A0CF-4D20-8CAA-CB89DD9EE47C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
