@@ -28,6 +28,31 @@ namespace Gsemac.Core.Tests {
 
         }
         [TestMethod]
+        public void TestParseMsVersionWithMajorAndStrict() {
+
+            Assert.ThrowsException<FormatException>(() => MSVersion.Parse("1"));
+
+        }
+        [TestMethod]
+        public void TestParseMsVersionWithMajorAndNotStrict() {
+
+            Assert.AreEqual("1", MSVersion.Parse("1", strict: false).ToString());
+
+        }
+        [TestMethod]
+        public void TestParseMsVersionWithMoreThanFourNumbersAndStrict() {
+
+            Assert.ThrowsException<FormatException>(() => MSVersion.Parse("1.2.3.4.5"));
+
+        }
+        [TestMethod]
+        public void TestParseMsVersionWithMoreThanFourNumbersAndNotStrict() {
+
+            Assert.AreEqual("1.2.3.4.5", MSVersion.Parse("1.2.3.4.5", strict: false).ToString());
+
+        }
+
+        [TestMethod]
         public void TestParseMsVersionThrowsWithTooFewNumbers() {
 
             Assert.ThrowsException<FormatException>(() => MSVersion.Parse("1"));

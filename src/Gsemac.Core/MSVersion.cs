@@ -18,10 +18,10 @@ namespace Gsemac.Core {
 
         public bool IsPreRelease => false;
 
-        public int Major { get; } = -1;
-        public int Minor { get; } = -1;
-        public int Build => build < 0 ? 0 : build;
-        public int Revision => revision < 0 ? 0 : revision;
+        public int Major => revisionNumbers[0];
+        public int Minor => revisionNumbers.Length > 1 ? revisionNumbers[1] : 0;
+        public int Build => revisionNumbers.Length > 2 ? revisionNumbers[2] : 0;
+        public int Revision => revisionNumbers.Length > 3 ? revisionNumbers[3] : 0;
 
         public MSVersion(int major, int minor) {
 
@@ -31,8 +31,10 @@ namespace Gsemac.Core {
             if (minor < 0)
                 throw new ArgumentOutOfRangeException(nameof(minor));
 
-            this.Major = major;
-            this.Minor = minor;
+            this.revisionNumbers = new int[] {
+                major,
+                minor,
+            };
 
         }
         public MSVersion(int major, int minor, int build) :
@@ -41,7 +43,9 @@ namespace Gsemac.Core {
             if (build < 0)
                 throw new ArgumentOutOfRangeException(nameof(build));
 
-            this.build = build;
+            this.revisionNumbers = this.revisionNumbers.Concat(new int[] {
+                build
+            }).ToArray();
 
         }
         public MSVersion(int major, int minor, int build, int revision) :
@@ -50,17 +54,16 @@ namespace Gsemac.Core {
             if (revision < 0)
                 throw new ArgumentOutOfRangeException(nameof(revision));
 
-            this.revision = revision;
+            this.revisionNumbers = this.revisionNumbers.Concat(new int[] {
+                revision
+            }).ToArray();
 
         }
         public MSVersion(string versionString) {
 
             MSVersion version = Parse(versionString);
 
-            this.Major = version.Major;
-            this.Minor = version.Minor;
-            this.build = version.build;
-            this.revision = version.revision;
+            this.revisionNumbers = version.revisionNumbers;
 
         }
 
@@ -76,10 +79,18 @@ namespace Gsemac.Core {
         }
         public int CompareTo(MSVersion other) {
 
-            int[] lhsRevisionNumbers = new int[] { Major, Minor, Build, Revision };
-            int[] rhsRevisionNumbers = new int[] { other.Major, other.Minor, other.Build, other.Revision };
+            // Compare revision numbers in order.
+            // This works for any number of revision numbers.
 
-            for (int i = 0; i < Math.Min(lhsRevisionNumbers.Length, rhsRevisionNumbers.Length); ++i) {
+            int length = Math.Max(this.Count(), other.Count());
+
+            int[] lhsRevisionNumbers = new int[length];
+            int[] rhsRevisionNumbers = new int[length];
+
+            Array.Copy(this.revisionNumbers, lhsRevisionNumbers, this.Count());
+            Array.Copy(other.revisionNumbers, rhsRevisionNumbers, other.Count());
+
+            for (int i = 0; i < length; ++i) {
 
                 if (lhsRevisionNumbers[i] > rhsRevisionNumbers[i])
                     return 1;
@@ -146,14 +157,7 @@ namespace Gsemac.Core {
 
         public IEnumerator<int> GetEnumerator() {
 
-            yield return Major;
-            yield return Minor;
-
-            if (build >= 0)
-                yield return Build;
-
-            if (revision >= 0)
-                yield return Revision;
+            return ((IEnumerable<int>)revisionNumbers).GetEnumerator();
 
         }
         IEnumerator IEnumerable.GetEnumerator() {
@@ -164,31 +168,16 @@ namespace Gsemac.Core {
 
         public override string ToString() {
 
-            StringBuilder sb = new StringBuilder();
-
-            sb.Append(Major);
-            sb.Append('.');
-            sb.Append(Minor);
-
-            if (build >= 0) {
-
-                sb.Append('.');
-                sb.Append(Build);
-
-            }
-
-            if (revision >= 0) {
-
-                sb.Append('.');
-                sb.Append(Revision);
-
-            }
-
-            return sb.ToString();
+            return string.Join(".", revisionNumbers);
 
         }
 
         public static bool TryParse(string input, out MSVersion result) {
+
+            return TryParse(input, strict: true, out result);
+
+        }
+        public static bool TryParse(string input, bool strict, out MSVersion result) {
 
             result = null;
 
@@ -199,31 +188,35 @@ namespace Gsemac.Core {
 
             // Version strings are of the form major.minor[.build[.revision]].
 
-            int?[] parts = input.Split('.')
+            int?[] revisionNumbers = input.Split('.')
                 .Select(part => int.TryParse(part, out int parsedInt) ? (int?)parsedInt : null)
                 .ToArray();
 
-            // There must be at least two parts, they must all be numeric, and they must all be > 0.
+            // There must be at least two revision numbers, they must all be numeric, and they must all be > 0.
+            // If strict is false, we will allow any number of revision numbers (at least one).
 
-            if (parts.Count() < 2 || parts.Count() > 4 || parts.Any(part => !part.HasValue || part.Value < 0))
+            if (!revisionNumbers.Any() || revisionNumbers.Any(part => !part.HasValue || part.Value < 0))
                 return false;
 
-            if (parts.Count() == 4)
-                result = new MSVersion(parts[0].Value, parts[1].Value, parts[2].Value, parts[3].Value);
-            else if (parts.Count() == 3)
-                result = new MSVersion(parts[0].Value, parts[1].Value, parts[2].Value);
-            else
-                result = new MSVersion(parts[0].Value, parts[1].Value);
+            if (strict && (revisionNumbers.Count() < 2 || revisionNumbers.Count() > 4 || revisionNumbers.Any(part => !part.HasValue || part.Value < 0)))
+                return false;
+
+            result = new MSVersion(revisionNumbers.Select(i => i.Value).ToArray());
 
             return true;
 
         }
         public static MSVersion Parse(string input) {
 
+            return Parse(input, strict: true);
+
+        }
+        public static MSVersion Parse(string input, bool strict) {
+
             if (input is null)
                 throw new ArgumentNullException(nameof(input));
 
-            if (!TryParse(input, out MSVersion result))
+            if (!TryParse(input, strict, out MSVersion result))
                 throw new FormatException("The version string was not in the correct format.");
 
             return result;
@@ -232,8 +225,13 @@ namespace Gsemac.Core {
 
         // Private members
 
-        private readonly int build = -1;
-        private readonly int revision = -1;
+        private readonly int[] revisionNumbers;
+
+        private MSVersion(int[] revisionNumbers) {
+
+            this.revisionNumbers = revisionNumbers;
+
+        }
 
     }
 

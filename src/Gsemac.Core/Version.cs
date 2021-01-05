@@ -8,6 +8,11 @@ namespace Gsemac.Core {
 
         public static bool TryParse(string input, out IVersion result) {
 
+            return TryParse(input, strict: true, out result);
+
+        }
+        public static bool TryParse(string input, bool strict, out IVersion result) {
+
             result = null;
 
             if (string.IsNullOrWhiteSpace(input))
@@ -18,7 +23,7 @@ namespace Gsemac.Core {
 
             input = Regex.Replace(input, @"^v(?:ersion)?\s*", string.Empty, RegexOptions.IgnoreCase);
 
-            if (MSVersion.TryParse(input, out MSVersion msVersion))
+            if (MSVersion.TryParse(input, strict, out MSVersion msVersion))
                 result = msVersion;
             else if (SemVersion.TryParse(input, out SemVersion semVersion))
                 result = semVersion;
@@ -28,10 +33,15 @@ namespace Gsemac.Core {
         }
         public static IVersion Parse(string input) {
 
+            return Parse(input, strict: true);
+
+        }
+        public static IVersion Parse(string input, bool strict) {
+
             if (input is null)
                 throw new ArgumentNullException(nameof(input));
 
-            if (!TryParse(input, out IVersion result))
+            if (!TryParse(input, strict, out IVersion result))
                 throw new FormatException("The version string was not in the correct format.");
 
             return result;
@@ -85,8 +95,8 @@ namespace Gsemac.Core {
             int[] lhsRevisionNumbers = new int[length];
             int[] rhsRevisionNumbers = new int[length];
 
-            Array.Copy(lhs.ToArray(), lhsRevisionNumbers, length);
-            Array.Copy(rhs.ToArray(), rhsRevisionNumbers, length);
+            Array.Copy(lhs.ToArray(), lhsRevisionNumbers, lhs.Count());
+            Array.Copy(rhs.ToArray(), rhsRevisionNumbers, rhs.Count());
 
             for (int i = 0; i < length; ++i) {
 
