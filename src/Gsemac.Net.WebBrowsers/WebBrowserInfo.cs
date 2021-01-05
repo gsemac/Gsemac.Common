@@ -16,7 +16,7 @@ namespace Gsemac.Net.WebBrowsers {
         // Public members
 
         public string Name { get; }
-        public Version Version { get; }
+        public System.Version Version { get; }
         public string ExecutablePath { get; }
         public bool Is64Bit { get; }
         public WebBrowserId Id { get; }
@@ -151,9 +151,9 @@ namespace Gsemac.Net.WebBrowsers {
             return WebBrowserId.Unidentified;
 
         }
-        private static Version GetBrowserVersion(FileVersionInfo versionInfo) {
+        private static System.Version GetBrowserVersion(FileVersionInfo versionInfo) {
 
-            return new Version(versionInfo.ProductVersion);
+            return new System.Version(versionInfo.ProductVersion);
 
         }
         private static bool Is64BitExecutable(string browserExecutablePath) {

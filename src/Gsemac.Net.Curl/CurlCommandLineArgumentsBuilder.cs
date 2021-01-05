@@ -121,7 +121,7 @@ namespace Gsemac.Net.Curl {
             return this;
 
         }
-        public CurlCommandLineArgumentsBuilder WithHttpVersion(Version version) {
+        public CurlCommandLineArgumentsBuilder WithHttpVersion(System.Version version) {
 
             if (version != null) {
 
