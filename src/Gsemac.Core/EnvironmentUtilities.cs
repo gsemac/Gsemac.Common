@@ -24,7 +24,7 @@ namespace Gsemac.Core {
         }
         public static IEnumerable<string> GetEnvironmentPaths() {
 
-            return Environment.GetEnvironmentVariable("PATH").Split(Path.PathSeparator);
+            return Environment.GetEnvironmentVariable("PATH")?.Split(Path.PathSeparator) ?? Enumerable.Empty<string>();
 
         }
 
