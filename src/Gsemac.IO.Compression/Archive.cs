@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace Gsemac.IO.Compression {
 
-    public static class ZipArchive {
+    public static class Archive {
 
         // Public members
 
@@ -16,6 +16,13 @@ namespace Gsemac.IO.Compression {
         public static IArchive OpenStream(Stream stream, FileAccess fileAccess = FileAccess.ReadWrite, bool leaveOpen = false, IArchiveOptions options = null) {
 
             return CompressionPluginLoader.GetArchiveReaders().First().OpenStream(stream, fileAccess, leaveOpen, options);
+        }
+
+        public static void Extract(string filePath, string directoryPath) {
+
+            using (IArchive archive = OpenFile(filePath, FileAccess.Read))
+                archive.ExtractAllEntries(directoryPath);
+
         }
 
     }
