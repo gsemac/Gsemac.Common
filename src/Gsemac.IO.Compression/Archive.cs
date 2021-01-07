@@ -10,12 +10,12 @@ namespace Gsemac.IO.Compression {
 
         public static IArchive OpenFile(string filePath, FileAccess fileAccess = FileAccess.ReadWrite, IArchiveOptions options = null) {
 
-            return CompressionPluginLoader.GetArchiveReaders().First().OpenFile(filePath, fileAccess, options);
+            return CompressionPluginLoader.GetArchiveDecoders().First().OpenFile(filePath, fileAccess, options);
 
         }
         public static IArchive OpenStream(Stream stream, FileAccess fileAccess = FileAccess.ReadWrite, bool leaveOpen = false, IArchiveOptions options = null) {
 
-            return CompressionPluginLoader.GetArchiveReaders().First().OpenStream(stream, fileAccess, leaveOpen, options);
+            return CompressionPluginLoader.GetArchiveDecoders().First().Decode(stream, fileAccess, leaveOpen, options);
         }
 
         public static void Extract(string filePath, string directoryPath) {

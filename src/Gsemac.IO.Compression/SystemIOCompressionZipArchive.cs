@@ -8,7 +8,7 @@ using System.Text;
 
 namespace Gsemac.IO.Compression {
 
-    internal class NetFrameworkZipArchive :
+    internal class SystemIOCompressionZipArchive :
         ArchiveBase {
 
         // Public members
@@ -21,7 +21,7 @@ namespace Gsemac.IO.Compression {
         }
         public override CompressionLevel CompressionLevel { get; set; } = CompressionLevel.Maximum;
 
-        public NetFrameworkZipArchive(Stream stream, FileAccess fileAccess = FileAccess.ReadWrite, bool leaveOpen = false, IArchiveOptions options = null) :
+        public SystemIOCompressionZipArchive(Stream stream, FileAccess fileAccess = FileAccess.ReadWrite, bool leaveOpen = false, IArchiveOptions options = null) :
             this(stream, leaveOpen, fileAccess, options) {
         }
 
@@ -61,14 +61,14 @@ namespace Gsemac.IO.Compression {
 
             }
 
-            return new NetFrameworkZipArchiveEntry(entry);
+            return new SystemIOCompressionZipArchiveEntry(entry);
 
         }
         public override IArchiveEntry GetEntry(string entryName) {
 
             System.IO.Compression.ZipArchiveEntry entry = archive.GetEntry(SanitizeEntryName(entryName));
 
-            return entry is null ? null : new NetFrameworkZipArchiveEntry(entry);
+            return entry is null ? null : new SystemIOCompressionZipArchiveEntry(entry);
 
         }
         public override void DeleteEntry(IArchiveEntry entry) {
@@ -76,7 +76,7 @@ namespace Gsemac.IO.Compression {
             if (entry is null)
                 throw new ArgumentNullException(nameof(entry));
 
-            if (entry is NetFrameworkZipArchiveEntry zipArchiveEntry && zipArchiveEntry.BaseEntry.Archive == archive)
+            if (entry is SystemIOCompressionZipArchiveEntry zipArchiveEntry && zipArchiveEntry.BaseEntry.Archive == archive)
                 zipArchiveEntry.BaseEntry.Delete();
             else
                 throw new ArchiveEntryDoesNotExistException();
@@ -90,7 +90,7 @@ namespace Gsemac.IO.Compression {
             if (outputStream is null)
                 throw new ArgumentNullException(nameof(outputStream));
 
-            if (entry is NetFrameworkZipArchiveEntry zipArchiveEntry && zipArchiveEntry.BaseEntry.Archive == archive) {
+            if (entry is SystemIOCompressionZipArchiveEntry zipArchiveEntry && zipArchiveEntry.BaseEntry.Archive == archive) {
 
                 using (Stream entryStream = zipArchiveEntry.BaseEntry.Open())
                     entryStream.CopyTo(outputStream);
@@ -105,7 +105,7 @@ namespace Gsemac.IO.Compression {
 
             return archive.Entries
                 .Where(entry => PathUtilities.IsFilePath(entry.FullName))
-                .Select(entry => new NetFrameworkZipArchiveEntry(entry));
+                .Select(entry => new SystemIOCompressionZipArchiveEntry(entry));
 
         }
 
@@ -145,7 +145,7 @@ namespace Gsemac.IO.Compression {
         private readonly System.IO.Compression.ZipArchive archive;
         private bool disposedValue = false;
 
-        private NetFrameworkZipArchive(Stream stream, bool leaveOpen, FileAccess fileAccess, IArchiveOptions options) {
+        private SystemIOCompressionZipArchive(Stream stream, bool leaveOpen, FileAccess fileAccess, IArchiveOptions options) {
 
             if (options is null)
                 options = new ArchiveOptions();

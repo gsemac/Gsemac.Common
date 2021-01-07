@@ -3,13 +3,13 @@ using System.Collections.Generic;
 
 namespace Gsemac.IO.Compression {
 
-    public static class CompressionPluginLoader {
+    internal static class CompressionPluginLoader {
 
         // Public members
 
-        public static IEnumerable<IArchiveReader> GetArchiveReaders() {
+        public static IEnumerable<IArchiveDecoder> GetArchiveDecoders() {
 
-            return pluginLoader.GetPlugins<IArchiveReader>();
+            return pluginLoader.GetPlugins<IArchiveDecoder>();
 
         }
 

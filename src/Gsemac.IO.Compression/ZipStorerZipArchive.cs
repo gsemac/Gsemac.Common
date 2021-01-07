@@ -35,7 +35,7 @@ namespace Gsemac.IO.Compression {
         public override IArchiveEntry AddEntry(Stream stream, string entryName, bool overwrite = true, bool leaveOpen = false, IArchiveEntryOptions options = null) {
 
             if (!CanWrite)
-                throw new UnauthorizedAccessException("This archive is read-only.");
+                throw new UnauthorizedAccessException("The archive is read-only.");
 
             if (stream is null)
                 throw new ArgumentNullException(nameof(stream));
@@ -82,7 +82,7 @@ namespace Gsemac.IO.Compression {
         public override void DeleteEntry(IArchiveEntry entry) {
 
             if (!CanWrite)
-                throw new UnauthorizedAccessException("This archive is read-only.");
+                throw new UnauthorizedAccessException("The archive is read-only.");
 
             if (entry is null)
                 throw new ArgumentNullException(nameof(entry));
@@ -108,7 +108,7 @@ namespace Gsemac.IO.Compression {
             if (entry is ZipStorerZipArchiveEntry zipArchiveEntry)
                 archive.Value.ExtractFile(zipArchiveEntry.BaseEntry, outputStream);
             else
-                throw new ArgumentException("Entry does not belong to this archive.", nameof(entry));
+                throw new ArgumentException("Entry does not belong to the archive.", nameof(entry));
 
         }
 

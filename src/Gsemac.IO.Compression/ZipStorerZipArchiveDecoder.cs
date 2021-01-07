@@ -3,17 +3,17 @@ using System.IO;
 
 namespace Gsemac.IO.Compression {
 
-    public class ZipStorerZipArchiveReader :
+    public class ZipStorerZipArchiveDecoder :
         PluginBase,
-        IArchiveReader {
+        IArchiveDecoder {
 
         // Public members
 
-        public ZipStorerZipArchiveReader() :
+        public ZipStorerZipArchiveDecoder() :
             base(1) {
         }
 
-        public IArchive OpenStream(Stream stream, FileAccess fileAccess = FileAccess.ReadWrite, bool leaveOpen = false, IArchiveOptions options = null) {
+        public IArchive Decode(Stream stream, FileAccess fileAccess = FileAccess.ReadWrite, bool leaveOpen = false, IArchiveOptions options = null) {
 
             return new ZipStorerZipArchive(stream, fileAccess, leaveOpen, options);
 
