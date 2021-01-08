@@ -1,4 +1,5 @@
 ﻿using Gsemac.Reflection.Plugins;
+using System.Collections.Generic;
 using System.IO;
 
 namespace Gsemac.IO.Compression {
@@ -8,6 +9,10 @@ namespace Gsemac.IO.Compression {
         IArchiveDecoder {
 
         // Public members
+
+        public IEnumerable<IFileFormat> SupportedFileFormats => new[] {
+            ArchiveFormat.Zip
+        };
 
         public ZipStorerZipArchiveDecoder() :
             base(1) {
