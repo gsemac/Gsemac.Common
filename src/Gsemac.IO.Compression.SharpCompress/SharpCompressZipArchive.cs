@@ -110,17 +110,9 @@ namespace Gsemac.IO.Compression {
 
         }
 
-        public override void Dispose() {
-
-            Dispose(disposing: true);
-
-            GC.SuppressFinalize(this);
-
-        }
-
         // Protected members
 
-        protected virtual void Dispose(bool disposing) {
+        protected override void Dispose(bool disposing) {
 
             if (!disposedValue) {
 

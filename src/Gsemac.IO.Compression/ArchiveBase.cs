@@ -20,9 +20,15 @@ namespace Gsemac.IO.Compression {
         public abstract void ExtractEntry(IArchiveEntry entry, Stream outputStream);
         public abstract IEnumerable<IArchiveEntry> GetEntries();
 
-        public abstract void Close();
+        public void Dispose() {
 
-        public abstract void Dispose();
+            Dispose(disposing: true);
+
+            System.GC.SuppressFinalize(this);
+
+        }
+
+        public abstract void Close();
 
         public IEnumerator<IArchiveEntry> GetEnumerator() {
 
@@ -37,7 +43,9 @@ namespace Gsemac.IO.Compression {
 
         // Protected members
 
-        protected string SanitizeEntryName(string entryName) {
+        protected virtual void Dispose(bool disposing) { }
+
+        protected static string SanitizeEntryName(string entryName) {
 
             // Entry names should always be relative paths, and should always be file paths (i.e. not directory paths).
 

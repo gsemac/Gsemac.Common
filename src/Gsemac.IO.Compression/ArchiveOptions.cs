@@ -9,6 +9,8 @@ namespace Gsemac.IO.Compression {
         public CompressionLevel CompressionLevel { get; set; } = CompressionLevel.Maximum;
         public Encoding Encoding { get; set; } = Encoding.UTF8;
 
+        public static ArchiveOptions Default => new ArchiveOptions();
+
     }
 
 }
