@@ -1,4 +1,5 @@
-﻿using Gsemac.IO.Extensions;
+﻿using Gsemac.IO;
+using Gsemac.IO.Extensions;
 using System.IO;
 
 namespace Gsemac.Drawing.Imaging.Extensions {
@@ -18,7 +19,7 @@ namespace Gsemac.Drawing.Imaging.Extensions {
         public static void Encode(this IImageCodec imageCodec, IImage image, string filePath, IImageEncoderOptions options) {
 
             if (!imageCodec.IsSupportedFileFormat(filePath))
-                throw new ImageFormatException();
+                throw new UnsupportedFileFormatException();
 
             using (FileStream fs = File.Open(filePath, FileMode.OpenOrCreate))
                 imageCodec.Encode(image, fs, options);
@@ -27,7 +28,7 @@ namespace Gsemac.Drawing.Imaging.Extensions {
         public static IImage Decode(this IImageCodec imageCodec, string filePath) {
 
             if (!imageCodec.IsSupportedFileFormat(filePath))
-                throw new ImageFormatException();
+                throw new UnsupportedFileFormatException();
 
             using (FileStream fs = File.OpenRead(filePath))
                 return imageCodec.Decode(fs);

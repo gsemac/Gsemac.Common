@@ -20,10 +20,10 @@ namespace Gsemac.Drawing.Imaging.Extensions {
         }
         public static void Save(this IImage image, Stream stream, IFileFormat imageFormat, IImageEncoderOptions encoderOptions) {
 
-            IImageEncoder encoder = ImageCodec.FromImageFormat(imageFormat);
+            IImageEncoder encoder = ImageCodec.FromFileFormat(imageFormat);
 
             if (encoder is null)
-                throw new ImageFormatException();
+                throw new UnsupportedFileFormatException();
 
             encoder.Encode(image, stream, encoderOptions);
 
@@ -53,7 +53,7 @@ namespace Gsemac.Drawing.Imaging.Extensions {
             IFileFormat imageFormat = FileFormat.FromFileExtension(filePath);
 
             if (imageFormat is null)
-                throw new ImageFormatException();
+                throw new UnsupportedFileFormatException();
 
             image.Save(filePath, imageFormat, encoderOptions);
 

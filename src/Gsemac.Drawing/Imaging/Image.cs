@@ -11,7 +11,7 @@ namespace Gsemac.Drawing.Imaging {
             IImageCodec imageCodec = ImageCodec.FromFileExtension(filePath);
 
             if (imageCodec is null)
-                throw new ImageFormatException();
+                throw new UnsupportedFileFormatException();
 
             return imageCodec.Decode(filePath);
 

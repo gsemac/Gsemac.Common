@@ -1,4 +1,5 @@
 ﻿using Gsemac.Drawing.Imaging.Extensions;
+using Gsemac.IO;
 using System;
 using System.IO;
 using System.Linq;
@@ -29,7 +30,7 @@ namespace Gsemac.Drawing.Imaging {
             bool overwriteSourceFile = sourceFilePath.Equals(destinationFilePath, StringComparison.OrdinalIgnoreCase);
 
             if (!ImageCodec.IsSupportedImageFormat(sourceExt) || !ImageCodec.IsSupportedImageFormat(destinationExt))
-                throw new ImageFormatException();
+                throw new UnsupportedFileFormatException();
 
             if (sourceExt.Equals(destinationExt, StringComparison.OrdinalIgnoreCase) &&
                 options.EncoderOptions.Equals(ImageEncoderOptions.Default) &&

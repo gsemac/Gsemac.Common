@@ -57,10 +57,10 @@ namespace Gsemac.Drawing.Imaging {
             if (string.IsNullOrWhiteSpace(ext))
                 return null;
 
-            return FromImageFormat(FileFormat.FromFileExtension(ext));
+            return FromFileFormat(FileFormat.FromFileExtension(ext));
 
         }
-        public static IImageCodec FromImageFormat(IFileFormat imageFormat) {
+        public static IImageCodec FromFileFormat(IFileFormat imageFormat) {
 
             return GetImageCodecs(imageFormat).FirstOrDefault(codec => codec.IsSupportedFileFormat(imageFormat));
 

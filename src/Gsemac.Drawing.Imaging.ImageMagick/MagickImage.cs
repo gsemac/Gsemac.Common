@@ -76,7 +76,7 @@ namespace Gsemac.Drawing.Imaging {
             string ext = ImageMagickUtilities.GetFileExtensionFromMagickFormat(magickFormat);
 
             if (string.IsNullOrEmpty(ext))
-                throw new ImageFormatException();
+                throw new UnsupportedFileFormatException();
 
             return FileFormat.FromFileExtension(ext);
 
