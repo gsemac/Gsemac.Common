@@ -1,6 +1,5 @@
-﻿using Gsemac.Drawing.Imaging.Extensions;
-using Gsemac.IO;
-using Gsemac.Reflection.Plugins;
+﻿using Gsemac.IO;
+using Gsemac.IO.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,8 +10,8 @@ namespace Gsemac.Drawing.Imaging {
 
         // Public members
 
-        public static IEnumerable<IImageFormat> SupportedImageFormats => GetSupportedImageFormats();
-        public static IEnumerable<IImageFormat> NativelySupportedImageFormats => GetNativelySupportedImageFormats();
+        public static IEnumerable<IFileFormat> SupportedImageFormats => GetSupportedImageFormats();
+        public static IEnumerable<IFileFormat> NativelySupportedImageFormats => GetNativelySupportedImageFormats();
 
         public static bool IsSupportedImageFormat(string filePath) {
 
@@ -21,10 +20,10 @@ namespace Gsemac.Drawing.Imaging {
             if (string.IsNullOrWhiteSpace(ext))
                 return false;
 
-            return IsSupportedImageFormat(ImageFormat.FromFileExtension(ext));
+            return IsSupportedImageFormat(FileFormat.FromFileExtension(ext));
 
         }
-        public static bool IsSupportedImageFormat(IImageFormat imageFormat) {
+        public static bool IsSupportedImageFormat(IFileFormat imageFormat) {
 
             return SupportedImageFormats.Any(supportedImageFormat => supportedImageFormat.Equals(imageFormat));
 
@@ -36,10 +35,10 @@ namespace Gsemac.Drawing.Imaging {
             if (string.IsNullOrWhiteSpace(ext))
                 return false;
 
-            return IsNativelySupportedImageFormat(ImageFormat.FromFileExtension(ext));
+            return IsNativelySupportedImageFormat(FileFormat.FromFileExtension(ext));
 
         }
-        public static bool IsNativelySupportedImageFormat(IImageFormat imageFormat) {
+        public static bool IsNativelySupportedImageFormat(IFileFormat imageFormat) {
 
             return NativelySupportedImageFormats.Any(supportedImageFormat => supportedImageFormat.Equals(imageFormat));
 
@@ -58,25 +57,25 @@ namespace Gsemac.Drawing.Imaging {
             if (string.IsNullOrWhiteSpace(ext))
                 return null;
 
-            return FromImageFormat(ImageFormat.FromFileExtension(ext));
+            return FromImageFormat(FileFormat.FromFileExtension(ext));
 
         }
-        public static IImageCodec FromImageFormat(IImageFormat imageFormat) {
+        public static IImageCodec FromImageFormat(IFileFormat imageFormat) {
 
-            return GetImageCodecs(imageFormat).FirstOrDefault(codec => codec.IsSupportedImageFormat(imageFormat));
+            return GetImageCodecs(imageFormat).FirstOrDefault(codec => codec.IsSupportedFileFormat(imageFormat));
 
         }
 
         // Private members
 
-        private static IEnumerable<IImageFormat> GetSupportedImageFormats() {
+        private static IEnumerable<IFileFormat> GetSupportedImageFormats() {
 
-            return GetImageCodecs().SelectMany(codec => codec.SupportedImageFormats)
-                .Distinct(new ImageFormatComparer())
+            return GetImageCodecs().SelectMany(codec => codec.SupportedFileFormats)
+                .Distinct()
                 .OrderBy(type => type);
 
         }
-        private static IEnumerable<IImageFormat> GetNativelySupportedImageFormats() {
+        private static IEnumerable<IFileFormat> GetNativelySupportedImageFormats() {
 
             return new List<string>(new[]{
                 ".bmp",
@@ -88,11 +87,11 @@ namespace Gsemac.Drawing.Imaging {
                 ".tif",
                 ".tiff"
             }).OrderBy(type => type)
-            .Select(ext => ImageFormat.FromFileExtension(ext))
-            .Distinct(new ImageFormatComparer());
+            .Select(ext => FileFormat.FromFileExtension(ext))
+            .Distinct();
 
         }
-        private static IEnumerable<IImageCodec> GetImageCodecs(IImageFormat imageFormat) {
+        private static IEnumerable<IImageCodec> GetImageCodecs(IFileFormat imageFormat) {
 
             List<IImageCodec> imageCodecs = new List<IImageCodec>();
 
@@ -101,7 +100,7 @@ namespace Gsemac.Drawing.Imaging {
                 IImageCodec nextImageCodec = imageCodec;
                 Type nextImageCodecType = imageCodec.GetType();
 
-                if (!(nextImageCodec is null) && !(imageFormat is null) && nextImageCodec.IsSupportedImageFormat(imageFormat) && nextImageCodecType.GetConstructor(new[] { typeof(IImageFormat) }) != null)
+                if (!(nextImageCodec is null) && !(imageFormat is null) && nextImageCodec.IsSupportedFileFormat(imageFormat) && nextImageCodecType.GetConstructor(new[] { typeof(IFileFormat) }) != null)
                     nextImageCodec = (IImageCodec)Activator.CreateInstance(nextImageCodecType, new object[] { imageFormat });
 
                 imageCodecs.Add(nextImageCodec);

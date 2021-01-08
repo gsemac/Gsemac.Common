@@ -2,6 +2,8 @@
 
 using Gsemac.Drawing.Imaging;
 using Gsemac.Drawing.Imaging.Extensions;
+using Gsemac.IO;
+using Gsemac.IO.Extensions;
 using Gsemac.Reflection.Plugins;
 using System;
 using System.Collections.Generic;
@@ -18,13 +20,13 @@ namespace Gsemac.Drawing.Imaging {
 
         // Public members
 
-        public IEnumerable<IImageFormat> SupportedImageFormats => ImageCodec.NativelySupportedImageFormats;
+        public IEnumerable<IFileFormat> SupportedFileFormats => ImageCodec.NativelySupportedImageFormats;
 
         public GdiImageCodec() {
         }
-        public GdiImageCodec(IImageFormat imageFormat) {
+        public GdiImageCodec(IFileFormat imageFormat) {
 
-            if (!this.IsSupportedImageFormat(imageFormat.FileExtension))
+            if (!this.IsSupportedFileFormat(imageFormat))
                 throw new ImageFormatException();
 
             this.imageFormat = imageFormat;
@@ -63,7 +65,7 @@ namespace Gsemac.Drawing.Imaging {
 
         // Private members
 
-        private readonly IImageFormat imageFormat;
+        private readonly IFileFormat imageFormat;
 
         private void EncodeBitmap(System.Drawing.Image image, Stream stream, IImageEncoderOptions encoderOptions) {
 
@@ -72,7 +74,7 @@ namespace Gsemac.Drawing.Imaging {
 
                 encoderParameters.Param[0] = qualityParameter;
 
-                System.Drawing.Imaging.ImageFormat format = imageFormat is null ? image.RawFormat : GetImageFormatFromFileExtension(imageFormat.FileExtension);
+                System.Drawing.Imaging.ImageFormat format = imageFormat is null ? image.RawFormat : GetImageFormatFromFileExtension(imageFormat.Extensions.FirstOrDefault());
                 ImageCodecInfo encoder = GetEncoderFromImageFormat(format);
 
                 if (encoder is null)

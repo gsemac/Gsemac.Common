@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Gsemac.IO;
+using System;
 using System.IO;
 
 namespace Gsemac.Drawing.Imaging.Extensions {
@@ -12,12 +13,12 @@ namespace Gsemac.Drawing.Imaging.Extensions {
             image.Codec.Encode(image, stream, ImageEncoderOptions.Default);
 
         }
-        public static void Save(this IImage image, Stream stream, IImageFormat imageFormat) {
+        public static void Save(this IImage image, Stream stream, IFileFormat imageFormat) {
 
             image.Save(stream, imageFormat, ImageEncoderOptions.Default);
 
         }
-        public static void Save(this IImage image, Stream stream, IImageFormat imageFormat, IImageEncoderOptions encoderOptions) {
+        public static void Save(this IImage image, Stream stream, IFileFormat imageFormat, IImageEncoderOptions encoderOptions) {
 
             IImageEncoder encoder = ImageCodec.FromImageFormat(imageFormat);
 
@@ -49,7 +50,7 @@ namespace Gsemac.Drawing.Imaging.Extensions {
         }
         public static void Save(this IImage image, string filePath, IImageEncoderOptions encoderOptions) {
 
-            IImageFormat imageFormat = ImageFormat.FromFileExtension(filePath);
+            IFileFormat imageFormat = FileFormat.FromFileExtension(filePath);
 
             if (imageFormat is null)
                 throw new ImageFormatException();
@@ -57,7 +58,7 @@ namespace Gsemac.Drawing.Imaging.Extensions {
             image.Save(filePath, imageFormat, encoderOptions);
 
         }
-        public static void Save(this IImage image, string filePath, IImageFormat imageFormat, IImageEncoderOptions encoderOptions) {
+        public static void Save(this IImage image, string filePath, IFileFormat imageFormat, IImageEncoderOptions encoderOptions) {
 
             if (imageFormat is null)
                 throw new ArgumentNullException(nameof(imageFormat));

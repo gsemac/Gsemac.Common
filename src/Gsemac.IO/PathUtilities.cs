@@ -168,6 +168,23 @@ namespace Gsemac.IO {
             return path;
 
         }
+        public static string NormalizeFileExtension(string extension) {
+
+            if (extension is null)
+                throw new ArgumentNullException(nameof(extension));
+
+            if (string.IsNullOrWhiteSpace(extension))
+                throw new ArgumentException("The given string is not a valid file extension.", nameof(extension));
+
+            extension = extension.ToLowerInvariant()
+                .Trim('.')
+                .Trim();
+
+            extension = "." + extension;
+
+            return extension;
+
+        }
 
         public static string GetRandomTemporaryDirectoryPath() {
 

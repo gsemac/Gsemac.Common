@@ -1,5 +1,6 @@
 ﻿#if NETFRAMEWORK
 
+using Gsemac.IO;
 using System;
 using System.Drawing;
 
@@ -13,11 +14,11 @@ namespace Gsemac.Drawing.Imaging {
         public int Width => image.Width;
         public int Height => image.Height;
         public Size Size => image.Size;
-        public IImageFormat Format { get; }
+        public IFileFormat Format { get; }
         public IImageCodec Codec { get; }
         internal System.Drawing.Image BaseImage => image;
 
-        public GdiImage(System.Drawing.Image image, IImageFormat imageFormat, IImageCodec imageCodec) {
+        public GdiImage(System.Drawing.Image image, IFileFormat imageFormat, IImageCodec imageCodec) {
 
             if (image is null)
                 throw new ArgumentNullException(nameof(image));
@@ -78,20 +79,20 @@ namespace Gsemac.Drawing.Imaging {
         private readonly System.Drawing.Image image;
         private bool disposedValue = false;
 
-        private static IImageFormat GetImageFormatFromImageFormat(System.Drawing.Imaging.ImageFormat imageFormat) {
+        private static IFileFormat GetImageFormatFromImageFormat(System.Drawing.Imaging.ImageFormat imageFormat) {
 
             if (imageFormat.Equals(System.Drawing.Imaging.ImageFormat.Bmp))
-                return ImageFormat.FromFileExtension(".bmp");
+                return FileFormat.FromFileExtension(".bmp");
             else if (imageFormat.Equals(System.Drawing.Imaging.ImageFormat.Gif))
-                return ImageFormat.FromFileExtension(".gif");
+                return FileFormat.FromFileExtension(".gif");
             else if (imageFormat.Equals(System.Drawing.Imaging.ImageFormat.Exif))
-                return ImageFormat.FromFileExtension(".exif");
+                return FileFormat.FromFileExtension(".exif");
             else if (imageFormat.Equals(System.Drawing.Imaging.ImageFormat.Jpeg))
                 return ImageFormat.Jpeg;
             else if (imageFormat.Equals(System.Drawing.Imaging.ImageFormat.Png))
                 return ImageFormat.Png;
             else if (imageFormat.Equals(System.Drawing.Imaging.ImageFormat.Tiff))
-                return ImageFormat.FromFileExtension(".tiff");
+                return FileFormat.FromFileExtension(".tiff");
             else
                 return null;
 

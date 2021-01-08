@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Gsemac.IO;
+using System;
 using System.Drawing;
 
 namespace Gsemac.Drawing.Imaging {
@@ -9,7 +10,7 @@ namespace Gsemac.Drawing.Imaging {
         int Width { get; }
         int Height { get; }
         Size Size { get; }
-        IImageFormat Format { get; }
+        IFileFormat Format { get; }
         IImageCodec Codec { get; }
 
 #if NETFRAMEWORK

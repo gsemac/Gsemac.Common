@@ -1,7 +1,5 @@
-﻿using Gsemac.Drawing.Imaging.Extensions;
-using Gsemac.IO;
-using Gsemac.Reflection.Plugins;
-using System;
+﻿using Gsemac.IO;
+using Gsemac.IO.Extensions;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -11,7 +9,7 @@ namespace Gsemac.Drawing.Imaging {
 
         // Public members
 
-        public static IEnumerable<IImageFormat> SupportedImageFormats => GetSupportedImageFormats();
+        public static IEnumerable<IFileFormat> SupportedFileFormats => GetSupportedImageFormats();
 
         public static bool IsSupportedImageFormat(string filePath) {
 
@@ -20,12 +18,12 @@ namespace Gsemac.Drawing.Imaging {
             if (string.IsNullOrWhiteSpace(ext))
                 return false;
 
-            return IsSupportedImageFormat(ImageFormat.FromFileExtension(ext));
+            return IsSupportedImageFormat(FileFormat.FromFileExtension(ext));
 
         }
-        public static bool IsSupportedImageFormat(IImageFormat imageFormat) {
+        public static bool IsSupportedImageFormat(IFileFormat imageFormat) {
 
-            return SupportedImageFormats.Any(supportedImageFormat => supportedImageFormat.Equals(imageFormat));
+            return SupportedFileFormats.Any(supportedImageFormat => supportedImageFormat.Equals(imageFormat));
 
         }
 
@@ -42,22 +40,22 @@ namespace Gsemac.Drawing.Imaging {
             if (string.IsNullOrWhiteSpace(ext))
                 return null;
 
-            return FromImageFormat(ImageFormat.FromFileExtension(ext));
+            return FromImageFormat(FileFormat.FromFileExtension(ext));
 
         }
-        public static IImageOptimizer FromImageFormat(IImageFormat imageFormat) {
+        public static IImageOptimizer FromImageFormat(IFileFormat imageFormat) {
 
-            return GetImageOptimizers().FirstOrDefault(optimizer => optimizer.IsSupportedImageFormat(imageFormat));
+            return GetImageOptimizers().FirstOrDefault(optimizer => optimizer.IsSupportedFileFormat(imageFormat));
 
         }
 
         // Private members
 
-        private static IEnumerable<IImageFormat> GetSupportedImageFormats() {
+        private static IEnumerable<IFileFormat> GetSupportedImageFormats() {
 
-            return GetImageOptimizers().SelectMany(optimizer => optimizer.SupportedImageFormats)
-                .Distinct(new ImageFormatComparer())
-                .OrderBy(type => type);
+            return GetImageOptimizers().SelectMany(optimizer => optimizer.SupportedFileFormats)
+                .OrderBy(type => type)
+                .Distinct();
 
         }
         private static IEnumerable<IImageOptimizer> GetImageOptimizersInternal() {

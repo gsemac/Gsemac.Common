@@ -1,5 +1,6 @@
 ﻿#if NETFRAMEWORK
 
+using Gsemac.IO;
 using Gsemac.Reflection;
 using Gsemac.Reflection.Plugins;
 using nQuant;
@@ -17,7 +18,7 @@ namespace Gsemac.Drawing.Imaging {
 
         // Public members
 
-        public IEnumerable<IImageFormat> SupportedImageFormats => GetSupportedImageFormats();
+        public IEnumerable<IFileFormat> SupportedFileFormats => GetSupportedImageFormats();
 
         public NQuantImageOptimizer() :
             base(1) {
@@ -52,11 +53,11 @@ namespace Gsemac.Drawing.Imaging {
 
         // Private members
 
-        private IEnumerable<IImageFormat> GetSupportedImageFormats() {
+        private IEnumerable<IFileFormat> GetSupportedImageFormats() {
 
             return new[]{
                 ".png"
-            }.Select(ext => ImageFormat.FromFileExtension(ext));
+            }.Select(ext => FileFormat.FromFileExtension(ext));
 
         }
 

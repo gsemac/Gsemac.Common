@@ -1,8 +1,15 @@
-﻿namespace Gsemac.IO {
+﻿using System;
+using System.Collections.Generic;
 
-    public interface IFileFormat {
+namespace Gsemac.IO {
 
-        string FileExtension { get; }
+    public interface IFileFormat :
+        IComparable,
+        IComparable<IFileFormat> {
+
+        IEnumerable<string> Extensions { get; }
+        IEnumerable<IFileSignature> Signatures { get; }
+        string MimeType { get; }
 
     }
 

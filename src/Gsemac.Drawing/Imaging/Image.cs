@@ -1,4 +1,5 @@
 ﻿using Gsemac.Drawing.Imaging.Extensions;
+using Gsemac.IO;
 using System.Drawing;
 
 namespace Gsemac.Drawing.Imaging {
@@ -28,7 +29,7 @@ namespace Gsemac.Drawing.Imaging {
             return FromBitmap(bitmap, null, null);
 
         }
-        public static IImage FromBitmap(System.Drawing.Image bitmap, IImageFormat imageFormat, IImageCodec imageCodec) {
+        public static IImage FromBitmap(System.Drawing.Image bitmap, IFileFormat imageFormat, IImageCodec imageCodec) {
 
             return new GdiImage(bitmap, imageFormat, imageCodec);
 

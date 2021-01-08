@@ -1,4 +1,5 @@
-﻿using ImageMagick;
+﻿using Gsemac.IO;
+using ImageMagick;
 using System;
 using System.Drawing;
 
@@ -12,7 +13,7 @@ namespace Gsemac.Drawing.Imaging {
         public int Width => image.Width;
         public int Height => image.Height;
         public Size Size => new Size(Width, Height);
-        public IImageFormat Format { get; }
+        public IFileFormat Format { get; }
         public IImageCodec Codec { get; }
         internal ImageMagick.MagickImage BaseImage => image;
 
@@ -70,14 +71,14 @@ namespace Gsemac.Drawing.Imaging {
         private readonly ImageMagick.MagickImage image;
         private bool disposedValue = false;
 
-        private static IImageFormat GetImageFormatFromMagickFormat(MagickFormat magickFormat) {
+        private static IFileFormat GetImageFormatFromMagickFormat(MagickFormat magickFormat) {
 
             string ext = ImageMagickUtilities.GetFileExtensionFromMagickFormat(magickFormat);
 
             if (string.IsNullOrEmpty(ext))
                 throw new ImageFormatException();
 
-            return ImageFormat.FromFileExtension(ext);
+            return FileFormat.FromFileExtension(ext);
 
         }
 

@@ -1,4 +1,6 @@
 ﻿using Gsemac.Drawing.Imaging.Extensions;
+using Gsemac.IO;
+using Gsemac.IO.Extensions;
 using Gsemac.Reflection;
 using Gsemac.Reflection.Plugins;
 using ImageMagick;
@@ -16,15 +18,15 @@ namespace Gsemac.Drawing.Imaging {
 
         // Public members
 
-        public IEnumerable<IImageFormat> SupportedImageFormats => GetSupportedImageFormats();
+        public IEnumerable<IFileFormat> SupportedFileFormats => GetSupportedImageFormats();
 
         public MagickImageCodec() :
             base(1) {
         }
-        public MagickImageCodec(IImageFormat imageFormat) :
+        public MagickImageCodec(IFileFormat imageFormat) :
             base(1) {
 
-            if (!this.IsSupportedImageFormat(imageFormat))
+            if (!this.IsSupportedFileFormat(imageFormat))
                 throw new ImageFormatException();
 
             this.imageFormat = imageFormat;
@@ -66,9 +68,9 @@ namespace Gsemac.Drawing.Imaging {
 
         // Private members
 
-        private readonly IImageFormat imageFormat;
+        private readonly IFileFormat imageFormat;
 
-        private static IEnumerable<IImageFormat> GetSupportedImageFormats() {
+        private static IEnumerable<IFileFormat> GetSupportedImageFormats() {
 
             return new[] {
                 ".avif",
@@ -81,8 +83,8 @@ namespace Gsemac.Drawing.Imaging {
                 ".tiff",
                 ".webp",
             }.OrderBy(ext => ext)
-            .Select(ext => ImageFormat.FromFileExtension(ext))
-            .Distinct(new ImageFormatComparer());
+            .Select(ext => FileFormat.FromFileExtension(ext))
+            .Distinct();
 
         }
         private static MagickFormat GetMagickFormatForFileExtension(string fileExtension) {
@@ -98,8 +100,8 @@ namespace Gsemac.Drawing.Imaging {
 
         private void Save(ImageMagick.MagickImage magickImage, Stream stream, IImageEncoderOptions encoderOptions) {
 
-            if (!(imageFormat is null))
-                magickImage.Format = GetMagickFormatForFileExtension(imageFormat.FileExtension);
+            if (imageFormat is object)
+                magickImage.Format = GetMagickFormatForFileExtension(imageFormat.Extensions.FirstOrDefault());
 
             magickImage.Quality = encoderOptions.Quality;
 

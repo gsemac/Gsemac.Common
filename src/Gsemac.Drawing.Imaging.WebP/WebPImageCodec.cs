@@ -1,5 +1,6 @@
 ﻿#if NETFRAMEWORK
 
+using Gsemac.IO;
 using Gsemac.IO.Extensions;
 using Gsemac.Reflection;
 using Gsemac.Reflection.Plugins;
@@ -19,7 +20,7 @@ namespace Gsemac.Drawing.Imaging {
 
         // Public members
 
-        public IEnumerable<IImageFormat> SupportedImageFormats => GetSupportedImageFormats();
+        public IEnumerable<IFileFormat> SupportedFileFormats => GetSupportedImageFormats();
 
         public void Encode(IImage image, Stream stream, IImageEncoderOptions encoderOptions) {
 
@@ -29,17 +30,17 @@ namespace Gsemac.Drawing.Imaging {
         }
         public IImage Decode(Stream stream) {
 
-            return Image.FromBitmap(DecodeWebPBitmap(stream), SupportedImageFormats.First(), this);
+            return Image.FromBitmap(DecodeWebPBitmap(stream), SupportedFileFormats.First(), this);
 
         }
 
         // Private members
 
-        private IEnumerable<IImageFormat> GetSupportedImageFormats() {
+        private IEnumerable<IFileFormat> GetSupportedImageFormats() {
 
             return new[]{
                 ".webp"
-            }.Select(ext => ImageFormat.FromFileExtension(ext));
+            }.Select(ext => FileFormat.FromFileExtension(ext));
 
         }
 
