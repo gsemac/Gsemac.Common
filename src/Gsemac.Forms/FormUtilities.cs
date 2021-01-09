@@ -95,7 +95,7 @@ namespace Gsemac.Forms {
 
                 User32.ReleaseCapture();
 
-                User32.SendMessage((sender as Form).Handle, WinUser.WmNCLButtonDown, (IntPtr)WinUser.HtCaption, (IntPtr)0);
+                User32.SendMessage((sender as Form).Handle, WinUser.WM_NCLBUTTONDOWN, (IntPtr)WinUser.HTCAPTION, (IntPtr)0);
 
             }
 

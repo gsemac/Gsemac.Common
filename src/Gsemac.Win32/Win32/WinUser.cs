@@ -2,9 +2,9 @@
 
     public static class WinUser {
 
-        public const int HtCaption = 0x2;
+        public const int HTCAPTION = 0x2;
 
-        public const int WmNCLButtonDown = 0xA1;
+        public const int WM_NCLBUTTONDOWN = 0xA1;
 
     }
 
