@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Gsemac.Win32;
+using System;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
@@ -72,6 +73,29 @@ namespace Gsemac.Forms {
                 int y = parent.Location.Y + (parent.Height - form.Height) / 2;
 
                 form.Location = new Point(Math.Max(x, 0), Math.Max(y, 0));
+
+            }
+
+        }
+
+        public static void SetDraggingEnabled(Form form, bool enabled) {
+
+            if (enabled)
+                form.MouseDown += DraggingMouseDownEventHandler;
+            else
+                form.MouseDown -= DraggingMouseDownEventHandler;
+
+        }
+
+        // Private members
+
+        private static void DraggingMouseDownEventHandler(object sender, MouseEventArgs e) {
+
+            if (e.Button == MouseButtons.Left) {
+
+                User32.ReleaseCapture();
+
+                User32.SendMessage((sender as Form).Handle, WinUser.WmNCLButtonDown, (IntPtr)WinUser.HtCaption, (IntPtr)0);
 
             }
 

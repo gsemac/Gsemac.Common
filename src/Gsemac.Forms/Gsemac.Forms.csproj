@@ -21,6 +21,7 @@
 	<ItemGroup>
 		<ProjectReference Include="..\Gsemac.Drawing\Gsemac.Drawing.csproj" />
 		<ProjectReference Include="..\Gsemac.Text\Gsemac.Text.csproj" />
+		<ProjectReference Include="..\Gsemac.Win32\Gsemac.Win32.csproj" />
 		<Reference Include="System.Windows.Forms" />
 	</ItemGroup>
 
