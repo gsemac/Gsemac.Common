@@ -32,7 +32,7 @@ namespace Gsemac.Win32 {
 
         [DllImport("user32", EntryPoint = "GetDC")]
         private static extern IntPtr GetDCNative(IntPtr hwnd);
-        [DllImport("user32")]
+        [DllImport("user32", EntryPoint = "ReleaseCapture")]
         public static extern bool ReleaseCaptureNative();
         [DllImport("user32", EntryPoint = "ReleaseDC")]
         private static extern IntPtr ReleaseDCNative(IntPtr hwnd, IntPtr hdc);
