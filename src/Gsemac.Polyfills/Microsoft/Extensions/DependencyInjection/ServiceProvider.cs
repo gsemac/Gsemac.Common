@@ -26,12 +26,12 @@ namespace Gsemac.Polyfills.Microsoft.Extensions.DependencyInjection {
             if (options.ValidateOnBuild)
                 ValidateServices();
 
-            // If we allow scoped services to be resolved from the root provider, they'll treated as singletons under the global scope.
+            // If we allow scoped services to be resolved from the root provider, they'll treated as singletons under the root scope.
 
             validateScopes = options.ValidateScopes;
 
             if (!validateScopes)
-                globalScope = this.CreateScope();
+                rootScope = this.CreateScope();
 
         }
 
@@ -50,9 +50,9 @@ namespace Gsemac.Polyfills.Microsoft.Extensions.DependencyInjection {
                 }
                 else {
 
-                    // Scoped services are treated as singletons under the global scope.
+                    // Scoped services are treated as singletons under the root scope.
 
-                    return globalScope.ServiceProvider.GetService(serviceType);
+                    return rootScope.ServiceProvider.GetService(serviceType);
 
                 }
 
@@ -95,6 +95,10 @@ namespace Gsemac.Polyfills.Microsoft.Extensions.DependencyInjection {
                             if (descriptor.ImplementationInstance is IDisposable disposable)
                                 disposable.Dispose();
 
+                    // Dispose of the root scope, disposing of any instantiated scoped services.
+
+                    rootScope?.Dispose();
+
                 }
 
                 disposedValue = true;
@@ -107,7 +111,7 @@ namespace Gsemac.Polyfills.Microsoft.Extensions.DependencyInjection {
         private bool disposedValue;
 
         private readonly bool validateScopes = false;
-        private readonly IServiceScope globalScope;
+        private readonly IServiceScope rootScope;
         private readonly IDictionary<Type, IList<ServiceDescriptor>> servicesDict = new Dictionary<Type, IList<ServiceDescriptor>>();
 
         private void ValidateServices() {
