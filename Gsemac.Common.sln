@@ -57,6 +57,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Gsemac.Net.GitHub", "src\Gs
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Gsemac.Polyfills", "src\Gsemac.Polyfills\Gsemac.Polyfills.csproj", "{EE1E3377-4158-4B19-8A29-85E1E382FF77}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gsemac.Polyfills.Tests", "tests\Gsemac.Polyfills.Tests\Gsemac.Polyfills.Tests.csproj", "{E7052C69-A9DA-4BC9-BD89-BF84D738EA02}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -163,6 +165,10 @@ Global
 		{EE1E3377-4158-4B19-8A29-85E1E382FF77}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EE1E3377-4158-4B19-8A29-85E1E382FF77}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EE1E3377-4158-4B19-8A29-85E1E382FF77}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E7052C69-A9DA-4BC9-BD89-BF84D738EA02}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E7052C69-A9DA-4BC9-BD89-BF84D738EA02}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E7052C69-A9DA-4BC9-BD89-BF84D738EA02}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E7052C69-A9DA-4BC9-BD89-BF84D738EA02}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -193,6 +199,7 @@ Global
 		{3FD1BB15-8F3F-448F-89CB-B65E39EAE4FA} = {559AE943-A0A6-43B1-ACF0-BE305C5B4FCE}
 		{72F6D9B7-A0CF-4D20-8CAA-CB89DD9EE47C} = {559AE943-A0A6-43B1-ACF0-BE305C5B4FCE}
 		{EE1E3377-4158-4B19-8A29-85E1E382FF77} = {559AE943-A0A6-43B1-ACF0-BE305C5B4FCE}
+		{E7052C69-A9DA-4BC9-BD89-BF84D738EA02} = {742EDB7B-BAAD-43E2-82B6-2ECAA2D28338}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {D040AD76-9C92-4D4E-99AD-45B26C068360}
