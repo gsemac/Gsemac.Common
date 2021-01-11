@@ -42,12 +42,23 @@ namespace Gsemac.Polyfills.Microsoft.Extensions.DependencyInjection {
 
         // Private members
 
+        private readonly object singletonInstantiationMutex = new object();
+
         private object DefaultImplementationFactory(IServiceProvider serviceProvider) {
 
             // Create the default implementation instance if we haven't already (for singletons only).
+            // Make sure that even if the service descriptor is being used by multiple threads that the service is only instantiated once.
 
-            if (ImplementationInstance is null && Lifetime == ServiceLifetime.Singleton)
-                ImplementationInstance = CreateInstance(serviceProvider);
+            if (ImplementationInstance is null) {
+
+                lock (singletonInstantiationMutex) {
+
+                    if (ImplementationInstance is null && Lifetime == ServiceLifetime.Singleton)
+                        ImplementationInstance = CreateInstance(serviceProvider);
+
+                }
+
+            }
 
             // If we have an instance, return it.
 

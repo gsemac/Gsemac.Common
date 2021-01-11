@@ -23,20 +23,47 @@ namespace Gsemac.Polyfills.Microsoft.Extensions.DependencyInjection {
 
             }
 
-            // Validate services by making sure all of them can be instantiated.
-
             if (options.ValidateOnBuild)
-                foreach (Type serviceType in servicesDict.Keys)
-                    this.GetRequiredService(serviceType);
+                ValidateServices();
+
+            // If we allow scoped services to be resolved from the root provider, they'll treated as singletons under the global scope.
+
+            validateScopes = options.ValidateScopes;
+
+            if (!validateScopes)
+                globalScope = this.CreateScope();
 
         }
 
         public object GetService(Type serviceType) {
 
-            return GetServiceDescriptor(serviceType)?.ImplementationFactory(this);
+            ServiceDescriptor serviceDescriptor = GetServiceDescriptor(serviceType);
+
+            if (serviceDescriptor is object && serviceDescriptor.Lifetime == ServiceLifetime.Scoped) {
+
+                if (validateScopes) {
+
+                    // Scoped services must be accessed from within a scope.
+
+                    throw new InvalidOperationException($"Cannot resolve scoped service '{serviceType}' from root provider.");
+
+                }
+                else {
+
+                    // Scoped services are treated as singletons under the global scope.
+
+                    return globalScope.ServiceProvider.GetService(serviceType);
+
+                }
+
+            }
+
+            return serviceDescriptor?.ImplementationFactory(this);
 
         }
         internal ServiceDescriptor GetServiceDescriptor(Type serviceType) {
+
+            // Note: No need to lock here, since the services dictionary will never be modified after it is created.
 
             if (servicesDict.TryGetValue(serviceType, out IList<ServiceDescriptor> descriptors))
                 return descriptors.FirstOrDefault();
@@ -79,7 +106,18 @@ namespace Gsemac.Polyfills.Microsoft.Extensions.DependencyInjection {
 
         private bool disposedValue;
 
+        private readonly bool validateScopes = false;
+        private readonly IServiceScope globalScope;
         private readonly IDictionary<Type, IList<ServiceDescriptor>> servicesDict = new Dictionary<Type, IList<ServiceDescriptor>>();
+
+        private void ValidateServices() {
+
+            // Validate services by making sure all of them can be instantiated.
+
+            foreach (Type serviceType in servicesDict.Keys)
+                this.GetRequiredService(serviceType);
+
+        }
 
     }
 
