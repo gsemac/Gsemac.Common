@@ -35,8 +35,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Gsemac.Text", "src\Gsemac.T
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Gsemac.Text.Tests", "tests\Gsemac.Text.Tests\Gsemac.Text.Tests.csproj", "{9B9113A6-C103-41BE-89D1-5A8F9CAA0EAD}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Gsemac.Threading", "src\Gsemac.Threading\Gsemac.Threading.csproj", "{5F0D871C-9DFD-4F17-ADDD-4BFB46D154A3}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Gsemac.Drawing.Imaging.WebP", "src\Gsemac.Drawing.Imaging.WebP\Gsemac.Drawing.Imaging.WebP.csproj", "{4B82375A-E75C-4273-8299-473BBE6483C9}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Gsemac.Drawing.Imaging.ImageMagick", "src\Gsemac.Drawing.Imaging.ImageMagick\Gsemac.Drawing.Imaging.ImageMagick.csproj", "{19E8B8A5-0372-4268-82DB-8A85F76121C0}"
@@ -57,7 +55,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Gsemac.Net.GitHub", "src\Gs
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Gsemac.Polyfills", "src\Gsemac.Polyfills\Gsemac.Polyfills.csproj", "{EE1E3377-4158-4B19-8A29-85E1E382FF77}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gsemac.Polyfills.Tests", "tests\Gsemac.Polyfills.Tests\Gsemac.Polyfills.Tests.csproj", "{E7052C69-A9DA-4BC9-BD89-BF84D738EA02}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Gsemac.Polyfills.Tests", "tests\Gsemac.Polyfills.Tests\Gsemac.Polyfills.Tests.csproj", "{E7052C69-A9DA-4BC9-BD89-BF84D738EA02}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -121,10 +119,6 @@ Global
 		{9B9113A6-C103-41BE-89D1-5A8F9CAA0EAD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9B9113A6-C103-41BE-89D1-5A8F9CAA0EAD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9B9113A6-C103-41BE-89D1-5A8F9CAA0EAD}.Release|Any CPU.Build.0 = Release|Any CPU
-		{5F0D871C-9DFD-4F17-ADDD-4BFB46D154A3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{5F0D871C-9DFD-4F17-ADDD-4BFB46D154A3}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{5F0D871C-9DFD-4F17-ADDD-4BFB46D154A3}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{5F0D871C-9DFD-4F17-ADDD-4BFB46D154A3}.Release|Any CPU.Build.0 = Release|Any CPU
 		{4B82375A-E75C-4273-8299-473BBE6483C9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{4B82375A-E75C-4273-8299-473BBE6483C9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4B82375A-E75C-4273-8299-473BBE6483C9}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -188,7 +182,6 @@ Global
 		{D720B6A0-3105-4190-B502-D24EEFE0BB76} = {742EDB7B-BAAD-43E2-82B6-2ECAA2D28338}
 		{214407BF-4C1D-4502-96E6-325FF4A42C8D} = {559AE943-A0A6-43B1-ACF0-BE305C5B4FCE}
 		{9B9113A6-C103-41BE-89D1-5A8F9CAA0EAD} = {742EDB7B-BAAD-43E2-82B6-2ECAA2D28338}
-		{5F0D871C-9DFD-4F17-ADDD-4BFB46D154A3} = {559AE943-A0A6-43B1-ACF0-BE305C5B4FCE}
 		{4B82375A-E75C-4273-8299-473BBE6483C9} = {559AE943-A0A6-43B1-ACF0-BE305C5B4FCE}
 		{19E8B8A5-0372-4268-82DB-8A85F76121C0} = {559AE943-A0A6-43B1-ACF0-BE305C5B4FCE}
 		{FC17F94D-7B7B-4D75-8943-17100BF4E9BA} = {559AE943-A0A6-43B1-ACF0-BE305C5B4FCE}

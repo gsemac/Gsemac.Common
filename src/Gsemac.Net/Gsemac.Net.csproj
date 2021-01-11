@@ -29,8 +29,8 @@
 	<ItemGroup>
 	  <ProjectReference Include="..\Gsemac.Drawing\Gsemac.Drawing.csproj" />
 	  <ProjectReference Include="..\Gsemac.IO\Gsemac.IO.csproj" />
+	  <ProjectReference Include="..\Gsemac.Polyfills\Gsemac.Polyfills.csproj" />
 	  <ProjectReference Include="..\Gsemac.Text\Gsemac.Text.csproj" />
-	  <ProjectReference Include="..\Gsemac.Threading\Gsemac.Threading.csproj" />
 	</ItemGroup>
 
 </Project>
