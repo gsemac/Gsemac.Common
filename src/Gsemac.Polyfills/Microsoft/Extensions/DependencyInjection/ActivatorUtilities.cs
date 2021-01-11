@@ -117,10 +117,8 @@ namespace Gsemac.Polyfills.Microsoft.Extensions.DependencyInjection {
                 .Where(type => !argumentTypes.Contains(type))
                 .Distinct();
 
-            IEnumerable<object> resolvedArguments = parameterTypesToResolve.Select(type => provider.GetService(type));
-
             foreach (Type type in parameterTypesToResolve)
-                argumentDict[type] = resolvedArguments.Where(argument => argument is object && type.IsAssignableFrom(argument.GetType())).FirstOrDefault();
+                argumentDict[type] = provider.GetService(type);
 
             // Get arguments that we'll pass to the constructor.
             // If any of them are null, we cannot use the given constructor.
