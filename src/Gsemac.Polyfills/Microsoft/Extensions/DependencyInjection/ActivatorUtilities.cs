@@ -50,7 +50,7 @@ namespace Gsemac.Polyfills.Microsoft.Extensions.DependencyInjection {
             // Any types that cannot be resolved will taken from parameters.
 
             ConstructorInfo selectedConstructor = null;
-            object[] constructorArguments = Enumerable.Empty<object>().ToArray();
+            object[] constructorArguments = System.Array.Empty<object>();
             IEnumerable<ConstructorInfo> constructors = instanceType.GetConstructors(BindingFlags.Public | BindingFlags.Instance);
 
             // We need to find a suitable constructor for which we have all the necessary arguments, or the one flagged with the ActivatorUtilitiesConstructorAttribute.
@@ -73,12 +73,11 @@ namespace Gsemac.Polyfills.Microsoft.Extensions.DependencyInjection {
 
                 foreach (ConstructorInfo constructorInfo in constructors.OrderByDescending(constructor => constructor.GetParameters().Count())) {
 
-                    object[] candidateConstructorArguments = GetConstructorArguments(provider, constructorInfo, argumentTypes, parameters);
+                    constructorArguments = GetConstructorArguments(provider, constructorInfo, argumentTypes, parameters);
 
-                    if (candidateConstructorArguments is object) {
+                    if (constructorArguments.All(argument => argument is object)) {
 
                         selectedConstructor = constructorInfo;
-                        constructorArguments = candidateConstructorArguments;
 
                         break;
 
@@ -90,6 +89,8 @@ namespace Gsemac.Polyfills.Microsoft.Extensions.DependencyInjection {
 
             if (selectedConstructor is object && !constructorArguments.Any())
                 constructorArguments = GetConstructorArguments(provider, selectedConstructor, argumentTypes, parameters);
+
+            ValidateConstructorArguments(instanceType, selectedConstructor, constructorArguments);
 
             if (constructorArguments.Any())
                 return Activator.CreateInstance(instanceType, constructorArguments);
@@ -125,10 +126,24 @@ namespace Gsemac.Polyfills.Microsoft.Extensions.DependencyInjection {
 
             IEnumerable<object> constructorArguments = parameterTypes.Select(type => argumentDict.ContainsKey(type) ? argumentDict[type] : null);
 
-            if (constructorArguments.Any(argument => argument is null))
-                return null;
-
             return constructorArguments.ToArray();
+
+        }
+        private static void ValidateConstructorArguments(Type instanceType, ConstructorInfo constructorInfo, object[] arguments) {
+
+            if (constructorInfo is null)
+                return;
+
+            Type[] argumentTypes = constructorInfo.GetParameters()
+                .Select(parameter => parameter.ParameterType)
+                .ToArray();
+
+            for (int i = 0; i < argumentTypes.Count() && i < arguments.Count(); ++i) {
+
+                if (arguments[i] is null)
+                    throw new InvalidOperationException($"Unable to resolve service for type '{argumentTypes[i]}' while attempting to activate '{instanceType}'.");
+
+            }
 
         }
 
