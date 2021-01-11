@@ -14,7 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\src\Gsemac.Polyfills\Gsemac.Polyfills.csproj" />
+    <ProjectReference Include="..\..\src\Gsemac.Polyfills\Gsemac.Polyfills.csproj" />
   </ItemGroup>
 
 </Project>

@@ -74,7 +74,7 @@ namespace Gsemac.Polyfills.Microsoft.Extensions.DependencyInjection {
 
             return ImplementationFactory is object && ImplementationFactory != DefaultImplementationFactory ?
                 ImplementationFactory(serviceProvider) :
-                ActivatorUtilities.CreateInstance(serviceProvider, ServiceType);
+                ActivatorUtilities.CreateInstance(serviceProvider, ImplementationType);
 
         }
 
