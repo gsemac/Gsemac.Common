@@ -37,6 +37,9 @@ namespace Gsemac.Polyfills.Microsoft.Extensions.DependencyInjection {
 
         public object GetService(Type serviceType) {
 
+            if (disposedValue)
+                throw new ObjectDisposedException(nameof(ServiceProvider));
+
             ServiceDescriptor serviceDescriptor = GetServiceDescriptor(serviceType);
 
             if (serviceDescriptor is object && serviceDescriptor.Lifetime == ServiceLifetime.Scoped) {
@@ -62,6 +65,9 @@ namespace Gsemac.Polyfills.Microsoft.Extensions.DependencyInjection {
 
         }
         internal ServiceDescriptor GetServiceDescriptor(Type serviceType) {
+
+            if (disposedValue)
+                throw new ObjectDisposedException(nameof(ServiceProvider));
 
             // Note: No need to lock here, since the services dictionary will never be modified after it is created.
 
