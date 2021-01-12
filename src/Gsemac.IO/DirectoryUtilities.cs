@@ -1,15 +1,17 @@
-﻿namespace Gsemac.IO {
+﻿using System;
+
+namespace Gsemac.IO {
 
     public static class DirectoryUtilities {
 
-        public static string FindFileByFileName(string directoryPath, string fileName, FindFileOptions options = FindFileOptions.Default) {
+        public static string FindFileByFilename(string directoryPath, string filename, FindFileOptions options = FindFileOptions.Default) {
 
             string fullPath = string.Empty;
 
-            if (!string.IsNullOrEmpty(fileName) && System.IO.Directory.Exists(directoryPath)) {
+            if (!string.IsNullOrEmpty(filename) && System.IO.Directory.Exists(directoryPath)) {
 
                 if (options.HasFlag(FindFileOptions.IgnoreCase))
-                    fileName = fileName.ToLowerInvariant();
+                    filename = filename.ToLowerInvariant();
 
                 foreach (string filePath in System.IO.Directory.EnumerateFiles(directoryPath, "*", System.IO.SearchOption.AllDirectories)) {
 
@@ -20,7 +22,7 @@
                     if (options.HasFlag(FindFileOptions.IgnoreCase))
                         candidateFileName = candidateFileName.ToLowerInvariant();
 
-                    if (candidateFileName.Equals(fileName)) {
+                    if (candidateFileName.Equals(filename)) {
 
                         fullPath = filePath;
 
@@ -33,6 +35,24 @@
             }
 
             return fullPath;
+
+        }
+
+        public static bool TryCreateDirectory(string directoryPath) {
+
+            try {
+
+                if (!System.IO.Directory.Exists(directoryPath))
+                    System.IO.Directory.CreateDirectory(directoryPath);
+
+                return true;
+
+            }
+            catch (Exception) {
+
+                return false;
+
+            }
 
         }
 
