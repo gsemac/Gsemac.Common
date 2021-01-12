@@ -70,6 +70,18 @@ namespace Gsemac.Polyfills.Microsoft.Extensions.DependencyInjection.Tests {
 
         }
         [TestMethod]
+        public void TestGetSingletonWithManualInstantiation() {
+
+            MyServiceWithNoDependencies myService = new MyServiceWithNoDependencies();
+
+            IServiceProvider serviceProvider = new ServiceCollection()
+                .AddSingleton<IMyService>(myService)
+                .BuildServiceProvider();
+
+            Assert.IsTrue(serviceProvider.GetService<IMyService>().Equals(myService));
+
+        }
+        [TestMethod]
         public void TestGetTransientService() {
 
             IServiceProvider serviceProvider = new ServiceCollection()
