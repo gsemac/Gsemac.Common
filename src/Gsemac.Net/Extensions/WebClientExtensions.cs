@@ -48,6 +48,20 @@ namespace Gsemac.Net.Extensions {
 
         }
 
+        public static WebClient WithOptions(this WebClient client, IHttpWebRequestOptions options) {
+
+            client.Headers[HttpRequestHeader.Accept] = options.Accept;
+            client.Headers[HttpRequestHeader.AcceptLanguage] = options.AcceptLanguage;
+            //webClient.AutomaticDecompression = options.AutomaticDecompression;
+            //webClient.CookieContainer = options.Cookies;
+            client.Credentials = options.Credentials;
+            client.Proxy = options.Proxy;
+            client.Headers[HttpRequestHeader.UserAgent] = options.UserAgent;
+
+            return client;
+
+        }
+
     }
 
 }

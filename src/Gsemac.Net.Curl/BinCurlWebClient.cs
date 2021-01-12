@@ -9,14 +9,16 @@
         // Public members
 
         public BinCurlWebClient() :
-            this(LibCurl.CurlExecutablePath) {
+            this(new CurlWebRequestOptions() { 
+                CurlExecutablePath = LibCurl.CurlExecutablePath
+            }) {
         }
         /// <summary>
         /// Initializes a new instance of the <see cref="BinCurlWebClient"/> class.
         /// </summary>
         /// <param name="curlExecutablePath">Path to Curl executable.</param>
-        public BinCurlWebClient(string curlExecutablePath) :
-            base(new BinCurlHttpWebRequestFactory(curlExecutablePath)) {
+        public BinCurlWebClient(ICurlWebRequestOptions curlOptions) :
+            base(new BinCurlHttpWebRequestFactory(curlOptions)) {
         }
 
     }

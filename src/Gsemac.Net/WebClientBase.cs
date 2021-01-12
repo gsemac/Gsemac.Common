@@ -13,10 +13,10 @@ namespace Gsemac.Net {
 
             this.webRequestFactory = webRequestFactory;
 
-            // The Proxy property is non-null by default, and we want to know if the user set the proxy to a blank proxy intentionally.
-            // Instead of trying to figure that out, we'll set the Proxy property here, and assume that whatever the property is from hereon out is what the user wants.
+            // Replace the default proxy with a placeholder, so we can detect if the user has changed the proxy property.
+            // This would not be necessary if we could override the Proxy property, but alas, we cannot.
 
-            webRequestFactory.GetOptions().CopyTo(this);
+            Proxy = new PlaceHolderWebProxy(Proxy);
 
         }
 
@@ -31,12 +31,15 @@ namespace Gsemac.Net {
 
                 IHttpWebRequest httpWebRequest = webRequestFactory.Create(address);
 
-                httpWebRequest.Credentials = baseHttpWebRequest.Credentials;
-                httpWebRequest.Method = baseHttpWebRequest.Method;
-                httpWebRequest.Proxy = baseHttpWebRequest.Proxy;
+                if (baseHttpWebRequest.Credentials is object)
+                    httpWebRequest.Credentials = baseHttpWebRequest.Credentials;
 
-                httpWebRequest.Headers.Clear();
-                baseHttpWebRequest.Headers.CopyTo(httpWebRequest);
+                httpWebRequest.Method = baseHttpWebRequest.Method;
+
+                if (!(baseHttpWebRequest.Proxy is PlaceHolderWebProxy))
+                    httpWebRequest.Proxy = baseHttpWebRequest.Proxy;
+
+                httpWebRequest.WithHeaders(baseHttpWebRequest.Headers);
 
                 return httpWebRequest as WebRequest;
 
@@ -50,6 +53,39 @@ namespace Gsemac.Net {
         }
 
         // Private members
+
+        private sealed class PlaceHolderWebProxy :
+            IWebProxy {
+
+            // Public members
+
+            public ICredentials Credentials {
+                get => webProxy.Credentials;
+                set => webProxy.Credentials = value;
+            }
+
+            public PlaceHolderWebProxy(IWebProxy webProxy) {
+
+                this.webProxy = webProxy;
+
+            }
+
+            public Uri GetProxy(Uri destination) {
+
+                return webProxy.GetProxy(destination);
+
+            }
+            public bool IsBypassed(Uri host) {
+
+                return webProxy.IsBypassed(host);
+
+            }
+
+            // Private members
+
+            private readonly IWebProxy webProxy;
+
+        }
 
         private readonly IHttpWebRequestFactory webRequestFactory;
 

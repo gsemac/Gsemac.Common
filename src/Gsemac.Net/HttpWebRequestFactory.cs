@@ -1,9 +1,10 @@
-﻿using System;
+﻿using Gsemac.Net.Extensions;
+using System;
 
 namespace Gsemac.Net {
 
     public class HttpWebRequestFactory :
-        HttpWebRequestFactoryBase {
+        IHttpWebRequestFactory {
 
         // Public members
 
@@ -11,16 +12,27 @@ namespace Gsemac.Net {
             this(HttpWebRequestOptions.Default) {
         }
         public HttpWebRequestFactory(IHttpWebRequestOptions options) :
-            base(options) {
+            this(new HttpWebRequestOptionsFactory(options)) {
+        }
+        public HttpWebRequestFactory(IHttpWebRequestOptionsFactory optionsFactory) {
+
+            if (optionsFactory is null)
+                throw new ArgumentNullException(nameof(optionsFactory));
+
+            this.optionsFactory = optionsFactory;
+
         }
 
-        // Protected members
+        public IHttpWebRequest Create(Uri requestUri) {
 
-        protected override IHttpWebRequest CreateInternal(Uri requestUri) {
-
-            return new HttpWebRequestWrapper(requestUri);
+            return new HttpWebRequestWrapper(requestUri)
+                .WithOptions(optionsFactory.Create(requestUri));
 
         }
+
+        // Private members
+
+        private readonly IHttpWebRequestOptionsFactory optionsFactory;
 
     }
 

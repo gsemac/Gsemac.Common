@@ -1,9 +1,10 @@
-﻿using System;
+﻿using Gsemac.Net.Extensions;
+using System;
 
 namespace Gsemac.Net.Curl {
 
     public class LibCurlHttpWebRequestFactory :
-        HttpWebRequestFactoryBase {
+        IHttpWebRequestFactory {
 
         // Public members
 
@@ -11,16 +12,24 @@ namespace Gsemac.Net.Curl {
             this(HttpWebRequestOptions.Default) {
         }
         public LibCurlHttpWebRequestFactory(IHttpWebRequestOptions options) :
-            base(options) {
+            this(new HttpWebRequestOptionsFactory(options)) {
+        }
+        public LibCurlHttpWebRequestFactory(IHttpWebRequestOptionsFactory optionsFactory) {
+
+            this.optionsFactory = optionsFactory;
+
         }
 
-        // Protected members
+        public IHttpWebRequest Create(Uri requestUri) {
 
-        protected override IHttpWebRequest CreateInternal(Uri requestUri) {
-
-            return new LibCurlHttpWebRequest(requestUri);
+            return new LibCurlHttpWebRequest(requestUri)
+                .WithOptions(optionsFactory.Create(requestUri));
 
         }
+
+        // Private members
+
+        private readonly IHttpWebRequestOptionsFactory optionsFactory;
 
     }
 

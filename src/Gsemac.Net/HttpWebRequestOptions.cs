@@ -20,7 +20,25 @@ namespace Gsemac.Net {
         }
         public HttpWebRequestOptions(IHttpWebRequestOptions other, bool copyIfNull = true) {
 
-            other.CopyTo(this, copyIfNull);
+            if (copyIfNull || !string.IsNullOrWhiteSpace(other.Accept))
+                Accept = other.Accept;
+
+            if (copyIfNull || !string.IsNullOrWhiteSpace(other.AcceptLanguage))
+                AcceptLanguage = other.AcceptLanguage;
+
+            AutomaticDecompression = other.AutomaticDecompression;
+
+            if (copyIfNull || other.Cookies is object)
+                Cookies = other.Cookies;
+
+            if (copyIfNull || other.Credentials is object)
+                Credentials = other.Credentials;
+
+            if (copyIfNull || other.Proxy is object)
+                Proxy = other.Proxy;
+
+            if (copyIfNull || !string.IsNullOrWhiteSpace(other.UserAgent))
+                UserAgent = other.UserAgent;
 
         }
 

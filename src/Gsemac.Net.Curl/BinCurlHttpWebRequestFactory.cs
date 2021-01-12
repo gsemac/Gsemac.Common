@@ -1,44 +1,53 @@
-﻿using System;
+﻿using Gsemac.Net.Extensions;
+using System;
 
 namespace Gsemac.Net.Curl {
 
     public class BinCurlHttpWebRequestFactory :
-        HttpWebRequestFactoryBase {
+        IHttpWebRequestFactory {
 
         // Public members
 
         public BinCurlHttpWebRequestFactory() :
             this(HttpWebRequestOptions.Default) {
         }
-        public BinCurlHttpWebRequestFactory(string curlExecutablePath) :
+        public BinCurlHttpWebRequestFactory(ICurlWebRequestOptions curlOptions) :
             this() {
 
-            this.curlExecutablePath = curlExecutablePath;
+            this.curlOptions = curlOptions;
 
         }
         public BinCurlHttpWebRequestFactory(IHttpWebRequestOptions options) :
-            base(options) {
+            this(new HttpWebRequestOptionsFactory(options)) {
         }
-        public BinCurlHttpWebRequestFactory(IHttpWebRequestOptions options, string curlExecutablePath) :
-            this(options) {
+        public BinCurlHttpWebRequestFactory(IHttpWebRequestOptions options, ICurlWebRequestOptions curlOptions) :
+            this(new HttpWebRequestOptionsFactory(options), curlOptions) {
+        }
+        public BinCurlHttpWebRequestFactory(IHttpWebRequestOptionsFactory optionsFactory) {
 
-            this.curlExecutablePath = curlExecutablePath;
+            this.optionsFactory = optionsFactory;
+
+        }
+        public BinCurlHttpWebRequestFactory(IHttpWebRequestOptionsFactory optionsFactory, ICurlWebRequestOptions curlOptions) :
+            this(optionsFactory) {
+
+            this.curlOptions = curlOptions;
 
         }
 
-        // Protected members
+        public IHttpWebRequest Create(Uri requestUri) {
 
-        protected override IHttpWebRequest CreateInternal(Uri requestUri) {
-
-            return string.IsNullOrWhiteSpace(curlExecutablePath) ?
+            return (string.IsNullOrWhiteSpace(curlOptions.CurlExecutablePath) ?
                 new BinCurlHttpWebRequest(requestUri) :
-                new BinCurlHttpWebRequest(requestUri, curlExecutablePath);
+                new BinCurlHttpWebRequest(requestUri, curlOptions.CurlExecutablePath))
+                .WithOptions(optionsFactory.Create(requestUri));
 
         }
 
         // Private members
 
-        private readonly string curlExecutablePath;
+        private readonly ICurlWebRequestOptions curlOptions = CurlWebRequestOptions.Default;
+        private readonly IHttpWebRequestOptionsFactory optionsFactory;
 
     }
 

@@ -73,6 +73,48 @@ namespace Gsemac.Net.Extensions {
 
         }
 
+        public static IHttpWebRequest WithOptions(this IHttpWebRequest webRequest, IHttpWebRequestOptions options, bool copyIfNull = true) {
+
+            if (copyIfNull || !string.IsNullOrWhiteSpace(options.Accept))
+                webRequest.Accept = options.Accept;
+
+            if (copyIfNull || !string.IsNullOrWhiteSpace(options.AcceptLanguage))
+                webRequest.Headers[HttpRequestHeader.AcceptLanguage] = options.AcceptLanguage;
+
+            webRequest.AutomaticDecompression = options.AutomaticDecompression;
+
+            if (copyIfNull || options.Cookies is object)
+                webRequest.CookieContainer = options.Cookies;
+
+            if (copyIfNull || options.Credentials is object)
+                webRequest.Credentials = options.Credentials;
+
+            if (copyIfNull || options.Proxy is object)
+                webRequest.Proxy = options.Proxy;
+
+            if (copyIfNull || !string.IsNullOrWhiteSpace(options.UserAgent))
+                webRequest.UserAgent = options.UserAgent;
+
+            return webRequest;
+
+        }
+        public static IHttpWebRequest WithHeaders(this IHttpWebRequest webRequest, WebHeaderCollection headers) {
+
+            foreach (IHttpHeader header in headers.GetHeaders())
+                webRequest.SetHeader(header.Name, header.Value);
+
+            return webRequest;
+
+        }
+        public static HttpWebRequest WithHeaders(this HttpWebRequest webRequest, WebHeaderCollection headers) {
+
+            foreach (IHttpHeader header in headers.GetHeaders())
+                webRequest.SetHeader(header.Name, header.Value);
+
+            return webRequest;
+
+        }
+
         // Private members
 
         private static Tuple<long, long> ParseRangeHeader(string headerValue) {

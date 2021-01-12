@@ -25,18 +25,6 @@ namespace Gsemac.Net.Extensions {
                 desination[key] = source[key];
 
         }
-        public static void CopyTo(this WebHeaderCollection source, HttpWebRequest desination) {
-
-            foreach (IHttpHeader header in source.GetHeaders())
-                desination.SetHeader(header.Name, header.Value);
-
-        }
-        public static void CopyTo(this WebHeaderCollection source, IHttpWebRequest desination) {
-
-            foreach (IHttpHeader header in source.GetHeaders())
-                desination.SetHeader(header.Name, header.Value);
-
-        }
 
     }
 

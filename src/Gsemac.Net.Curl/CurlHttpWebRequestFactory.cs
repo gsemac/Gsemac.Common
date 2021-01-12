@@ -8,36 +8,18 @@ namespace Gsemac.Net.Curl {
 
         // Public members
 
-        public IHttpWebRequestOptions GetOptions() {
-
-            return webRequestFactory.GetOptions();
-
-        }
-        public IHttpWebRequestOptions GetOptions(Uri uri) {
-
-            return webRequestFactory.GetOptions(uri);
-
-        }
-        public void SetOptions(IHttpWebRequestOptions options) {
-
-            webRequestFactory.SetOptions(options);
-
-        }
-        public void SetOptions(string domain, IHttpWebRequestOptions options) {
-
-            webRequestFactory.SetOptions(domain, options);
-
-        }
-
         public CurlHttpWebRequestFactory() :
-            this(new HttpWebRequestOptions()) {
+            this(HttpWebRequestOptions.Default) {
         }
-        public CurlHttpWebRequestFactory(IHttpWebRequestOptions options) {
+        public CurlHttpWebRequestFactory(IHttpWebRequestOptions options) :
+            this(new HttpWebRequestOptionsFactory(options)) {
+        }
+        public CurlHttpWebRequestFactory(IHttpWebRequestOptionsFactory optionsFactory) {
 
             if (File.Exists(LibCurl.LibCurlPath) || !File.Exists(LibCurl.CurlExecutablePath))
-                webRequestFactory = new LibCurlHttpWebRequestFactory(options);
+                webRequestFactory = new LibCurlHttpWebRequestFactory(optionsFactory);
             else
-                webRequestFactory = new BinCurlHttpWebRequestFactory(options);
+                webRequestFactory = new BinCurlHttpWebRequestFactory(optionsFactory);
 
         }
 
