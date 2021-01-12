@@ -29,7 +29,7 @@ namespace Gsemac.Drawing.Imaging {
             string destinationExt = Path.GetExtension(destinationFilePath);
             bool overwriteSourceFile = sourceFilePath.Equals(destinationFilePath, StringComparison.OrdinalIgnoreCase);
 
-            if (!ImageCodec.IsSupportedImageFormat(sourceExt) || !ImageCodec.IsSupportedImageFormat(destinationExt))
+            if (!ImageCodec.IsSupportedFileFormat(sourceExt) || !ImageCodec.IsSupportedFileFormat(destinationExt))
                 throw new UnsupportedFileFormatException();
 
             if (sourceExt.Equals(destinationExt, StringComparison.OrdinalIgnoreCase) &&

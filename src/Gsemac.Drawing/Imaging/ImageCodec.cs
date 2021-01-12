@@ -10,43 +10,37 @@ namespace Gsemac.Drawing.Imaging {
 
         // Public members
 
-        public static IEnumerable<IFileFormat> SupportedImageFormats => GetSupportedImageFormats();
-        public static IEnumerable<IFileFormat> NativelySupportedImageFormats => GetNativelySupportedImageFormats();
+        public static IEnumerable<IFileFormat> SupportedFileFormats => GetSupportedImageFormats();
+        public static IEnumerable<IFileFormat> NativelySupportedFileFormats => GetNativelySupportedImageFormats();
 
-        public static bool IsSupportedImageFormat(string filePath) {
-
-            string ext = PathUtilities.GetFileExtension(filePath).ToLowerInvariant();
-
-            if (string.IsNullOrWhiteSpace(ext))
-                return false;
-
-            return IsSupportedImageFormat(FileFormat.FromFileExtension(ext));
-
-        }
-        public static bool IsSupportedImageFormat(IFileFormat imageFormat) {
-
-            return SupportedImageFormats.Any(supportedImageFormat => supportedImageFormat.Equals(imageFormat));
-
-        }
-        public static bool IsNativelySupportedImageFormat(string filePath) {
+        public static bool IsSupportedFileFormat(string filePath) {
 
             string ext = PathUtilities.GetFileExtension(filePath).ToLowerInvariant();
 
             if (string.IsNullOrWhiteSpace(ext))
                 return false;
 
-            return IsNativelySupportedImageFormat(FileFormat.FromFileExtension(ext));
+            return IsSupportedFileFormat(FileFormat.FromFileExtension(ext));
 
         }
-        public static bool IsNativelySupportedImageFormat(IFileFormat imageFormat) {
+        public static bool IsSupportedFileFormat(IFileFormat fileFormat) {
 
-            return NativelySupportedImageFormats.Any(supportedImageFormat => supportedImageFormat.Equals(imageFormat));
+            return SupportedFileFormats.Any(supportedImageFormat => supportedImageFormat.Equals(fileFormat));
 
         }
+        public static bool IsNativelySupportedFileFormat(string filePath) {
 
-        public static IEnumerable<IImageCodec> GetImageCodecs() {
+            string ext = PathUtilities.GetFileExtension(filePath).ToLowerInvariant();
 
-            return GetImageCodecs(null);
+            if (string.IsNullOrWhiteSpace(ext))
+                return false;
+
+            return IsNativelySupportedFileFormat(FileFormat.FromFileExtension(ext));
+
+        }
+        public static bool IsNativelySupportedFileFormat(IFileFormat fileFormat) {
+
+            return NativelySupportedFileFormats.Any(supportedImageFormat => supportedImageFormat.Equals(fileFormat));
 
         }
 
@@ -68,6 +62,11 @@ namespace Gsemac.Drawing.Imaging {
 
         // Private members
 
+        private static IEnumerable<IImageCodec> GetImageCodecs() {
+
+            return GetImageCodecs(null);
+
+        }
         private static IEnumerable<IFileFormat> GetSupportedImageFormats() {
 
             return GetImageCodecs().SelectMany(codec => codec.SupportedFileFormats)
