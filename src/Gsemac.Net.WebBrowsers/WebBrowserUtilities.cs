@@ -34,7 +34,7 @@ namespace Gsemac.Net.WebBrowsers {
 
             // Start an HTTP server on a random port.
 
-            Uri requestUri = new Uri($"http://localhost:{SocketUtilities.GetUnusedPort()}/");
+            Uri requestUri = new Uri($"http://localhost:{SocketUtilities.GetAvailablePort()}/");
             bool listenForRequests = true;
 
             using (HttpListener listener = new HttpListener()) {

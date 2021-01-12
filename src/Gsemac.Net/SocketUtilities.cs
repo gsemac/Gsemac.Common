@@ -5,17 +5,44 @@ namespace Gsemac.Net {
 
     public static class SocketUtilities {
 
-        public static int GetUnusedPort() {
+        public static int GetAvailablePort() {
 
-            var listener = new TcpListener(IPAddress.Any, 0);
+            TcpListener listener = new TcpListener(IPAddress.Any, 0);
 
             listener.Start();
 
-            var port = ((IPEndPoint)listener.LocalEndpoint).Port;
+            int port = ((IPEndPoint)listener.LocalEndpoint).Port;
 
             listener.Stop();
 
             return port;
+
+        }
+        public static bool IsPortAvailable(int port) {
+
+            TcpListener listener = new TcpListener(IPAddress.Any, port);
+
+            try {
+
+                listener.Start();
+
+                return true;
+
+            }
+            catch (SocketException ex) {
+
+                if (ex.SocketErrorCode == SocketError.AddressAlreadyInUse)
+                    return false;
+
+                throw ex;
+
+            }
+            finally {
+
+                listener.Stop();
+
+            }
+
 
         }
 
