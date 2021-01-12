@@ -9,7 +9,7 @@ namespace Gsemac.IO.Compression {
         // Public members
 
         public static IArchive Open(string filePath, FileAccess fileAccess = FileAccess.ReadWrite, IArchiveOptions options = null) {
-
+     
             IArchiveDecoder decoder = ArchiveDecoder.FromFileExtension(filePath);
 
             if (decoder is null)
