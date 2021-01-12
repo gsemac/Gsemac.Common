@@ -40,4 +40,22 @@
 
     }
 
+    internal class MyServiceWithMultipleConstructorsAndOptionalDependencies :
+        IMyService {
+
+        public int InvokedConstructorId { get; } = -1;
+
+        public MyServiceWithMultipleConstructorsAndOptionalDependencies(MyServiceWithNoDependencies service = null) {
+
+            InvokedConstructorId = 1;
+
+        }
+        public MyServiceWithMultipleConstructorsAndOptionalDependencies(MyServiceWithNoDependencies service1 = null, MyServiceWithNoDependencies service2 = null) {
+
+            InvokedConstructorId = 2;
+
+        }
+
+    }
+
 }

@@ -75,7 +75,7 @@ namespace Gsemac.Polyfills.Microsoft.Extensions.DependencyInjection {
 
                     constructorArguments = GetConstructorArguments(provider, constructorInfo, argumentTypes, parameters);
 
-                    if (constructorArguments.All(argument => argument is object)) {
+                    if (IsConstructorInvokable(constructorInfo, constructorArguments)) {
 
                         selectedConstructor = constructorInfo;
 
@@ -90,7 +90,7 @@ namespace Gsemac.Polyfills.Microsoft.Extensions.DependencyInjection {
             if (selectedConstructor is object && !constructorArguments.Any())
                 constructorArguments = GetConstructorArguments(provider, selectedConstructor, argumentTypes, parameters);
 
-            ValidateConstructorArguments(instanceType, selectedConstructor, constructorArguments);
+            EnsureConstructorIsInvokable(instanceType, selectedConstructor, constructorArguments);
 
             if (constructorArguments.Any())
                 return Activator.CreateInstance(instanceType, constructorArguments);
@@ -98,10 +98,11 @@ namespace Gsemac.Polyfills.Microsoft.Extensions.DependencyInjection {
                 return Activator.CreateInstance(instanceType);
 
         }
+
         private static object[] GetConstructorArguments(IServiceProvider provider, ConstructorInfo constructorInfo, Type[] argumentTypes, params object[] parameters) {
 
             if (argumentTypes is null)
-                argumentTypes = Enumerable.Empty<Type>().ToArray();
+                argumentTypes = System.Array.Empty<Type>();
 
             IEnumerable<Type> parameterTypes = constructorInfo.GetParameters().Select(parameter => parameter.ParameterType);
             IDictionary<Type, object> argumentDict = new Dictionary<Type, object>();
@@ -121,15 +122,24 @@ namespace Gsemac.Polyfills.Microsoft.Extensions.DependencyInjection {
             foreach (Type type in parameterTypesToResolve)
                 argumentDict[type] = provider.GetService(type);
 
-            // Get arguments that we'll pass to the constructor.
-            // If any of them are null, we cannot use the given constructor.
+            // Get the arguments in the order that they will be passed to the constructor.
 
             IEnumerable<object> constructorArguments = parameterTypes.Select(type => argumentDict.ContainsKey(type) ? argumentDict[type] : null);
 
             return constructorArguments.ToArray();
 
         }
-        private static void ValidateConstructorArguments(Type instanceType, ConstructorInfo constructorInfo, object[] arguments) {
+        private static bool IsConstructorInvokable(ConstructorInfo constructorInfo, object[] arguments) {
+
+            if (constructorInfo is null)
+                throw new ArgumentNullException(nameof(constructorInfo));
+
+            return constructorInfo.GetParameters()
+                .Zip(arguments, (x, y) => Tuple.Create(x, y))
+                .All(tuple => tuple.Item1.IsOptional || tuple.Item2 is object);
+
+        }
+        private static void EnsureConstructorIsInvokable(Type instanceType, ConstructorInfo constructorInfo, object[] arguments) {
 
             if (constructorInfo is null)
                 return;
