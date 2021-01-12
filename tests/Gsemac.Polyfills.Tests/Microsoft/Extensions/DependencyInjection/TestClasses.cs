@@ -12,7 +12,14 @@
     internal class MyServiceWithDependencies :
         IMyService {
 
-        public MyServiceWithDependencies(MyServiceWithNoDependencies _) { }
+        public MyServiceWithDependencies(MyServiceWithNoDependencies service) { }
+
+    }
+
+    internal class MyServiceWithOptionalDependencies :
+        IMyService {
+
+        public MyServiceWithOptionalDependencies(MyServiceWithNoDependencies service = null) { }
 
     }
 

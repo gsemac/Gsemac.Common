@@ -134,14 +134,12 @@ namespace Gsemac.Polyfills.Microsoft.Extensions.DependencyInjection {
             if (constructorInfo is null)
                 return;
 
-            Type[] argumentTypes = constructorInfo.GetParameters()
-                .Select(parameter => parameter.ParameterType)
-                .ToArray();
+            ParameterInfo[] constructorParameters = constructorInfo.GetParameters();
 
-            for (int i = 0; i < argumentTypes.Count() && i < arguments.Count(); ++i) {
+            for (int i = 0; i < constructorParameters.Count() && i < arguments.Count(); ++i) {
 
-                if (arguments[i] is null)
-                    throw new InvalidOperationException($"Unable to resolve service for type '{argumentTypes[i]}' while attempting to activate '{instanceType}'.");
+                if (arguments[i] is null && !constructorParameters[i].IsOptional)
+                    throw new InvalidOperationException($"Unable to resolve service for type '{constructorParameters[i].ParameterType}' while attempting to activate '{instanceType}'.");
 
             }
 

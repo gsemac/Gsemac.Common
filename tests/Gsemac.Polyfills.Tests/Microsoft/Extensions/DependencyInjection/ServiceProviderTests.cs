@@ -40,6 +40,16 @@ namespace Gsemac.Polyfills.Microsoft.Extensions.DependencyInjection.Tests {
 
         }
         [TestMethod]
+        public void TestGetServiceWithOptionalDependenciesWhenDependenciesAreNotRegistered() {
+
+            IServiceProvider serviceProvider = new ServiceCollection()
+                .AddTransient<MyServiceWithOptionalDependencies>()
+                .BuildServiceProvider();
+
+            Assert.IsTrue(serviceProvider.GetService<MyServiceWithOptionalDependencies>() is MyServiceWithOptionalDependencies);
+
+        }
+        [TestMethod]
         public void TestGetServiceWhenServiceIsNotRegistered() {
 
             IServiceProvider serviceProvider = new ServiceCollection()
