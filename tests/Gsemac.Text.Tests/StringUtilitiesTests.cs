@@ -167,6 +167,42 @@ namespace Gsemac.Text.Tests {
 
         }
 
+        // ToSentenceCase
+
+        [TestMethod]
+        public void TestToSentenceCaseWithMultipleSentences() {
+
+            Assert.AreEqual("Hello! welcome to my test case.", StringUtilities.ToSentenceCase("Hello! welcome to my test case."));
+
+        }
+        [TestMethod]
+        public void TestToSentenceCaseWithLeadingWhitespace() {
+
+            Assert.AreEqual("    Hello!", StringUtilities.ToSentenceCase("    hello!"));
+
+        }
+        [TestMethod]
+        public void TestToSentenceCaseWithMultipleSentencesAndMultiSentenceOption() {
+
+            Assert.AreEqual("Hello! Welcome to my test case.", StringUtilities.ToSentenceCase("hello! welcome to my test case.",
+                SentenceCasingOptions.DetectMultipleSentences));
+
+        }
+        [TestMethod]
+        public void TestToSentenceCaseWithPunctuationWithoutFollowingWhitespace() {
+
+            Assert.AreEqual("Hello! Please see the attatched archive.Zip.", StringUtilities.ToSentenceCase("hello! please see the attatched archive.zip.",
+                SentenceCasingOptions.DetectMultipleSentences));
+
+        }
+        [TestMethod]
+        public void TestToSentenceCaseWithPunctuationWithoutFollowingWhitespaceWithRequireWhitespaceAfterPunctuationOption() {
+
+            Assert.AreEqual("Hello! Please see the attatched archive.zip.", StringUtilities.ToSentenceCase("hello! please see the attatched archive.zip.",
+                SentenceCasingOptions.DetectMultipleSentences | SentenceCasingOptions.RequireWhitespaceAfterPunctuation));
+
+        }
+
         // IsNumeric
 
         [TestMethod]

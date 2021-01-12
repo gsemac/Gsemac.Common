@@ -262,7 +262,22 @@ namespace Gsemac.Text {
             return result;
 
         }
-        public static string ToSentenceCase(string input, CasingOptions options = CasingOptions.Default) {
+        public static string ToSentenceCase(string input) {
+
+            return ToSentenceCase(input, CasingOptions.Default, SentenceCasingOptions.Default);
+
+        }
+        public static string ToSentenceCase(string input, CasingOptions options) {
+
+            return ToSentenceCase(input, options, SentenceCasingOptions.Default);
+
+        }
+        public static string ToSentenceCase(string input, SentenceCasingOptions options) {
+
+            return ToSentenceCase(input, CasingOptions.Default, options);
+
+        }
+        public static string ToSentenceCase(string input, CasingOptions options, SentenceCasingOptions sentenceCasingOptions) {
 
             if (string.IsNullOrEmpty(input))
                 return input;
@@ -270,7 +285,26 @@ namespace Gsemac.Text {
             if (!options.HasFlag(CasingOptions.PreserveAcronyms))
                 input = input.ToLowerInvariant();
 
-            string result = Regex.Replace(input, @"(?:^|[\.!?])\s*(\w)", m => m.Value.ToUpperInvariant());
+            string result = input;
+
+            if (sentenceCasingOptions.HasFlag(SentenceCasingOptions.DetectMultipleSentences)) {
+
+                // Detect multiple sentences in the same string, and convert them all to sentence case.
+
+                string pattern = sentenceCasingOptions.HasFlag(SentenceCasingOptions.RequireWhitespaceAfterPunctuation) ?
+                    @"(?:^|[\.!?]\s)\s*(\w)" :
+                    @"(?:^|[\.!?])\s*(\w)";
+
+                result = Regex.Replace(input, pattern, m => m.Value.ToUpperInvariant());
+
+            }
+            else {
+
+                // Treat the entire string as a single sentence (only capitalize the first letter).
+
+                result = Regex.Replace(input, @"^\s*(\w)", m => m.Value.ToUpperInvariant());
+
+            }
 
             if (options.HasFlag(CasingOptions.CapitalizeRomanNumerals))
                 result = CapitalizeRomanNumerals(result);
