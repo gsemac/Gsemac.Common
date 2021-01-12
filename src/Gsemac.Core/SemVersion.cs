@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -16,6 +15,7 @@ namespace Gsemac.Core {
         // Public members
 
         public bool IsPreRelease => !string.IsNullOrEmpty(PreRelease);
+        public IEnumerable<int> RevisionNumbers => revisionNumbers;
 
         public int Major => revisionNumbers[0];
         public int Minor => revisionNumbers.Length > 1 ? revisionNumbers[1] : 0;
@@ -108,8 +108,8 @@ namespace Gsemac.Core {
 
             // If we get here, both versions are pre-release versions.
 
-            string[] preReleaseParts = PreRelease?.Split('.') ?? new string[] { };
-            string[] otherPreReleaseParts = other.PreRelease?.Split('.') ?? new string[] { };
+            string[] preReleaseParts = PreRelease?.Split('.') ?? Enumerable.Empty<string>().ToArray();
+            string[] otherPreReleaseParts = other.PreRelease?.Split('.') ?? Enumerable.Empty<string>().ToArray();
 
             for (int i = 0; i < preReleaseParts.Count() && i < otherPreReleaseParts.Count(); ++i) {
 
@@ -179,17 +179,6 @@ namespace Gsemac.Core {
         public static bool operator >=(SemVersion left, SemVersion right) {
 
             return left is null ? right is null : left.CompareTo(right) >= 0;
-
-        }
-
-        public IEnumerator<int> GetEnumerator() {
-
-            return ((IEnumerable<int>)revisionNumbers).GetEnumerator();
-
-        }
-        IEnumerator IEnumerable.GetEnumerator() {
-
-            return GetEnumerator();
 
         }
 

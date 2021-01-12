@@ -50,7 +50,7 @@ namespace Gsemac.Core {
 
         }
 
-        public static int Compare(object lhs, object rhs) {
+        internal static int Compare(object lhs, object rhs) {
 
             if (lhs is null)
                 throw new ArgumentNullException(nameof(lhs));
@@ -74,7 +74,7 @@ namespace Gsemac.Core {
             throw new ArgumentException("One or both of the given objects are not valid version objects.");
 
         }
-        public static int Compare(IVersion lhs, IVersion rhs) {
+        internal static int Compare(IVersion lhs, IVersion rhs) {
 
             if (lhs is null)
                 throw new ArgumentNullException(nameof(lhs));
@@ -92,10 +92,9 @@ namespace Gsemac.Core {
 
             // Otherwise, perform a generic comparison.
 
-            return Compare(lhs.ToArray(), rhs.ToArray());
+            return Compare(lhs.RevisionNumbers.ToArray(), rhs.RevisionNumbers.ToArray());
 
         }
-
         internal static int Compare(int[] lhs, int[] rhs) {
 
             // Compare revision numbers in order.

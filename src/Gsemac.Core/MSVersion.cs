@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -15,6 +14,7 @@ namespace Gsemac.Core {
         // Public members
 
         public bool IsPreRelease => false;
+        public IEnumerable<int> RevisionNumbers => revisionNumbers;
 
         public int Major => revisionNumbers[0];
         public int Minor => revisionNumbers.Length > 1 ? revisionNumbers[1] : 0;
@@ -65,7 +65,7 @@ namespace Gsemac.Core {
 
         }
         public MSVersion(IVersion other) :
-            this(other.ToArray()) {
+            this(other.RevisionNumbers.ToArray()) {
         }
         public MSVersion(System.Version other) :
             this(SystemVersionToMSVersion(other)) {
@@ -135,17 +135,6 @@ namespace Gsemac.Core {
         public static bool operator >=(MSVersion left, MSVersion right) {
 
             return left is null ? right is null : left.CompareTo(right) >= 0;
-
-        }
-
-        public IEnumerator<int> GetEnumerator() {
-
-            return ((IEnumerable<int>)revisionNumbers).GetEnumerator();
-
-        }
-        IEnumerator IEnumerable.GetEnumerator() {
-
-            return GetEnumerator();
 
         }
 
