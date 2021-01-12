@@ -82,7 +82,27 @@ namespace Gsemac.IO.Logging {
 
         protected void OnLogged(ILogMessage message) {
 
-            loggedEvent?.Invoke(this, new LogEventArgs(message));
+            if (loggedEvent is object) {
+
+                foreach (LogEventHandler logEventHandler in loggedEvent.GetInvocationList()) {
+
+                    try {
+
+                        logEventHandler?.Invoke(this, new LogEventArgs(message));
+
+                    }
+                    catch (Exception ex) {
+
+                        // If exceptions are ignored, exceptions can be thrown in event handlers without interrupting other event handlers.
+
+                        if (!IgnoreExceptions)
+                            throw ex;
+
+                    }
+
+                }
+
+            }
 
         }
 
@@ -108,7 +128,17 @@ namespace Gsemac.IO.Logging {
                 ILogMessage logMessage = new LogMessage(LogLevel.Info, Assembly.GetEntryAssembly().GetName().Name, $"{key}: {Headers[key]}");
                 LogEventArgs logEventArgs = new LogEventArgs(logMessage);
 
-                eventHandler.Invoke(this, logEventArgs);
+                try {
+
+                    eventHandler.Invoke(this, logEventArgs);
+
+                }
+                catch (Exception ex) {
+
+                    if (!IgnoreExceptions)
+                        throw ex;
+
+                }
 
             }
 
