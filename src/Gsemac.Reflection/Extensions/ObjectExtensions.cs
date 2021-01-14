@@ -4,9 +4,9 @@ namespace Gsemac.Reflection.Extensions {
 
     public static class ObjectExtensions {
 
-        public static IObjectPropertyDictionary ToDictionary(this object obj, ObjectPropertyDictionaryOptions options = ObjectPropertyDictionaryOptions.Default) {
+        public static IPropertyDictionary ToDictionary(this object obj, PropertyDictionaryOptions options = PropertyDictionaryOptions.Default) {
 
-            return new ObjectPropertyDictionary(obj, options);
+            return new PropertyDictionary(obj, options);
 
         }
 

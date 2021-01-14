@@ -7,8 +7,8 @@ using System.Reflection;
 
 namespace Gsemac.Reflection {
 
-    public class ObjectPropertyDictionary :
-        IObjectPropertyDictionary {
+    public class PropertyDictionary :
+        IPropertyDictionary {
 
         // Public members
 
@@ -22,7 +22,7 @@ namespace Gsemac.Reflection {
         public int Count => propertyDict.Keys.Count;
         public bool IsReadOnly => propertyDict.IsReadOnly;
 
-        public ObjectPropertyDictionary(object obj, ObjectPropertyDictionaryOptions options = ObjectPropertyDictionaryOptions.Default) {
+        public PropertyDictionary(object obj, PropertyDictionaryOptions options = PropertyDictionaryOptions.Default) {
 
             propertyDict = BuildPropertyDict(obj, obj.GetType(), options);
 
@@ -178,7 +178,7 @@ namespace Gsemac.Reflection {
         private readonly IDictionary<string, ObjectPropertyPair> propertyDict;
         private readonly object objectUpdateMutex = new object();
 
-        private IDictionary<string, ObjectPropertyPair> BuildPropertyDict(object obj, Type type, ObjectPropertyDictionaryOptions options) {
+        private IDictionary<string, ObjectPropertyPair> BuildPropertyDict(object obj, Type type, PropertyDictionaryOptions options) {
 
             BindingFlags bindingFlags = BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static | BindingFlags.DeclaredOnly;
 
@@ -189,13 +189,13 @@ namespace Gsemac.Reflection {
                 string propertyKey = propertyInfo.Name;
                 bool propertyTypeIsObject = Type.GetTypeCode(propertyInfo.PropertyType) == TypeCode.Object;
 
-                if (propertyInfo.CanWrite || !options.HasFlag(ObjectPropertyDictionaryOptions.SkipReadOnlyProperties))
+                if (propertyInfo.CanWrite || !options.HasFlag(PropertyDictionaryOptions.SkipReadOnlyProperties))
                     propertyDict[propertyKey] = new ObjectPropertyPair(obj, propertyInfo);
 
                 // Check if the property is a primitive type.
                 // https://stackoverflow.com/a/2664428 (Michael Petito)
 
-                if (propertyTypeIsObject && options.HasFlag(ObjectPropertyDictionaryOptions.IncludeNestedProperties)) {
+                if (propertyTypeIsObject && options.HasFlag(PropertyDictionaryOptions.IncludeNestedProperties)) {
 
                     var childPropertyDict = BuildPropertyDict(propertyInfo.GetValue(obj, null), propertyInfo.PropertyType, options);
 

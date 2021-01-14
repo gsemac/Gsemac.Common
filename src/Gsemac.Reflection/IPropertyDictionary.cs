@@ -2,7 +2,7 @@
 
 namespace Gsemac.Reflection {
 
-    public interface IObjectPropertyDictionary :
+    public interface IPropertyDictionary :
         IDictionary<string, object> {
 
         bool TryGetValue<T>(string key, out T value);
