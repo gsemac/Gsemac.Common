@@ -18,8 +18,4 @@
 		<DebugSymbols>false</DebugSymbols>
 	</PropertyGroup>
 
-	<ItemGroup>
-	  <ProjectReference Include="..\Gsemac.Polyfills\Gsemac.Polyfills.csproj" />
-	</ItemGroup>
-
 </Project>
