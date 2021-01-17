@@ -34,7 +34,10 @@ namespace Gsemac.Reflection.Extensions {
                 return true;
 
             }
-            catch (InvalidCastException) {
+            catch (Exception) {
+
+                // I originally had this catch InvalidCastException, but it's also possible for other exceptions to be thrown, such as FormatException when parsing strings.
+                // Because this method is never supposed to throw, I've changed it to catch all exceptions.
 
                 result = default;
 
