@@ -1,7 +1,6 @@
 ﻿using Gsemac.Text;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -493,51 +492,6 @@ namespace Gsemac.IO {
             path2 = NormalizeDirectorySeparators(path2);
 
             return path1.Equals(path2, stringComparison);
-
-        }
-
-        public static void OpenPath(string path, OpenPathOptions options = OpenPathOptions.None) {
-
-            const string explorerExe = "explorer.exe";
-
-            // The path provided may be a file or a directory.
-            // - If the path is a directory, we'll just open the directory.
-            // - If the path is a file, we'll open the directory and highlight the file.
-
-            bool isFilePath = IsFilePath(path, true);
-
-            if (isFilePath || System.IO.Directory.Exists(path))
-                path = System.IO.Path.GetFullPath(path);
-
-            string explorerArguments = isFilePath ?
-                $"/select, \"{path}\"" :
-                $"\"{path}\"";
-
-            if (isFilePath || options.HasFlag(OpenPathOptions.NewWindow) || !System.IO.Directory.Exists(path)) {
-
-                // We choose this option if the path doesn't exist since it avoids an exception being thrown by Process.Start.
-                // It will simply open a default directory.
-
-                Process.Start(explorerExe, explorerArguments);
-
-            }
-            else {
-
-                Process.Start(new ProcessStartInfo() {
-                    FileName = path,
-                    UseShellExecute = true,
-                    Verb = "open"
-                });
-
-            }
-
-        }
-        public static void OpenPathOrDefault(string path, string defaultPath, OpenPathOptions options = OpenPathOptions.None) {
-
-            if (System.IO.Directory.Exists(path) || System.IO.File.Exists(path))
-                OpenPath(path, options);
-            else
-                OpenPath(defaultPath, options);
 
         }
 

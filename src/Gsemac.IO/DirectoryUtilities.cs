@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 
 namespace Gsemac.IO {
 
@@ -53,6 +54,51 @@ namespace Gsemac.IO {
                 return false;
 
             }
+
+        }
+
+        public static void OpenDirectory(string path, OpenDirectoryOptions options = OpenDirectoryOptions.None) {
+
+            const string explorerExe = "explorer.exe";
+
+            // The path provided may be a file or a directory.
+            // - If the path is a directory, we'll just open the directory.
+            // - If the path is a file, we'll open the directory and highlight the file.
+
+            bool isFilePath = PathUtilities.IsFilePath(path, true);
+
+            if (isFilePath || System.IO.Directory.Exists(path))
+                path = System.IO.Path.GetFullPath(path);
+
+            string explorerArguments = isFilePath ?
+                $"/select, \"{path}\"" :
+                $"\"{path}\"";
+
+            if (isFilePath || options.HasFlag(OpenDirectoryOptions.NewWindow) || !System.IO.Directory.Exists(path)) {
+
+                // We choose this option if the path doesn't exist since it avoids an exception being thrown by Process.Start.
+                // It will simply open a default directory.
+
+                Process.Start(explorerExe, explorerArguments);
+
+            }
+            else {
+
+                Process.Start(new ProcessStartInfo() {
+                    FileName = path,
+                    UseShellExecute = true,
+                    Verb = "open"
+                });
+
+            }
+
+        }
+        public static void OpenDirectory(string path, string defaultPath, OpenDirectoryOptions options = OpenDirectoryOptions.None) {
+
+            if (System.IO.Directory.Exists(path) || System.IO.File.Exists(path))
+                OpenDirectory(path, options);
+            else
+                OpenDirectory(defaultPath, options);
 
         }
 

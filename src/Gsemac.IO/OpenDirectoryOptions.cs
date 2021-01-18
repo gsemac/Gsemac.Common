@@ -3,7 +3,7 @@
 namespace Gsemac.IO {
 
     [Flags]
-    public enum OpenPathOptions {
+    public enum OpenDirectoryOptions {
         None,
         Default = None,
         /// <summary>
