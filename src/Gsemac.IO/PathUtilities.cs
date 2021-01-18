@@ -488,6 +488,18 @@ namespace Gsemac.IO {
         }
         public static bool AreEqual(string path1, string path2, StringComparison stringComparison = StringComparison.OrdinalIgnoreCase) {
 
+            // Consider the paths equal if they are both null.
+
+            if (string.IsNullOrEmpty(path1) && string.IsNullOrEmpty(path2))
+                return true;
+
+            // If only one of the paths is null, the paths are not equal.
+
+            if (string.IsNullOrEmpty(path1) || string.IsNullOrEmpty(path2))
+                return false;
+
+            // Directory separators are ignored when comparing paths.
+
             path1 = NormalizeDirectorySeparators(path1);
             path2 = NormalizeDirectorySeparators(path2);
 

@@ -433,9 +433,27 @@ namespace Gsemac.IO.Tests {
 
         }
         [TestMethod]
-        public void TestAreNotEqualWithUnequalPaths() {
+        public void TestAreEqualWithUnequalPaths() {
 
             Assert.IsFalse(PathUtilities.AreEqual(@"C:\path\to\", @"C:\path\to\directory\"));
+
+        }
+        [TestMethod]
+        public void TestAreEqualWithBothPathsEmpty() {
+
+            Assert.IsTrue(PathUtilities.AreEqual(string.Empty, string.Empty));
+
+        }
+        [TestMethod]
+        public void TestAreEqualWithFirstPathEmpty() {
+
+            Assert.IsFalse(PathUtilities.AreEqual(string.Empty, @"C:\path\to\directory\"));
+
+        }
+        [TestMethod]
+        public void TestAreEqualWithSecondPathEmpty() {
+
+            Assert.IsFalse(PathUtilities.AreEqual(@"C:\path\to\directory\", string.Empty));
 
         }
 
