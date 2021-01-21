@@ -4,7 +4,7 @@
 
         public static string ToProper(this string input, CasingOptions options = CasingOptions.Default) {
 
-            return StringUtilities.ToProperCase(input, options);
+            return CaseConverter.ToProperCase(input, options);
 
         }
 

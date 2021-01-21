@@ -211,108 +211,6 @@ namespace Gsemac.Text {
 
         }
 
-        public static string ToCase(string input, StringCasing casing) {
-
-            if (string.IsNullOrEmpty(input))
-                return input;
-
-            switch (casing) {
-
-                case StringCasing.Unchanged:
-                    return input;
-
-                case StringCasing.Lower:
-                    return input.ToLowerInvariant();
-
-                case StringCasing.Upper:
-                    return input.ToUpperInvariant();
-
-                case StringCasing.Proper:
-                    return ToProperCase(input);
-
-                case StringCasing.Sentence:
-                    return ToSentenceCase(input);
-
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(input));
-
-            }
-
-        }
-        public static string ToProperCase(string input, CasingOptions options = CasingOptions.Default) {
-
-            if (string.IsNullOrEmpty(input))
-                return input;
-
-            // TextInfo.ToTitleCase preserves sequences of all-caps, assuming that the sequence represents an acronym.
-            // If we do not wish to preserve acronyms, we'll make the entire string lowercase first.
-
-            if (!options.HasFlag(CasingOptions.PreserveAcronyms))
-                input = input.ToLowerInvariant();
-
-            string result = System.Threading.Thread.CurrentThread.CurrentCulture.TextInfo.ToTitleCase(input);
-
-            // Fix possessive S (e.g. "'s") because TextInfo.ToTitleCase will capitalize them (e.g. "John's" -> "John'S").
-
-            result = Regex.Replace(result, @"\b(['’])S\b", "$1s");
-
-            if (options.HasFlag(CasingOptions.CapitalizeRomanNumerals))
-                result = CapitalizeRomanNumerals(result);
-
-            return result;
-
-        }
-        public static string ToSentenceCase(string input) {
-
-            return ToSentenceCase(input, CasingOptions.Default, SentenceCasingOptions.Default);
-
-        }
-        public static string ToSentenceCase(string input, CasingOptions options) {
-
-            return ToSentenceCase(input, options, SentenceCasingOptions.Default);
-
-        }
-        public static string ToSentenceCase(string input, SentenceCasingOptions options) {
-
-            return ToSentenceCase(input, CasingOptions.Default, options);
-
-        }
-        public static string ToSentenceCase(string input, CasingOptions options, SentenceCasingOptions sentenceCasingOptions) {
-
-            if (string.IsNullOrEmpty(input))
-                return input;
-
-            if (!options.HasFlag(CasingOptions.PreserveAcronyms))
-                input = input.ToLowerInvariant();
-
-            string result = input;
-
-            if (sentenceCasingOptions.HasFlag(SentenceCasingOptions.DetectMultipleSentences)) {
-
-                // Detect multiple sentences in the same string, and convert them all to sentence case.
-
-                string pattern = sentenceCasingOptions.HasFlag(SentenceCasingOptions.RequireWhitespaceAfterPunctuation) ?
-                    @"(?:^|[\.!?]\s)\s*(\w)" :
-                    @"(?:^|[\.!?])\s*(\w)";
-
-                result = Regex.Replace(input, pattern, m => m.Value.ToUpperInvariant());
-
-            }
-            else {
-
-                // Treat the entire string as a single sentence (only capitalize the first letter).
-
-                result = Regex.Replace(input, @"^\s*(\w)", m => m.Value.ToUpperInvariant());
-
-            }
-
-            if (options.HasFlag(CasingOptions.CapitalizeRomanNumerals))
-                result = CapitalizeRomanNumerals(result);
-
-            return result;
-
-        }
-
         public static bool IsNumeric(string input, NumberStyles style = NumberStyles.AllowLeadingWhite | NumberStyles.AllowTrailingWhite | NumberStyles.AllowDecimalPoint) {
 
             return double.TryParse(input, style, CultureInfo.InvariantCulture, out _);
@@ -471,17 +369,6 @@ namespace Gsemac.Text {
             sb.Replace(@"â˜†", @"☆");
 
             return sb.ToString();
-
-        }
-
-        private static string CapitalizeRomanNumerals(string input) {
-
-            // Regex adapted from Regular Expressions Cookbook, 6.9. Roman Numerals, example "Modern Roman numerals, strict":
-            // https://www.oreilly.com/library/view/regular-expressions-cookbook/9780596802837/ch06s09.html
-
-            const string romanNumeralsPattern = @"\b(?=[MDCLXVI])M*(C[MD]|D?C{0,3})(X[CL]|L?X{0,3})(I[XV]|V?I{0,3})\b";
-
-            return Regex.Replace(input, romanNumeralsPattern, m => m.Value.ToUpperInvariant(), RegexOptions.IgnoreCase);
 
         }
 
