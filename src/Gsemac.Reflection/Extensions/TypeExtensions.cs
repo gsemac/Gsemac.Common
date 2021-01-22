@@ -9,6 +9,7 @@ namespace Gsemac.Reflection.Extensions {
             return type.GetConstructor(Type.EmptyTypes) != null;
 
         }
+
         public static bool ImplementsInterface<T>(this Type type) {
 
             Type interfaceType = typeof(T);
@@ -16,6 +17,7 @@ namespace Gsemac.Reflection.Extensions {
             return interfaceType.IsAssignableFrom(type) && !type.IsAbstract;
 
         }
+
         public static bool IsNullableType(this Type type) {
 
             return type != null &&
@@ -34,6 +36,22 @@ namespace Gsemac.Reflection.Extensions {
                 return typeof(Nullable<>).MakeGenericType(type);
             else
                 return type;
+
+        }
+
+        public static bool IsBuiltInType(this Type type) {
+
+            // Returns true for built-in types as defined here:
+            // https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/builtin-types/built-in-types
+
+            if (type == typeof(object))
+                return true;
+
+            TypeCode typeCode = Type.GetTypeCode(type);
+
+            return typeCode != TypeCode.Object &&
+                typeCode != TypeCode.DateTime &&
+                typeCode != TypeCode.Empty;
 
         }
 
