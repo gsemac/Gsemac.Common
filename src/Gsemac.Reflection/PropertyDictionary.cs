@@ -90,7 +90,7 @@ namespace Gsemac.Reflection {
                     return true;
 
                 }
-                else if (obj.TryCast(out T castedValue)) {
+                else if (ObjectUtilities.TryCast(obj, out T castedValue)) {
 
                     value = castedValue;
 
@@ -120,7 +120,7 @@ namespace Gsemac.Reflection {
                         return true;
 
                     }
-                    else if (value.TryCast(propertyType, out object castedValue)) {
+                    else if (ObjectUtilities.TryCast(value, propertyType, out object castedValue)) {
 
                         SetPropertyValue(objectProperty, castedValue);
 

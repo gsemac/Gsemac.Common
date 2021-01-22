@@ -1,16 +1,10 @@
 ﻿using System;
 
-namespace Gsemac.Reflection.Extensions {
+namespace Gsemac.Reflection {
 
-    public static class ObjectExtensions {
+    public static class ObjectUtilities {
 
-        public static IPropertyDictionary ToDictionary(this object obj, PropertyDictionaryOptions options = PropertyDictionaryOptions.Default) {
-
-            return new PropertyDictionary(obj, options);
-
-        }
-
-        public static bool TryCast<T>(this object obj, out T result) {
+        public static bool TryCast<T>(object obj, out T result) {
 
             if (TryCast(obj, typeof(T), out object resultObject)) {
 
@@ -25,9 +19,12 @@ namespace Gsemac.Reflection.Extensions {
             return false;
 
         }
-        public static bool TryCast(this object obj, Type type, out object result) {
+        public static bool TryCast(object obj, Type type, out object result) {
 
             try {
+
+                if (type.IsEnum)
+                    return EnumUtilities.TryParse(obj, type, ignoreCase: true, out result);
 
                 result = Convert.ChangeType(obj, type);
 

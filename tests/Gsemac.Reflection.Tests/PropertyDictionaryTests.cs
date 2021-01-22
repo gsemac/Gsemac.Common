@@ -18,6 +18,15 @@ namespace Gsemac.Reflection.Tests {
 
         }
         [TestMethod]
+        public void TestSetPropertyValueWithCastRequired() {
+
+            IPropertyDictionary dict = new PropertyDictionary(new ClassWithProperties());
+
+            Assert.IsTrue(dict.TrySetValue("Option", "Item3"));
+            Assert.AreEqual(TestEnum.Item3, dict["Option"]);
+
+        }
+        [TestMethod]
         public void TestUpdateObjectPropertyValue() {
 
             IPropertyDictionary dict = new PropertyDictionary(new ClassWithRecursiveProperties(), PropertyDictionaryOptions.IncludeNestedProperties);
