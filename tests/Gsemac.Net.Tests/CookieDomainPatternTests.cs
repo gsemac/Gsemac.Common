@@ -4,7 +4,7 @@ using System;
 namespace Gsemac.Net.Tests {
 
     [TestClass]
-    public class CookieDomainEqualityComparerTests {
+    public class CookieDomainPatternTests {
 
         [TestMethod]
         public void TestDomainAndDomainWithSubdomain() {
