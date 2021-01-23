@@ -8,12 +8,12 @@ namespace Gsemac.Net.Extensions {
 
         // Public members
 
-        public static void SetHeader(this HttpWebRequest webRequest, string headerName, string headerValue) {
+        public static void SetHeaderValue(this HttpWebRequest webRequest, string headerName, string headerValue) {
 
-            SetHeader(new HttpWebRequestWrapper(webRequest), headerName, headerValue);
+            SetHeaderValue(new HttpWebRequestWrapper(webRequest), headerName, headerValue);
 
         }
-        public static void SetHeader(this IHttpWebRequest webRequest, string headerName, string headerValue) {
+        public static void SetHeaderValue(this IHttpWebRequest webRequest, string headerName, string headerValue) {
 
             switch (headerName.ToLowerInvariant()) {
 
@@ -78,7 +78,7 @@ namespace Gsemac.Net.Extensions {
         public static IHttpWebRequest WithHeaders(this IHttpWebRequest webRequest, WebHeaderCollection headers) {
 
             foreach (IHttpHeader header in headers.GetHeaders())
-                webRequest.SetHeader(header.Name, header.Value);
+                webRequest.SetHeaderValue(header.Name, header.Value);
 
             return webRequest;
 
@@ -86,7 +86,7 @@ namespace Gsemac.Net.Extensions {
         public static HttpWebRequest WithHeaders(this HttpWebRequest webRequest, WebHeaderCollection headers) {
 
             foreach (IHttpHeader header in headers.GetHeaders())
-                webRequest.SetHeader(header.Name, header.Value);
+                webRequest.SetHeaderValue(header.Name, header.Value);
 
             return webRequest;
 
