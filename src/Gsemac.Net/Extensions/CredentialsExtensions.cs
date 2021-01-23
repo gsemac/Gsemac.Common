@@ -5,25 +5,27 @@ namespace Gsemac.Net.Extensions {
 
     public static class CredentialsExtensions {
 
-        public static string ToCredentialString(this ICredentials credentials, Uri uri) {
+        // Public members
 
-            return credentials.ToCredentialString(uri, string.Empty);
+        public static string ToCredentialsString(this ICredentials credentials, Uri uri) {
+
+            return credentials.ToCredentialsString(uri, string.Empty);
 
         }
-        public static string ToCredentialString(this ICredentials credentials, Uri uri, string authType) {
+        public static string ToCredentialsString(this ICredentials credentials, Uri uri, string authType) {
 
             if (credentials is null)
                 throw new ArgumentNullException(nameof(credentials));
 
-            NetworkCredential NetworkCredential = credentials?.GetCredential(uri, authType);
+            NetworkCredential networkCredential = credentials?.GetCredential(uri, authType);
 
-            if (NetworkCredential is null)
+            if (networkCredential is null)
                 return string.Empty;
 
-            return NetworkCredential.ToCredentialString();
+            return networkCredential.ToCredentialsString();
 
         }
-        public static string ToCredentialString(this NetworkCredential credentials) {
+        public static string ToCredentialsString(this NetworkCredential credentials) {
 
             if (credentials is null)
                 throw new ArgumentNullException(nameof(credentials));

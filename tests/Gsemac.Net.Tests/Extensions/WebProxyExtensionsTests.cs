@@ -7,71 +7,71 @@ namespace Gsemac.Net.Extensions.Tests {
     public class WebProxyExtensionsTests {
 
         [TestMethod]
-        public void TestGetProxyStringWithHttpAddress() {
+        public void TestToProxyStringWithHttpAddress() {
 
             IWebProxy proxy = new WebProxy("127.0.0.1");
 
-            Assert.AreEqual("http://127.0.0.1:80", proxy.GetProxyString());
+            Assert.AreEqual("http://127.0.0.1:80", proxy.ToProxyString());
 
         }
         [TestMethod]
-        public void TestGetProxyStringWithHttpAddressWithProtocol() {
+        public void TestToProxyStringWithHttpAddressWithProtocol() {
 
             IWebProxy proxy = new WebProxy("http://127.0.0.1");
 
-            Assert.AreEqual("http://127.0.0.1:80", proxy.GetProxyString());
+            Assert.AreEqual("http://127.0.0.1:80", proxy.ToProxyString());
 
         }
         [TestMethod]
-        public void TestGetProxyStringWithSocks5AddressWithProtocol() {
+        public void TestToProxyStringWithSocks5AddressWithProtocol() {
 
             IWebProxy proxy = new WebProxy("socks5://127.0.0.1");
 
-            Assert.AreEqual("socks5://127.0.0.1:1080", proxy.GetProxyString());
+            Assert.AreEqual("socks5://127.0.0.1:1080", proxy.ToProxyString());
 
         }
         [TestMethod]
-        public void TestGetProxyStringWithHttpAddressWithPort() {
+        public void TestToProxyStringWithHttpAddressWithPort() {
 
             IWebProxy proxy = new WebProxy("http://127.0.0.1:81");
 
-            Assert.AreEqual("http://127.0.0.1:81", proxy.GetProxyString());
+            Assert.AreEqual("http://127.0.0.1:81", proxy.ToProxyString());
 
         }
         [TestMethod]
-        public void TestGetProxyStringWithHttpsAddress() {
+        public void TestToProxyStringWithHttpsAddress() {
 
             IWebProxy proxy = new WebProxy("https://127.0.0.1");
 
-            Assert.AreEqual("https://127.0.0.1:443", proxy.GetProxyString());
+            Assert.AreEqual("https://127.0.0.1:443", proxy.ToProxyString());
 
         }
         [TestMethod]
-        public void TestGetProxyStringWithUsernamePassword() {
+        public void TestToProxyStringWithUsernamePassword() {
 
             IWebProxy proxy = new WebProxy("127.0.0.1") {
                 Credentials = new NetworkCredential("username", "password")
             };
 
-            Assert.AreEqual("http://username:password@127.0.0.1:80", proxy.GetProxyString());
+            Assert.AreEqual("http://username:password@127.0.0.1:80", proxy.ToProxyString());
 
         }
         [TestMethod]
-        public void TestGetProxyStringWithUsernamePasswordWithReservedCharacters() {
+        public void TestToProxyStringWithUsernamePasswordWithReservedCharacters() {
 
             IWebProxy proxy = new WebProxy("127.0.0.1") {
                 Credentials = new NetworkCredential("user:name", "pass:word")
             };
 
-            Assert.AreEqual("http://user%3Aname:pass%3Aword@127.0.0.1:80", proxy.GetProxyString());
+            Assert.AreEqual("http://user%3Aname:pass%3Aword@127.0.0.1:80", proxy.ToProxyString());
 
         }
         [TestMethod]
-        public void TestGetProxyStringWithEmptyProxy() {
+        public void TestToProxyStringWithEmptyProxy() {
 
             IWebProxy proxy = new WebProxy();
 
-            Assert.AreEqual(string.Empty, proxy.GetProxyString());
+            Assert.AreEqual(string.Empty, proxy.ToProxyString());
 
         }
         [TestMethod]

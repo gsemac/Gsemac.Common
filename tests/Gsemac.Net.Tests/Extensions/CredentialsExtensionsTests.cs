@@ -6,36 +6,38 @@ namespace Gsemac.Net.Extensions.Tests {
     [TestClass]
     public class CredentialsExtensionsTests {
 
+        // Public members
+
         [TestMethod]
-        public void TestToCredentialStringWithUsernameAndPassword() {
+        public void TestToCredentialsStringWithUsernameAndPassword() {
 
             NetworkCredential credential = new NetworkCredential("username", "password");
 
-            Assert.AreEqual("username:password", credential.ToCredentialString());
+            Assert.AreEqual("username:password", credential.ToCredentialsString());
 
         }
         [TestMethod]
-        public void TestToCredentialStringWithUsernameAndPasswordAndDomain() {
+        public void TestToCredentialsStringWithUsernameAndPasswordAndDomain() {
 
             NetworkCredential credential = new NetworkCredential("username", "password", "example.com");
 
-            Assert.AreEqual("username:password", credential.ToCredentialString(new System.Uri("http://example.com")));
+            Assert.AreEqual("username:password", credential.ToCredentialsString(new System.Uri("http://example.com")));
 
         }
         [TestMethod]
-        public void TestToCredentialStringWithUsernameAndPasswordAndDomainAndAuthType() {
+        public void TestToCredentialsStringWithUsernameAndPasswordAndDomainAndAuthType() {
 
             NetworkCredential credential = new NetworkCredential("username", "password", "example.com");
 
-            Assert.AreEqual("username:password", credential.ToCredentialString(new System.Uri("http://example.com"), "Basic"));
+            Assert.AreEqual("username:password", credential.ToCredentialsString(new System.Uri("http://example.com"), "Basic"));
 
         }
         [TestMethod]
-        public void TestToCredentialStringWithUsernameAndPasswordWithReservedCharacters() {
+        public void TestToCredentialsStringWithUsernameAndPasswordWithReservedCharacters() {
 
             NetworkCredential credential = new NetworkCredential("user:name", "pass:word");
 
-            Assert.AreEqual("user%3Aname:pass%3Aword", credential.ToCredentialString());
+            Assert.AreEqual("user%3Aname:pass%3Aword", credential.ToCredentialsString());
 
         }
 

@@ -6,26 +6,29 @@ namespace Gsemac.Net.Extensions {
 
     public static class WebProxyExtensions {
 
+        // Public members
+
         public static bool IsEmpty(this IWebProxy proxy) {
+
+            return proxy.IsEmpty(PlaceholderUri);
+
+        }
+        public static bool IsEmpty(this IWebProxy proxy, Uri destination) {
 
             if (proxy is null)
                 return true;
 
-            return string.IsNullOrWhiteSpace(proxy.GetProxyString());
-
-        }
-        public static Uri GetProxy(this IWebProxy proxy) {
-
-            return proxy.GetProxy(new Uri("http://example.com"));
+            return proxy.IsBypassed(destination) ||
+                proxy.GetProxy(destination).Equals(destination);
 
         }
 
-        public static string GetProxyString(this IWebProxy proxy) {
+        public static string ToProxyString(this IWebProxy proxy) {
 
-            return proxy.GetProxyString(new Uri("http://example.com"));
+            return proxy.ToProxyString(PlaceholderUri);
 
         }
-        public static string GetProxyString(this IWebProxy proxy, Uri destination) {
+        public static string ToProxyString(this IWebProxy proxy, Uri destination) {
 
             if (proxy is null)
                 throw new ArgumentNullException(nameof(proxy));
@@ -47,7 +50,7 @@ namespace Gsemac.Net.Extensions {
 
             if (!(credentials is null)) {
 
-                sb.Append(credentials.ToCredentialString());
+                sb.Append(credentials.ToCredentialsString());
                 sb.Append("@");
 
             }
@@ -58,6 +61,10 @@ namespace Gsemac.Net.Extensions {
             return sb.ToString();
 
         }
+
+        // Private members
+
+        private static Uri PlaceholderUri => new Uri("http://example.com");
 
     }
 

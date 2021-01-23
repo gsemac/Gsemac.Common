@@ -101,7 +101,7 @@ namespace Gsemac.Net.Curl {
                 requestUri = uri;
 
             if (!(credentials is null))
-                AddArgument("-u", credentials.ToCredentialString(requestUri));
+                AddArgument("-u", credentials.ToCredentialsString(requestUri));
 
             return this;
 
@@ -194,7 +194,7 @@ namespace Gsemac.Net.Curl {
                 requestUri = uri;
 
             if (!(proxy is null) && !proxy.IsBypassed(requestUri))
-                AddArgument("--proxy", proxy.GetProxyString(requestUri));
+                AddArgument("--proxy", proxy.ToProxyString(requestUri));
 
             return this;
 

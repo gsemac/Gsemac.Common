@@ -78,7 +78,7 @@ namespace Gsemac.Net.WebDrivers {
                 driverOptions.AddArgument($"--user-agent={webDriverOptions.UserAgent}");
 
             if (!webDriverOptions.Proxy.IsEmpty())
-                driverOptions.AddArgument($"--proxy-server={webDriverOptions.Proxy.GetProxyString()}");
+                driverOptions.AddArgument($"--proxy-server={webDriverOptions.Proxy.ToProxyString()}");
 
             driverOptions.PageLoadStrategy = (OpenQA.Selenium.PageLoadStrategy)webDriverOptions.PageLoadStrategy;
 
@@ -145,9 +145,9 @@ namespace Gsemac.Net.WebDrivers {
 
             // If the user specified a proxy, apply the proxy.
 
-            if (webDriverOptions.Proxy.IsEmpty()) {
+            if (!webDriverOptions.Proxy.IsEmpty()) {
 
-                string proxyAbsoluteUri = webDriverOptions.Proxy.GetProxyString();
+                string proxyAbsoluteUri = webDriverOptions.Proxy.ToProxyString();
 
                 Proxy proxy = new Proxy {
                     HttpProxy = proxyAbsoluteUri,

@@ -144,7 +144,7 @@ namespace Gsemac.Net.Curl {
 
             if (!(Credentials is null)) {
 
-                string credentialString = Credentials.ToCredentialString(RequestUri);
+                string credentialString = Credentials.ToCredentialsString(RequestUri);
 
                 if (!string.IsNullOrEmpty(credentialString))
                     LibCurl.EasySetOpt(easyHandle, CurlOption.UserPwd, credentialString);
@@ -178,7 +178,7 @@ namespace Gsemac.Net.Curl {
         private void SetProxy(CurlEasyHandle easyHandle) {
 
             if (!(Proxy is null) && !Proxy.IsBypassed(RequestUri))
-                LibCurl.EasySetOpt(easyHandle, CurlOption.Proxy, Proxy.GetProxyString(RequestUri));
+                LibCurl.EasySetOpt(easyHandle, CurlOption.Proxy, Proxy.ToProxyString(RequestUri));
 
         }
 
