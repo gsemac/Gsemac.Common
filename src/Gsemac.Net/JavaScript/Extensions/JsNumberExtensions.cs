@@ -32,7 +32,7 @@ namespace Gsemac.Net.JavaScript.Extensions {
 
         // Private members
 
-        public static string ToStringBase36(int number) {
+        private static string ToStringBase36(int number) {
 
             if (number == 0)
                 return "0";

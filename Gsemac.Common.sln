@@ -57,7 +57,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Gsemac.Polyfills", "src\Gse
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Gsemac.Polyfills.Tests", "tests\Gsemac.Polyfills.Tests\Gsemac.Polyfills.Tests.csproj", "{E7052C69-A9DA-4BC9-BD89-BF84D738EA02}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gsemac.Reflection.Tests", "tests\Gsemac.Reflection.Tests\Gsemac.Reflection.Tests.csproj", "{5F52E9E6-12FC-4607-AE98-0896818D3742}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Gsemac.Reflection.Tests", "tests\Gsemac.Reflection.Tests\Gsemac.Reflection.Tests.csproj", "{5F52E9E6-12FC-4607-AE98-0896818D3742}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
