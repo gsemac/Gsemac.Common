@@ -1,35 +1,36 @@
-﻿using System;
+﻿using Gsemac.Core;
+using System;
 using System.Text;
 using System.Text.RegularExpressions;
 
 namespace Gsemac.Text {
 
-    public static class Base64 {
+    public sealed class Base64 :
+        IBinaryCodec {
 
         // Public members
 
-        public static string EncodeString(string input) {
+        public byte[] Encode(byte[] bytesToEncode, int startIndex, int length) {
 
-            return EncodeString(input, Encoding.UTF8);
-
-        }
-        public static string DecodeString(string input) {
-
-            return DecodeString(input, Encoding.UTF8);
+            return Encoding.UTF8.GetBytes(Convert.ToBase64String(bytesToEncode, startIndex, length));
 
         }
-        public static string EncodeString(string input, Encoding encoding) {
+        public byte[] Decode(byte[] encodedBytes, int startIndex, int length) {
 
-            return Convert.ToBase64String(encoding.GetBytes(input));
+            string base64String = PadBase64String(Encoding.UTF8.GetString(encodedBytes, startIndex, length));
+
+            return Convert.FromBase64String(base64String);
 
         }
-        public static string DecodeString(string input, Encoding encoding) {
 
-            // The default FromBase64String method will throw an exception if the input string is not padded.
+        public static IBinaryEncoder GetEncoder() {
 
-            input = PadBase64String(input);
+            return new Base64();
 
-            return encoding.GetString(Convert.FromBase64String(input));
+        }
+        public static IBinaryDecoder GetDecoder() {
+
+            return new Base64();
 
         }
 
