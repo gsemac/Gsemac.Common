@@ -1,9 +1,8 @@
-﻿using Gsemac.Core;
-using System;
+﻿using System;
 using System.Text;
 using System.Text.RegularExpressions;
 
-namespace Gsemac.Text {
+namespace Gsemac.Core.Codecs {
 
     public sealed class Base64 :
         IBinaryCodec {
@@ -44,7 +43,7 @@ namespace Gsemac.Text {
 
             input = PadBase64String(input.Trim());
 
-            return (input.Length % 4 == 0) &&
+            return input.Length % 4 == 0 &&
                 Regex.IsMatch(input, @"^[a-z0-9\+/]*={0,3}$", RegexOptions.IgnoreCase);
 
         }

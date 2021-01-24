@@ -1,9 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
-namespace Gsemac.Text.Tests {
+namespace Gsemac.Core.Codecs.Tests {
 
     [TestClass]
     public class Base64Tests {

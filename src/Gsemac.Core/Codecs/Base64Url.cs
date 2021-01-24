@@ -1,14 +1,13 @@
-﻿using Gsemac.Core;
-using Gsemac.Core.Extensions;
+﻿using Gsemac.Core.Codecs.Extensions;
 using System.Text;
 
-namespace Gsemac.Text {
+namespace Gsemac.Core.Codecs {
 
     public sealed class Base64Url :
         IBinaryCodec {
 
         public byte[] Decode(byte[] encodedBytes, int startIndex, int length) {
-
+            
             string base64UrlString = Encoding.UTF8.GetString(encodedBytes, startIndex, length);
 
             StringBuilder sb = new StringBuilder(base64UrlString);
