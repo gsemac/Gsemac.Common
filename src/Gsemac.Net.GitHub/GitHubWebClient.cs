@@ -41,7 +41,7 @@ namespace Gsemac.Net.GitHub {
             }
 
         }
-        public IEnumerable<IRelease> GetReleases(IRepositoryUrl repositoryUrl, int numberOfReleases) {
+        public IEnumerable<IRelease> GetReleases(IRepositoryUrl repositoryUrl) {
 
             string nextPageUrl = repositoryUrl.ReleasesUrl;
 
@@ -51,33 +51,30 @@ namespace Gsemac.Net.GitHub {
 
                 HtmlDocument htmlDocument = new HtmlDocument();
 
-                while (releases.Count() < numberOfReleases) {
+                while (!string.IsNullOrWhiteSpace(nextPageUrl)) {
 
-                    htmlDocument.LoadHtml(webClient.DownloadString(repositoryUrl.ReleasesUrl));
+                    htmlDocument.LoadHtml(webClient.DownloadString(nextPageUrl));
 
                     IEnumerable<HtmlNode> releaseEntryNodes = htmlDocument.DocumentNode.SelectNodes(@"//div[@class='release-entry']");
 
                     if (releaseEntryNodes.Count() <= 0)
                         break;
 
-                    releases.AddRange(releaseEntryNodes.Select(node => ParseReleaseEntry(node)));
+                    foreach (IRelease release in releaseEntryNodes.Select(node => ParseReleaseEntry(node)))
+                        yield return release;
 
                     // Go the next page of releases.
 
-                    if (releases.Count() < numberOfReleases) {
+                    nextPageUrl = htmlDocument.DocumentNode.SelectNodes(@"//a[text()='Next']")
+                        ?.FirstOrDefault()
+                        ?.GetAttributeValue("href", string.Empty);
 
-                        nextPageUrl = htmlDocument.DocumentNode.SelectNodes(@"//a[text()='Next']").FirstOrDefault()?.GetAttributeValue("href", string.Empty);
-
-                        if (string.IsNullOrWhiteSpace(nextPageUrl))
-                            break;
-
-                    }
+                    if (string.IsNullOrWhiteSpace(nextPageUrl))
+                        break;
 
                 }
 
             }
-
-            return releases.Take(numberOfReleases);
 
         }
 
@@ -93,11 +90,11 @@ namespace Gsemac.Net.GitHub {
 
         private IRelease ParseReleaseEntry(HtmlNode releaseEntryNode) {
 
-            DateTimeOffset creationTime = DateTimeOffset.Parse(releaseEntryNode.SelectNodes(@".//*[@datetime]").FirstOrDefault()?.GetAttributeValue("datetime", string.Empty), CultureInfo.InvariantCulture);
-            string description = releaseEntryNode.SelectNodes(@".//div[@class='markdown-body']").FirstOrDefault()?.InnerText;
-            string tag = releaseEntryNode.SelectNodes(@".//svg[contains(@class,'octicon-tag')]/following-sibling::span").FirstOrDefault()?.InnerText;
-            string title = releaseEntryNode.SelectNodes(@".//div[contains(@class,'release-header')]/div/div").FirstOrDefault()?.InnerText;
-            string url = releaseEntryNode.SelectNodes(@".//div[contains(@class,'release-header')]/div/div/a").FirstOrDefault()?.GetAttributeValue("href", string.Empty);
+            DateTimeOffset creationTime = DateTimeOffset.Parse(releaseEntryNode.SelectNodes(@".//*[@datetime]")?.FirstOrDefault()?.GetAttributeValue("datetime", string.Empty), CultureInfo.InvariantCulture);
+            string description = releaseEntryNode.SelectNodes(@".//div[@class='markdown-body']")?.FirstOrDefault()?.InnerText;
+            string tag = releaseEntryNode.SelectNodes(@".//svg[contains(@class,'octicon-tag')]/following-sibling::span")?.FirstOrDefault()?.InnerText;
+            string title = releaseEntryNode.SelectNodes(@".//div[contains(@class,'release-header')]/div/div")?.FirstOrDefault()?.InnerText;
+            string url = releaseEntryNode.SelectNodes(@".//div[contains(@class,'release-header')]/div/div/a")?.FirstOrDefault()?.GetAttributeValue("href", string.Empty);
 
             return new Release() {
                 CreationTime = creationTime,
@@ -112,7 +109,7 @@ namespace Gsemac.Net.GitHub {
         private IEnumerable<IReleaseAsset> ParseReleaseAssets(HtmlNode releaseEntryNode) {
 
             return releaseEntryNode.SelectNodes(@".//summary[contains(.,'Assets')]/following-sibling::div/div/div")
-                .Select(node => ParseReleaseAsset(node))
+                ?.Select(node => ParseReleaseAsset(node))
                 .Where(asset => !string.IsNullOrWhiteSpace(asset.Name) && !string.IsNullOrWhiteSpace(asset.DownloadUrl));
 
         }
