@@ -27,7 +27,7 @@ namespace Gsemac.Net.WebDrivers {
 
             if (updateRequired) {
 
-                OnLog.Info("Updating web driver");
+                OnLog.Info($"Updating web driver to version {webBrowserInfo.Version}");
 
                 if (DownloadWebDriver(webBrowserInfo)) {
 
@@ -40,7 +40,8 @@ namespace Gsemac.Net.WebDrivers {
 
                 }
 
-            } else
+            }
+            else
                 OnLog.Info("Web driver is up-to-date");
 
             return webDriverInfo;

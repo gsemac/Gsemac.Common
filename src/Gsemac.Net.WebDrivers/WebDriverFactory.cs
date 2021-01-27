@@ -17,6 +17,12 @@ namespace Gsemac.Net.WebDrivers {
         }
         public WebDriverFactory(IWebDriverOptions webDriverOptions, IWebDriverFactoryOptions webDriverFactoryOptions) {
 
+            if (webDriverOptions is null)
+                throw new ArgumentNullException(nameof(webDriverOptions));
+
+            if (webDriverFactoryOptions is null)
+                throw new ArgumentNullException(nameof(webDriverFactoryOptions));
+
             this.webDriverOptions = webDriverOptions;
             this.webDriverFactoryOptions = webDriverFactoryOptions;
 
