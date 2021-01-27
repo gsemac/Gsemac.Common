@@ -1,8 +1,12 @@
-﻿namespace Gsemac.Net.WebDrivers {
+﻿using Gsemac.IO.Logging;
+using Gsemac.Net.WebBrowsers;
 
-    public interface IWebDriverUpdater {
+namespace Gsemac.Net.WebDrivers {
 
-        IWebDriverInfo GetLatestWebDriver(string webDriverFilePath);
+    public interface IWebDriverUpdater :
+        ILoggable {
+
+        IWebDriverInfo GetWebDriver(IWebBrowserInfo webBrowserInfo);
 
     }
 

@@ -1,8 +1,13 @@
-﻿using Gsemac.Net.Extensions;
+﻿using Gsemac.IO;
+using Gsemac.IO.Compression;
+using Gsemac.Net.Extensions;
+using Gsemac.Net.GitHub;
+using Gsemac.Net.GitHub.Extensions;
+using Gsemac.Net.WebBrowsers;
 using System;
+using System.IO;
 using System.Linq;
 using System.Net;
-using System.Text.RegularExpressions;
 
 namespace Gsemac.Net.WebDrivers {
 
@@ -11,70 +16,66 @@ namespace Gsemac.Net.WebDrivers {
 
         // Public members
 
-        public FirefoxWebDriverUpdater(IHttpWebRequestFactory webRequestFactory) :
+        public FirefoxWebDriverUpdater() :
+            this(WebDriverUpdaterOptions.Default) {
+        }
+        public FirefoxWebDriverUpdater(IWebDriverUpdaterOptions webDriverUpdaterOptions) :
+            this(new HttpWebRequestFactory(), webDriverUpdaterOptions) {
+        }
+        public FirefoxWebDriverUpdater(IHttpWebRequestFactory webRequestFactory, IWebDriverUpdaterOptions webDriverUpdaterOptions) :
             base(webRequestFactory) {
 
             this.webRequestFactory = webRequestFactory;
-
-        }
-        public FirefoxWebDriverUpdater(IHttpWebRequestFactory webRequestFactory, IWebDriverInfoCache cache) :
-            base(webRequestFactory, cache) {
-
-            this.webRequestFactory = webRequestFactory;
+            this.webDriverUpdaterOptions = webDriverUpdaterOptions;
 
         }
 
         // Protected members
 
-        protected override IWebDriverInfo GetLatestWebDriverInfo() {
+        protected override string GetWebDriverExecutablePath() {
 
-            Uri releasesUri = new Uri("https://github.com/mozilla/geckodriver/releases/latest");
+            if (string.IsNullOrWhiteSpace(webDriverUpdaterOptions.WebDriverDirectory))
+                return WebDriverUtilities.GeckoDriverExecutablePath;
 
-            using (WebClient webClient = webRequestFactory.ToWebClientFactory().Create()) {
+            return Path.Combine(webDriverUpdaterOptions.WebDriverDirectory, WebDriverUtilities.GeckoDriverExecutablePath);
 
-                // Get download URLs from the latest release.
+        }
+        protected override Uri GetWebDriverDownloadUri(IWebBrowserInfo webBrowserInfo) {
 
-                string body = webClient.DownloadString(releasesUri);
+            string releasesUrl = "https://github.com/mozilla/geckodriver/releases/latest";
 
-                Uri downloadUri = Regex.Matches(body, @"<a href=""([^""]+)"" rel=""nofollow""").Cast<Match>()
-                    .Select(m => m.Groups[1].Value)
-                    .Where(relativeUri => relativeUri.Contains(GetTargetOS()))
-                    .Select(relativeUri => new Uri(releasesUri, relativeUri))
-                    .FirstOrDefault();
+            IGitHubClient gitHubClient = new GitHubWebClient(webRequestFactory);
+            IRelease release = gitHubClient.GetLatestRelease(releasesUrl);
 
-                if (!(downloadUri is null)) {
+            IReleaseAsset asset = release.Assets.Where(a => a.Name.Contains(GetPlatformOS()))
+                .FirstOrDefault();
 
-                    return new WebDriverInfo() {
-                        DownloadUri = downloadUri,
-                        Version = GetVersion(downloadUri)
-                    };
-
-                }
-
-            }
+            if (!string.IsNullOrWhiteSpace(asset?.DownloadUrl))
+                return new Uri(asset.DownloadUrl);
 
             // We weren't able to get information on the latest web driver.
 
             return null;
 
         }
+        protected override bool IsSupportedWebBrowser(IWebBrowserInfo webBrowserInfo) {
+
+            return webBrowserInfo.Id == WebBrowserId.Firefox;
+
+        }
 
         // Private members
 
         private readonly IHttpWebRequestFactory webRequestFactory;
+        private readonly IWebDriverUpdaterOptions webDriverUpdaterOptions;
 
-        private string GetTargetOS() {
+        private string GetPlatformOS() {
 
             // For now, we'll focus on Windows.
 
             return Environment.Is64BitOperatingSystem ?
                  "win64" :
                  "win32";
-
-        }
-        private Version GetVersion(Uri downloadUri) {
-
-            return new Version(Regex.Match(downloadUri.AbsoluteUri, @"v(\d+.\d+.\d+)").Groups[1].Value);
 
         }
 

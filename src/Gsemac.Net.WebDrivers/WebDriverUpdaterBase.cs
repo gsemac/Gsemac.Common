@@ -1,6 +1,9 @@
 ﻿using Gsemac.IO;
 using Gsemac.IO.Compression;
+using Gsemac.IO.Logging;
 using Gsemac.Net.Extensions;
+using Gsemac.Net.WebBrowsers;
+using Newtonsoft.Json;
 using System;
 using System.IO;
 using System.Net;
@@ -8,96 +11,37 @@ using System.Net;
 namespace Gsemac.Net.WebDrivers {
 
     public abstract class WebDriverUpdaterBase :
-        IWebDriverUpdater {
+         IWebDriverUpdater {
+
+        public event LogEventHandler Log;
 
         // Public members
 
-        public IWebDriverInfo GetLatestWebDriver(string webDriverFilePath) {
+        public IWebDriverInfo GetWebDriver(IWebBrowserInfo webBrowserInfo) {
 
-            // Check the cache for information on this web driver.
+            if (!IsSupportedWebBrowser(webBrowserInfo))
+                throw new ArgumentException("The given web browser is not valid for updater.", nameof(webBrowserInfo));
 
-            IWebDriverInfo webDriverInfo = cache?.GetWebDriverInfo(webDriverFilePath);
-
-            bool updateRequired = !File.Exists(webDriverFilePath) ||
-                webDriverInfo is null ||
-                (DateTimeOffset.Now - webDriverInfo.LastUpdated).TotalDays <= 1.0;
+            IWebDriverInfo webDriverInfo = GetCurrentWebDriverInfo();
+            bool updateRequired = !webDriverInfo.Version?.Equals(webBrowserInfo.Version) ?? true;
 
             if (updateRequired) {
 
-                // Get info about the latest web driver version.
+                OnLog.Info("Updating web driver");
 
-                try {
+                if (DownloadWebDriver(webBrowserInfo)) {
 
-                    IWebDriverInfo latestWebDriverInfo = GetLatestWebDriverInfo();
+                    webDriverInfo = new WebDriverInfo() {
+                        ExecutablePath = GetWebDriverExecutablePath(),
+                        Version = webBrowserInfo.Version
+                    };
 
-                    // If this is the same version as the one we already have, we won't download it again.
-
-                    if (!(latestWebDriverInfo?.DownloadUri is null) && (webDriverInfo is null || webDriverInfo?.Version < latestWebDriverInfo?.Version)) {
-
-                        // Download the updated web driver.
-
-                        string downloadFilePath = Path.GetTempFileName();
-                        string downloadFileExt = PathUtilities.GetFileExtension(latestWebDriverInfo.DownloadUri.AbsoluteUri);
-
-                        using (WebClient webClient = webRequestFactory.ToWebClientFactory().Create())
-                            webClient.DownloadFile(latestWebDriverInfo.DownloadUri, downloadFilePath);
-
-                        try {
-
-                            if (downloadFileExt.Equals(".zip", StringComparison.OrdinalIgnoreCase)) {
-
-                                // If this is a .zip archive, extract the desired file.
-
-                                string filename = PathUtilities.GetFileName(webDriverFilePath);
-
-                                using (IArchive archive = Archive.OpenRead(downloadFilePath))
-                                using (FileStream outputStream = File.OpenWrite(webDriverFilePath))
-                                    archive.ExtractEntry(archive.GetEntry(filename), outputStream);
-
-                            }
-                            else if (downloadFileExt.Equals(".exe", StringComparison.OrdinalIgnoreCase)) {
-
-                                // Otherwise, attempt to replace the old web driver.
-
-                                File.Copy(downloadFilePath, webDriverFilePath, overwrite: true);
-
-                            }
-
-                            webDriverInfo = latestWebDriverInfo;
-
-                        }
-                        finally {
-
-                            // Delete the downloaded file.
-
-                            File.Delete(downloadFilePath);
-
-                        }
-
-                    }
-
-                }
-                finally {
-
-                    if (File.Exists(webDriverFilePath)) {
-
-                        // Update the web driver info.
-
-                        webDriverInfo = new WebDriverInfo(webDriverInfo) {
-                            Md5Hash = FileUtilities.CalculateMD5Hash(webDriverFilePath),
-                            LastUpdated = DateTimeOffset.Now,
-                        };
-
-                        // Update the cache.
-
-                        if (!(cache is null))
-                            cache.AddWebDriverInfo(webDriverInfo);
-
-                    }
+                    SaveWebDriverInfo(webDriverInfo);
 
                 }
 
-            }
+            } else
+                OnLog.Info("Web driver is up-to-date");
 
             return webDriverInfo;
 
@@ -105,24 +49,99 @@ namespace Gsemac.Net.WebDrivers {
 
         // Protected members
 
+        protected LogEventHelper OnLog => new LogEventHelper("Web Driver Updater", Log);
+
         protected WebDriverUpdaterBase(IHttpWebRequestFactory webRequestFactory) {
 
             this.webRequestFactory = webRequestFactory;
 
         }
-        protected WebDriverUpdaterBase(IHttpWebRequestFactory webRequestFactory, IWebDriverInfoCache cache) :
-            this(webRequestFactory) {
 
-            this.cache = cache;
-
-        }
-
-        protected abstract IWebDriverInfo GetLatestWebDriverInfo();
+        protected abstract string GetWebDriverExecutablePath();
+        protected abstract Uri GetWebDriverDownloadUri(IWebBrowserInfo webBrowserInfo);
+        protected abstract bool IsSupportedWebBrowser(IWebBrowserInfo webBrowserInfo);
 
         // Private members
 
         private readonly IHttpWebRequestFactory webRequestFactory;
-        private readonly IWebDriverInfoCache cache;
+
+        private string GetWebDriverMetadataFilePath() {
+
+            return PathUtilities.SetFileExtension(GetWebDriverExecutablePath(), ".json");
+
+        }
+
+        private IWebDriverInfo GetCurrentWebDriverInfo() {
+
+            string webDriverMetadataFilePath = GetWebDriverMetadataFilePath();
+
+            if (File.Exists(webDriverMetadataFilePath)) {
+
+                string metadataJson = File.ReadAllText(webDriverMetadataFilePath);
+
+                return JsonConvert.DeserializeObject<WebDriverInfo>(metadataJson);
+
+            }
+            else
+                return new WebDriverInfo();
+
+        }
+        private void SaveWebDriverInfo(IWebDriverInfo webDriverInfo) {
+
+            string webDriverMetadataFilePath = GetWebDriverMetadataFilePath();
+
+            File.WriteAllText(webDriverMetadataFilePath, JsonConvert.SerializeObject(webDriverInfo, Formatting.Indented));
+
+        }
+        private bool DownloadWebDriver(IWebBrowserInfo webBrowserInfo) {
+
+            string webDriverExecutablePath = GetWebDriverExecutablePath();
+
+            OnLog.Info("Getting web driver download url");
+
+            Uri webDriverDownloadUri = GetWebDriverDownloadUri(webBrowserInfo);
+            string downloadFilePath = PathUtilities.SetFileExtension(Path.GetTempFileName(), ".zip");
+
+            if (webDriverDownloadUri is object) {
+
+                OnLog.Info($"Downloading {webDriverDownloadUri}");
+
+                using (WebClient webClient = webRequestFactory.ToWebClientFactory().Create())
+                    webClient.DownloadFile(webDriverDownloadUri, downloadFilePath);
+
+                try {
+
+                    string filePathInArchive = PathUtilities.GetFileName(webDriverExecutablePath);
+
+                    OnLog.Info($"Extracting {filePathInArchive}");
+
+                    Archive.ExtractFile(downloadFilePath, filePathInArchive, webDriverExecutablePath);
+
+                }
+                catch (Exception ex) {
+
+                    OnLog.Error(ex.ToString());
+
+                    throw ex;
+
+                }
+                finally {
+
+                    File.Delete(downloadFilePath);
+
+                }
+
+                // We were able to successfully update the web driver.
+
+                return true;
+
+            }
+
+            // We were not able to successfully update the web driver.
+
+            return false;
+
+        }
 
     }
 
