@@ -64,6 +64,14 @@ namespace Gsemac.IO.Logging.Extensions {
 
         }
 
+        public static ILogger AddSource(this ILogger logger, ILoggable source) {
+
+            source.Log += logger.CreateLogEventHandler();
+
+            return logger;
+
+        }
+
         // Private members
 
         private static string GetDefaultSource() {
