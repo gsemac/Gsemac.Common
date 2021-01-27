@@ -72,15 +72,15 @@ namespace Gsemac.Core {
 
         }
 
-        public static DateTimeOffset ParseHttpDateHeader(string dateHeader) {
+        public static DateTimeOffset ParseHttpHeader(string dateHeader) {
 
-            if (TryParseHttpDateHeader(dateHeader, out DateTimeOffset result))
+            if (TryParseHttpHeader(dateHeader, out DateTimeOffset result))
                 return result;
 
             throw new FormatException();
 
         }
-        public static bool TryParseHttpDateHeader(string dateHeader, out DateTimeOffset result) {
+        public static bool TryParseHttpHeader(string dateHeader, out DateTimeOffset result) {
 
             return DateTimeOffset.TryParseExact(dateHeader, "ddd, dd MMM yyyy HH:mm:ss 'GMT'", CultureInfo.InvariantCulture.DateTimeFormat, DateTimeStyles.AssumeUniversal, out result);
 
