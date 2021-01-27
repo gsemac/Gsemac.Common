@@ -2,8 +2,6 @@
 using Gsemac.Net.WebBrowsers;
 using OpenQA.Selenium;
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Gsemac.Net.WebDrivers {
 
@@ -13,6 +11,9 @@ namespace Gsemac.Net.WebDrivers {
         // Public members
 
         public event LogEventHandler Log;
+
+        public abstract IWebDriver Create();
+        public abstract IWebDriver Create(IWebBrowserInfo webBrowserInfo);
 
         public void Dispose() {
 
@@ -27,10 +28,6 @@ namespace Gsemac.Net.WebDrivers {
         protected LogEventHelper OnLog => new LogEventHelper("Web Driver Factory", Log);
 
         protected virtual void Dispose(bool disposing) { }
-
-        // Private members
-
-        public abstract IWebDriver Create(IWebBrowserInfo webBrowserInfo);
 
     }
 

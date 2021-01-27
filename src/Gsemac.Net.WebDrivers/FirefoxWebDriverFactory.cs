@@ -29,6 +29,11 @@ namespace Gsemac.Net.WebDrivers {
 
         }
 
+        public override IWebDriver Create() {
+
+            return Create(WebBrowserInfo.GetWebBrowserInfo(WebBrowserId.Firefox));
+
+        }
         public override IWebDriver Create(IWebBrowserInfo webBrowserInfo) {
 
             if (webBrowserInfo.Id != WebBrowserId.Firefox)

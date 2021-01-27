@@ -22,6 +22,11 @@ namespace Gsemac.Net.WebDrivers {
 
         }
 
+        public override IWebDriver Create() {
+
+            return Create(WebBrowserInfo.GetDefaultWebBrowserInfo());
+
+        }
         public override IWebDriver Create(IWebBrowserInfo webBrowserInfo) {
 
             IWebDriverFactory factory = null;

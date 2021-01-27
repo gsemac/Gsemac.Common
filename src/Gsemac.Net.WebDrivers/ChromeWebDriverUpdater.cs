@@ -1,6 +1,4 @@
-﻿using Gsemac.IO;
-using Gsemac.IO.Compression;
-using Gsemac.Net.Extensions;
+﻿using Gsemac.Net.Extensions;
 using Gsemac.Net.WebBrowsers;
 using System;
 using System.IO;

@@ -30,6 +30,11 @@ namespace Gsemac.Net.WebDrivers {
 
         }
 
+        public override IWebDriver Create() {
+
+            return Create(WebBrowserInfo.GetWebBrowserInfo(WebBrowserId.Chrome));
+
+        }
         public override IWebDriver Create(IWebBrowserInfo webBrowserInfo) {
 
             if (webBrowserInfo.Id != WebBrowserId.Chrome)

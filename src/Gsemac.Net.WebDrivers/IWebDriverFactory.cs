@@ -7,6 +7,7 @@ using System;
 namespace Gsemac.Net.WebDrivers {
 
     public interface IWebDriverFactory :
+        IFactory<IWebDriver>,
         ILoggable,
         IDisposable {
 
