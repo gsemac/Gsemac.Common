@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Net;
 
@@ -10,6 +11,76 @@ namespace Gsemac.Net.Extensions {
 
             foreach (string key in headerCollection.AllKeys)
                 yield return new HttpHeader(key, headerCollection[key]);
+
+        }
+
+        public static bool TryGetHeader(this WebHeaderCollection headerCollection, string header, out string value) {
+
+            value = default;
+
+            if (headerCollection is null)
+                return false;
+
+            try {
+
+                value = headerCollection[header];
+
+                return true;
+
+            }
+            catch (InvalidOperationException) {
+
+                // The WebHeaderCollection will throw an InvalidOperationException if the header type (HttpRequestHeader or HttpResponseHeader) does not match what type the collection allows instances of.
+                // What type of header the WebHeaderCollection allows can only be inferred from context and cannot be determined for an arbitrary WebHeaderCollection.
+
+                // This causes problems in some situations such as downloading a file from a local URI using the WebClient class, which will not change the WebHeaderCollection 
+                // to one allowing response headers (which it would for a remote URI). The only solution would be checking if the URI was a local URI before trying to read the response headers.
+
+                return false;
+
+            }
+
+        }
+        public static bool TryGetHeader(this WebHeaderCollection headerCollection, HttpRequestHeader requestHeader, out string value) {
+
+            value = default;
+
+            if (headerCollection is null)
+                return false;
+
+            try {
+
+                value = headerCollection[requestHeader];
+
+                return true;
+
+            }
+            catch (InvalidOperationException) {
+
+                return false;
+
+            }
+
+        }
+        public static bool TryGetHeader(this WebHeaderCollection headerCollection, HttpResponseHeader responseHeader, out string value) {
+
+            value = default;
+
+            if (headerCollection is null)
+                return false;
+
+            try {
+
+                value = headerCollection[responseHeader];
+
+                return true;
+
+            }
+            catch (InvalidOperationException) {
+
+                return false;
+
+            }
 
         }
 
