@@ -48,6 +48,14 @@ namespace Gsemac.IO.Compression {
 
         }
 
+        public static void ExtractFile(string archiveFilePath, string filePathInArchive, string ouputFilePath) {
+
+            using (IArchive archive = OpenRead(archiveFilePath))
+            using (FileStream outputStream = File.OpenWrite(ouputFilePath))
+                archive.ExtractEntry(archive.GetEntry(filePathInArchive), outputStream);
+
+        }
+
     }
 
 }
