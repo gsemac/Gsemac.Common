@@ -44,11 +44,8 @@ namespace Gsemac.Net.WebDrivers {
 
             OnLog.Info($"Creating web driver ({webBrowserInfo})");
 
-            string webDriverExecutablePath = GetWebDriverExecutablePath(webBrowserInfo);
+            string webDriverExecutablePath = Path.GetFullPath(GetWebDriverExecutablePath(webBrowserInfo));
             string webDriverDirectoryPath = Path.GetDirectoryName(webDriverExecutablePath);
-
-            if (string.IsNullOrWhiteSpace(webDriverDirectoryPath))
-                webDriverDirectoryPath = Directory.GetCurrentDirectory();
 
             // Create the driver service.
 
@@ -158,6 +155,8 @@ namespace Gsemac.Net.WebDrivers {
                 //driver.AddScriptToEvaluateOnNewDocument("(() => { utils = undefined; })();");
 
             }
+
+            driver.Manage().Window.Position = webDriverOptions.WindowPosition;
 
         }
 

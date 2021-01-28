@@ -43,11 +43,8 @@ namespace Gsemac.Net.WebDrivers {
 
             OnLog.Info($"Creating web driver ({webBrowserInfo})");
 
-            string webDriverExecutablePath = GetWebDriverExecutablePath(webBrowserInfo);
+            string webDriverExecutablePath = Path.GetFullPath(GetWebDriverExecutablePath(webBrowserInfo));
             string webDriverDirectoryPath = Path.GetDirectoryName(webDriverExecutablePath);
-
-            if (string.IsNullOrWhiteSpace(webDriverDirectoryPath))
-                webDriverDirectoryPath = Directory.GetCurrentDirectory();
 
             // Create the driver service.
 
@@ -61,9 +58,9 @@ namespace Gsemac.Net.WebDrivers {
 
             ConfigureDriverOptions(driverOptions);
 
-            driverService.HideCommandPromptWindow = true;
+            FirefoxDriver driver = new FirefoxDriver(driverService, driverOptions);
 
-            IWebDriver driver = new FirefoxDriver(driverService, driverOptions);
+            ConfigureDriver(driver);
 
             return driver;
 
@@ -158,6 +155,11 @@ namespace Gsemac.Net.WebDrivers {
             // Disable the "navigator.webdriver" property.
 
             profile.SetPreference("dom.webdriver.enabled", false);
+
+        }
+        private void ConfigureDriver(FirefoxDriver driver) {
+
+            driver.Manage().Window.Position = webDriverOptions.WindowPosition;
 
         }
 
