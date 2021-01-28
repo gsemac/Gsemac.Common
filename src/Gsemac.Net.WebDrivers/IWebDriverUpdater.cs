@@ -6,7 +6,7 @@ namespace Gsemac.Net.WebDrivers {
     public interface IWebDriverUpdater :
         ILoggable {
 
-        IWebDriverInfo GetWebDriver(IWebBrowserInfo webBrowserInfo);
+        IWebDriverFileInfo GetWebDriver(IWebBrowserInfo webBrowserInfo);
 
     }
 

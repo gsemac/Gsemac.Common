@@ -17,12 +17,12 @@ namespace Gsemac.Net.WebDrivers {
 
         // Public members
 
-        public IWebDriverInfo GetWebDriver(IWebBrowserInfo webBrowserInfo) {
+        public IWebDriverFileInfo GetWebDriver(IWebBrowserInfo webBrowserInfo) {
 
             if (!IsSupportedWebBrowser(webBrowserInfo))
                 throw new ArgumentException("The given web browser is not valid for updater.", nameof(webBrowserInfo));
 
-            IWebDriverInfo webDriverInfo = GetCurrentWebDriverInfo();
+            IWebDriverFileInfo webDriverInfo = GetCurrentWebDriverFileInfo();
             bool updateRequired = !webDriverInfo.Version?.Equals(webBrowserInfo.Version) ?? true;
 
             if (updateRequired) {
@@ -31,7 +31,7 @@ namespace Gsemac.Net.WebDrivers {
 
                 if (DownloadWebDriver(webBrowserInfo)) {
 
-                    webDriverInfo = new WebDriverInfo() {
+                    webDriverInfo = new WebDriverFileInfo() {
                         ExecutablePath = GetWebDriverExecutablePath(),
                         Version = webBrowserInfo.Version
                     };
@@ -72,7 +72,7 @@ namespace Gsemac.Net.WebDrivers {
 
         }
 
-        private IWebDriverInfo GetCurrentWebDriverInfo() {
+        private IWebDriverFileInfo GetCurrentWebDriverFileInfo() {
 
             string webDriverMetadataFilePath = GetWebDriverMetadataFilePath();
 
@@ -80,14 +80,14 @@ namespace Gsemac.Net.WebDrivers {
 
                 string metadataJson = File.ReadAllText(webDriverMetadataFilePath);
 
-                return JsonConvert.DeserializeObject<WebDriverInfo>(metadataJson);
+                return JsonConvert.DeserializeObject<WebDriverFileInfo>(metadataJson);
 
             }
             else
-                return new WebDriverInfo();
+                return new WebDriverFileInfo();
 
         }
-        private void SaveWebDriverInfo(IWebDriverInfo webDriverInfo) {
+        private void SaveWebDriverInfo(IWebDriverFileInfo webDriverInfo) {
 
             string webDriverMetadataFilePath = GetWebDriverMetadataFilePath();
 
