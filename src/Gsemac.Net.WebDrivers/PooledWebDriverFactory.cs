@@ -20,6 +20,9 @@ namespace Gsemac.Net.WebDrivers {
         public PooledWebDriverFactory(IPooledWebDriverFactoryOptions options) :
             this(new WebDriverFactory(), options) {
         }
+        public PooledWebDriverFactory(IWebDriverOptions webDriverOptions) :
+            this(webDriverOptions, PooledWebDriverFactoryOptions.Default) {
+        }
         public PooledWebDriverFactory(IWebDriverOptions webDriverOptions, IPooledWebDriverFactoryOptions options) :
             this(webDriverOptions, WebDriverFactoryOptions.Default, options) {
         }
@@ -72,6 +75,7 @@ namespace Gsemac.Net.WebDrivers {
         // Private members
 
         private class WebDriverWrapper :
+            IWebDriverWrapper,
             IWebDriver {
 
             // Public members
@@ -133,6 +137,12 @@ namespace Gsemac.Net.WebDrivers {
             public ITargetLocator SwitchTo() {
 
                 return webDriver.SwitchTo();
+
+            }
+
+            public IWebDriver GetWebDriver() {
+
+                return webDriver;
 
             }
 

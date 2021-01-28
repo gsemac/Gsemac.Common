@@ -1,4 +1,5 @@
 ﻿using OpenQA.Selenium;
+using OpenQA.Selenium.Remote;
 using OpenQA.Selenium.Support.UI;
 using System;
 using System.Collections.Generic;
@@ -11,15 +12,84 @@ namespace Gsemac.Net.WebDrivers.Extensions {
 
     public static class WebDriverExtensions {
 
-        public static string GetUserAgent(this IWebDriver driver) {
+        internal static IWebDriver UnwrapWebDriver(this IWebDriver driver) {
 
-            IJavaScriptExecutor javascriptExecutor = (IJavaScriptExecutor)driver;
+            if (driver is IWebDriverWrapper wrapper)
+                return wrapper.GetWebDriver();
 
-            string userAgent = (string)javascriptExecutor.ExecuteScript("return navigator.userAgent");
-
-            return userAgent;
+            return driver;
 
         }
+
+        public static void ExecuteScript(this IWebDriver driver, string script) {
+
+            driver.ExecuteScript<object>(script);
+
+        }
+        public static T ExecuteScript<T>(this IWebDriver driver, string script) {
+
+            IJavaScriptExecutor javascriptExecutor = (IJavaScriptExecutor)UnwrapWebDriver(driver);
+
+            T result = (T)javascriptExecutor.ExecuteScript(script);
+
+            return result;
+
+        }
+
+        public static string GetUserAgent(this IWebDriver driver) {
+
+            return driver.ExecuteScript<string>("return navigator.userAgent");
+
+        }
+        public static bool IsDocumentComplete(this IWebDriver driver) {
+
+            return driver.ExecuteScript<string>("return document.readyState").Equals("complete");
+
+        }
+        public static Size GetDocumentSize(this IWebDriver driver) {
+
+            int totalWidth = (int)driver.ExecuteScript<long>("return document.body.offsetWidth");
+            int totalHeight = (int)driver.ExecuteScript<long>("return document.body.parentNode.scrollHeight");
+
+            return new Size(totalWidth, totalHeight);
+
+        }
+        public static Size GetViewportSize(this IWebDriver driver) {
+
+            int viewportWidth = (int)driver.ExecuteScript<long>("return document.body.clientWidth");
+            int viewportHeight = (int)driver.ExecuteScript<long>("return window.innerHeight");
+
+            return new Size(viewportWidth, viewportHeight);
+
+        }
+        public static void ScrollTo(this IWebDriver driver, int x, int y) {
+
+            driver.ExecuteScript($"window.scrollTo({x}, {y});");
+
+        }
+        public static void ScrollBy(this IWebDriver driver, int deltaX, int deltaY) {
+
+            driver.ExecuteScript($"window.scrollBy({deltaX}, {deltaY});");
+
+        }
+        public static void HideOtherElements(this IWebDriver driver, string elementXPath) {
+
+            // The xpath string may contain quotes, so we may need to use different outer quotes depending on what's inside.
+            // This isn't foolproof, but should work in the majority of situations.
+
+            string elementXPathWithQuotes = elementXPath.Contains("\"") ?
+                $"'{elementXPath}'" :
+                $"\"{elementXPath}'\"";
+
+            driver.ExecuteScript(Properties.Resources.HideOtherElementsJs + $"\nwindow[\"hiddenElements\"] = hideOtherElements({elementXPathWithQuotes});");
+
+        }
+        public static void RestoreHiddenElements(this IWebDriver driver) {
+
+            driver.ExecuteScript(Properties.Resources.HideOtherElementsJs + $"\nreturn restoreHiddenElements(window[\"hiddenElements\"]);");
+
+        }
+
         public static CookieCollection GetCookies(this IWebDriver driver) {
 
             CookieCollection cookies = new CookieCollection();
@@ -61,60 +131,6 @@ namespace Gsemac.Net.WebDrivers.Extensions {
             }
 
         }
-        public static bool IsDocumentComplete(this IWebDriver driver) {
-
-            return ((IJavaScriptExecutor)driver).ExecuteScript("return document.readyState").Equals("complete");
-
-        }
-
-        public static Size GetDocumentSize(this IWebDriver driver) {
-
-            int totalWidth = (int)(long)((IJavaScriptExecutor)driver).ExecuteScript("return document.body.offsetWidth");
-            int totalHeight = (int)(long)((IJavaScriptExecutor)driver).ExecuteScript("return document.body.parentNode.scrollHeight");
-
-            return new Size(totalWidth, totalHeight);
-
-        }
-        public static Size GetViewportSize(this IWebDriver driver) {
-
-            int viewportWidth = (int)(long)((IJavaScriptExecutor)driver).ExecuteScript("return document.body.clientWidth");
-            int viewportHeight = (int)(long)((IJavaScriptExecutor)driver).ExecuteScript("return window.innerHeight");
-
-            return new Size(viewportWidth, viewportHeight);
-
-        }
-        public static void ScrollTo(this IWebDriver driver, int x, int y) {
-
-            ((IJavaScriptExecutor)driver).ExecuteScript($"window.scrollTo({x}, {y});");
-
-        }
-        public static void ScrollBy(this IWebDriver driver, int deltaX, int deltaY) {
-
-            ((IJavaScriptExecutor)driver).ExecuteScript($"window.scrollBy({deltaX}, {deltaY});");
-
-        }
-
-        public static void HideOtherElements(this IWebDriver driver, string elementXPath) {
-
-            // The xpath string may contain quotes, so we may need to use different outer quotes depending on what's inside.
-            // This isn't foolproof, but should work in the majority of situations.
-
-            string elementXPathWithQuotes = elementXPath.Contains("\"") ?
-                $"'{elementXPath}'" :
-                $"\"{elementXPath}'\"";
-
-            IJavaScriptExecutor javascriptExecutor = (IJavaScriptExecutor)driver;
-
-            javascriptExecutor.ExecuteScript(Properties.Resources.HideOtherElementsJs + $"\nwindow[\"hiddenElements\"] = hideOtherElements({elementXPathWithQuotes});");
-
-        }
-        public static void RestoreHiddenElements(this IWebDriver driver) {
-
-            IJavaScriptExecutor javascriptExecutor = (IJavaScriptExecutor)driver;
-
-            javascriptExecutor.ExecuteScript(Properties.Resources.HideOtherElementsJs + $"\nreturn restoreHiddenElements(window[\"hiddenElements\"]);");
-
-        }
 
         public static void GoToUrl(this IWebDriver driver, string url, bool blocking = true) {
 
@@ -153,6 +169,7 @@ namespace Gsemac.Net.WebDrivers.Extensions {
             driver.Navigate().GoToUrl("about:blank");
 
         }
+
         public static bool HasQuit(this IWebDriver webDriver) {
 
             try {
@@ -169,8 +186,6 @@ namespace Gsemac.Net.WebDrivers.Extensions {
         }
 
 #if NETFRAMEWORK
-
-        // Public members
 
         public static Bitmap ScreenshotPage(this IWebDriver driver) {
 
@@ -190,7 +205,7 @@ namespace Gsemac.Net.WebDrivers.Extensions {
 
                 // The entire document fits the screen, so there is no need to take multiple screenshots.
 
-                result = ScreenshotToBitmap((driver as ITakesScreenshot).GetScreenshot());
+                result = ScreenshotToBitmap(driver.TakeScreenshot());
 
             }
             else {
@@ -278,9 +293,17 @@ namespace Gsemac.Net.WebDrivers.Extensions {
 
         // Private members
 
+
+
+#endif
+
+        // Private members
+
+#if NETFRAMEWORK
+
         private static Screenshot TakeScreenshot(this IWebDriver driver) {
 
-            return (driver as ITakesScreenshot).GetScreenshot();
+            return ((ITakesScreenshot)UnwrapWebDriver(driver)).GetScreenshot();
 
         }
         private static Bitmap ScreenshotToBitmap(Screenshot screenshot) {
