@@ -66,18 +66,41 @@ namespace Gsemac.Net.WebDrivers {
 
         }
 
+        // Protected members
+
+        protected override void Dispose(bool disposing) {
+
+            if (disposing && !isDisposed) {
+
+                if (webDriverFactoryOptions.KillWebDriverProcessesOnDispose) {
+
+                    OnLog.Info($"Killing web driver processes");
+
+                    WebDriverUtilities.KillWebDriverProcesses(GetWebDriverExecutablePath(null));
+
+                }
+
+                isDisposed = true;
+
+            }
+
+            base.Dispose(disposing);
+
+        }
+
         // Private members
 
         private readonly IHttpWebRequestFactory webRequestFactory;
         private readonly IWebDriverOptions webDriverOptions;
         private readonly IWebDriverFactoryOptions webDriverFactoryOptions;
+        private bool isDisposed = false;
 
         private string GetWebDriverExecutablePath(IWebBrowserInfo webBrowserInfo) {
 
             if (!string.IsNullOrWhiteSpace(webDriverOptions.WebDriverExecutablePath))
                 return webDriverOptions.WebDriverExecutablePath;
 
-            if (webDriverFactoryOptions.AutoUpdateEnabled) {
+            if (webBrowserInfo is object && webDriverFactoryOptions.AutoUpdateEnabled) {
 
                 OnLog.Info($"Checking for web driver updates");
 

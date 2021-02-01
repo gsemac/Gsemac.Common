@@ -52,7 +52,8 @@ namespace Gsemac.Net.WebDrivers {
 
                 lock (poolLock) {
 
-                    isDisposed = true;
+                    if (isDisposed)
+                        return;
 
                     ReleaseAllWebDrivers();
 
@@ -65,6 +66,8 @@ namespace Gsemac.Net.WebDrivers {
 
                     if (disposeFactory)
                         baseFactory.Dispose();
+
+                    isDisposed = true;
 
                 }
 
@@ -205,6 +208,8 @@ namespace Gsemac.Net.WebDrivers {
             // If no web drivers were available, wait until one is available.
 
             if (webDriver is null && !isDisposed && poolAccessWaiter is object) {
+
+                OnLog.Info($"Thread {Thread.CurrentThread.ManagedThreadId} waiting to take web driver from the pool");
 
                 if (poolAccessWaiter.WaitOne(options.Timeout))
                     webDriver = TakeWebDriverFromPool(webBrowserInfo);

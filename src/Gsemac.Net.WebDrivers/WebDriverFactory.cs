@@ -1,6 +1,7 @@
 ﻿using Gsemac.Net.WebBrowsers;
 using OpenQA.Selenium;
 using System;
+using System.Collections.Generic;
 
 namespace Gsemac.Net.WebDrivers {
 
@@ -35,30 +36,27 @@ namespace Gsemac.Net.WebDrivers {
         }
         public override IWebDriver Create(IWebBrowserInfo webBrowserInfo) {
 
-            IWebDriverFactory factory = null;
+            if (isDisposed)
+                throw new ObjectDisposedException(nameof(WebDriverFactory));
 
-            switch (webBrowserInfo.Id) {
+            return GetOrCreateFactory(webBrowserInfo.Id).Create(webBrowserInfo);
 
-                case WebBrowserId.Chrome:
-                    factory = new ChromeWebDriverFactory(webDriverOptions, webDriverFactoryOptions);
-                    break;
+        }
 
-                case WebBrowserId.Firefox:
-                    factory = new FirefoxWebDriverFactory(webDriverOptions, webDriverFactoryOptions);
-                    break;
+        // Protected members
 
-            }
+        protected override void Dispose(bool disposing) {
 
-            if (factory is null)
-                throw new ArgumentException("The given web browser is not supported.");
+            if (!isDisposed && disposing) {
 
-            using (factory) {
+                isDisposed = true;
 
-                factory.Log += (sender, e) => OnLog.OnLog(e.Message);
-
-                return factory.Create(webBrowserInfo);
+                foreach (IWebDriverFactory factory in factoryDict.Values)
+                    factory.Dispose();
 
             }
+
+            base.Dispose(disposing);
 
         }
 
@@ -66,6 +64,44 @@ namespace Gsemac.Net.WebDrivers {
 
         private readonly IWebDriverOptions webDriverOptions;
         private readonly IWebDriverFactoryOptions webDriverFactoryOptions;
+        private readonly IDictionary<WebBrowserId, IWebDriverFactory> factoryDict = new Dictionary<WebBrowserId, IWebDriverFactory>();
+        private readonly object factoryDictLock = new object();
+        private bool isDisposed = false;
+
+        private IWebDriverFactory GetOrCreateFactory(WebBrowserId webBrowserId) {
+
+            IWebDriverFactory factory = null;
+
+            lock (factoryDictLock) {
+
+                if (!factoryDict.TryGetValue(webBrowserId, out factory)) {
+
+                    switch (webBrowserId) {
+
+                        case WebBrowserId.Chrome:
+                            factoryDict[webBrowserId] = new ChromeWebDriverFactory(webDriverOptions, webDriverFactoryOptions);
+                            break;
+
+                        case WebBrowserId.Firefox:
+                            factoryDict[webBrowserId] = new FirefoxWebDriverFactory(webDriverOptions, webDriverFactoryOptions);
+                            break;
+
+                        default:
+                            throw new ArgumentException("The given web browser is not supported.");
+
+                    }
+
+                    factory = factoryDict[webBrowserId];
+
+                    factory.Log += (sender, e) => OnLog.OnLog(e.Message);
+
+                }
+
+            }
+
+            return factory;
+
+        }
 
     }
 
