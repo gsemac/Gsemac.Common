@@ -34,7 +34,7 @@ namespace Gsemac.Net.WebDrivers {
 
         public override IWebDriver Create() {
 
-            return Create(WebBrowserInfo.GetDefaultWebBrowserInfo());
+            return Create(webDriverFactoryOptions.DefaultWebBrowser ?? WebBrowserInfo.GetDefaultWebBrowserInfo());
 
         }
         public override IWebDriver Create(IWebBrowserInfo webBrowserInfo) {

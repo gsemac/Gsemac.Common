@@ -23,16 +23,25 @@ namespace Gsemac.Net.WebDrivers {
         public PooledWebDriverFactory(IPooledWebDriverFactoryOptions options) :
             this(new WebDriverFactory(options), options) {
         }
+        public PooledWebDriverFactory(IWebDriverFactoryOptions options) :
+          this(new WebDriverFactory(options), options) {
+        }
         public PooledWebDriverFactory(IWebDriverOptions webDriverOptions, IPooledWebDriverFactoryOptions options) :
             this(new WebDriverFactory(webDriverOptions, options), disposeFactory: true, options) {
+        }
+        public PooledWebDriverFactory(IWebDriverOptions webDriverOptions, IWebDriverFactoryOptions options) :
+            this(webDriverOptions, new PooledWebDriverFactoryOptions(options)) {
         }
         public PooledWebDriverFactory(IWebDriverFactory baseFactory, IPooledWebDriverFactoryOptions options) :
             this(baseFactory, disposeFactory: false, options) {
         }
+        public PooledWebDriverFactory(IWebDriverFactory baseFactory, IWebDriverFactoryOptions options) :
+            this(baseFactory, new PooledWebDriverFactoryOptions(options)) {
+        }
 
         public override IWebDriver Create() {
 
-            return CreateInternal(webBrowserInfo: null);
+            return CreateInternal(webBrowserInfo: options.DefaultWebBrowser);
 
         }
         public override IWebDriver Create(IWebBrowserInfo webBrowserInfo) {

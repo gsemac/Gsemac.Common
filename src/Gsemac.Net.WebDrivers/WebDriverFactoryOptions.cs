@@ -1,10 +1,13 @@
-﻿namespace Gsemac.Net.WebDrivers {
+﻿using Gsemac.Net.WebBrowsers;
+
+namespace Gsemac.Net.WebDrivers {
 
     public class WebDriverFactoryOptions :
         IWebDriverFactoryOptions {
 
         public bool AutoUpdateEnabled { get; set; } = true;
-        public bool KillWebDriverProcessesOnDispose { get; } = false;
+        public IWebBrowserInfo DefaultWebBrowser { get; set; }
+        public bool KillWebDriverProcessesOnDispose { get; set; } = false;
         public string WebDriverDirectory { get; set; }
 
         public static WebDriverFactoryOptions Default => new WebDriverFactoryOptions();
