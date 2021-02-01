@@ -17,17 +17,14 @@ namespace Gsemac.Net.WebDrivers {
         public PooledWebDriverFactory() :
             this(PooledWebDriverFactoryOptions.Default) {
         }
-        public PooledWebDriverFactory(IPooledWebDriverFactoryOptions options) :
-            this(new WebDriverFactory(), options) {
-        }
         public PooledWebDriverFactory(IWebDriverOptions webDriverOptions) :
             this(webDriverOptions, PooledWebDriverFactoryOptions.Default) {
         }
-        public PooledWebDriverFactory(IWebDriverOptions webDriverOptions, IPooledWebDriverFactoryOptions options) :
-            this(webDriverOptions, WebDriverFactoryOptions.Default, options) {
+        public PooledWebDriverFactory(IPooledWebDriverFactoryOptions options) :
+            this(new WebDriverFactory(options), options) {
         }
-        public PooledWebDriverFactory(IWebDriverOptions webDriverOptions, IWebDriverFactoryOptions webDriverFactoryOptions, IPooledWebDriverFactoryOptions options) :
-            this(new WebDriverFactory(webDriverOptions, webDriverFactoryOptions), disposeFactory: true, options) {
+        public PooledWebDriverFactory(IWebDriverOptions webDriverOptions, IPooledWebDriverFactoryOptions options) :
+            this(new WebDriverFactory(webDriverOptions, options), disposeFactory: true, options) {
         }
         public PooledWebDriverFactory(IWebDriverFactory baseFactory, IPooledWebDriverFactoryOptions options) :
             this(baseFactory, disposeFactory: false, options) {

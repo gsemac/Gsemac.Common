@@ -16,6 +16,9 @@ namespace Gsemac.Net.WebDrivers {
         public WebDriverFactory(IWebDriverOptions webDriverOptions) :
             this(webDriverOptions, WebDriverFactoryOptions.Default) {
         }
+        public WebDriverFactory(IWebDriverFactoryOptions webDriverFactoryOptions) :
+            this(WebDriverOptions.Default, webDriverFactoryOptions) {
+        }
         public WebDriverFactory(IWebDriverOptions webDriverOptions, IWebDriverFactoryOptions webDriverFactoryOptions) {
 
             if (webDriverOptions is null)
