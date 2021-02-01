@@ -16,7 +16,7 @@ namespace Gsemac.Net {
             // Replace the default proxy with a placeholder, so we can detect if the user has changed the proxy property.
             // This would not be necessary if we could override the Proxy property, but alas, we cannot.
 
-            Proxy = new PlaceHolderWebProxy(Proxy);
+            Proxy = new PlaceholderWebProxy(Proxy);
 
         }
 
@@ -36,7 +36,7 @@ namespace Gsemac.Net {
 
                 httpWebRequest.Method = baseHttpWebRequest.Method;
 
-                if (!(baseHttpWebRequest.Proxy is PlaceHolderWebProxy))
+                if (!(baseHttpWebRequest.Proxy is PlaceholderWebProxy))
                     httpWebRequest.Proxy = baseHttpWebRequest.Proxy;
 
                 httpWebRequest.WithHeaders(baseHttpWebRequest.Headers);
@@ -54,17 +54,17 @@ namespace Gsemac.Net {
 
         // Private members
 
-        private sealed class PlaceHolderWebProxy :
+        private sealed class PlaceholderWebProxy :
             IWebProxy {
 
             // Public members
 
             public ICredentials Credentials {
-                get => webProxy.Credentials;
+                get => webProxy?.Credentials;
                 set => webProxy.Credentials = value;
             }
 
-            public PlaceHolderWebProxy(IWebProxy webProxy) {
+            public PlaceholderWebProxy(IWebProxy webProxy) {
 
                 this.webProxy = webProxy;
 
@@ -72,10 +72,16 @@ namespace Gsemac.Net {
 
             public Uri GetProxy(Uri destination) {
 
+                if (webProxy is null)
+                    return destination;
+
                 return webProxy.GetProxy(destination);
 
             }
             public bool IsBypassed(Uri host) {
+
+                if (webProxy is null)
+                    return true;
 
                 return webProxy.IsBypassed(host);
 
