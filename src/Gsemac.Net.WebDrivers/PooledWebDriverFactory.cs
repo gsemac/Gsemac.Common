@@ -35,12 +35,12 @@ namespace Gsemac.Net.WebDrivers {
 
         public override IWebDriver Create() {
 
-            return GetWebDriverInternal(webBrowserInfo: null);
+            return CreateInternal(webBrowserInfo: null);
 
         }
         public override IWebDriver Create(IWebBrowserInfo webBrowserInfo) {
 
-            return GetWebDriverInternal(webBrowserInfo);
+            return CreateInternal(webBrowserInfo);
 
         }
 
@@ -104,7 +104,7 @@ namespace Gsemac.Net.WebDrivers {
             public void Dispose() {
 
                 if (!isDisposed)
-                    sourceFactory.ReleaseWebDriverInternal(webDriver, disposeWebDriver: false);
+                    sourceFactory.ReleaseWebDriver(webDriver, disposeWebDriver: false);
 
                 isDisposed = true;
 
@@ -157,11 +157,13 @@ namespace Gsemac.Net.WebDrivers {
         private class PoolItem {
 
             public int Id { get; set; }
+            public WebBrowserId WebBrowserId { get; set; }
             public IWebDriver WebDriver { get; set; }
 
-            public PoolItem(int id, IWebDriver webDriver) {
+            public PoolItem(int id, WebBrowserId webBrowserId, IWebDriver webDriver) {
 
                 this.Id = id;
+                this.WebBrowserId = webBrowserId;
                 this.WebDriver = webDriver;
 
             }
@@ -171,7 +173,7 @@ namespace Gsemac.Net.WebDrivers {
         private readonly IPooledWebDriverFactoryOptions options;
         private readonly IWebDriverFactory baseFactory;
         private readonly bool disposeFactory;
-        private readonly Queue<PoolItem> pool = new Queue<PoolItem>();
+        private readonly List<PoolItem> pool = new List<PoolItem>();
         private readonly List<PoolItem> spawnedDrivers = new List<PoolItem>();
         private readonly object poolLock = new object();
         private readonly AutoResetEvent poolAccessWaiter = new AutoResetEvent(false);
@@ -194,25 +196,26 @@ namespace Gsemac.Net.WebDrivers {
 
         }
 
-        private IWebDriver GetWebDriverInternal(IWebBrowserInfo webBrowserInfo) {
+        private IWebDriver CreateInternal(IWebBrowserInfo webBrowserInfo) {
 
             // Attempt to take a web driver from the pool.
 
-            IWebDriver webDriver = SpawnOrGetWebDriverFromPool(webBrowserInfo);
+            IWebDriver webDriver = TakeWebDriverFromPool(webBrowserInfo);
 
             // If no web drivers were available, wait until one is available.
 
             if (webDriver is null && !isDisposed && poolAccessWaiter is object) {
 
                 if (poolAccessWaiter.WaitOne(options.Timeout))
-                    webDriver = SpawnOrGetWebDriverFromPool(webBrowserInfo);
+                    webDriver = TakeWebDriverFromPool(webBrowserInfo);
 
             }
 
             return new WebDriverWrapper(webDriver, this);
 
         }
-        private void ReleaseWebDriverInternal(IWebDriver webDriver, bool disposeWebDriver) {
+
+        private void ReleaseWebDriver(IWebDriver webDriver, bool disposeWebDriver) {
 
             lock (poolLock) {
 
@@ -222,7 +225,7 @@ namespace Gsemac.Net.WebDrivers {
                         .FirstOrDefault();
 
                     if (webDriverItem is null)
-                        throw new ArgumentException(nameof(webDriver), "The given driver is not owned by this pool.");
+                        throw new ArgumentNullException(nameof(webDriver));
 
                     if (disposeWebDriver || webDriver.HasQuit()) {
 
@@ -244,7 +247,7 @@ namespace Gsemac.Net.WebDrivers {
 
                         webDriver.Navigate().GoToUrl("about:blank");
 
-                        pool.Enqueue(webDriverItem);
+                        pool.Add(webDriverItem);
 
                         OnLog.Info($"Returned web driver {webDriverItem.Id} to the pool");
 
@@ -264,13 +267,40 @@ namespace Gsemac.Net.WebDrivers {
             // Close and dispose of any created drivers.
 
             foreach (IWebDriver webDriver in spawnedDrivers.Select(item => item.WebDriver).ToArray())
-                ReleaseWebDriverInternal(webDriver, disposeWebDriver: true);
+                ReleaseWebDriver(webDriver, disposeWebDriver: true);
 
         }
 
-        private IWebDriver SpawnOrGetWebDriverFromPool(IWebBrowserInfo webBrowserInfo) {
+        private IWebDriver SpawnNewWebDriver(IWebBrowserInfo webBrowserInfo) {
 
             PoolItem webDriverItem = null;
+
+            lock (poolLock) {
+
+                if (spawnedDrivers.Count() >= options.PoolSize)
+                    throw new InvalidOperationException("The web driver pool has already reached its max capacity.");
+
+                if (!isDisposed) {
+
+                    IWebDriver webDriver = webBrowserInfo is null ? baseFactory.Create() : baseFactory.Create(webBrowserInfo);
+
+                    webDriverItem = new PoolItem(currentWebDriverId++, webBrowserInfo?.Id ?? WebBrowserId.Unidentified, webDriver);
+
+                    spawnedDrivers.Add(webDriverItem);
+
+                    if (webBrowserInfo is null)
+                        OnLog.Info($"Spawned new web driver with ID {webDriverItem.Id}");
+                    else
+                        OnLog.Info($"Spawned new web driver with ID {webDriverItem.Id} ({webBrowserInfo})");
+
+                }
+
+            }
+
+            return webDriverItem?.WebDriver;
+
+        }
+        private IWebDriver TakeWebDriverFromPool(IWebBrowserInfo webBrowserInfo) {
 
             lock (poolLock) {
 
@@ -278,25 +308,35 @@ namespace Gsemac.Net.WebDrivers {
 
                     if (pool.Count() > 0) {
 
-                        // If there is a driver in the pool we can use, use it.
+                        PoolItem webDriverItem = pool.FirstOrDefault(item => (webBrowserInfo?.Id ?? WebBrowserId.Unidentified) == item.WebBrowserId);
 
-                        webDriverItem = pool.Dequeue();
+                        if (webDriverItem is object) {
 
-                        OnLog.Info($"Took web driver {webDriverItem.Id} from the pool");
+                            // If there is a driver in the pool that matches the requested web browser, use it.
+
+                            pool.Remove(webDriverItem);
+
+                            OnLog.Info($"Took web driver {webDriverItem.Id} from the pool");
+
+                            return webDriverItem.WebDriver;
+
+                        }
+                        else {
+
+                            // There is no driver in the pool that matches the requested web browser, so remove one and replace it.
+
+                            ReleaseWebDriver(pool.First().WebDriver, disposeWebDriver: true);
+
+                            return SpawnNewWebDriver(webBrowserInfo);
+
+                        }
 
                     }
                     else if (spawnedDrivers.Count() < options.PoolSize) {
 
                         // If we haven't spawned the maximum amount of drivers yet, create a new one to use.
 
-                        webDriverItem = new PoolItem(currentWebDriverId++, webBrowserInfo is null ? baseFactory.Create() : baseFactory.Create(webBrowserInfo));
-
-                        spawnedDrivers.Add(webDriverItem);
-
-                        if (webBrowserInfo is null)
-                            OnLog.Info($"Spawned new web driver with ID {webDriverItem.Id}");
-                        else
-                            OnLog.Info($"Spawned new web driver with ID {webDriverItem.Id} ({webBrowserInfo})");
+                        return SpawnNewWebDriver(webBrowserInfo);
 
                     }
 
@@ -304,7 +344,9 @@ namespace Gsemac.Net.WebDrivers {
 
             }
 
-            return webDriverItem?.WebDriver;
+            // If we get here, we weren't able to get or spawn a web driver (object already disposed?).
+
+            return null;
 
         }
 
