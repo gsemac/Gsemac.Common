@@ -6,6 +6,9 @@ namespace Gsemac.Net.WebDrivers {
     public interface IWebDriverUpdater :
         ILoggable {
 
+        event DownloadFileProgressChangedEventHandler DownloadFileProgressChanged;
+        event DownloadFileCompletedEventHandler DownloadFileCompleted;
+
         IWebDriverFileInfo GetWebDriver(IWebBrowserInfo webBrowserInfo);
 
     }

@@ -98,6 +98,9 @@ namespace Gsemac.Net.WebDrivers {
 
                     factory.Log += (sender, e) => OnLog.OnLog(e.Message);
 
+                    factory.DownloadFileCompleted += OnDownloadFileCompleted;
+                    factory.DownloadFileProgressChanged += OnDownloadFileProgressChanged;
+
                 }
 
             }

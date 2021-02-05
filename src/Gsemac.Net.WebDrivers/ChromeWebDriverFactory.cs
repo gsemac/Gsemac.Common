@@ -126,6 +126,9 @@ namespace Gsemac.Net.WebDrivers {
 
             updater.Log += (sender, e) => OnLog.OnLog(e.Message);
 
+            updater.DownloadFileProgressChanged += OnDownloadFileProgressChanged;
+            updater.DownloadFileCompleted += OnDownloadFileCompleted;
+
             return updater;
 
         }

@@ -11,6 +11,9 @@ namespace Gsemac.Net.WebDrivers {
         ILoggable,
         IDisposable {
 
+        event DownloadFileProgressChangedEventHandler DownloadFileProgressChanged;
+        event DownloadFileCompletedEventHandler DownloadFileCompleted;
+
         IWebDriver Create(IWebBrowserInfo webBrowserInfo);
 
     }

@@ -14,6 +14,8 @@ namespace Gsemac.Net.WebDrivers {
          IWebDriverUpdater {
 
         public event LogEventHandler Log;
+        public event DownloadFileProgressChangedEventHandler DownloadFileProgressChanged;
+        public event DownloadFileCompletedEventHandler DownloadFileCompleted;
 
         // Public members
 
@@ -62,6 +64,17 @@ namespace Gsemac.Net.WebDrivers {
         protected abstract Uri GetWebDriverDownloadUri(IWebBrowserInfo webBrowserInfo);
         protected abstract bool IsSupportedWebBrowser(IWebBrowserInfo webBrowserInfo);
 
+        protected void OnDownloadFileProgressChanged(object sender, DownloadFileProgressChangedEventArgs e) {
+
+            DownloadFileProgressChanged?.Invoke(this, e);
+
+        }
+        protected void OnDownloadFileCompleted(object sender, DownloadFileCompletedEventArgs e) {
+
+            DownloadFileCompleted?.Invoke(this, e);
+
+        }
+
         // Private members
 
         private readonly IHttpWebRequestFactory webRequestFactory;
@@ -107,8 +120,14 @@ namespace Gsemac.Net.WebDrivers {
 
                 OnLog.Info($"Downloading {webDriverDownloadUri}");
 
-                using (WebClient webClient = webRequestFactory.ToWebClientFactory().Create())
-                    webClient.DownloadFile(webDriverDownloadUri, downloadFilePath);
+                using (WebClient webClient = webRequestFactory.ToWebClientFactory().Create()) {
+
+                    webClient.DownloadProgressChanged += (sender, e) => OnDownloadFileProgressChanged(this, new DownloadFileProgressChangedEventArgs(downloadFilePath, e));
+                    webClient.DownloadFileCompleted += (sender, e) => OnDownloadFileCompleted(this, new DownloadFileCompletedEventArgs(downloadFilePath, e.Error is null));
+
+                    webClient.DownloadFileSync(webDriverDownloadUri, downloadFilePath);
+
+                }
 
                 try {
 
