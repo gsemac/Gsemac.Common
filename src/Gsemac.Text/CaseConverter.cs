@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Text.RegularExpressions;
 
 namespace Gsemac.Text {
@@ -120,6 +121,35 @@ namespace Gsemac.Text {
                 result = CapitalizeRomanNumerals(result);
 
             return result;
+
+        }
+
+        public static StringCasing DetectCase(string input) {
+
+            if (string.IsNullOrWhiteSpace(input))
+                return StringCasing.Unchanged;
+
+            if (input.Equals(input.ToUpperInvariant()))
+                return StringCasing.Upper;
+
+            if (input.Equals(input.ToLowerInvariant()))
+                return StringCasing.Lower;
+
+            char[] firstCharsOfEachWord = Regex.Matches(input, @"\s*\b(.).+?\b").Cast<Match>().Select(m => m.Groups[1].Value.First()).ToArray();
+
+            // If the first letter of each word is uppercase, assume we have Proper Case.
+
+            if (firstCharsOfEachWord.All(c => !char.IsLower(c)))
+                return StringCasing.Proper;
+
+            // If the first letter of the first word is uppercase, assume we have Sentence Case.
+
+            if (firstCharsOfEachWord.Any() && !char.IsLower(firstCharsOfEachWord.First()))
+                return StringCasing.Sentence;
+
+            // We could not detect the case.
+
+            return StringCasing.Unchanged;
 
         }
 
