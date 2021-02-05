@@ -53,6 +53,12 @@ namespace Gsemac.Collections.Extensions {
 
         }
 
+        public static IEnumerable<T> DistinctBy<T, TKey>(this IEnumerable<T> source, Func<T, TKey> selector) {
+
+            return source.GroupBy(selector).Select(item => item.First());
+
+        }
+
     }
 
 }
