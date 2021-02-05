@@ -8,10 +8,12 @@ namespace Gsemac.Net {
         EventArgs {
 
         public bool Success { get; }
+        public Uri Uri { get; }
         public string FilePath { get; }
 
-        public DownloadFileCompletedEventArgs(string filePath, bool success) {
+        public DownloadFileCompletedEventArgs(Uri uri, string filePath, bool success) {
 
+            Uri = uri;
             FilePath = filePath;
             Success = success;
 

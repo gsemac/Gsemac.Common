@@ -7,17 +7,19 @@ namespace Gsemac.Net {
     public class DownloadProgressChangedEventArgs :
           EventArgs {
 
+        public Uri Uri { get; }
         public long BytesReceived { get; }
         public long TotalBytesToReceive { get; }
 
-        public DownloadProgressChangedEventArgs(long bytesReceived, long totalBytesToReceive) {
+        public DownloadProgressChangedEventArgs(Uri uri, long bytesReceived, long totalBytesToReceive) {
 
+            Uri = uri;
             BytesReceived = bytesReceived;
             TotalBytesToReceive = totalBytesToReceive;
 
         }
-        public DownloadProgressChangedEventArgs(System.Net.DownloadProgressChangedEventArgs e) :
-            this(e.BytesReceived, e.TotalBytesToReceive) {
+        public DownloadProgressChangedEventArgs(Uri uri, System.Net.DownloadProgressChangedEventArgs e) :
+            this(uri, e.BytesReceived, e.TotalBytesToReceive) {
         }
 
     }
