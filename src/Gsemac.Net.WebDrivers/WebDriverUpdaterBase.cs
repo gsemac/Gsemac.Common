@@ -19,12 +19,12 @@ namespace Gsemac.Net.WebDrivers {
 
         // Public members
 
-        public IWebDriverFileInfo GetWebDriver(IWebBrowserInfo webBrowserInfo) {
+        public IWebDriverVersionInfo GetWebDriver(IWebBrowserInfo webBrowserInfo) {
 
             if (!IsSupportedWebBrowser(webBrowserInfo))
                 throw new ArgumentException("The given web browser is not valid for updater.", nameof(webBrowserInfo));
 
-            IWebDriverFileInfo webDriverInfo = GetCurrentWebDriverFileInfo();
+            IWebDriverVersionInfo webDriverInfo = GetCurrentWebDriverFileInfo();
             bool updateRequired = !webDriverInfo.Version?.Equals(webBrowserInfo.Version) ?? true;
 
             if (updateRequired) {
@@ -33,7 +33,7 @@ namespace Gsemac.Net.WebDrivers {
 
                 if (DownloadWebDriver(webBrowserInfo)) {
 
-                    webDriverInfo = new WebDriverFileInfo() {
+                    webDriverInfo = new WebDriverVersionInfo() {
                         ExecutablePath = GetWebDriverExecutablePath(),
                         Version = webBrowserInfo.Version
                     };
@@ -85,7 +85,7 @@ namespace Gsemac.Net.WebDrivers {
 
         }
 
-        private IWebDriverFileInfo GetCurrentWebDriverFileInfo() {
+        private IWebDriverVersionInfo GetCurrentWebDriverFileInfo() {
 
             string webDriverMetadataFilePath = GetWebDriverMetadataFilePath();
 
@@ -93,14 +93,14 @@ namespace Gsemac.Net.WebDrivers {
 
                 string metadataJson = File.ReadAllText(webDriverMetadataFilePath);
 
-                return JsonConvert.DeserializeObject<WebDriverFileInfo>(metadataJson);
+                return JsonConvert.DeserializeObject<WebDriverVersionInfo>(metadataJson);
 
             }
             else
-                return new WebDriverFileInfo();
+                return new WebDriverVersionInfo();
 
         }
-        private void SaveWebDriverInfo(IWebDriverFileInfo webDriverInfo) {
+        private void SaveWebDriverInfo(IWebDriverVersionInfo webDriverInfo) {
 
             string webDriverMetadataFilePath = GetWebDriverMetadataFilePath();
 

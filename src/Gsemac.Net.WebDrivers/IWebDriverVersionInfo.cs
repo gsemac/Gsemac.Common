@@ -2,7 +2,7 @@
 
 namespace Gsemac.Net.WebDrivers {
 
-    public interface IWebDriverFileInfo {
+    public interface IWebDriverVersionInfo {
 
         Version Version { get; }
         string ExecutablePath { get; }

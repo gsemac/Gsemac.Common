@@ -105,7 +105,7 @@ namespace Gsemac.Net.WebDrivers {
 
                 OnLog.Info($"Checking for web driver updates");
 
-                IWebDriverFileInfo webDriverInfo = GetWebDriverUpdater().GetWebDriver(webBrowserInfo);
+                IWebDriverVersionInfo webDriverInfo = GetWebDriverUpdater().GetWebDriver(webBrowserInfo);
 
                 if (!string.IsNullOrWhiteSpace(webDriverInfo?.ExecutablePath))
                     return webDriverInfo.ExecutablePath;
