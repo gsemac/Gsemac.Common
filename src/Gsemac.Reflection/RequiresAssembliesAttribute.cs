@@ -3,7 +3,7 @@
 namespace Gsemac.Reflection {
 
     [AttributeUsage(AttributeTargets.All, AllowMultiple = true)]
-    public class RequiresAssembliesAttribute :
+    public sealed class RequiresAssembliesAttribute :
         Attribute,
         IRequirementAttribute {
 

@@ -2,7 +2,7 @@
 
 namespace Gsemac.Reflection {
 
-    public class RequiresTypeAttribute :
+    public sealed class RequiresTypeAttribute :
         Attribute,
         IRequirementAttribute {
 
