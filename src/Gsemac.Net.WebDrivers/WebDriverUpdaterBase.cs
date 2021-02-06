@@ -22,7 +22,7 @@ namespace Gsemac.Net.WebDrivers {
         public IWebDriverVersionInfo GetWebDriver(IWebBrowserInfo webBrowserInfo) {
 
             if (!IsSupportedWebBrowser(webBrowserInfo))
-                throw new ArgumentException("The given web browser is not valid for updater.", nameof(webBrowserInfo));
+                throw new ArgumentException("The given web browser is not valid for this updater.", nameof(webBrowserInfo));
 
             IWebDriverVersionInfo webDriverInfo = GetCurrentWebDriverFileInfo();
             bool updateRequired = !webDriverInfo.Version?.Equals(webBrowserInfo.Version) ?? true;
