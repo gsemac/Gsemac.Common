@@ -11,8 +11,8 @@ namespace Gsemac.Net.WebDrivers {
         // Public members
 
         public event LogEventHandler Log;
-        public event DownloadFileProgressChangedEventHandler DownloadFileProgressChanged;
-        public event DownloadFileCompletedEventHandler DownloadFileCompleted;
+        public virtual event DownloadFileProgressChangedEventHandler DownloadFileProgressChanged;
+        public virtual event DownloadFileCompletedEventHandler DownloadFileCompleted;
 
         public abstract IWebDriver Create();
         public abstract IWebDriver Create(IWebBrowserInfo webBrowserInfo);

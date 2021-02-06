@@ -14,6 +14,15 @@ namespace Gsemac.Net.WebDrivers {
 
         // Public members
 
+        public override event DownloadFileProgressChangedEventHandler DownloadFileProgressChanged {
+            add => baseFactory.DownloadFileProgressChanged += value;
+            remove => baseFactory.DownloadFileProgressChanged -= value;
+        }
+        public override event DownloadFileCompletedEventHandler DownloadFileCompleted {
+            add => baseFactory.DownloadFileCompleted += value;
+            remove => baseFactory.DownloadFileCompleted -= value;
+        }
+
         public PooledWebDriverFactory() :
             this(PooledWebDriverFactoryOptions.Default) {
         }
