@@ -8,26 +8,26 @@ using System.Threading;
 
 namespace Gsemac.Net.Curl {
 
-    public class CurlCommandLineArgumentsBuilder :
-        CommandLineArgumentsBuilder {
+    public class CurlCmdArgumentsBuilder :
+        CmdArgumentsBuilder {
 
         // Public members
 
-        public new CurlCommandLineArgumentsBuilder WithArgument(string argumentValue) {
+        public new CurlCmdArgumentsBuilder WithArgument(string value) {
 
-            base.AddArgument(argumentValue);
-
-            return this;
-
-        }
-        public new CurlCommandLineArgumentsBuilder WithArgument(string argumentName, string argumentValue) {
-
-            base.AddArgument(argumentName, argumentValue);
+            AddArgument(value);
 
             return this;
 
         }
-        public CurlCommandLineArgumentsBuilder WithAutomaticDecompression(DecompressionMethods decompressionMethods) {
+        public new CurlCmdArgumentsBuilder WithArgument(string name, string value) {
+
+            AddArgument(name, value);
+
+            return this;
+
+        }
+        public CurlCmdArgumentsBuilder WithAutomaticDecompression(DecompressionMethods decompressionMethods) {
 
             if (decompressionMethods != DecompressionMethods.None) {
 
@@ -51,7 +51,7 @@ namespace Gsemac.Net.Curl {
             return this;
 
         }
-        public CurlCommandLineArgumentsBuilder WithAutomaticRedirect(int maxRedirections) {
+        public CurlCmdArgumentsBuilder WithAutomaticRedirect(int maxRedirections) {
 
             if (maxRedirections > 0) {
 
@@ -63,7 +63,7 @@ namespace Gsemac.Net.Curl {
             return this;
 
         }
-        public CurlCommandLineArgumentsBuilder WithCookies(CookieContainer cookieContainer, Uri requestUri = null) {
+        public CurlCmdArgumentsBuilder WithCookies(CookieContainer cookieContainer, Uri requestUri = null) {
 
             if (requestUri is null)
                 requestUri = uri;
@@ -83,7 +83,7 @@ namespace Gsemac.Net.Curl {
             return this;
 
         }
-        public CurlCommandLineArgumentsBuilder WithConnectTimeout(int timeoutSeconds) {
+        public CurlCmdArgumentsBuilder WithConnectTimeout(int timeoutSeconds) {
 
             if (timeoutSeconds != Timeout.Infinite)
                 AddArgument("--connect-timeout", (timeoutSeconds / 1000.0).ToString(CultureInfo.InvariantCulture));
@@ -91,8 +91,8 @@ namespace Gsemac.Net.Curl {
             return this;
 
         }
-        public CurlCommandLineArgumentsBuilder WithConsoleOutput() => WithArgument("--output", "-"); // output binary data directly to standard output
-        public CurlCommandLineArgumentsBuilder WithCredentials(ICredentials credentials, Uri requestUri = null) {
+        public CurlCmdArgumentsBuilder WithConsoleOutput() => WithArgument("--output", "-"); // output binary data directly to standard output
+        public CurlCmdArgumentsBuilder WithCredentials(ICredentials credentials, Uri requestUri = null) {
 
             // Argument should be of the following form:
             // -u username:password
@@ -106,8 +106,8 @@ namespace Gsemac.Net.Curl {
             return this;
 
         }
-        public CurlCommandLineArgumentsBuilder WithHeaderOutput() => WithArgument("--include"); // include response headers in output
-        public CurlCommandLineArgumentsBuilder WithHeaders(WebHeaderCollection headers) {
+        public CurlCmdArgumentsBuilder WithHeaderOutput() => WithArgument("--include"); // include response headers in output
+        public CurlCmdArgumentsBuilder WithHeaders(WebHeaderCollection headers) {
 
             for (int i = 0; i < headers.Count; ++i) {
 
@@ -121,7 +121,7 @@ namespace Gsemac.Net.Curl {
             return this;
 
         }
-        public CurlCommandLineArgumentsBuilder WithHttpVersion(System.Version version) {
+        public CurlCmdArgumentsBuilder WithHttpVersion(System.Version version) {
 
             if (version != null) {
 
@@ -135,7 +135,7 @@ namespace Gsemac.Net.Curl {
             return this;
 
         }
-        public CurlCommandLineArgumentsBuilder WithKeepAlive(bool keepAlive) {
+        public CurlCmdArgumentsBuilder WithKeepAlive(bool keepAlive) {
 
             if (!keepAlive)
                 AddArgument("--no-keepalive");
@@ -143,7 +143,7 @@ namespace Gsemac.Net.Curl {
             return this;
 
         }
-        public CurlCommandLineArgumentsBuilder WithMethod(string method) {
+        public CurlCmdArgumentsBuilder WithMethod(string method) {
 
             if (string.IsNullOrWhiteSpace(method))
                 method = "GET";
@@ -177,7 +177,7 @@ namespace Gsemac.Net.Curl {
             return this;
 
         }
-        public CurlCommandLineArgumentsBuilder WithPostData(string postData) {
+        public CurlCmdArgumentsBuilder WithPostData(string postData) {
 
             if (!string.IsNullOrWhiteSpace(postData))
                 AddArgument("--data", postData);
@@ -185,7 +185,7 @@ namespace Gsemac.Net.Curl {
             return this;
 
         }
-        public CurlCommandLineArgumentsBuilder WithProxy(IWebProxy proxy, Uri requestUri = null) {
+        public CurlCmdArgumentsBuilder WithProxy(IWebProxy proxy, Uri requestUri = null) {
 
             // Argument should be of the following form:
             // -x, --proxy <[protocol://][user:password@]proxyhost[:port]>
@@ -199,7 +199,7 @@ namespace Gsemac.Net.Curl {
             return this;
 
         }
-        public CurlCommandLineArgumentsBuilder WithUri(Uri uri) {
+        public CurlCmdArgumentsBuilder WithUri(Uri uri) {
 
             this.uri = uri;
 

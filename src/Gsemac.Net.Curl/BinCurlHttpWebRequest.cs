@@ -62,7 +62,7 @@ namespace Gsemac.Net.Curl {
         }
         private string GetCurlArguments() {
 
-            return new CurlCommandLineArgumentsBuilder()
+            return new CurlCmdArgumentsBuilder()
                 .WithHeaderOutput()
                 .WithConsoleOutput()
                 .WithAutomaticRedirect(AllowAutoRedirect ? MaximumAutomaticRedirections : 0)
