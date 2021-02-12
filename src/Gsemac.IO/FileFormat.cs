@@ -33,7 +33,7 @@ namespace Gsemac.IO {
             else
                 ext = PathUtilities.NormalizeFileExtension(ext);
 
-            IFileFormat fileFormat = knownFileFormats.Value
+            IFileFormat fileFormat = GetKnownFileFormats()
                 .Where(format => format.Extensions.Any(formatExt => formatExt.Equals(ext, StringComparison.OrdinalIgnoreCase)))
                 .FirstOrDefault();
 
@@ -41,6 +41,20 @@ namespace Gsemac.IO {
                 fileFormat = new FileFormat(ext);
 
             return fileFormat;
+
+        }
+        public static IFileFormat FromMimeType(string mimeType) {
+
+            if (string.IsNullOrEmpty(mimeType))
+                throw new ArgumentNullException(nameof(mimeType));
+
+            IFileFormat fileFormat = GetKnownFileFormats()
+                .Where(format => format.MimeType.Equals(mimeType, StringComparison.OrdinalIgnoreCase))
+                .FirstOrDefault();
+
+            // We were unable to find a file format with a matching MIME type.
+
+            return null;
 
         }
 
@@ -67,6 +81,11 @@ namespace Gsemac.IO {
                     .Where(type => type.IsDefaultConstructable())
                     .Select(type => Activator.CreateInstance(type))
                     .OfType<IFileFormat>();
+
+        }
+        private static IEnumerable<IFileFormat> GetKnownFileFormats() {
+
+            return knownFileFormats.Value;
 
         }
 
