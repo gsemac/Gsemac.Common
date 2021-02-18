@@ -58,7 +58,7 @@ namespace Gsemac.Reflection {
                 // If the probing path is relative, make it rooted relative to the entry assembly.
 
                 if (!string.IsNullOrEmpty(candidatePath) && !Path.IsPathRooted(candidatePath))
-                    candidatePath = Path.Combine(new EntryAssemblyInfo().Directory, candidatePath);
+                    candidatePath = Path.Combine(AssemblyInfo.EntryAssembly.Directory, candidatePath);
 
                 // Attempt to find the assembly in the probing path.
 
@@ -99,7 +99,7 @@ namespace Gsemac.Reflection {
 
             return ProbingPaths.Concat(new[] {
                 Directory.GetCurrentDirectory(),
-                new EntryAssemblyInfo().Directory,
+                AssemblyInfo.EntryAssembly.Directory,
             }).Distinct().Select(path => Path.GetFullPath(path));
 
         }
