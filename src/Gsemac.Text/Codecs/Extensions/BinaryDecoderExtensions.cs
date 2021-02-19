@@ -1,6 +1,6 @@
 ﻿using System.Text;
 
-namespace Gsemac.Core.Codecs.Extensions {
+namespace Gsemac.Text.Codecs.Extensions {
 
     public static class BinaryDecoderExtensions {
 
@@ -14,14 +14,19 @@ namespace Gsemac.Core.Codecs.Extensions {
             return decoder.Decode(encodedBytes, startIndex, encodedBytes.Length - startIndex);
 
         }
-        public static string DecodeString(this IBinaryDecoder decoder, string encodedString, Encoding encoding = null) {
+        public static byte[] Decode(this IBinaryDecoder decoder, string encodedString, Encoding encoding = null) {
 
             if (encoding is null)
                 encoding = Encoding.UTF8;
 
             byte[] encodedBytes = encoding.GetBytes(encodedString);
 
-            return encoding.GetString(decoder.Decode(encodedBytes));
+            return decoder.Decode(encodedBytes);
+
+        }
+        public static string DecodeString(this IBinaryDecoder decoder, string encodedString, Encoding encoding = null) {
+
+            return encoding.GetString(decoder.Decode(encodedString, encoding));
 
         }
 

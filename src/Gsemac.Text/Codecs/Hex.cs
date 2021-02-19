@@ -2,7 +2,7 @@
 using System.Globalization;
 using System.Text;
 
-namespace Gsemac.Core.Codecs {
+namespace Gsemac.Text.Codecs {
 
     public sealed class Hex :
          IBinaryCodec {

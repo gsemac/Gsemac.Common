@@ -2,7 +2,7 @@
 using System.Text;
 using System.Text.RegularExpressions;
 
-namespace Gsemac.Core.Codecs {
+namespace Gsemac.Text.Codecs {
 
     public sealed class Base64 :
         IBinaryCodec {

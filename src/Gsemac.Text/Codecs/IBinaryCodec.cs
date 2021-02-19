@@ -1,4 +1,4 @@
-﻿namespace Gsemac.Core.Codecs {
+﻿namespace Gsemac.Text.Codecs {
 
     public interface IBinaryCodec :
         IBinaryEncoder,

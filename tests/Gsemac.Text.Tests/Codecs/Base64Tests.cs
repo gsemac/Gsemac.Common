@@ -1,6 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace Gsemac.Core.Codecs.Tests {
+namespace Gsemac.Text.Codecs.Tests {
 
     [TestClass]
     public class Base64Tests {
