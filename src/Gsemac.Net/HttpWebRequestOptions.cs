@@ -42,6 +42,25 @@ namespace Gsemac.Net {
 
         }
 
+        public static HttpWebRequestOptions FromHttpWebRequest(IHttpWebRequest httpWebRequest) {
+
+            return new HttpWebRequestOptions() {
+                Accept = httpWebRequest.Accept,
+                AcceptLanguage = httpWebRequest.Headers[HttpRequestHeader.AcceptLanguage],
+                AutomaticDecompression = httpWebRequest.AutomaticDecompression,
+                Cookies = httpWebRequest.CookieContainer,
+                Credentials = httpWebRequest.Credentials,
+                Proxy = httpWebRequest.Proxy,
+                UserAgent = httpWebRequest.UserAgent,
+            };
+
+        }
+        public static HttpWebRequestOptions FromHttpWebRequest(HttpWebRequest httpWebRequest) {
+
+            return FromHttpWebRequest(new HttpWebRequestWrapper(httpWebRequest));
+
+        }
+
     }
 
 }
