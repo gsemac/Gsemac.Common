@@ -36,8 +36,11 @@ namespace Gsemac.Net {
             ImpersonationLevel = httpWebRequest.ImpersonationLevel;
 
         }
-        public HttpWebRequestWrapper(Uri uri) :
-            this(WebRequest.Create(uri)) {
+        public HttpWebRequestWrapper(Uri requestUri) :
+            this(Create(requestUri)) {
+        }
+        public HttpWebRequestWrapper(string requestUri) :
+            this(new Uri(requestUri)) {
         }
 
         // Private members
