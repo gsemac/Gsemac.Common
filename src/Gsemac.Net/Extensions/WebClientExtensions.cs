@@ -13,6 +13,11 @@ namespace Gsemac.Net.Extensions {
             client.DownloadFile(address, PathUtilities.GetFileName(address.AbsoluteUri));
 
         }
+        public static void DownloadFile(this WebClient client, string address) {
+
+            DownloadFile(client, new Uri(address));
+
+        }
         public static void DownloadFileAsync(this WebClient client, Uri address) {
 
             client.DownloadFileAsync(address, PathUtilities.GetFileName(address.AbsoluteUri));
