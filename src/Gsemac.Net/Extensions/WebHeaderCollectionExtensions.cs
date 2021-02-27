@@ -25,7 +25,7 @@ namespace Gsemac.Net.Extensions {
 
                 value = headerCollection[headerName];
 
-                return true;
+                return !string.IsNullOrWhiteSpace(value);
 
             }
             catch (InvalidOperationException) {
@@ -52,7 +52,7 @@ namespace Gsemac.Net.Extensions {
 
                 value = headerCollection[requestHeader];
 
-                return true;
+                return !string.IsNullOrWhiteSpace(value);
 
             }
             catch (InvalidOperationException) {
@@ -73,7 +73,7 @@ namespace Gsemac.Net.Extensions {
 
                 value = headerCollection[responseHeader];
 
-                return true;
+                return !string.IsNullOrWhiteSpace(value);
 
             }
             catch (InvalidOperationException) {
