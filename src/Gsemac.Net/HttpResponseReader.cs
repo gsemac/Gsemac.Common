@@ -2,8 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
 
 namespace Gsemac.Net {
 
@@ -23,6 +21,13 @@ namespace Gsemac.Net {
             string statusLine = reader.ReadLine();
 
             return HttpStatusLine.Parse(statusLine);
+
+        }
+        public bool TryReadStatusLine(out IHttpStatusLine result) {
+
+            string statusLine = reader.ReadLine();
+
+            return HttpStatusLine.TryParse(statusLine, out result);
 
         }
         public IEnumerable<IHttpHeader> ReadHeaders() {

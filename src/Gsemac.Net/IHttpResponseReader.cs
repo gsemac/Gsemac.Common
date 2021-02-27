@@ -7,6 +7,7 @@ namespace Gsemac.Net {
         IDisposable {
 
         IHttpStatusLine ReadStatusLine();
+        bool TryReadStatusLine(out IHttpStatusLine result);
         IEnumerable<IHttpHeader> ReadHeaders();
         string ReadBody();
 

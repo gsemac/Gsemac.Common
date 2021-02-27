@@ -20,16 +20,15 @@ namespace Gsemac.Net {
 
         }
 
-        public static HttpStatusLine Parse(string statusLine) {
+        public static IHttpStatusLine Parse(string statusLine) {
 
-            if (TryParse(statusLine, out HttpStatusLine httpResponseStatus))
+            if (TryParse(statusLine, out IHttpStatusLine httpResponseStatus))
                 return httpResponseStatus;
             else
                 throw new ArgumentException("The given string was not a valid HTTP status line.", nameof(statusLine));
 
-
         }
-        public static bool TryParse(string statusLine, out HttpStatusLine result) {
+        public static bool TryParse(string statusLine, out IHttpStatusLine result) {
 
             Match statusLineMatch = Regex.Match(statusLine, @"^HTTP\/(\d+(?:\.\d+)?)\s*(\d+)\s*(.+?)$");
 
@@ -58,7 +57,7 @@ namespace Gsemac.Net {
 
             }
 
-            return result != null;
+            return result is object;
 
         }
 
