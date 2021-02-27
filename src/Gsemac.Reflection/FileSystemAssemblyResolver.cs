@@ -7,6 +7,8 @@ namespace Gsemac.Reflection {
 
         // Public members
 
+        public static IFileSystemAssemblyResolver Default { get; set; } = new AnyCpuFileSystemAssemblyResolver();
+
         public FileSystemAssemblyResolver() :
             this(new[] { "lib" }) {
         }
