@@ -35,6 +35,7 @@
 
 	<ItemGroup>
 	  <ProjectReference Include="..\Gsemac.Net\Gsemac.Net.csproj" />
+	  <ProjectReference Include="..\Gsemac.Reflection\Gsemac.Reflection.csproj" />
 	</ItemGroup>
 
 </Project>

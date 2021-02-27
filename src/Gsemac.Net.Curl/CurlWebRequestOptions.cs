@@ -5,7 +5,7 @@
 
         public static CurlWebRequestOptions Default => new CurlWebRequestOptions();
 
-        public string CurlExecutablePath { get; set; }
+        public string CurlExecutablePath { get; set; } = CurlUtilities.CurlExecutablePath;
 
     }
 

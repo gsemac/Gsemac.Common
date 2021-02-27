@@ -39,7 +39,7 @@ namespace Gsemac.Net.Curl {
 
             return (string.IsNullOrWhiteSpace(curlOptions.CurlExecutablePath) ?
                 new BinCurlHttpWebRequest(requestUri) :
-                new BinCurlHttpWebRequest(requestUri, curlOptions.CurlExecutablePath))
+                new BinCurlHttpWebRequest(requestUri, curlOptions))
                 .WithOptions(optionsFactory.Create(requestUri));
 
         }

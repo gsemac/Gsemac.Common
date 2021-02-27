@@ -64,8 +64,8 @@ namespace Gsemac.Net.Curl {
 
                         LibCurl.EasySetOpt(easyHandle, CurlOption.TcpKeepAlive, KeepAlive ? 1 : 0);
 
-                        if (File.Exists(LibCurl.CABundlePath))
-                            LibCurl.EasySetOpt(easyHandle, CurlOption.CaInfo, LibCurl.CABundlePath);
+                        if (File.Exists(CurlUtilities.CABundlePath))
+                            LibCurl.EasySetOpt(easyHandle, CurlOption.CaInfo, CurlUtilities.CABundlePath);
 
                         SetCookies(easyHandle);
                         SetCredentials(easyHandle);
