@@ -20,10 +20,10 @@ namespace Gsemac.Net.Curl {
             // Delegates must be kept alive (i.e. not garbage collected) unil there is no chance of them being called again.
             // To make sure they are kept alive for the duration of the request, they are stored in member variables.
 
-            this.headerFunction = new WriteFunctionDelegate(HeaderFunctionImpl);
-            this.readFunction = new ReadFunctionDelegate(ReadFunctionImpl);
-            this.writeFunction = new WriteFunctionDelegate(WriteFunctionImpl);
-            this.progressFunction = new ProgressFunctionDelegate(ProgressFunctionImpl);
+            this.headerFunction = new WriteFunctionCallback(HeaderFunctionImpl);
+            this.readFunction = new ReadFunctionCallback(ReadFunctionImpl);
+            this.writeFunction = new WriteFunctionCallback(WriteFunctionImpl);
+            this.progressFunction = new ProgressFunctionCallback(ProgressFunctionImpl);
 
         }
         public CurlDataCopier(Stream writeStream, Stream readStream, CancellationToken cancellationToken) :
@@ -33,10 +33,10 @@ namespace Gsemac.Net.Curl {
 
         }
 
-        public WriteFunctionDelegate HeaderFunction => headerFunction;
-        public ReadFunctionDelegate ReadFunction => readFunction;
-        public WriteFunctionDelegate WriteFunction => writeFunction;
-        public ProgressFunctionDelegate ProgressFunction => progressFunction;
+        public WriteFunctionCallback HeaderFunction => headerFunction;
+        public ReadFunctionCallback ReadFunction => readFunction;
+        public WriteFunctionCallback WriteFunction => writeFunction;
+        public ProgressFunctionCallback ProgressFunction => progressFunction;
 
         public void SetCallbacks(CurlEasyHandle easyHandle) {
 
@@ -52,10 +52,10 @@ namespace Gsemac.Net.Curl {
         private readonly Stream readStream;
         private readonly Stream writeStream;
         private readonly CancellationToken cancellationToken;
-        private readonly WriteFunctionDelegate headerFunction;
-        private readonly ReadFunctionDelegate readFunction;
-        private readonly WriteFunctionDelegate writeFunction;
-        private readonly ProgressFunctionDelegate progressFunction;
+        private readonly WriteFunctionCallback headerFunction;
+        private readonly ReadFunctionCallback readFunction;
+        private readonly WriteFunctionCallback writeFunction;
+        private readonly ProgressFunctionCallback progressFunction;
 
         private UIntPtr HeaderFunctionImpl(IntPtr data, UIntPtr size, UIntPtr nmemb, IntPtr userdata) {
 

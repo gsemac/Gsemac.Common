@@ -43,19 +43,19 @@ namespace Gsemac.Net.Curl {
         public static extern CurlCode EasySetOpt64(CurlEasyHandle handle, CurlOption option, string value);
 
         [DllImport(X86DllPath, EntryPoint = "curl_easy_setopt")]
-        public static extern CurlCode EasySetOpt32(CurlEasyHandle handle, CurlOption option, WriteFunctionDelegate value);
+        public static extern CurlCode EasySetOpt32(CurlEasyHandle handle, CurlOption option, WriteFunctionCallback value);
         [DllImport(X64DllPath, EntryPoint = "curl_easy_setopt")]
-        public static extern CurlCode EasySetOpt64(CurlEasyHandle handle, CurlOption option, WriteFunctionDelegate value);
+        public static extern CurlCode EasySetOpt64(CurlEasyHandle handle, CurlOption option, WriteFunctionCallback value);
 
         [DllImport(X86DllPath, EntryPoint = "curl_easy_setopt")]
-        public static extern CurlCode EasySetOpt32(CurlEasyHandle handle, CurlOption option, ProgressFunctionDelegate value);
+        public static extern CurlCode EasySetOpt32(CurlEasyHandle handle, CurlOption option, ProgressFunctionCallback value);
         [DllImport(X64DllPath, EntryPoint = "curl_easy_setopt")]
-        public static extern CurlCode EasySetOpt64(CurlEasyHandle handle, CurlOption option, ProgressFunctionDelegate value);
+        public static extern CurlCode EasySetOpt64(CurlEasyHandle handle, CurlOption option, ProgressFunctionCallback value);
 
         [DllImport(X86DllPath, EntryPoint = "curl_easy_setopt")]
-        public static extern CurlCode EasySetOpt32(CurlEasyHandle handle, CurlOption option, ReadFunctionDelegate value);
+        public static extern CurlCode EasySetOpt32(CurlEasyHandle handle, CurlOption option, ReadFunctionCallback value);
         [DllImport(X64DllPath, EntryPoint = "curl_easy_setopt")]
-        public static extern CurlCode EasySetOpt64(CurlEasyHandle handle, CurlOption option, ReadFunctionDelegate value);
+        public static extern CurlCode EasySetOpt64(CurlEasyHandle handle, CurlOption option, ReadFunctionCallback value);
 
         [DllImport(X86DllPath, EntryPoint = "curl_easy_setopt")]
         public static extern CurlCode EasySetOpt32(CurlEasyHandle handle, CurlOption option, SListHandle value);
