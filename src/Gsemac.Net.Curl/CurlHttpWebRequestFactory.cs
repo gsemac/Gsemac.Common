@@ -1,5 +1,5 @@
-﻿using System;
-using System.IO;
+﻿using Gsemac.Net.Extensions;
+using System;
 
 namespace Gsemac.Net.Curl {
 
@@ -16,24 +16,20 @@ namespace Gsemac.Net.Curl {
         }
         public CurlHttpWebRequestFactory(IHttpWebRequestOptionsFactory optionsFactory) {
 
-            if (File.Exists(LibCurl.LibCurlPath) || !File.Exists(LibCurl.CurlExecutablePath))
-                webRequestFactory = new LibCurlHttpWebRequestFactory(optionsFactory);
-            else
-                webRequestFactory = new BinCurlHttpWebRequestFactory(optionsFactory);
+            this.optionsFactory = optionsFactory;
 
         }
 
         public IHttpWebRequest Create(Uri requestUri) {
 
-            IHttpWebRequest httpWebRequest = webRequestFactory.Create(requestUri);
-
-            return httpWebRequest;
+            return new CurlHttpWebRequest(requestUri)
+                .WithOptions(optionsFactory.Create(requestUri));
 
         }
 
         // Private members
 
-        private readonly IHttpWebRequestFactory webRequestFactory;
+        private readonly IHttpWebRequestOptionsFactory optionsFactory;
 
     }
 

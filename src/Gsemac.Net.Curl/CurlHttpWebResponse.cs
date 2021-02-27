@@ -3,12 +3,12 @@ using System.Threading;
 
 namespace Gsemac.Net.Curl {
 
-    public class LibCurlHttpWebResponse :
+    internal class CurlHttpWebResponse :
         CurlHttpWebResponseBase {
 
         // Public members
 
-        public LibCurlHttpWebResponse(IHttpWebRequest parentRequest, Stream responseStream, CancellationTokenSource cancellationTokenSource) :
+        public CurlHttpWebResponse(IHttpWebRequest parentRequest, Stream responseStream, CancellationTokenSource cancellationTokenSource) :
             base(parentRequest, responseStream) {
 
             this.cancellationTokenSource = cancellationTokenSource;

@@ -3,16 +3,16 @@
     /// <summary>
     /// Provides common methods for sending data to and receiving data via Curl from a resource identified by a URI.
     /// </summary>
-    public class LibCurlWebClient :
+    public class CurlWebClient :
         WebClientBase {
 
         // Public members
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="LibCurlWebClient"/> class.
+        /// Initializes a new instance of the <see cref="CurlWebClient"/> class.
         /// </summary>
-        public LibCurlWebClient() :
-            base(new LibCurlHttpWebRequestFactory()) {
+        public CurlWebClient() :
+            base(new CurlHttpWebRequestFactory()) {
         }
 
     }

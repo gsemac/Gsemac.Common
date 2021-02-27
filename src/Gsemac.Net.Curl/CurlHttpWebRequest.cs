@@ -10,13 +10,16 @@ using System.Threading.Tasks;
 
 namespace Gsemac.Net.Curl {
 
-    public class LibCurlHttpWebRequest :
+    public class CurlHttpWebRequest :
         HttpWebRequestBase {
 
         // Public members
 
-        public LibCurlHttpWebRequest(Uri requestUri) :
+        public CurlHttpWebRequest(Uri requestUri) :
             base(requestUri) {
+        }
+        public CurlHttpWebRequest(string requestUri) :
+            this(new Uri(requestUri)) {
         }
 
         // Methods overidden from WebRequest
@@ -46,7 +49,7 @@ namespace Gsemac.Net.Curl {
                     using (SList headers = new SList())
                     using (MemoryStream postDataStream = new MemoryStream(GetRequestStream(validateMethod: false).ToArray())) {
 
-                        CurlDataCopier dataCopier = new CurlDataCopier(stream, postDataStream, cancellationToken);
+                        CurlCallbackHelper dataCopier = new CurlCallbackHelper(stream, postDataStream, cancellationToken);
 
                         dataCopier.SetCallbacks(easyHandle);
 
@@ -91,7 +94,7 @@ namespace Gsemac.Net.Curl {
 
             HaveResponse = true;
 
-            return new LibCurlHttpWebResponse(this, stream, cancellationTokenSource);
+            return new CurlHttpWebResponse(this, stream, cancellationTokenSource);
 
         }
 

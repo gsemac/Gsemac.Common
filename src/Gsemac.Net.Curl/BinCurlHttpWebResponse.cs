@@ -1,6 +1,6 @@
 ﻿namespace Gsemac.Net.Curl {
 
-    public class BinCurlHttpWebResponse :
+    internal class BinCurlHttpWebResponse :
         CurlHttpWebResponseBase {
 
         // Public members

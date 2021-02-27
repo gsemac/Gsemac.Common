@@ -1,12 +1,12 @@
-﻿using System;
-using System.Globalization;
+﻿using Gsemac.Net.Extensions;
+using System;
 using System.IO;
 using System.Net;
 using System.Text.RegularExpressions;
 
 namespace Gsemac.Net.Curl {
 
-    public abstract class CurlHttpWebResponseBase :
+    internal abstract class CurlHttpWebResponseBase :
         HttpWebResponseBase {
 
         // Public members
@@ -22,8 +22,7 @@ namespace Gsemac.Net.Curl {
         protected CurlHttpWebResponseBase(IHttpWebRequest parentRequest, Stream responseStream) :
             base(parentRequest.RequestUri, responseStream) {
 
-            this.responseUri = parentRequest.RequestUri;
-            this.maximumAutomaticRedirections = parentRequest.AllowAutoRedirect ? parentRequest.MaximumAutomaticRedirections : 0;
+            responseUri = parentRequest.RequestUri;
 
             Method = parentRequest.Method;
             ProtocolVersion = parentRequest.ProtocolVersion;
@@ -41,7 +40,7 @@ namespace Gsemac.Net.Curl {
                 throw new WebException("Received an empty response.", null, WebExceptionStatus.ServerProtocolViolation, this);
 
             }
-            else if (!((int)StatusCode).ToString(CultureInfo.InvariantCulture).StartsWith("2")) {
+            else if ((int)StatusCode >= 400 && (int)StatusCode < 600) {
 
                 // We got a response, but didn't get a success code.
 
@@ -55,77 +54,67 @@ namespace Gsemac.Net.Curl {
 
         private Uri responseUri;
         private readonly CookieContainer cookies = new CookieContainer();
-        private readonly int maximumAutomaticRedirections;
 
         private void ReadHttpHeaders(Stream responseStream) {
 
             using (IHttpResponseReader reader = new HttpResponseReader(responseStream)) {
 
-                try {
+                // Curl will output multiple sets of headers if we are redirected.
 
-                    // Curl will output multiple sets of headers if we are redirected.
+                bool readHeaders = true;
 
-                    bool readHeaders = true;
-                    int numberOfRedirects = 0;
+                while (readHeaders) {
 
-                    while (readHeaders) {
+                    // We might fail to read the status line if we had a redirect that wasn't followed (i.e. "AllowAutoRedirect" is false).
+                    // In that case, there are no other responses to read.
 
-                        Headers.Clear();
+                    if (!reader.TryReadStatusLine(out IHttpStatusLine statusLine))
+                        break;
 
-                        IHttpStatusLine statusLine = reader.ReadStatusLine();
+                    ProtocolVersion = statusLine.ProtocolVersion;
+                    StatusCode = statusLine.StatusCode;
+                    StatusDescription = statusLine.StatusDescription;
 
-                        ProtocolVersion = statusLine.ProtocolVersion;
-                        StatusCode = statusLine.StatusCode;
-                        StatusDescription = statusLine.StatusDescription;
+                    Headers.Clear();
 
-                        foreach (IHttpHeader header in reader.ReadHeaders())
-                            Headers.Add(header.Name, header.Value);
+                    foreach (IHttpHeader header in reader.ReadHeaders())
+                        Headers.Add(header.Name, header.Value);
 
-                        // Update response URI and continue reading headers if we were redirected.
+                    // Update response URI and continue reading headers if we were redirected.
 
-                        string location = Headers[HttpResponseHeader.Location];
-                        bool hasLocation = !string.IsNullOrWhiteSpace(location);
+                    bool wasRedirected = Headers.TryGetHeaderValue(HttpResponseHeader.Location, out string locationHeader);
+                    Uri locationUri = null;
 
-                        readHeaders = hasLocation;
+                    readHeaders = wasRedirected;
 
-                        if (hasLocation) {
+                    if (wasRedirected) {
 
-                            if (!Uri.TryCreate(location, UriKind.Absolute, out Uri locationUri))
-                                Uri.TryCreate(ResponseUri.GetLeftPart(UriPartial.Authority) + location, UriKind.Absolute, out locationUri);
-
-                            if (!(locationUri is null))
-                                responseUri = locationUri;
-
-                            readHeaders = numberOfRedirects++ < maximumAutomaticRedirections;
-
-                        }
-
-                    }
-
-                    // Get charset.
-
-                    string contentType = Headers[HttpResponseHeader.ContentType];
-
-                    if (!string.IsNullOrWhiteSpace(contentType)) {
-
-                        Match charsetMatch = Regex.Match(contentType, @"charset=([^\s]+)");
-
-                        if (charsetMatch.Success)
-                            CharacterSet = charsetMatch.Groups[1].Value;
+                        if (!Uri.TryCreate(responseUri, locationHeader, out locationUri))
+                            throw new WebException("Cannot handle redirect from HTTP/HTTPS protocols to other dissimilar ones.", null, WebExceptionStatus.ProtocolError, this);
 
                     }
 
                     // Get cookies.
 
-                    string setCookie = Headers[HttpResponseHeader.SetCookie];
+                    if (Headers.TryGetHeaderValue(HttpResponseHeader.SetCookie, out string setCookieHeader))
+                        cookies.SetCookies(responseUri, setCookieHeader);
 
-                    if (!string.IsNullOrWhiteSpace(setCookie))
-                        cookies.SetCookies(ResponseUri, setCookie);
+                    // Update the response URI.
+                    // This is done after reading the "set-cookie" header so that the cookies are applied to the original domain instead of the new one.
+
+                    if (locationUri is object)
+                        responseUri = locationUri;
 
                 }
-                catch (ArgumentException) {
 
-                    throw new ProtocolViolationException("The response was malformed.");
+                // Get charset.
+
+                if (Headers.TryGetHeaderValue(HttpResponseHeader.ContentType, out string contentTypeHeader)) {
+
+                    Match charsetMatch = Regex.Match(contentTypeHeader, @"charset=([^\s]+)");
+
+                    if (charsetMatch.Success)
+                        CharacterSet = charsetMatch.Groups[1].Value;
 
                 }
 
