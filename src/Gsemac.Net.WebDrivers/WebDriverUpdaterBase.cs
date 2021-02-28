@@ -19,7 +19,7 @@ namespace Gsemac.Net.WebDrivers {
 
         // Public members
 
-        public IWebDriverVersionInfo GetWebDriver(IWebBrowserInfo webBrowserInfo) {
+        public IWebDriverVersionInfo UpdateWebDriver(IWebBrowserInfo webBrowserInfo) {
 
             if (!IsSupportedWebBrowser(webBrowserInfo))
                 throw new ArgumentException("The given web browser is not valid for this updater.", nameof(webBrowserInfo));
