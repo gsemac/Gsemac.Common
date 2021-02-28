@@ -41,13 +41,16 @@ namespace Gsemac.Collections {
         /// <summary>
         /// Initializes a new instance of the <see cref="ByteQueue"/> class.
         /// </summary>
-        public ByteQueue() { }
+        public ByteQueue() {
+        }
         /// <summary>
         /// Initializes a new instance of the <see cref="ByteQueue"/> class.
         /// </summary>
         /// <param name="capacity">Starting capacity of the underlying buffer.</param>
         public ByteQueue(int capacity) {
+
             Capacity = capacity;
+
         }
 
         /// <summary>
@@ -55,14 +58,18 @@ namespace Gsemac.Collections {
         /// </summary>
         /// <param name="value">Value to add.</param>
         public void Enqueue(byte value) {
+
             Enqueue(new byte[] { value });
+
         }
         /// <summary>
         /// Adds an array of bytes to the queue.
         /// </summary>
         /// <param name="buffer">Values to add.</param>
         public void Enqueue(byte[] buffer) {
+
             Enqueue(buffer, 0, buffer.Length);
+
         }
         /// <summary>
         /// Adds an array of bytes to the queue.
@@ -75,6 +82,7 @@ namespace Gsemac.Collections {
             int bytesToWrite = count;
 
             // Make sure the capacity is large enough to store the new bytes.
+
             EnsureCapacity(bytesToWrite);
 
             if (wpos < rpos) {
@@ -135,7 +143,9 @@ namespace Gsemac.Collections {
         /// <param name="buffer">Buffer to read into.</param>
         /// <returns>The number of bytes read.</returns>
         public int Dequeue(byte[] buffer) {
+
             return Dequeue(buffer, 0, buffer.Length);
+
         }
         /// <summary>
         /// Reads an array of bytes from the queue, returning the number of bytes read.

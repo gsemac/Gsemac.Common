@@ -9,6 +9,18 @@ namespace Gsemac.Collections.Tests {
     public class ByteQueueTests {
 
         [TestMethod]
+        public void TestLengthOfEmptyBufferIsZero() {
+
+            Assert.AreEqual(0, new ByteQueue().Length);
+
+        }
+        [TestMethod]
+        public void TestLengthOfEmptyBufferWithInitialCapacityIsZero() {
+
+            Assert.AreEqual(0, new ByteQueue(32).Length);
+
+        }
+        [TestMethod]
         public void TestLengthAfterWrite() {
 
             ByteQueue queue = new ByteQueue();

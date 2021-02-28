@@ -122,7 +122,7 @@ namespace Gsemac.IO {
 
         // Private members
 
-        private readonly ByteQueue streamBuffer = new ByteQueue(4096);
+        private readonly ByteQueue streamBuffer = new ByteQueue();
         private volatile bool isBlocking = false;
         private volatile bool isClosed = false;
 
