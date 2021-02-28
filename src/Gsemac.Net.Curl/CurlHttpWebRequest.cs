@@ -18,7 +18,7 @@ namespace Gsemac.Net.Curl {
         public CurlHttpWebRequest(Uri requestUri, ICurlWebRequestOptions options = null) :
             base(requestUri) {
 
-            this.options = options;
+            this.options = options ?? CurlWebRequestOptions.Default;
 
         }
         public CurlHttpWebRequest(string requestUri, ICurlWebRequestOptions options = null) :
