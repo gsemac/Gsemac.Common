@@ -28,4 +28,11 @@
 		<ProjectReference Include="..\Gsemac.Text\Gsemac.Text.csproj" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <Compile Update="Properties\ExceptionMessages.Designer.cs">
+	    <DesignTime>True</DesignTime>
+	    <DependentUpon>ExceptionMessages.resx</DependentUpon>
+	  </Compile>
+	</ItemGroup>
+
 </Project>
