@@ -10,7 +10,7 @@ namespace Gsemac.Net.Extensions {
 
         public static void DownloadFile(this WebClient client, Uri address) {
 
-            client.DownloadFile(address, PathUtilities.GetFileName(address.AbsoluteUri));
+            client.DownloadFile(address, PathUtilities.ReplaceInvalidPathChars(PathUtilities.GetFileName(address.AbsoluteUri), InvalidPathCharsOptions.ReplaceInvalidFileNameChars));
 
         }
         public static void DownloadFile(this WebClient client, string address) {
