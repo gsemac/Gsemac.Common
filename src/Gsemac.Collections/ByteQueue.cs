@@ -21,7 +21,9 @@ namespace Gsemac.Collections {
                 if (buffer is null)
                     return 0;
 
-                if (wpos > rpos)
+                if (wpos == rpos)
+                    return 0;
+                else if (wpos > rpos)
                     return wpos - rpos;
                 else
                     return buffer.Length - rpos + wpos;
