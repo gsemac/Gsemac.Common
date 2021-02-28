@@ -10,7 +10,9 @@ namespace Gsemac.Reflection {
         public static IFileSystemAssemblyResolver Default { get; set; } = new AnyCpuFileSystemAssemblyResolver();
 
         public FileSystemAssemblyResolver() :
-            this(new[] { "lib" }) {
+            this(new[] {
+                "lib",
+            }) {
         }
         public FileSystemAssemblyResolver(IEnumerable<string> probingPaths) {
 

@@ -15,11 +15,14 @@ namespace Gsemac.Net.Curl {
 
         // Public members
 
-        public CurlHttpWebRequest(Uri requestUri) :
+        public CurlHttpWebRequest(Uri requestUri, ICurlWebRequestOptions options = null) :
             base(requestUri) {
+
+            this.options = options;
+
         }
-        public CurlHttpWebRequest(string requestUri) :
-            this(new Uri(requestUri)) {
+        public CurlHttpWebRequest(string requestUri, ICurlWebRequestOptions options = null) :
+            this(new Uri(requestUri), options) {
         }
 
         // Methods overidden from WebRequest
@@ -64,8 +67,8 @@ namespace Gsemac.Net.Curl {
 
                         LibCurl.EasySetOpt(easyHandle, CurlOption.TcpKeepAlive, KeepAlive ? 1 : 0);
 
-                        if (File.Exists(CurlUtilities.CABundlePath))
-                            LibCurl.EasySetOpt(easyHandle, CurlOption.CaInfo, CurlUtilities.CABundlePath);
+                        if (File.Exists(options.CABundlePath))
+                            LibCurl.EasySetOpt(easyHandle, CurlOption.CaInfo, options.CABundlePath);
 
                         SetCookies(easyHandle);
                         SetCredentials(easyHandle);
@@ -99,6 +102,8 @@ namespace Gsemac.Net.Curl {
         }
 
         // Private members
+
+        private readonly ICurlWebRequestOptions options;
 
         private string GetAcceptEncoding() {
 

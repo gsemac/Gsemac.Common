@@ -28,6 +28,7 @@ namespace Gsemac.Net.Curl {
 
             assemblyResolver.ProbingPaths.Add("lib");
             assemblyResolver.ProbingPaths.Add("bin");
+            assemblyResolver.ProbingPaths.Add("plugins");
 
             return new IFileSystemAssemblyResolver[] {
                 FileSystemAssemblyResolver.Default,

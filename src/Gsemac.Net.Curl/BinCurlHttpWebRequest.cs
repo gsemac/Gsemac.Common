@@ -16,26 +16,21 @@ namespace Gsemac.Net.Curl {
         /// </summary>
         public string CurlArguments => GetCurlArguments();
 
-        public BinCurlHttpWebRequest(Uri requestUri) :
-            this(requestUri, CurlWebRequestOptions.Default) {
-        }
-        /// <summary>
-        /// Initializes a new instance of the <see cref="BinCurlHttpWebRequest"/> class.
-        /// </summary>
-        /// <param name="curlExecutablePath">Path to the curl executable.</param>
-        /// <param name="requestUri">URI to request.</param>
-        public BinCurlHttpWebRequest(Uri requestUri, ICurlWebRequestOptions curlOptions) :
+        public BinCurlHttpWebRequest(Uri requestUri, ICurlWebRequestOptions options = null) :
             base(requestUri) {
 
-            this.curlOptions = curlOptions;
+            this.options = options ?? CurlWebRequestOptions.Default;
 
+        }
+        public BinCurlHttpWebRequest(string requestUri, ICurlWebRequestOptions options = null) :
+           this(new Uri(requestUri), options) {
         }
 
         // Methods overidden from WebRequest
 
         public override WebResponse GetResponse() {
 
-            BinCurlProcessStream stream = new BinCurlProcessStream(curlOptions.CurlExecutablePath, CurlArguments) {
+            BinCurlProcessStream stream = new BinCurlProcessStream(options.CurlExecutablePath, CurlArguments) {
                 ReadTimeout = ReadWriteTimeout,
                 WriteTimeout = ReadWriteTimeout
             };
@@ -48,7 +43,7 @@ namespace Gsemac.Net.Curl {
 
         // Private members
 
-        private readonly ICurlWebRequestOptions curlOptions;
+        private readonly ICurlWebRequestOptions options;
 
         private string GetPostData() {
 
