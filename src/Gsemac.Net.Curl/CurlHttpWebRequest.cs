@@ -29,9 +29,10 @@ namespace Gsemac.Net.Curl {
 
         public override WebResponse GetResponse() {
 
-            ConcurrentMemoryStream stream = new ConcurrentMemoryStream() {
+            Stream stream = new ProducerConsumerStream(8192) {
                 Blocking = true,
-                ReadTimeout = Timeout
+                ReadTimeout = Timeout,
+                WriteTimeout = Timeout,
             };
 
             CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();

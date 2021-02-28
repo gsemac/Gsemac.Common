@@ -31,6 +31,7 @@ namespace Gsemac.IO {
             set => throw new NotSupportedException(ExceptionMessages.StreamDoesNotSupportSeeking);
         }
         public override int ReadTimeout { get; set; } = Timeout.Infinite;
+        public override int WriteTimeout { get; set; } = Timeout.Infinite;
 
         /// <summary>
         /// If set to true, reads will block until data is available.
