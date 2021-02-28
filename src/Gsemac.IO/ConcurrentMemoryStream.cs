@@ -1,4 +1,5 @@
 ﻿using Gsemac.Collections;
+using Gsemac.IO.Properties;
 using System;
 using System.IO;
 using System.Threading;
@@ -20,17 +21,14 @@ namespace Gsemac.IO {
         public override long Length {
             get {
 
-                lock (bufferMutex) {
-
-                    return data.Length;
-
-                }
+                lock (streamBuffer)
+                    return streamBuffer.Length;
 
             }
         }
         public override long Position {
-            get => throw new NotSupportedException("Stream does not support seeking.");
-            set => throw new NotSupportedException("Stream does not support seeking.");
+            get => throw new NotSupportedException(ExceptionMessages.StreamDoesNotSupportSeeking);
+            set => throw new NotSupportedException(ExceptionMessages.StreamDoesNotSupportSeeking);
         }
         public override int ReadTimeout { get; set; } = Timeout.Infinite;
 
@@ -38,93 +36,75 @@ namespace Gsemac.IO {
         /// If set to true, reads will block until data is available.
         /// </summary>
         public bool Blocking {
-            get => blocking;
-            set => blocking = value;
+            get => isBlocking;
+            set => isBlocking = value;
         }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ConcurrentMemoryStream"/> class.
         /// </summary>
-        public ConcurrentMemoryStream() { }
+        public ConcurrentMemoryStream() {
+        }
         /// <summary>
         /// Initializes a new instance of the <see cref="ConcurrentMemoryStream"/> class.
         /// </summary>
         /// <param name="bufferSize">Initial size of the underlying buffer.</param>
         public ConcurrentMemoryStream(int bufferSize) {
-            data.Capacity = bufferSize;
+
+            streamBuffer.Capacity = bufferSize;
+
         }
 
-        public override void Flush() { }
+        public override void Flush() {
+        }
         public override int Read(byte[] buffer, int offset, int count) {
 
-            // Allow closed streams to be read (but not written to).
-            // This allows a stream to be closed to indicate that it is finished being written to.
+            // Closed streams can be read from, but cannot be written to.
+            // A closed stream indicates that there is no more data to write it.
 
-            int bytesRead = 0;
+            lock (streamBuffer) {
 
-            lock (bufferMutex) {
+                while (streamBuffer.Length <= 0 && isBlocking && !isClosed)
+                    if (!Monitor.Wait(streamBuffer, ReadTimeout))
+                        throw new TimeoutException();
 
-                bytesRead = data.Dequeue(buffer, offset, count);
-
-                // If we didn't read anything from the stream, reset the lock so we can wait on it.
-
-                if (bytesRead <= 0 && blocking && !isClosed)
-                    bufferDataNotifier.Reset();
+                return streamBuffer.Dequeue(buffer, offset, count);
 
             }
-
-            if (bytesRead <= 0 && blocking) {
-
-                if (!isClosed)
-                    bufferDataNotifier.Wait(ReadTimeout);
-
-                lock (bufferMutex) {
-
-                    bytesRead = data.Dequeue(buffer, offset, count);
-
-                    // If we didn't read anything from the stream, reset the lock so we can wait on it.
-
-                    if (bytesRead <= 0 && blocking && !isClosed)
-                        bufferDataNotifier.Reset();
-
-                }
-
-            }
-
-            return bytesRead;
 
         }
-        public override long Seek(long offset, SeekOrigin origin) => throw new NotSupportedException("Stream does not support seeking.");
-        public override void SetLength(long value) => throw new NotSupportedException("Stream does not support this operation.");
+        public override long Seek(long offset, SeekOrigin origin) => throw new NotSupportedException(ExceptionMessages.StreamDoesNotSupportSeeking);
+        public override void SetLength(long value) => throw new NotSupportedException(ExceptionMessages.StreamDoesNotSupportThisOperation);
         public override void Write(byte[] buffer, int offset, int count) {
 
-            lock (bufferMutex) {
+            lock (streamBuffer) {
 
                 if (isClosed)
-                    throw new ObjectDisposedException("Cannot access a closed Stream.");
+                    throw new ObjectDisposedException(ExceptionMessages.CannotAccessAClosedStream);
 
-                data.Enqueue(buffer, offset, count);
+                streamBuffer.Enqueue(buffer, offset, count);
 
-                bufferDataNotifier.Set();
+                // PulseAll is used instead of Pulse because a single reading thread may not read all of the available data.
+
+                if (count > 0)
+                    Monitor.PulseAll(streamBuffer);
 
             }
 
         }
         public override void Close() {
 
-            if (!isClosed) {
+            lock (streamBuffer) {
 
-                // Unblock read if currently blocked.
+                if (!isClosed) {
 
-                blocking = false;
+                    isClosed = true;
 
-                bufferDataNotifier.Set();
+                    Monitor.PulseAll(streamBuffer);
 
-                bufferDataNotifier.Dispose();
+                }
 
             }
-
-            isClosed = true;
 
         }
 
@@ -141,10 +121,8 @@ namespace Gsemac.IO {
 
         // Private members
 
-        private readonly ByteQueue data = new ByteQueue(4096);
-        private readonly object bufferMutex = new object();
-        private readonly ManualResetEventSlim bufferDataNotifier = new ManualResetEventSlim(true);
-        private volatile bool blocking = false;
+        private readonly ByteQueue streamBuffer = new ByteQueue(4096);
+        private volatile bool isBlocking = false;
         private volatile bool isClosed = false;
 
     }
