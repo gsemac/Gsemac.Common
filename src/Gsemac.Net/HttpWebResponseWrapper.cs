@@ -17,8 +17,10 @@ namespace Gsemac.Net {
 
             if (webResponse is HttpWebResponse httpWebResponse)
                 this.httpWebResponse = httpWebResponse;
+            else if (webResponse is HttpWebResponseWrapper httpWebResponseWrapper)
+                this.httpWebResponse = httpWebResponseWrapper.httpWebResponse;
             else
-                throw new ArgumentException("WebResponse was not an instance of class HttpWebResponse.", nameof(webResponse));
+                throw new ArgumentException("WebResponse was not an instance of HttpWebResponse.", nameof(webResponse));
 
         }
         public HttpWebResponseWrapper(HttpWebResponse httpWebResponse) {

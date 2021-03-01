@@ -8,7 +8,7 @@ namespace Gsemac.Net {
 
         // Public members
 
-        public static WebResponse FollowRedirects(IHttpWebRequest httpWebRequest, IHttpWebRequestFactory httpWebRequestFactory, int maximumRedirections = defaultMaximumRedirections) {
+        public static WebResponse FollowRedirects(IHttpWebRequest httpWebRequest, IHttpWebRequestFactory httpWebRequestFactory) {
 
             // While redirections can be handled automatically be enabling "AllowAutoRedirect", the default implementation ignores the set-cookie header of intermediate responses.
             // This implementation preserves cookies set throughout the entire chain of requests.
@@ -19,9 +19,7 @@ namespace Gsemac.Net {
             if (httpWebRequestFactory is null)
                 throw new ArgumentNullException(nameof(httpWebRequestFactory));
 
-            if (maximumRedirections <= 0)
-                throw new ArgumentOutOfRangeException(nameof(maximumRedirections));
-
+            int maximumRedirections = httpWebRequest.MaximumAutomaticRedirections;
             bool originalAllowAutoRedirect = httpWebRequest.AllowAutoRedirect;
 
             httpWebRequest.AllowAutoRedirect = false;
@@ -112,15 +110,11 @@ namespace Gsemac.Net {
             }
 
         }
-        public static WebResponse FollowRedirects(HttpWebRequest httpWebRequest, int maximumRedirections = defaultMaximumRedirections) {
+        public static WebResponse FollowRedirects(HttpWebRequest httpWebRequest) {
 
-            return FollowRedirects(new HttpWebRequestWrapper(httpWebRequest), new HttpWebRequestFactory(), maximumRedirections);
+            return FollowRedirects(new HttpWebRequestWrapper(httpWebRequest), new HttpWebRequestFactory());
 
         }
-
-        // Private members
-
-        private const int defaultMaximumRedirections = 50;
 
     }
 

@@ -14,6 +14,8 @@ namespace Gsemac.Net {
 
         // Public members
 
+        public bool OverrideAutomaticRedirection { get; set; } = false;
+
         public HttpWebRequestWrapper(WebRequest webRequest) {
 
             if (webRequest is null)
@@ -110,7 +112,13 @@ namespace Gsemac.Net {
         public override Stream EndGetRequestStream(IAsyncResult asyncResult) => httpWebRequest.EndGetRequestStream(asyncResult);
         public override WebResponse EndGetResponse(IAsyncResult asyncResult) => httpWebRequest.EndGetResponse(asyncResult);
         public override Stream GetRequestStream() => httpWebRequest.GetRequestStream();
-        public override WebResponse GetResponse() => new HttpWebResponseWrapper(httpWebRequest.GetResponse());
+        public override WebResponse GetResponse() {
+
+            return new HttpWebResponseWrapper(OverrideAutomaticRedirection && AllowAutoRedirect ?
+                WebRequestUtilities.FollowRedirects(httpWebRequest) :
+                httpWebRequest.GetResponse());
+
+        }
 
         // Inherited from IHttpWebRequest
 
