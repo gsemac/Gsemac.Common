@@ -6,9 +6,49 @@ namespace Gsemac.Net {
 
     public static class WebRequestUtilities {
 
-        // Public members
+        public static HttpStatusCode? GetHttpStatusCode(IHttpWebRequest httpWebRequest) {
 
-        public static WebResponse FollowRedirects(IHttpWebRequest httpWebRequest, IHttpWebRequestFactory httpWebRequestFactory) {
+            if (httpWebRequest is null)
+                throw new ArgumentNullException(nameof(httpWebRequest));
+
+            HttpStatusCode? statusCode = null;
+
+            // Attempt to make a HEAD request first. If it fails, we'll fall back to making a GET request.
+
+            httpWebRequest.AllowAutoRedirect = false;
+
+            foreach (string method in new[] { "HEAD", "GET" }) {
+
+                httpWebRequest.Method = method;
+
+                try {
+
+                    using (WebResponse webResponse = httpWebRequest.GetResponse())
+                        statusCode = (webResponse as IHttpWebResponse)?.StatusCode;
+
+                }
+                catch (WebException ex) {
+
+                    using (WebResponse webResponse = ex.Response)
+                        statusCode = (webResponse as IHttpWebResponse)?.StatusCode;
+
+                }
+
+                if (statusCode.HasValue && statusCode != HttpStatusCode.MethodNotAllowed)
+                    break;
+
+            }
+
+            return statusCode;
+
+        }
+        public static HttpStatusCode? GetHttpStatusCode(HttpWebRequest httpWebRequest) {
+
+            return GetHttpStatusCode(new HttpWebRequestWrapper(httpWebRequest));
+
+        }
+
+        public static WebResponse FollowHttpRedirects(IHttpWebRequest httpWebRequest, IHttpWebRequestFactory httpWebRequestFactory) {
 
             // While redirections can be handled automatically be enabling "AllowAutoRedirect", the default implementation ignores the set-cookie header of intermediate responses.
             // This implementation preserves cookies set throughout the entire chain of requests.
@@ -110,9 +150,9 @@ namespace Gsemac.Net {
             }
 
         }
-        public static WebResponse FollowRedirects(HttpWebRequest httpWebRequest) {
+        public static WebResponse FollowHttpRedirects(HttpWebRequest httpWebRequest) {
 
-            return FollowRedirects(new HttpWebRequestWrapper(httpWebRequest), new HttpWebRequestFactory());
+            return FollowHttpRedirects(new HttpWebRequestWrapper(httpWebRequest), new HttpWebRequestFactory());
 
         }
 

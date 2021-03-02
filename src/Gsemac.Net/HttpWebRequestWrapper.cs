@@ -115,7 +115,7 @@ namespace Gsemac.Net {
         public override WebResponse GetResponse() {
 
             return new HttpWebResponseWrapper(OverrideAutomaticRedirection && AllowAutoRedirect ?
-                WebRequestUtilities.FollowRedirects(httpWebRequest) :
+                WebRequestUtilities.FollowHttpRedirects(httpWebRequest) :
                 httpWebRequest.GetResponse());
 
         }
