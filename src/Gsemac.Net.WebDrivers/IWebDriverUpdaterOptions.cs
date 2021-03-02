@@ -2,7 +2,7 @@
 
     public interface IWebDriverUpdaterOptions {
 
-        string WebDriverDirectory { get; }
+        string WebDriverDirectoryPath { get; }
 
     }
 

@@ -3,13 +3,13 @@
     public class WebDriverUpdaterOptions :
         IWebDriverUpdaterOptions {
 
-        public string WebDriverDirectory { get; set; }
+        public string WebDriverDirectoryPath { get; set; }
 
         public WebDriverUpdaterOptions() {
         }
         public WebDriverUpdaterOptions(string webDriverDirectory) {
 
-            this.WebDriverDirectory = webDriverDirectory;
+            this.WebDriverDirectoryPath = webDriverDirectory;
 
         }
 

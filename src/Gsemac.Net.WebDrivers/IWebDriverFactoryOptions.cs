@@ -7,7 +7,7 @@ namespace Gsemac.Net.WebDrivers {
         bool AutoUpdateEnabled { get; }
         IWebBrowserInfo DefaultWebBrowser { get; }
         bool KillWebDriverProcessesOnDispose { get; }
-        string WebDriverDirectory { get; }
+        string WebDriverDirectoryPath { get; }
 
     }
 

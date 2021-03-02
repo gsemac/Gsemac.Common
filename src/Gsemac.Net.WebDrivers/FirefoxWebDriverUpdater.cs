@@ -34,10 +34,10 @@ namespace Gsemac.Net.WebDrivers {
 
         protected override string GetWebDriverExecutablePath() {
 
-            if (string.IsNullOrWhiteSpace(webDriverUpdaterOptions.WebDriverDirectory))
+            if (string.IsNullOrWhiteSpace(webDriverUpdaterOptions.WebDriverDirectoryPath))
                 return WebDriverUtilities.GeckoDriverExecutablePath;
 
-            return Path.Combine(webDriverUpdaterOptions.WebDriverDirectory, WebDriverUtilities.GeckoDriverExecutablePath);
+            return Path.Combine(webDriverUpdaterOptions.WebDriverDirectoryPath, WebDriverUtilities.GeckoDriverExecutablePath);
 
         }
         protected override Uri GetWebDriverDownloadUri(IWebBrowserInfo webBrowserInfo) {

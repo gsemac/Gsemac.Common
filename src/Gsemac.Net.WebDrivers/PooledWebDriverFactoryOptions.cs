@@ -16,7 +16,7 @@ namespace Gsemac.Net.WebDrivers {
             AutoUpdateEnabled = options.AutoUpdateEnabled;
             DefaultWebBrowser = options.DefaultWebBrowser;
             KillWebDriverProcessesOnDispose = options.KillWebDriverProcessesOnDispose;
-            WebDriverDirectory = options.WebDriverDirectory;
+            WebDriverDirectoryPath = options.WebDriverDirectoryPath;
 
         }
 

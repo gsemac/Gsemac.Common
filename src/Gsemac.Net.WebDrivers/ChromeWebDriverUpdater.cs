@@ -29,10 +29,10 @@ namespace Gsemac.Net.WebDrivers {
 
         protected override string GetWebDriverExecutablePath() {
 
-            if (string.IsNullOrWhiteSpace(webDriverUpdaterOptions.WebDriverDirectory))
+            if (string.IsNullOrWhiteSpace(webDriverUpdaterOptions.WebDriverDirectoryPath))
                 return WebDriverUtilities.ChromeDriverExecutablePath;
 
-            return Path.Combine(webDriverUpdaterOptions.WebDriverDirectory, WebDriverUtilities.ChromeDriverExecutablePath);
+            return Path.Combine(webDriverUpdaterOptions.WebDriverDirectoryPath, WebDriverUtilities.ChromeDriverExecutablePath);
 
         }
         protected override Uri GetWebDriverDownloadUri(IWebBrowserInfo webBrowserInfo) {

@@ -112,16 +112,16 @@ namespace Gsemac.Net.WebDrivers {
 
             }
 
-            if (string.IsNullOrWhiteSpace(webDriverFactoryOptions.WebDriverDirectory))
+            if (string.IsNullOrWhiteSpace(webDriverFactoryOptions.WebDriverDirectoryPath))
                 return WebDriverUtilities.ChromeDriverExecutablePath;
 
-            return Path.Combine(webDriverFactoryOptions.WebDriverDirectory, WebDriverUtilities.ChromeDriverExecutablePath);
+            return Path.Combine(webDriverFactoryOptions.WebDriverDirectoryPath, WebDriverUtilities.ChromeDriverExecutablePath);
 
         }
         private IWebDriverUpdater GetWebDriverUpdater() {
 
             IWebDriverUpdater updater = new ChromeWebDriverUpdater(webRequestFactory, new WebDriverUpdaterOptions() {
-                WebDriverDirectory = webDriverFactoryOptions.WebDriverDirectory
+                WebDriverDirectoryPath = webDriverFactoryOptions.WebDriverDirectoryPath
             });
 
             updater.Log += (sender, e) => OnLog.OnLog(e.Message);

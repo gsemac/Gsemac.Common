@@ -111,16 +111,16 @@ namespace Gsemac.Net.WebDrivers {
 
             }
 
-            if (string.IsNullOrWhiteSpace(webDriverFactoryOptions.WebDriverDirectory))
+            if (string.IsNullOrWhiteSpace(webDriverFactoryOptions.WebDriverDirectoryPath))
                 return WebDriverUtilities.GeckoDriverExecutablePath;
 
-            return Path.Combine(webDriverFactoryOptions.WebDriverDirectory, WebDriverUtilities.GeckoDriverExecutablePath);
+            return Path.Combine(webDriverFactoryOptions.WebDriverDirectoryPath, WebDriverUtilities.GeckoDriverExecutablePath);
 
         }
         private IWebDriverUpdater GetWebDriverUpdater() {
 
             IWebDriverUpdater updater = new FirefoxWebDriverUpdater(webRequestFactory, new WebDriverUpdaterOptions() {
-                WebDriverDirectory = webDriverFactoryOptions.WebDriverDirectory
+                WebDriverDirectoryPath = webDriverFactoryOptions.WebDriverDirectoryPath
             });
 
             updater.Log += (sender, e) => OnLog.OnLog(e.Message);
