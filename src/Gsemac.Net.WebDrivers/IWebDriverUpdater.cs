@@ -4,7 +4,7 @@ using Gsemac.Net.WebBrowsers;
 namespace Gsemac.Net.WebDrivers {
 
     public interface IWebDriverUpdater :
-        ILoggable {
+        ILogEventSource {
 
         event DownloadFileProgressChangedEventHandler DownloadFileProgressChanged;
         event DownloadFileCompletedEventHandler DownloadFileCompleted;

@@ -8,7 +8,7 @@ namespace Gsemac.Net.WebDrivers {
 
     public interface IWebDriverFactory :
         IFactory<IWebDriver>,
-        ILoggable,
+        ILogEventSource,
         IDisposable {
 
         event DownloadFileProgressChangedEventHandler DownloadFileProgressChanged;

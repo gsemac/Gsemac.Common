@@ -58,15 +58,15 @@ namespace Gsemac.IO.Logging.Extensions {
 
         }
 
-        public static LogEventHandler CreateLogEventHandler(this ILogger logger) {
+        public static LogEventHandler CreateEventHandler(this ILogger logger) {
 
             return (sender, e) => logger.Log(e.Message);
 
         }
 
-        public static ILogger AddSource(this ILogger logger, ILoggable source) {
+        public static ILogger AddEventSource(this ILogger logger, ILogEventSource source) {
 
-            source.Log += logger.CreateLogEventHandler();
+            source.Log += logger.CreateEventHandler();
 
             return logger;
 
