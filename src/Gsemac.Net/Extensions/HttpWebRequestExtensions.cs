@@ -8,87 +8,94 @@ namespace Gsemac.Net.Extensions {
 
         // Public members
 
-        public static void SetHeaderValue(this HttpWebRequest webRequest, string headerName, string headerValue) {
-
-            SetHeaderValue(new HttpWebRequestWrapper(webRequest), headerName, headerValue);
-
-        }
-        public static void SetHeaderValue(this IHttpWebRequest webRequest, string headerName, string headerValue) {
+        public static void SetHeaderValue(this IHttpWebRequest httpWebRequest, string headerName, string value) {
 
             switch (headerName.ToLowerInvariant()) {
 
                 case "accept":
-                    webRequest.Accept = headerValue;
+                    httpWebRequest.Accept = value;
                     break;
 
                 case "content-type":
-                    webRequest.ContentType = headerValue;
+                    httpWebRequest.ContentType = value;
                     break;
 
                 case "range": {
 
-                        var range = ParseRangeHeader(headerValue);
+                        var range = ParseRangeHeader(value);
 
-                        webRequest.AddRange(range.Item1, range.Item2);
+                        httpWebRequest.AddRange(range.Item1, range.Item2);
 
                     }
                     break;
 
                 case "referer":
-                    webRequest.Referer = headerValue;
+                    httpWebRequest.Referer = value;
                     break;
 
                 case "user-agent":
-                    webRequest.UserAgent = headerValue;
+                    httpWebRequest.UserAgent = value;
                     break;
 
                 default:
-                    webRequest.Headers.Set(headerName, headerValue);
+                    httpWebRequest.Headers.Set(headerName, value);
                     break;
 
             }
 
         }
+        public static void SetHeaderValue(this HttpWebRequest httpWebRequest, string headerName, string value) {
 
-        public static IHttpWebRequest WithOptions(this IHttpWebRequest webRequest, IHttpWebRequestOptions options, bool copyIfNull = true) {
+            SetHeaderValue(new HttpWebRequestWrapper(httpWebRequest), headerName, value);
+
+        }
+
+        public static IHttpWebRequest WithOptions(this IHttpWebRequest httpWebRequest, IHttpWebRequestOptions options, bool copyIfNull = true) {
 
             if (copyIfNull || !string.IsNullOrWhiteSpace(options.Accept))
-                webRequest.Accept = options.Accept;
+                httpWebRequest.Accept = options.Accept;
 
             if (copyIfNull || !string.IsNullOrWhiteSpace(options.AcceptLanguage))
-                webRequest.Headers[HttpRequestHeader.AcceptLanguage] = options.AcceptLanguage;
+                httpWebRequest.Headers[HttpRequestHeader.AcceptLanguage] = options.AcceptLanguage;
 
-            webRequest.AutomaticDecompression = options.AutomaticDecompression;
+            httpWebRequest.AutomaticDecompression = options.AutomaticDecompression;
 
             if (copyIfNull || options.Cookies is object)
-                webRequest.CookieContainer = options.Cookies;
+                httpWebRequest.CookieContainer = options.Cookies;
 
             if (copyIfNull || options.Credentials is object)
-                webRequest.Credentials = options.Credentials;
+                httpWebRequest.Credentials = options.Credentials;
 
             if (copyIfNull || options.Proxy is object)
-                webRequest.Proxy = options.Proxy;
+                httpWebRequest.Proxy = options.Proxy;
 
             if (copyIfNull || !string.IsNullOrWhiteSpace(options.UserAgent))
-                webRequest.UserAgent = options.UserAgent;
+                httpWebRequest.UserAgent = options.UserAgent;
 
-            return webRequest;
-
-        }
-        public static IHttpWebRequest WithHeaders(this IHttpWebRequest webRequest, WebHeaderCollection headers) {
-
-            foreach (IHttpHeader header in headers.GetHeaders())
-                webRequest.SetHeaderValue(header.Name, header.Value);
-
-            return webRequest;
+            return httpWebRequest;
 
         }
-        public static HttpWebRequest WithHeaders(this HttpWebRequest webRequest, WebHeaderCollection headers) {
+        public static HttpWebRequest WithOptions(this HttpWebRequest httpWebRequest, IHttpWebRequestOptions options, bool copyIfNull = true) {
+
+            WithOptions(new HttpWebRequestWrapper(httpWebRequest), options, copyIfNull);
+
+            return httpWebRequest;
+
+        }
+        public static IHttpWebRequest WithHeaders(this IHttpWebRequest httpWebRequest, WebHeaderCollection headers) {
 
             foreach (IHttpHeader header in headers.GetHeaders())
-                webRequest.SetHeaderValue(header.Name, header.Value);
+                httpWebRequest.SetHeaderValue(header.Name, header.Value);
 
-            return webRequest;
+            return httpWebRequest;
+
+        }
+        public static HttpWebRequest WithHeaders(this HttpWebRequest httpWebRequest, WebHeaderCollection headers) {
+
+            foreach (IHttpHeader header in headers.GetHeaders())
+                httpWebRequest.SetHeaderValue(header.Name, header.Value);
+
+            return httpWebRequest;
 
         }
 
