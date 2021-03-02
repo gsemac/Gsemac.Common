@@ -1,5 +1,6 @@
 ﻿using Gsemac.Net.Extensions;
 using System;
+using System.Globalization;
 using System.Net;
 
 namespace Gsemac.Net {
@@ -12,6 +13,9 @@ namespace Gsemac.Net {
                 throw new ArgumentNullException(nameof(httpWebRequest));
 
             HttpStatusCode? statusCode = null;
+
+            bool originalAllowAutoRedirect = httpWebRequest.AllowAutoRedirect;
+            string originalMethod = httpWebRequest.Method;
 
             // Attempt to make a HEAD request first. If it fails, we'll fall back to making a GET request.
 
@@ -38,6 +42,11 @@ namespace Gsemac.Net {
                     break;
 
             }
+
+            // Restore original configuration.
+
+            httpWebRequest.AllowAutoRedirect = originalAllowAutoRedirect;
+            httpWebRequest.Method = originalMethod;
 
             return statusCode;
 
@@ -153,6 +162,75 @@ namespace Gsemac.Net {
         public static WebResponse FollowHttpRedirects(HttpWebRequest httpWebRequest) {
 
             return FollowHttpRedirects(new HttpWebRequestWrapper(httpWebRequest), new HttpWebRequestFactory());
+
+        }
+
+        public static long? GetFileSize(IHttpWebRequest httpWebRequest) {
+
+            if (httpWebRequest is null)
+                throw new ArgumentNullException(nameof(httpWebRequest));
+
+            long? fileSize = null;
+
+            string originalMethod = httpWebRequest.Method;
+
+            // Attempt to make a HEAD request first. If it fails, we'll fall back to making a GET request.
+
+            foreach (string method in new[] { "HEAD", "GET" }) {
+
+                httpWebRequest.Method = method;
+
+                try {
+
+                    using (WebResponse webResponse = httpWebRequest.GetResponse()) {
+
+                        if (webResponse.Headers.TryGetHeaderValue(HttpResponseHeader.ContentLength, out string contentLength) &&
+                            long.TryParse(contentLength, NumberStyles.Integer, CultureInfo.InvariantCulture, out long parsedContentLength)) {
+
+                            fileSize = parsedContentLength;
+
+                        }
+
+                        // We'll exit the loop regardless of whether or not we got a content-length header, because trying again with a GET request is unlikely to produce one.
+
+                        break;
+
+                    }
+
+                }
+                catch (WebException ex) {
+
+                    // 405 error just indicates that HEAD requests aren't supported by the server, so we shouldn't throw yet (this is a common case).
+                    // We'll follow up by attempting a GET request instead.
+
+                    using (WebResponse webResponse = ex.Response)
+                        if ((webResponse as IHttpWebResponse)?.StatusCode != HttpStatusCode.MethodNotAllowed)
+                            throw ex;
+
+                }
+
+            }
+
+            // Restore original configuration.
+
+            httpWebRequest.Method = originalMethod;
+
+            return fileSize;
+
+        }
+        public static long? GetFileSize(HttpWebRequest httpWebRequest) {
+
+            return GetFileSize(new HttpWebRequestWrapper(httpWebRequest));
+
+        }
+        public static long? GetFileSize(Uri uri) {
+
+            return GetFileSize(new HttpWebRequestFactory().Create(uri));
+
+        }
+        public static long? GetFileSize(string uri) {
+
+            return GetFileSize(new Uri(uri));
 
         }
 
