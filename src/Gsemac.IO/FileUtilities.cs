@@ -6,7 +6,7 @@ namespace Gsemac.IO {
 
     public static class FileUtilities {
 
-        public static string CalculateMD5Hash(string filePath) {
+        public static string CalculateMD5(string filePath) {
 
             using (MD5 md5 = MD5.Create())
             using (var stream = File.OpenRead(filePath)) {
@@ -14,6 +14,33 @@ namespace Gsemac.IO {
                 var hash = md5.ComputeHash(stream);
 
                 return BitConverter.ToString(hash).Replace("-", string.Empty).ToLowerInvariant();
+
+            }
+
+        }
+
+        public static long GetFileSize(string filePath) {
+
+            return new FileInfo(filePath).Length;
+
+        }
+        public static bool TryGetFileSize(string filePath, out long fileSize) {
+
+            fileSize = default;
+
+            if (!File.Exists(filePath))
+                return false;
+
+            try {
+
+                fileSize = GetFileSize(filePath);
+
+                return true;
+
+            }
+            catch (UnauthorizedAccessException) {
+
+                return false;
 
             }
 
