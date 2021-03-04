@@ -5,33 +5,45 @@ using System.Security.Cryptography;
 
 namespace Gsemac.Net.WebBrowsers {
 
-    public class DpapiChromeCookieDecryptor :
+    internal class DpapiChromeCookieDecryptor :
         ICookieDecryptor {
 
         // Public members
 
-        public bool CheckSignature(byte[] encryptedValue) {
+        public byte[] DecryptCookie(byte[] encryptedBytes) {
 
-            return encryptedValue.Take(signatureBytes.Length).SequenceEqual(signatureBytes);
+            using (MemoryStream stream = new MemoryStream(encryptedBytes)) {
 
-        }
-        public byte[] DecryptCookie(byte[] encryptedValue) {
-
-            using (MemoryStream stream = new MemoryStream(encryptedValue))
-            using (BinaryReader reader = new BinaryReader(stream)) {
-
-                if (!reader.ReadBytes(signatureBytes.Length).SequenceEqual(signatureBytes))
+                if (!CheckSignature(signatureBytes))
                     throw new FormatException("Encrypted value is not in the correct format.");
 
-                return ProtectedData.Unprotect(encryptedValue, null, DataProtectionScope.CurrentUser);
+                return ProtectedData.Unprotect(encryptedBytes, null, DataProtectionScope.CurrentUser);
 
             }
+
+        }
+        public bool TryDecryptCookie(byte[] encryptedBytes, out byte[] decryptedBytes) {
+
+            decryptedBytes = null;
+
+            if (!CheckSignature(encryptedBytes))
+                return false;
+
+            decryptedBytes = DecryptCookie(encryptedBytes);
+
+            return true;
 
         }
 
         // Private members
 
         private readonly byte[] signatureBytes = new byte[] { 0x01, 0x00, 0x00, 0x00, 0xD0, 0x8C, 0x9D, 0xDF, 0x01, 0x15, 0xD1, 0x11, 0x8C, 0x7A, 0x00, 0xC0, 0x4F, 0xC2, 0x97, 0xEB }; // DPAPI signature
+
+        private bool CheckSignature(byte[] encryptedBytes) {
+
+            return encryptedBytes.Take(signatureBytes.Length).SequenceEqual(signatureBytes);
+
+        }
 
     }
 

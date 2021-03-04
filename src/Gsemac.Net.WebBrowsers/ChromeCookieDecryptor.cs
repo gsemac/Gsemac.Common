@@ -16,19 +16,21 @@ namespace Gsemac.Net.WebBrowsers {
 
         }
 
-        public bool CheckSignature(byte[] encryptedValue) {
+        public byte[] DecryptCookie(byte[] encryptedBytes) {
 
-            return decryptors.Any(decryptor => decryptor.CheckSignature(encryptedValue));
-
-        }
-        public byte[] DecryptCookie(byte[] encryptedValue) {
-
-            ICookieDecryptor cookieDecryptor = decryptors.Where(decryptor => decryptor.CheckSignature(encryptedValue)).FirstOrDefault();
-
-            if (!(cookieDecryptor is null))
-                return cookieDecryptor.DecryptCookie(encryptedValue);
+            if (TryDecryptCookie(encryptedBytes, out byte[] decryptedBytes))
+                return decryptedBytes;
 
             throw new FormatException("Encrypted value is not in the correct format.");
+
+        }
+        public bool TryDecryptCookie(byte[] encryptedBytes, out byte[] decryptedBytes) {
+
+            decryptedBytes = decryptors.Select(decryptor => decryptor.TryDecryptCookie(encryptedBytes, out byte[] result) ? result : null)
+                .Where(result => result is object)
+                .FirstOrDefault();
+
+            return decryptedBytes is object;
 
         }
 

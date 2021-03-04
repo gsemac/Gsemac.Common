@@ -8,28 +8,24 @@ using System.Linq;
 
 namespace Gsemac.Net.WebBrowsers {
 
-    public class Aes256GcmChromeCookieDecryptor :
+    internal class Aes256GcmChromeCookieDecryptor :
         ICookieDecryptor {
 
         // Public members
 
-        public bool CheckSignature(byte[] encryptedValue) {
 
-            return encryptedValue.Take(signatureBytes.Length).SequenceEqual(signatureBytes);
-
-        }
-        public byte[] DecryptCookie(byte[] encryptedValue) {
+        public byte[] DecryptCookie(byte[] encryptedBytes) {
 
             // Based on the answer given here: https://stackoverflow.com/a/60423699 (Topaco)
 
-            using (MemoryStream stream = new MemoryStream(encryptedValue))
+            using (MemoryStream stream = new MemoryStream(encryptedBytes))
             using (BinaryReader reader = new BinaryReader(stream)) {
 
                 if (!reader.ReadBytes(signatureBytes.Length).SequenceEqual(signatureBytes))
                     throw new FormatException("Encrypted value is not in the correct format.");
 
                 byte[] nonce = reader.ReadBytes(12);
-                byte[] ciphertext = reader.ReadBytes(encryptedValue.Length - (signatureBytes.Length + nonce.Length));
+                byte[] ciphertext = reader.ReadBytes(encryptedBytes.Length - (signatureBytes.Length + nonce.Length));
                 byte[] decryptionKey = GetDecryptionKey();
 
                 return AesGcmDecrypt(ciphertext, decryptionKey, nonce);
@@ -37,11 +33,29 @@ namespace Gsemac.Net.WebBrowsers {
             }
 
         }
+        public bool TryDecryptCookie(byte[] encryptedBytes, out byte[] decryptedBytes) {
+
+            decryptedBytes = null;
+
+            if (!CheckSignature(encryptedBytes))
+                return false;
+
+            decryptedBytes = DecryptCookie(encryptedBytes);
+
+            return true;
+
+        }
 
         // Private members
 
         private readonly byte[] signatureBytes = new byte[] { 0x76, 0x31, 0x30 }; // ASCII encoding of "v10" 
         private byte[] decryptionKey;
+
+        private bool CheckSignature(byte[] encryptedBytes) {
+
+            return encryptedBytes.Take(signatureBytes.Length).SequenceEqual(signatureBytes);
+
+        }
 
         private string GetLocalStatePath() {
 

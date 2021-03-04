@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Gsemac.Core;
+using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Data.SQLite;
 using System.IO;
@@ -7,21 +9,20 @@ using System.Net;
 
 namespace Gsemac.Net.WebBrowsers {
 
-    public class FirefoxWebBrowserCookieReader :
-        IWebBrowserCookieReader {
+    public class FirefoxCookiesReader :
+        ICookiesReader {
 
         // Public members
 
-        public CookieContainer GetCookies() {
+        public IEnumerable<Cookie> GetCookies() {
 
-            return GetFirefoxWebBrowserCookies();
+            return GetFirefoxCookies();
 
         }
-        public CookieCollection GetCookies(Uri uri) => GetCookies().GetCookies(uri);
 
         // Private members
 
-        private static string GetFirefoxCookiesPath() {
+        private string GetFirefoxCookiesPath() {
 
             string firefoxProfilesDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
                 @"Mozilla\Firefox\Profiles\");
@@ -48,9 +49,8 @@ namespace Gsemac.Net.WebBrowsers {
             throw new FileNotFoundException("Could not determine cookies path.");
 
         }
-        private static CookieContainer GetFirefoxWebBrowserCookies() {
+        private IEnumerable<Cookie> GetFirefoxCookies() {
 
-            CookieContainer cookies = new CookieContainer();
             string cookiesPath = GetFirefoxCookiesPath();
 
             // Firefox stores its cookies in an SQLite database.
@@ -68,8 +68,19 @@ namespace Gsemac.Net.WebBrowsers {
                         string value = row["value"].ToString();
                         string domain = row["host"].ToString();
                         string path = row["path"].ToString();
+                        long expiry = (long)row["expiry"];
+                        long isSecure = (long)row["isSecure"];
+                        long isHttpOnly = (long)row["isHttpOnly"];
 
-                        cookies.Add(new Cookie(name, value, path, domain));
+                        Cookie cookie = new Cookie(name, value, path, domain) {
+                            Secure = isSecure > 0,
+                            HttpOnly = isHttpOnly > 0,
+                        };
+
+                        if (expiry > 0)
+                            cookie.Expires = TimestampToDateTimeUtc(expiry);
+
+                        yield return cookie;
 
                     }
 
@@ -77,7 +88,17 @@ namespace Gsemac.Net.WebBrowsers {
 
             }
 
-            return cookies;
+        }
+        private DateTime TimestampToDateTimeUtc(long timestamp) {
+
+            // Firefox stores expiry timestamps as unix time seconds.
+
+            // DateTime is not capable of representing the same range of dates as the browser's timestamps.
+
+            if (timestamp > DateUtilities.ToUnixTimeSeconds(DateTimeOffset.MaxValue))
+                return DateTime.MaxValue;
+
+            return DateUtilities.FromUnixTimeSeconds(timestamp).DateTime;
 
         }
 

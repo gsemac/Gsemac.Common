@@ -2,8 +2,8 @@
 
     public interface ICookieDecryptor {
 
-        bool CheckSignature(byte[] encryptedValue);
-        byte[] DecryptCookie(byte[] encryptedValue);
+        byte[] DecryptCookie(byte[] encryptedBytes);
+        bool TryDecryptCookie(byte[] encryptedBytes, out byte[] decryptedBytes);
 
     }
 
