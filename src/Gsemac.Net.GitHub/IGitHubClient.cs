@@ -1,11 +1,13 @@
 ﻿using System.Collections.Generic;
+using System.IO;
 
 namespace Gsemac.Net.GitHub {
 
     public interface IGitHubClient {
 
-        IRepository GetRepository(IRepositoryUrl repositoryUrl);
-        IEnumerable<IRelease> GetReleases(IRepositoryUrl repositoryUrl);
+        IRepository GetRepository(string url);
+        IEnumerable<IRelease> GetReleases(string url);
+        IEnumerable<IFileNode> GetFiles(string url, SearchOption searchOption = SearchOption.TopDirectoryOnly);
 
     }
 

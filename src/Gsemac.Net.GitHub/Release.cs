@@ -11,7 +11,7 @@ namespace Gsemac.Net.GitHub {
         public string Tag { get; set; } = string.Empty;
         public string Title { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
-        public DateTimeOffset CreationTime { get; set; }
+        public DateTimeOffset Published { get; set; }
 
         public IEnumerable<IReleaseAsset> Assets { get; set; } = Enumerable.Empty<IReleaseAsset>();
 

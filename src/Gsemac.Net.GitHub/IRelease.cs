@@ -9,7 +9,7 @@ namespace Gsemac.Net.GitHub {
         string Tag { get; }
         string Title { get; }
         string Description { get; }
-        DateTimeOffset CreationTime { get; }
+        DateTimeOffset Published { get; }
 
         IEnumerable<IReleaseAsset> Assets { get; }
 

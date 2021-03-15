@@ -2,10 +2,14 @@
 
     public interface IRepository {
 
-        IRepositoryUrl Url { get; }
-        string Owner { get; }
+        string DefaultBranchName { get; }
+        string Url { get; }
         string Name { get; }
-        string DownloadUrl { get; }
+        string Owner { get; }
+        string Tree { get; }
+
+        string ArchiveUrl { get; }
+        string ReleasesUrl { get; }
 
     }
 
