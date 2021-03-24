@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 
@@ -25,6 +26,17 @@ namespace Gsemac.Core {
         public static IEnumerable<string> GetEnvironmentPaths() {
 
             return Environment.GetEnvironmentVariable("PATH")?.Split(Path.PathSeparator) ?? Enumerable.Empty<string>();
+
+        }
+
+        public static System.Version GetClrVersion() {
+
+            return Environment.Version;
+
+        }
+        public static System.Version GetFrameworkVersion() {
+
+            return new System.Version(FileVersionInfo.GetVersionInfo(typeof(int).Assembly.Location).ProductVersion);
 
         }
 

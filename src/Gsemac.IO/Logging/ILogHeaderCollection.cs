@@ -6,6 +6,7 @@ namespace Gsemac.IO.Logging {
     public enum LogHeaderKey {
         ProductVersion,
         ClrVersion,
+        FrameworkVersion,
         OSVersion,
         Locale,
         Path,

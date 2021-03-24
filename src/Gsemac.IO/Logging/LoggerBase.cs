@@ -119,13 +119,34 @@ namespace Gsemac.IO.Logging {
             wroteHeaders = true;
 
         }
+
         protected virtual void WriteHeaders(LogEventHandler eventHandler) {
 
             // Keys are copied into an array so we don't run into trouble if the headers are modified in another thread.
 
             foreach (string key in Headers?.Keys.ToArray()) {
 
-                ILogMessage logMessage = new LogMessage(LogLevel.Info, Assembly.GetEntryAssembly().GetName().Name, $"{key}: {Headers[key]}");
+                string headerName = key;
+                string headerValue = "";
+
+                // Since header values can be retrieved with a lambda, it's possible that an exception is thrown while retrieving the value.
+                // If the user has opted to ignore exceptions, any exceptions should be caught.
+
+                try {
+
+                    headerValue = Headers[key];
+
+                }
+                catch (Exception ex) {
+
+                    if (!IgnoreExceptions)
+                        throw ex;
+
+                    headerValue = ex.ToString();
+
+                }
+
+                ILogMessage logMessage = new LogMessage(LogLevel.Info, Assembly.GetEntryAssembly().GetName().Name, $"{headerName}: {headerValue}");
                 LogEventArgs logEventArgs = new LogEventArgs(logMessage);
 
                 try {
@@ -143,6 +164,8 @@ namespace Gsemac.IO.Logging {
             }
 
         }
+
+        // Private members
 
         private readonly object loggedEventMutex = new object();
         private bool enabled = true;

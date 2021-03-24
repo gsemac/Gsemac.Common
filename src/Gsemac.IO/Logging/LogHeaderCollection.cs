@@ -1,4 +1,5 @@
 ﻿using Gsemac.Collections;
+using Gsemac.Core;
 using Gsemac.IO.Logging.Extensions;
 using System;
 using System.Collections;
@@ -32,7 +33,8 @@ namespace Gsemac.IO.Logging {
             if (addDefaultHeaders) {
 
                 this.Add(LogHeaderKey.ProductVersion, () => Assembly.GetEntryAssembly().GetName().Version.ToString());
-                this.Add(LogHeaderKey.ClrVersion, () => Environment.Version.ToString());
+                this.Add(LogHeaderKey.ClrVersion, () => EnvironmentUtilities.GetClrVersion().ToString());
+                this.Add(LogHeaderKey.FrameworkVersion, () => EnvironmentUtilities.GetFrameworkVersion().ToString());
                 this.Add(LogHeaderKey.OSVersion, () => Environment.OSVersion.ToString() + string.Format(" ({0})", Environment.Is64BitOperatingSystem ? "64-bit" : "32-bit"));
                 this.Add(LogHeaderKey.Locale, () => System.Globalization.CultureInfo.InstalledUICulture.Name);
                 this.Add(LogHeaderKey.Path, () => PathUtilities.AnonymizePath(Assembly.GetEntryAssembly().Location));

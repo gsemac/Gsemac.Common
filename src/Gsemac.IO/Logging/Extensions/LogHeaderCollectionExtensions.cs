@@ -44,6 +44,9 @@ namespace Gsemac.IO.Logging.Extensions {
                 case LogHeaderKey.ClrVersion:
                     return "CLR Version";
 
+                case LogHeaderKey.FrameworkVersion:
+                    return "Framework Version";
+
                 case LogHeaderKey.OSVersion:
                     return "OS Version";
 
