@@ -11,7 +11,7 @@
 		<RepositoryType>git</RepositoryType>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 		<Copyright></Copyright>
-		<RootNamespace>Gsemac</RootNamespace>
+		<RootNamespace>Gsemac.Win32</RootNamespace>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)' == 'Release'">

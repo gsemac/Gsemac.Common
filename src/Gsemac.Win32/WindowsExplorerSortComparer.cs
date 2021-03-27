@@ -1,9 +1,8 @@
-﻿using Gsemac.Win32;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 
-namespace Gsemac.Collections {
+namespace Gsemac.Win32 {
 
     public class WindowsExplorerSortComparer :
         IComparer,
