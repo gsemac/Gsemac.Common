@@ -1,8 +1,9 @@
-﻿using Gsemac.IO;
+﻿using Gsemac.Drawing.Imaging;
+using Gsemac.IO;
 using System;
 using System.Drawing;
 
-namespace Gsemac.Drawing.Imaging {
+namespace Gsemac.Drawing {
 
     public interface IImage :
         IDisposable {

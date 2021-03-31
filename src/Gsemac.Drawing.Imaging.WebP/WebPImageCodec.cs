@@ -30,7 +30,7 @@ namespace Gsemac.Drawing.Imaging {
         }
         public IImage Decode(Stream stream) {
 
-            return Image.FromBitmap(DecodeWebPBitmap(stream), SupportedFileFormats.First(), this);
+            return ImageUtilities.CreateImageFromBitmap(DecodeWebPBitmap(stream), SupportedFileFormats.First(), this);
 
         }
 
@@ -44,14 +44,14 @@ namespace Gsemac.Drawing.Imaging {
 
         }
 
-        private void EncodeWebPBitmap(System.Drawing.Image image, Stream stream, IImageEncoderOptions encoderOptions) {
+        private void EncodeWebPBitmap(Image image, Stream stream, IImageEncoderOptions encoderOptions) {
 
             using (WebPWrapper.WebP encoder = new WebPWrapper.WebP())
             using (MemoryStream webPStream = new MemoryStream(encoder.EncodeLossy(image as Bitmap, encoderOptions.Quality)))
                 webPStream.CopyTo(stream);
 
         }
-        private System.Drawing.Image DecodeWebPBitmap(Stream stream) {
+        private Image DecodeWebPBitmap(Stream stream) {
 
             using (WebPWrapper.WebP decoder = new WebPWrapper.WebP())
                 return decoder.Decode(stream.ToArray());

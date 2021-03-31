@@ -1,8 +1,7 @@
 ﻿#if NETFRAMEWORK
 
-using Gsemac.Drawing.Extensions;
 using Gsemac.Drawing.Imaging;
-using Gsemac.Drawing.Imaging.Extensions;
+using Gsemac.IO;
 using System.Drawing;
 
 namespace Gsemac.Drawing {
@@ -10,7 +9,7 @@ namespace Gsemac.Drawing {
     public static class ImageUtilities {
 
         // Public members
-        public static System.Drawing.Image ResizeImage(System.Drawing.Image image, int? width = null, int? height = null, bool disposeOriginal = false) {
+        public static Image ResizeImage(Image image, int? width = null, int? height = null, bool disposeOriginal = false) {
 
             int newWidth = image.Width;
             int newHeight = image.Height;
@@ -46,7 +45,8 @@ namespace Gsemac.Drawing {
             return resultImage;
 
         }
-        public static bool HasIndexedPixelFormat(System.Drawing.Image image) {
+
+        public static bool HasIndexedPixelFormat(Image image) {
 
             return image.PixelFormat == System.Drawing.Imaging.PixelFormat.Format1bppIndexed ||
                 image.PixelFormat == System.Drawing.Imaging.PixelFormat.Format4bppIndexed ||
@@ -54,7 +54,7 @@ namespace Gsemac.Drawing {
                 image.PixelFormat == System.Drawing.Imaging.PixelFormat.Indexed;
 
         }
-        public static System.Drawing.Image ConvertImageToNonIndexedPixelFormat(System.Drawing.Image image, bool disposeOriginal = false) {
+        public static Image ConvertImageToNonIndexedPixelFormat(Image image, bool disposeOriginal = false) {
 
             // We can't create a graphics object from an image with an indexed pixel format, so we need to create a new bitmap.
 
@@ -69,7 +69,7 @@ namespace Gsemac.Drawing {
             return resultImage;
 
         }
-        public static System.Drawing.Image ConvertImageToNonIndexedPixelFormat(IImage image, bool disposeOriginal = false) {
+        public static Image ConvertImageToNonIndexedPixelFormat(IImage image, bool disposeOriginal = false) {
 
             Bitmap resultImage = image.ToBitmap();
 
@@ -80,6 +80,21 @@ namespace Gsemac.Drawing {
 
         }
 
+        public static IImage CreateImageFromBitmap(Bitmap bitmap) {
+
+            return CreateImageFromBitmap((Image)bitmap);
+
+        }
+        public static IImage CreateImageFromBitmap(Image bitmap) {
+
+            return CreateImageFromBitmap(bitmap, null, null);
+
+        }
+        public static IImage CreateImageFromBitmap(Image bitmap, IFileFormat imageFormat, IImageCodec imageCodec) {
+
+            return new GdiImage(bitmap, imageFormat, imageCodec);
+
+        }
 
     }
 

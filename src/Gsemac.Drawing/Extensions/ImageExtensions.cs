@@ -1,8 +1,9 @@
-﻿using Gsemac.IO;
+﻿using Gsemac.Drawing.Imaging;
+using Gsemac.IO;
 using System;
 using System.IO;
 
-namespace Gsemac.Drawing.Imaging.Extensions {
+namespace Gsemac.Drawing.Extensions {
 
     public static class ImageExtensions {
 

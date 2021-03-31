@@ -10,7 +10,7 @@ namespace Gsemac.Drawing.Imaging {
 
         public IImage Apply(IImage sourceImage) {
 
-            System.Drawing.Image resultImage = ImageUtilities.ConvertImageToNonIndexedPixelFormat(sourceImage, disposeOriginal: true);
+            Image resultImage = ImageUtilities.ConvertImageToNonIndexedPixelFormat(sourceImage, disposeOriginal: true);
 
             ColorMatrix colorMatrix = new ColorMatrix(new float[][] {
                 new[]{0.3f, 0.3f, 0.3f, 0.0f, 0.0f},
@@ -26,7 +26,7 @@ namespace Gsemac.Drawing.Imaging {
 
                 // Note that one of the reasons for drawing on top of new image is so that transluscent pixels from the old image aren't visible through the new one.
 
-                System.Drawing.Image imageWithAlphaChannel = new Bitmap(resultImage.Width, resultImage.Height, PixelFormat.Format32bppArgb);
+                Image imageWithAlphaChannel = new Bitmap(resultImage.Width, resultImage.Height, PixelFormat.Format32bppArgb);
 
                 using (resultImage)
                 using (Graphics graphics = Graphics.FromImage(imageWithAlphaChannel)) {
@@ -37,7 +37,7 @@ namespace Gsemac.Drawing.Imaging {
 
                 }
 
-                return Image.FromBitmap(imageWithAlphaChannel);
+                return ImageUtilities.CreateImageFromBitmap(imageWithAlphaChannel);
 
             }
 

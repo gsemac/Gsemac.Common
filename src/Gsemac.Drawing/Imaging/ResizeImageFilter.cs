@@ -52,7 +52,7 @@ namespace Gsemac.Drawing.Imaging {
             if (!newHeight.HasValue && verticalScale.HasValue)
                 newHeight = (int)(sourceImage.Height * verticalScale.Value);
 
-            return Image.FromBitmap(ImageUtilities.ResizeImage(sourceImage.ToBitmap(disposeOriginal: true), newWidth, newHeight, disposeOriginal: true));
+            return ImageUtilities.CreateImageFromBitmap(ImageUtilities.ResizeImage(sourceImage.ToBitmap(disposeOriginal: true), newWidth, newHeight, disposeOriginal: true));
 
         }
 

@@ -105,7 +105,7 @@ namespace Gsemac.Drawing.Imaging {
 
                     }
 
-                    return Image.FromBitmap(result);
+                    return ImageUtilities.CreateImageFromBitmap(result);
 
                 }
 

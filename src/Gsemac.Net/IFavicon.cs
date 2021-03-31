@@ -1,4 +1,4 @@
-﻿using Gsemac.Drawing.Imaging;
+﻿using Gsemac.Drawing;
 using System;
 
 namespace Gsemac.Net {

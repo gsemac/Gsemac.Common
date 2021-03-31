@@ -36,7 +36,7 @@ namespace Gsemac.Drawing.Imaging {
 
                 }
 
-                return Image.FromBitmap(imageWithAlphaChannel);
+                return ImageUtilities.CreateImageFromBitmap(imageWithAlphaChannel);
 
             }
 

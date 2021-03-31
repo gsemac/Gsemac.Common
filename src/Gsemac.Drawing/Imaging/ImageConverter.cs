@@ -1,4 +1,4 @@
-﻿using Gsemac.Drawing.Imaging.Extensions;
+﻿using Gsemac.Drawing.Extensions;
 using Gsemac.IO;
 using System;
 using System.IO;
@@ -49,7 +49,7 @@ namespace Gsemac.Drawing.Imaging {
 
                 IImage image;
 
-                using (image = Image.FromFile(sourceFilePath)) {
+                using (image = imageFactory.FromFile(sourceFilePath)) {
 
                     image = ImageFilter.ApplyAll(image, options.Filters);
 
@@ -60,6 +60,10 @@ namespace Gsemac.Drawing.Imaging {
             }
 
         }
+
+        // Private members
+
+        private readonly IImageFactory imageFactory = new ImageFactory();
 
     }
 

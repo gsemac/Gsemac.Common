@@ -1,11 +1,6 @@
 ﻿#if NETFRAMEWORK
 
-using Gsemac.Drawing.Extensions;
-using Gsemac.Drawing.Imaging;
-using System;
-using System.Collections.Generic;
 using System.Drawing;
-using System.Text;
 
 namespace Gsemac.Drawing.Imaging {
 
@@ -14,7 +9,7 @@ namespace Gsemac.Drawing.Imaging {
 
         // Public members
 
-        public WatermarkImageFilter(System.Drawing.Image overlayImage) {
+        public WatermarkImageFilter(Image overlayImage) {
 
             this.overlayImage = overlayImage;
 
@@ -22,7 +17,7 @@ namespace Gsemac.Drawing.Imaging {
 
         public IImage Apply(IImage sourceImage) {
 
-            System.Drawing.Image resultImage = ImageUtilities.ConvertImageToNonIndexedPixelFormat(sourceImage, disposeOriginal: true);
+            Image resultImage = ImageUtilities.ConvertImageToNonIndexedPixelFormat(sourceImage, disposeOriginal: true);
 
             // Draw the modified image directly on top of the original image.
 
@@ -37,13 +32,13 @@ namespace Gsemac.Drawing.Imaging {
 
             }
 
-            return Image.FromBitmap(resultImage);
+            return ImageUtilities.CreateImageFromBitmap(resultImage);
 
         }
 
         // Private members
 
-        private readonly System.Drawing.Image overlayImage;
+        private readonly Image overlayImage;
 
     }
 
