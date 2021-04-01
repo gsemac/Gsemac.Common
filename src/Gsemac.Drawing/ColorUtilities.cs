@@ -6,12 +6,12 @@ namespace Gsemac.Drawing {
 
         // Public members
 
-        public static double ColorDistance(Color first, Color second, IColorDistanceStrategy strategy = null) {
+        public static double ComputeDistance(Color first, Color second, IColorDistanceStrategy strategy = null) {
 
             if (strategy is null)
                 strategy = new DeltaEColorDistanceStrategy();
 
-            return strategy.GetDistance(first, second, normalize: true);
+            return strategy.ComputeDistance(first, second, normalize: true);
 
         }
 

@@ -4,6 +4,8 @@ namespace Gsemac.Drawing.Extensions {
 
     public static class ColorExtensions {
 
+        // Public members
+
         public static Color AddTint(this Color baseColor, float factor) {
 
             // Adapted from the answer given here:
@@ -31,9 +33,9 @@ namespace Gsemac.Drawing.Extensions {
 
         }
 
-        public static Color ToRgb(this LabColor color) {
+        public static LabColor ToLab(this Color color) {
 
-            return color.ToXyz().ToRgb();
+            return LabColor.FromRgb(color);
 
         }
         public static XyzColor ToXyz(this Color color) {
@@ -41,19 +43,10 @@ namespace Gsemac.Drawing.Extensions {
             return XyzColor.FromRgb(color);
 
         }
-        public static XyzColor ToXyz(this LabColor color) {
 
-            return color.ToXyz();
+        public static double DistanceTo(this Color color, Color other) {
 
-        }
-        public static LabColor ToLab(this Color color) {
-
-            return LabColor.FromXyz(XyzColor.FromRgb(color));
-
-        }
-        public static LabColor ToLab(this XyzColor color) {
-
-            return LabColor.FromXyz(color);
+            return ColorUtilities.ComputeDistance(color, other);
 
         }
 

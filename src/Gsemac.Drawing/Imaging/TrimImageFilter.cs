@@ -125,7 +125,7 @@ namespace Gsemac.Drawing.Imaging {
 
         private bool CompareColors(Color first, Color second) {
 
-            return ColorUtilities.ColorDistance(first, second, distanceAlgorithm) <= tolerance;
+            return ColorUtilities.ComputeDistance(first, second, distanceAlgorithm) <= tolerance;
 
         }
         private bool RowIsColor(Bitmap bitmap, int row, Color trimColor) {

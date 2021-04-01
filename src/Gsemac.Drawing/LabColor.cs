@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Drawing;
 
 namespace Gsemac.Drawing {
 
@@ -18,14 +19,36 @@ namespace Gsemac.Drawing {
 
         }
 
-        public XyzColor ToXyz() {
+        public Color ToRgb() {
+
+            return LabToXyz(this).ToRgb();
+
+        }
+
+        public static LabColor FromRgb(Color color) {
+
+            return XyzToLab(XyzColor.FromRgb(color));
+
+        }
+
+        // Private members
+
+        private const double referenceX = 95.047;
+        private const double referenceY = 100.0;
+        private const double referenceZ = 108.883;
+
+        private readonly double l;
+        private readonly double a;
+        private readonly double b;
+
+        private static XyzColor LabToXyz(LabColor color) {
 
             // Convert from LAB to XYZ.
             // Algorithm from https://www.easyrgb.com/en/math.php
 
-            double y = (l + 16) / 116.0;
-            double x = (a / 500.0) + y;
-            double z = y - b / 200.0f;
+            double y = (color.L + 16) / 116.0;
+            double x = (color.A / 500.0) + y;
+            double z = y - color.B / 200.0f;
 
             x = Math.Pow(x, 3) > 0.008856 ? Math.Pow(x, 3) : (x - 16 / 116.0) / 7.787;
             y = Math.Pow(y, 3) > 0.008856 ? Math.Pow(y, 3) : (y - 16 / 116.0) / 7.787;
@@ -38,17 +61,15 @@ namespace Gsemac.Drawing {
             return new XyzColor(x, y, z);
 
         }
-
-        public static LabColor FromXyz(XyzColor color) {
-
-            return FromXyz(color.X, color.Y, color.Z);
-
-        }
-        public static LabColor FromXyz(double x, double y, double z) {
+        private static LabColor XyzToLab(XyzColor color) {
 
             // Convert from XYZ to LAB.
             // Algorithm from https://www.easyrgb.com/en/math.php
             // Using D65 observer values
+
+            double x = color.X;
+            double y = color.Y;
+            double z = color.Z;
 
             x /= referenceX;
             y /= referenceY;
@@ -65,16 +86,6 @@ namespace Gsemac.Drawing {
             return new LabColor(l, a, b);
 
         }
-
-        // Private members
-
-        private const double referenceX = 95.047;
-        private const double referenceY = 100.0;
-        private const double referenceZ = 108.883;
-
-        private readonly double l;
-        private readonly double a;
-        private readonly double b;
 
     }
 
