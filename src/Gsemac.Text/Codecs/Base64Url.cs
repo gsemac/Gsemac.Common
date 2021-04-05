@@ -42,6 +42,17 @@ namespace Gsemac.Text.Codecs {
 
         }
 
+        public static string EncodeString(string stringToEncode) {
+
+            return GetEncoder().EncodeString(stringToEncode);
+
+        }
+        public static string DecodeString(string encodedString) {
+
+            return GetDecoder().DecodeString(encodedString);
+
+        }
+
     }
 
 }

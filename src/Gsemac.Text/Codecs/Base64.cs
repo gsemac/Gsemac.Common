@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Gsemac.Text.Codecs.Extensions;
+using System;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -33,6 +34,16 @@ namespace Gsemac.Text.Codecs {
 
         }
 
+        public static string EncodeString(string stringToEncode) {
+
+            return GetEncoder().EncodeString(stringToEncode);
+
+        }
+        public static string DecodeString(string encodedString) {
+
+            return GetDecoder().DecodeString(encodedString);
+
+        }
         public static bool IsBase64String(string input) {
 
             // Slightly modified from the answer given here:

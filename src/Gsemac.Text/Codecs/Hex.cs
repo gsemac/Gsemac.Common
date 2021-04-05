@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Gsemac.Text.Codecs.Extensions;
+using System;
 using System.Globalization;
 using System.Text;
 
@@ -48,6 +49,17 @@ namespace Gsemac.Text.Codecs {
         public static IBinaryDecoder GetDecoder() {
 
             return new Hex();
+
+        }
+
+        public static string EncodeString(string stringToEncode) {
+
+            return GetEncoder().EncodeString(stringToEncode);
+
+        }
+        public static string DecodeString(string encodedString) {
+
+            return GetDecoder().DecodeString(encodedString);
 
         }
 
