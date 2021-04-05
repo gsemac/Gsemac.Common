@@ -11,40 +11,45 @@
 
         }
 
-        public void OnLog(ILogMessage logMessage) {
+        public void Log(ILogMessage logMessage) {
 
             logEventHandler?.Invoke(this, new LogEventArgs(logMessage));
 
         }
-        public void OnLog(LogLevel level, string source, string message) {
+        public void Log(LogLevel level, string source, string message) {
 
-            OnLog(new LogMessage(level, source, message));
-
-        }
-        public void OnLog(string source, string message) {
-
-            OnLog(new LogMessage(LogLevel.Info, source, message));
+            Log(new LogMessage(level, source, message));
 
         }
-        public void OnLog(string message) {
+        public void Log(string source, string message) {
 
-            OnLog(sourceName, message);
+            Log(new LogMessage(LogLevel.Info, source, message));
+
+        }
+        public void Log(string message) {
+
+            Log(sourceName, message);
+
+        }
+        public void Log(object sender, LogEventArgs e) {
+
+            Log(e.Message);
 
         }
 
         public void Info(string message) {
 
-            OnLog(LogLevel.Info, sourceName, message);
+            Log(LogLevel.Info, sourceName, message);
 
         }
         public void Warning(string message) {
 
-            OnLog(LogLevel.Warning, sourceName, message);
+            Log(LogLevel.Warning, sourceName, message);
 
         }
         public void Error(string message) {
 
-            OnLog(LogLevel.Error, sourceName, message);
+            Log(LogLevel.Error, sourceName, message);
 
         }
 

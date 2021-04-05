@@ -210,7 +210,7 @@ namespace Gsemac.Net.WebDrivers {
             if (options.PoolSize < 1)
                 throw new ArgumentOutOfRangeException(nameof(options), "The pool size must be at least 1.");
 
-            baseFactory.Log += (sender, e) => OnLog.OnLog(e.Message);
+            baseFactory.Log += OnLog.Log;
 
         }
 

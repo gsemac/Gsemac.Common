@@ -123,7 +123,7 @@ namespace Gsemac.Net.WebDrivers {
                 WebDriverDirectoryPath = webDriverFactoryOptions.WebDriverDirectoryPath
             });
 
-            updater.Log += (sender, e) => OnLog.OnLog(e.Message);
+            updater.Log += OnLog.Log;
 
             updater.DownloadFileProgressChanged += OnDownloadFileProgressChanged;
             updater.DownloadFileCompleted += OnDownloadFileCompleted;
