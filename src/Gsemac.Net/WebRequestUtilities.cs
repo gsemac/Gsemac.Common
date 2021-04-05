@@ -1,4 +1,5 @@
-﻿using Gsemac.Net.Extensions;
+﻿using Gsemac.Core;
+using Gsemac.Net.Extensions;
 using System;
 using System.Globalization;
 using System.Net;
@@ -7,55 +8,7 @@ namespace Gsemac.Net {
 
     public static class WebRequestUtilities {
 
-        public static HttpStatusCode? GetHttpStatusCode(IHttpWebRequest httpWebRequest) {
-
-            if (httpWebRequest is null)
-                throw new ArgumentNullException(nameof(httpWebRequest));
-
-            HttpStatusCode? statusCode = null;
-
-            bool originalAllowAutoRedirect = httpWebRequest.AllowAutoRedirect;
-            string originalMethod = httpWebRequest.Method;
-
-            // Attempt to make a HEAD request first. If it fails, we'll fall back to making a GET request.
-
-            httpWebRequest.AllowAutoRedirect = false;
-
-            foreach (string method in new[] { "HEAD", "GET" }) {
-
-                httpWebRequest.Method = method;
-
-                try {
-
-                    using (WebResponse webResponse = httpWebRequest.GetResponse())
-                        statusCode = (webResponse as IHttpWebResponse)?.StatusCode;
-
-                }
-                catch (WebException ex) {
-
-                    using (WebResponse webResponse = ex.Response)
-                        statusCode = (webResponse as IHttpWebResponse)?.StatusCode;
-
-                }
-
-                if (statusCode.HasValue && statusCode != HttpStatusCode.MethodNotAllowed)
-                    break;
-
-            }
-
-            // Restore original configuration.
-
-            httpWebRequest.AllowAutoRedirect = originalAllowAutoRedirect;
-            httpWebRequest.Method = originalMethod;
-
-            return statusCode;
-
-        }
-        public static HttpStatusCode? GetHttpStatusCode(HttpWebRequest httpWebRequest) {
-
-            return GetHttpStatusCode(new HttpWebRequestWrapper(httpWebRequest));
-
-        }
+        // Public members
 
         public static WebResponse FollowHttpRedirects(IHttpWebRequest httpWebRequest, IHttpWebRequestFactory httpWebRequestFactory) {
 
@@ -165,12 +118,112 @@ namespace Gsemac.Net {
 
         }
 
-        public static long? GetFileSize(IHttpWebRequest httpWebRequest) {
+        public static HttpStatusCode GetHttpStatusCode(IHttpWebRequest httpWebRequest) {
+
+            if (httpWebRequest is null)
+                throw new ArgumentNullException(nameof(httpWebRequest));
+
+            HttpStatusCode? statusCode = null;
+            WebException lastException = null;
+
+            bool originalAllowAutoRedirect = httpWebRequest.AllowAutoRedirect;
+            string originalMethod = httpWebRequest.Method;
+
+            httpWebRequest.AllowAutoRedirect = false;
+
+            // Attempt to make a HEAD request first. If it fails, we'll fall back to making a GET request.
+
+            foreach (string method in new[] { "HEAD", "GET" }) {
+
+                httpWebRequest.Method = method;
+
+                try {
+
+                    using (WebResponse webResponse = httpWebRequest.GetResponse())
+                        statusCode = (webResponse as IHttpWebResponse)?.StatusCode;
+
+                }
+                catch (WebException ex) {
+
+                    using (WebResponse webResponse = ex.Response)
+                        statusCode = (webResponse as IHttpWebResponse)?.StatusCode;
+
+                    lastException = ex;
+
+                }
+
+                if (statusCode.HasValue && statusCode != HttpStatusCode.MethodNotAllowed)
+                    break;
+
+            }
+
+            // Restore original configuration.
+
+            httpWebRequest.AllowAutoRedirect = originalAllowAutoRedirect;
+            httpWebRequest.Method = originalMethod;
+
+            if (statusCode.HasValue)
+                return statusCode.Value;
+            else
+                throw lastException ?? new Exception($"Unable to obtain HTTP status code from {httpWebRequest.RequestUri}.");
+
+        }
+        public static HttpStatusCode GetHttpStatusCode(HttpWebRequest httpWebRequest) {
+
+            return GetHttpStatusCode(new HttpWebRequestWrapper(httpWebRequest));
+
+        }
+        public static HttpStatusCode GetHttpStatusCode(Uri uri) {
+
+            return GetHttpStatusCode(new HttpWebRequestFactory().Create(uri));
+
+        }
+        public static HttpStatusCode GetHttpStatusCode(string uri) {
+
+            return GetHttpStatusCode(new Uri(uri));
+
+        }
+        public static bool TryGetHttpStatusCode(IHttpWebRequest httpWebRequest, out HttpStatusCode statusCode) {
+
+            try {
+
+                statusCode = GetHttpStatusCode(httpWebRequest);
+
+                return true;
+
+            }
+            catch (WebException) {
+
+                statusCode = default;
+
+                return false;
+
+            }
+
+        }
+        public static bool TryGetHttpStatusCode(HttpWebRequest httpWebRequest, out HttpStatusCode statusCode) {
+
+            return TryGetHttpStatusCode(new HttpWebRequestWrapper(httpWebRequest), out statusCode);
+
+        }
+        public static bool TryGetHttpStatusCode(Uri uri, out HttpStatusCode statusCode) {
+
+            return TryGetHttpStatusCode(new HttpWebRequestFactory().Create(uri), out statusCode);
+
+        }
+        public static bool TryGetHttpStatusCode(string uri, out HttpStatusCode statusCode) {
+
+            return TryGetHttpStatusCode(new Uri(uri), out statusCode);
+
+        }
+
+        public static long GetFileSize(IHttpWebRequest httpWebRequest) {
 
             if (httpWebRequest is null)
                 throw new ArgumentNullException(nameof(httpWebRequest));
 
             long? fileSize = null;
+            WebException lastException = null;
 
             string originalMethod = httpWebRequest.Method;
 
@@ -200,6 +253,8 @@ namespace Gsemac.Net {
                 }
                 catch (WebException ex) {
 
+                    lastException = ex;
+
                     // 405 error just indicates that HEAD requests aren't supported by the server, so we shouldn't throw yet (this is a common case).
                     // We'll follow up by attempting a GET request instead.
 
@@ -215,22 +270,130 @@ namespace Gsemac.Net {
 
             httpWebRequest.Method = originalMethod;
 
-            return fileSize;
+            if (fileSize.HasValue)
+                return fileSize.Value;
+            else
+                throw lastException ?? new Exception($"Unable to obtain file size from {httpWebRequest.RequestUri}.");
 
         }
-        public static long? GetFileSize(HttpWebRequest httpWebRequest) {
+        public static long GetFileSize(HttpWebRequest httpWebRequest) {
 
             return GetFileSize(new HttpWebRequestWrapper(httpWebRequest));
 
         }
-        public static long? GetFileSize(Uri uri) {
+        public static long GetFileSize(Uri uri) {
 
             return GetFileSize(new HttpWebRequestFactory().Create(uri));
 
         }
-        public static long? GetFileSize(string uri) {
+        public static long GetFileSize(string uri) {
 
             return GetFileSize(new Uri(uri));
+
+        }
+        public static bool TryGetFileSize(IHttpWebRequest httpWebRequest, out long fileSize) {
+
+            try {
+
+                fileSize = GetFileSize(httpWebRequest);
+
+                return true;
+
+            }
+            catch (WebException) {
+
+                fileSize = default;
+
+                return false;
+
+            }
+
+        }
+        public static bool TryGetFileSize(HttpWebRequest httpWebRequest, out long fileSize) {
+
+            return TryGetFileSize(new HttpWebRequestWrapper(httpWebRequest), out fileSize);
+
+        }
+        public static bool TryGetFileSize(Uri uri, out long fileSize) {
+
+            return TryGetFileSize(new HttpWebRequestFactory().Create(uri), out fileSize);
+
+        }
+        public static bool TryGetFileSize(string uri, out long fileSize) {
+
+            return TryGetFileSize(new Uri(uri), out fileSize);
+
+        }
+
+        public static DateTimeOffset GetServerDateTime(IHttpWebRequest httpWebRequest) {
+
+            string originalMethod = httpWebRequest.Method;
+
+            try {
+
+                using (WebResponse webResponse = httpWebRequest.GetResponse()) {
+
+                    if (webResponse.Headers.TryGetHeaderValue(HttpResponseHeader.Date, out string date) && DateUtilities.TryParseHttpHeader(date, out DateTimeOffset parsedDate))
+                        return parsedDate;
+
+                }
+
+            }
+            finally {
+
+                httpWebRequest.Method = originalMethod;
+
+            }
+
+            throw new Exception($"Unable to obtain date from {httpWebRequest.RequestUri}.");
+
+        }
+        public static DateTimeOffset GetServerDateTime(HttpWebRequest httpWebRequest) {
+
+            return GetServerDateTime(new HttpWebRequestWrapper(httpWebRequest));
+
+        }
+        public static DateTimeOffset GetServerDateTime(Uri uri) {
+
+            return GetServerDateTime(new HttpWebRequestFactory().Create(uri));
+
+        }
+        public static DateTimeOffset GetServerDateTime(string uri) {
+
+            return GetServerDateTime(new Uri(uri));
+
+        }
+        public static bool TryGetServerDateTime(IHttpWebRequest httpWebRequest, out DateTimeOffset date) {
+
+            try {
+
+                date = GetServerDateTime(httpWebRequest);
+
+                return true;
+
+            }
+            catch (WebException) {
+
+                date = default;
+
+                return false;
+
+            }
+
+        }
+        public static bool TryGetServerDateTime(HttpWebRequest httpWebRequest, out DateTimeOffset date) {
+
+            return TryGetServerDateTime(new HttpWebRequestWrapper(httpWebRequest), out date);
+
+        }
+        public static bool TryGetServerDateTime(Uri uri, out DateTimeOffset date) {
+
+            return TryGetServerDateTime(new HttpWebRequestFactory().Create(uri), out date);
+
+        }
+        public static bool TryGetServerDateTime(string uri, out DateTimeOffset date) {
+
+            return TryGetServerDateTime(new Uri(uri), out date);
 
         }
 
