@@ -52,14 +52,14 @@ namespace Gsemac.Text.Codecs {
 
         }
 
-        public static string EncodeString(string stringToEncode) {
+        public static string EncodeString(string stringToEncode, Encoding encoding = null) {
 
-            return GetEncoder().EncodeString(stringToEncode);
+            return GetEncoder().EncodeString(stringToEncode, encoding);
 
         }
-        public static string DecodeString(string encodedString) {
+        public static string DecodeString(string encodedString, Encoding encoding = null) {
 
-            return GetDecoder().DecodeString(encodedString);
+            return GetDecoder().DecodeString(encodedString, encoding);
 
         }
 
