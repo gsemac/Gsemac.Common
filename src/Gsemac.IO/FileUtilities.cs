@@ -6,7 +6,7 @@ namespace Gsemac.IO {
 
     public static class FileUtilities {
 
-        public static string CalculateMD5(string filePath) {
+        public static string ComputeMD5Hash(string filePath) {
 
             using (MD5 md5 = MD5.Create())
             using (var stream = File.OpenRead(filePath)) {
