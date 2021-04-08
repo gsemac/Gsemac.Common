@@ -6,7 +6,7 @@ namespace Gsemac.Polyfills.Microsoft.Extensions.DependencyInjection {
 
         // Public members
 
-        public Func<IServiceProvider, object> ImplementationFactory { get; }
+        public Func<IServiceProvider, object> ImplementationFactory => InternalImplementationFactory;
         public object ImplementationInstance { get; private set; }
         public Type ImplementationType { get; }
         public ServiceLifetime Lifetime { get; }
@@ -14,7 +14,7 @@ namespace Gsemac.Polyfills.Microsoft.Extensions.DependencyInjection {
 
         public ServiceDescriptor(Type serviceType, Func<IServiceProvider, object> factory, ServiceLifetime lifetime) {
 
-            ImplementationFactory = factory;
+            implementationFactory = factory;
             ImplementationInstance = null;
             ImplementationType = serviceType;
             ServiceType = serviceType;
@@ -23,7 +23,6 @@ namespace Gsemac.Polyfills.Microsoft.Extensions.DependencyInjection {
         }
         public ServiceDescriptor(Type serviceType, object instance) {
 
-            ImplementationFactory = DefaultImplementationFactory;
             ImplementationType = serviceType;
             ServiceType = serviceType;
             Lifetime = ServiceLifetime.Singleton;
@@ -32,7 +31,6 @@ namespace Gsemac.Polyfills.Microsoft.Extensions.DependencyInjection {
         }
         public ServiceDescriptor(Type serviceType, Type implementationType, ServiceLifetime lifetime) {
 
-            ImplementationFactory = DefaultImplementationFactory;
             ImplementationInstance = null;
             ImplementationType = implementationType;
             ServiceType = serviceType;
@@ -43,8 +41,9 @@ namespace Gsemac.Polyfills.Microsoft.Extensions.DependencyInjection {
         // Private members
 
         private readonly object singletonInstantiationMutex = new object();
+        private readonly Func<IServiceProvider, object> implementationFactory;
 
-        private object DefaultImplementationFactory(IServiceProvider serviceProvider) {
+        private object InternalImplementationFactory(IServiceProvider serviceProvider) {
 
             // Create the default implementation instance if we haven't already (for singletons only).
             // Make sure that even if the service descriptor is being used by multiple threads that the service is only instantiated once.
@@ -72,8 +71,8 @@ namespace Gsemac.Polyfills.Microsoft.Extensions.DependencyInjection {
         }
         private object CreateInstance(IServiceProvider serviceProvider) {
 
-            return ImplementationFactory is object && ImplementationFactory != DefaultImplementationFactory ?
-                ImplementationFactory(serviceProvider) :
+            return implementationFactory is object ?
+                implementationFactory(serviceProvider) :
                 ActivatorUtilities.CreateInstance(serviceProvider, ImplementationType);
 
         }

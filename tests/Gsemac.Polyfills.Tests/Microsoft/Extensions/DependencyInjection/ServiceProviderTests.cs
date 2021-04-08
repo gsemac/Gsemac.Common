@@ -102,6 +102,28 @@ namespace Gsemac.Polyfills.Microsoft.Extensions.DependencyInjection.Tests {
 
         }
         [TestMethod]
+        public void TestGetSingletonWithFactoryFunctionIsInstantiatedOnlyOnce() {
+
+            int instantiations = 0;
+
+            IServiceProvider serviceProvider = new ServiceCollection()
+                .AddSingleton<IMyService>((sp) => {
+
+                    ++instantiations;
+
+                    return new MyServiceWithNoDependencies();
+
+                })
+                .BuildServiceProvider();
+
+            serviceProvider.GetRequiredService<IMyService>();
+            serviceProvider.GetRequiredService<IMyService>();
+            serviceProvider.GetRequiredService<IMyService>();
+
+            Assert.AreEqual(instantiations, 1);
+
+        }
+        [TestMethod]
         public void TestGetTransientService() {
 
             IServiceProvider serviceProvider = new ServiceCollection()
