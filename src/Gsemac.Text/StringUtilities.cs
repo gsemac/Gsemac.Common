@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -327,6 +329,21 @@ namespace Gsemac.Text {
             int maxLength = Math.Max(str1.Length, str2.Length);
 
             return 1.0 - (levenshteinDistance / maxLength);
+
+        }
+
+        public static string ComputeMD5Hash(string input, Encoding encoding = null) {
+
+            encoding = encoding ?? Encoding.UTF8;
+
+            using (MD5 md5 = MD5.Create())
+            using (Stream stream = new MemoryStream(encoding.GetBytes(input))) {
+
+                var hash = md5.ComputeHash(stream);
+
+                return BitConverter.ToString(hash).Replace("-", string.Empty).ToLowerInvariant();
+
+            }
 
         }
 
