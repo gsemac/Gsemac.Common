@@ -37,6 +37,11 @@
 
         }
 
+        public void Debug(string message) {
+
+            Log(LogLevel.Debug, sourceName, message);
+
+        }
         public void Info(string message) {
 
             Log(LogLevel.Info, sourceName, message);
