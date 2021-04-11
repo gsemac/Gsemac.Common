@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace Gsemac.Core {
 
@@ -221,12 +222,13 @@ namespace Gsemac.Core {
                 return false;
 
             // Split the version into its numeric (e.g. "1.0.0") and pre-release/build (e.g. "alpha+build") parts.
+            // Note that we can have build metadata without a pre-release name (e.g. "1.2.3+abc").
 
-            string[] parts = input.Split(new char[] { '-' }, 2);
+            string[] parts = Regex.Split(input, @"(?=[-+])");
 
-            // The version string must at least have the numeric part.
+            // The version string must have at least one part (the numeric part).
 
-            if (!parts.Any())
+            if (!parts.Any() && !char.IsDigit(parts.First().First()))
                 return false;
 
             int?[] revisionNumbers = parts.First().Split('.')
@@ -246,23 +248,28 @@ namespace Gsemac.Core {
 
             if (parts.Count() > 1) {
 
-                string[] preReleaseAndBuild = parts.Last().Split(new char[] { '+' }, 2);
+                string preRelease = parts.Where(part => part.StartsWith("-")).FirstOrDefault();
+                string buildMetadata = parts.Where(part => part.StartsWith("+")).FirstOrDefault();
 
-                // The pre-release string must not be empty.
+                if (!string.IsNullOrEmpty(preRelease)) {
 
-                if (string.IsNullOrWhiteSpace(preReleaseAndBuild[0]))
-                    return false;
+                    // If there is a pre-release string, it should not be empty.
 
-                result.PreRelease = preReleaseAndBuild[0];
-
-                if (preReleaseAndBuild.Count() == 2) {
-
-                    // The build metadata string must not be empty.
-
-                    if (string.IsNullOrWhiteSpace(preReleaseAndBuild[1]))
+                    if (preRelease.Length <= 1)
                         return false;
 
-                    result.Build = preReleaseAndBuild[1];
+                    result.PreRelease = preRelease.TrimStart('-');
+
+                }
+
+                if (!string.IsNullOrEmpty(buildMetadata)) {
+
+                    // If there is a build metadata string, it should not be empty.
+
+                    if (buildMetadata.Length <= 1)
+                        return false;
+
+                    result.Build = buildMetadata.TrimStart('+');
 
                 }
 

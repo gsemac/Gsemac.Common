@@ -27,6 +27,12 @@ namespace Gsemac.Core.Tests {
             Assert.AreEqual("1.2.3-alpha+abc123", SemVersion.Parse("1.2.3-alpha+abc123").ToString());
 
         }
+        [TestMethod]
+        public void TestParseSemVersionWithMajorMinorPatchBuild() {
+
+            Assert.AreEqual("1.2.3+abc123", SemVersion.Parse("1.2.3+abc123").ToString());
+
+        }
 
         [TestMethod]
         public void TestParseSemVersionWithMajorAndStrict() {
