@@ -29,14 +29,14 @@ namespace Gsemac.Core {
 
         }
 
-        public static System.Version GetClrVersion() {
+        public static IVersion GetClrVersion() {
 
-            return Environment.Version;
+            return new MSVersion(Environment.Version);
 
         }
-        public static System.Version GetFrameworkVersion() {
+        public static IVersion GetFrameworkVersion() {
 
-            return new System.Version(FileVersionInfo.GetVersionInfo(typeof(int).Assembly.Location).ProductVersion);
+            return Version.Parse(FileVersionInfo.GetVersionInfo(typeof(int).Assembly.Location).ProductVersion);
 
         }
 
