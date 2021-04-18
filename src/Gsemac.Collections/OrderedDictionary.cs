@@ -20,6 +20,9 @@ namespace Gsemac.Collections {
         public bool IsReadOnly => false;
 
         public OrderedDictionary() {
+
+            underlyingDict = new Dictionary<TKey, TValue>();
+
         }
         public OrderedDictionary(IDictionary<TKey, TValue> underlyingDictionary) {
 
@@ -91,7 +94,7 @@ namespace Gsemac.Collections {
         // Private members
 
         private readonly IList<TKey> orderedKeys = new List<TKey>();
-        private readonly IDictionary<TKey, TValue> underlyingDict = new Dictionary<TKey, TValue>();
+        private readonly IDictionary<TKey, TValue> underlyingDict;
 
         private void SetValue(TKey key, TValue value) {
 
