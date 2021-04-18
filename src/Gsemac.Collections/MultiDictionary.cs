@@ -30,16 +30,30 @@ namespace Gsemac.Collections {
         public int Count => underlyingDict.Count;
         public bool IsReadOnly => underlyingDict.IsReadOnly;
 
+        public MultiDictionary() {
+
+            underlyingDict = new Dictionary<TKey, ICollection<TValue>>();
+
+        }
+        public MultiDictionary(int capacity) {
+
+            underlyingDict = new Dictionary<TKey, ICollection<TValue>>(capacity);
+
+        }
+        public MultiDictionary(IEqualityComparer<TKey> comparer) {
+
+            underlyingDict = new Dictionary<TKey, ICollection<TValue>>(comparer);
+
+        }
+        public MultiDictionary(int capacity, IEqualityComparer<TKey> comparer) {
+
+            underlyingDict = new Dictionary<TKey, ICollection<TValue>>(capacity, comparer);
+
+        }
+
         public void Add(TKey key, ICollection<TValue> value) {
 
             underlyingDict.Add(key, value);
-
-        }
-        public void Add(TKey key, TValue value) {
-
-            ICollection<TValue> existingItems = this[key];
-
-            existingItems.Add(value);
 
         }
         public void Add(KeyValuePair<TKey, ICollection<TValue>> item) {
@@ -98,7 +112,7 @@ namespace Gsemac.Collections {
 
         // Private members
 
-        private readonly IDictionary<TKey, ICollection<TValue>> underlyingDict = new Dictionary<TKey, ICollection<TValue>>();
+        private readonly IDictionary<TKey, ICollection<TValue>> underlyingDict;
 
     }
 
