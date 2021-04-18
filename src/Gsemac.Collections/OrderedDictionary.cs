@@ -10,14 +10,22 @@ namespace Gsemac.Collections {
         // Public members
 
         public TValue this[TKey key] {
-            get => dict[key];
+            get => underlyingDict[key];
             set => SetValue(key, value);
         }
 
         public ICollection<TKey> Keys => new LazyReadOnlyCollection<TKey>(orderedKeys);
-        public ICollection<TValue> Values => new LazyReadOnlyCollection<TValue>(orderedKeys.Select(key => dict[key]));
-        public int Count => dict.Count;
+        public ICollection<TValue> Values => new LazyReadOnlyCollection<TValue>(orderedKeys.Select(key => underlyingDict[key]));
+        public int Count => underlyingDict.Count;
         public bool IsReadOnly => false;
+
+        public OrderedDictionary() {
+        }
+        public OrderedDictionary(IDictionary<TKey, TValue> underlyingDictionary) {
+
+            this.underlyingDict = underlyingDictionary;
+
+        }
 
         public void Add(TKey key, TValue value) {
 
@@ -33,29 +41,29 @@ namespace Gsemac.Collections {
 
             orderedKeys.Clear();
 
-            dict.Clear();
+            underlyingDict.Clear();
 
         }
         public bool Contains(KeyValuePair<TKey, TValue> item) {
 
-            return dict.Contains(item);
+            return underlyingDict.Contains(item);
 
         }
         public bool ContainsKey(TKey key) {
 
-            return dict.ContainsKey(key);
+            return underlyingDict.ContainsKey(key);
 
         }
         public void CopyTo(KeyValuePair<TKey, TValue>[] array, int arrayIndex) {
 
-            dict.ToArray().CopyTo(array, arrayIndex);
+            underlyingDict.ToArray().CopyTo(array, arrayIndex);
 
         }
         public bool Remove(TKey key) {
 
             orderedKeys.Remove(key);
 
-            return dict.Remove(key);
+            return underlyingDict.Remove(key);
 
         }
         public bool Remove(KeyValuePair<TKey, TValue> item) {
@@ -65,13 +73,13 @@ namespace Gsemac.Collections {
         }
         public bool TryGetValue(TKey key, out TValue value) {
 
-            return dict.TryGetValue(key, out value);
+            return underlyingDict.TryGetValue(key, out value);
 
         }
 
         public IEnumerator<KeyValuePair<TKey, TValue>> GetEnumerator() {
 
-            return dict.GetEnumerator();
+            return underlyingDict.GetEnumerator();
 
         }
         IEnumerator IEnumerable.GetEnumerator() {
@@ -83,7 +91,7 @@ namespace Gsemac.Collections {
         // Private members
 
         private readonly IList<TKey> orderedKeys = new List<TKey>();
-        private readonly IDictionary<TKey, TValue> dict = new Dictionary<TKey, TValue>();
+        private readonly IDictionary<TKey, TValue> underlyingDict = new Dictionary<TKey, TValue>();
 
         private void SetValue(TKey key, TValue value) {
 
@@ -92,7 +100,7 @@ namespace Gsemac.Collections {
 
             orderedKeys.Add(key);
 
-            dict.Add(key, value);
+            underlyingDict.Add(key, value);
 
         }
 
