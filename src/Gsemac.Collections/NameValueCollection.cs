@@ -38,6 +38,19 @@ namespace Gsemac.Collections {
             underlyingDict = new MultiDictionary<string, string>(capacity, comparer);
 
         }
+        public NameValueCollection(INameValueCollection items) :
+            this() {
+
+            this.Add(items);
+
+        }
+        public NameValueCollection(IDictionary<string, string> items) :
+            this() {
+
+            foreach (var pair in items)
+                Add(pair);
+
+        }
 
         public void Add(string key, string value) {
 
