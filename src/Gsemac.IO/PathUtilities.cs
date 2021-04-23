@@ -16,6 +16,19 @@ namespace Gsemac.IO {
         public const int MaxPathSegmentLength = 255;
         public const string ExtendedLengthPrefix = @"\\?\";
 
+        public static string GetPath(string path) {
+
+            string relativePath = path;
+
+            if (!string.IsNullOrWhiteSpace(relativePath)) {
+
+                relativePath = TrimDirectorySeparators(path.Substring(System.IO.Path.GetPathRoot(path).Length));
+
+            }
+
+            return relativePath;
+
+        }
         public static string GetRelativePath(string fullPath, string relativeToPath) {
 
             if (string.IsNullOrEmpty(fullPath))
@@ -33,19 +46,6 @@ namespace Gsemac.IO {
                 return fullInputPath.Substring(index + fullRelativeToPath.Length, fullInputPath.Length - (index + fullRelativeToPath.Length));
             else
                 return fullPath;
-
-        }
-        public static string GetRelativePathToRoot(string path) {
-
-            string relativePath = path;
-
-            if (!string.IsNullOrWhiteSpace(relativePath)) {
-
-                relativePath = TrimDirectorySeparators(path.Substring(System.IO.Path.GetPathRoot(path).Length));
-
-            }
-
-            return relativePath;
 
         }
         public static IEnumerable<string> GetPathSegments(string path) {
@@ -79,6 +79,17 @@ namespace Gsemac.IO {
                 yield return segment;
 
         }
+        public static string GetScheme(string path) {
+
+            Match match = Regex.Match(path, @"^([\w][\w+-.]+):");
+
+            if (match.Success)
+                return match.Groups[1].Value;
+
+            return string.Empty;
+
+        }
+
         public static string GetFileName(string path) {
 
             // This process should work for both remote and local paths.
@@ -252,8 +263,8 @@ namespace Gsemac.IO {
 
                 // Make the paths relative to their root so that the path can be anonymized regardless of the drive it's on.
 
-                userDirectory = GetRelativePathToRoot(userDirectory);
-                path = GetRelativePathToRoot(path);
+                userDirectory = GetPath(userDirectory);
+                path = GetPath(path);
 
                 if (path.StartsWith(userDirectory)) {
 
@@ -367,12 +378,7 @@ namespace Gsemac.IO {
 
         }
 
-        public static bool IsFilePath(string path) {
-
-            return IsFilePath(path, verifyFileExists: false);
-
-        }
-        public static bool IsFilePath(string path, bool verifyFileExists) {
+        public static bool IsFilePath(string path, bool verifyFileExists = false) {
 
             bool result = path.Any() &&
                 path.Last() != System.IO.Path.DirectorySeparatorChar &&
@@ -384,12 +390,7 @@ namespace Gsemac.IO {
             return result;
 
         }
-        public static bool IsLocalPath(string path) {
-
-            return IsLocalPath(path, verifyPathExists: false);
-
-        }
-        public static bool IsLocalPath(string path, bool verifyPathExists) {
+        public static bool IsLocalPath(string path, bool verifyPathExists = false) {
 
             bool isLocalPath = false;
 
@@ -428,9 +429,14 @@ namespace Gsemac.IO {
             return isLocalPath;
 
         }
-        public static bool IsPathRooted(string path) {
+        public static bool IsPathRooted(string path, bool isUrl = false) {
 
             // "System.IO.Path.IsPathRooted" throws an exception for paths longer than the maximum path length, as well as for malformed paths (e.g. paths containing invalid characters).
+
+            // URLs starting with path separators are not rooted, but relative to the root.
+
+            if (isUrl && path.StartsWith("/") || path.StartsWith("\\"))
+                return false;
 
             string directorySeparatorsStr = System.IO.Path.DirectorySeparatorChar.ToString() + System.IO.Path.AltDirectorySeparatorChar.ToString();
             string pattern = @"^(?:[" + Regex.Escape(directorySeparatorsStr) + @"]|[a-z]+\:\/\/|[a-z]\:)";

@@ -32,33 +32,78 @@ namespace Gsemac.IO.Tests {
         // GetRelativePathToRoot
 
         [TestMethod]
-        public void GetPathRelativeToRootWithRoot() {
+        public void TestGetPathRelativeToRootWithRoot() {
 
-            Assert.AreEqual(@"Users\Username", PathUtilities.GetRelativePathToRoot(@"\Users\Username"));
-
-        }
-        [TestMethod]
-        public void GetPathRelativeToRootWithDriveRoot() {
-
-            Assert.AreEqual(@"Users\Username", PathUtilities.GetRelativePathToRoot(@"C:\Users\Username"));
+            Assert.AreEqual(@"Users\Username", PathUtilities.GetPath(@"\Users\Username"));
 
         }
         [TestMethod]
-        public void GetPathRelativeToRootWithNetworkShare() {
+        public void TestGetPathRelativeToRootWithDriveRoot() {
 
-            Assert.AreEqual(@"Username", PathUtilities.GetRelativePathToRoot(@"\\Share\Users\Username"));
-
-        }
-        [TestMethod]
-        public void GetPathRelativeToRootWithRelativePath() {
-
-            Assert.AreEqual(@"Users\Username", PathUtilities.GetRelativePathToRoot(@"Users\Username"));
+            Assert.AreEqual(@"Users\Username", PathUtilities.GetPath(@"C:\Users\Username"));
 
         }
         [TestMethod]
-        public void GetPathRelativeToRootWithEmptyString() {
+        public void TestGetPathRelativeToRootWithNetworkShare() {
 
-            Assert.AreEqual(string.Empty, PathUtilities.GetRelativePathToRoot(string.Empty));
+            Assert.AreEqual(@"Username", PathUtilities.GetPath(@"\\Share\Users\Username"));
+
+        }
+        [TestMethod]
+        public void TestGetPathRelativeToRootWithRelativePath() {
+
+            Assert.AreEqual(@"Users\Username", PathUtilities.GetPath(@"Users\Username"));
+
+        }
+        [TestMethod]
+        public void TestGetPathRelativeToRootWithEmptyString() {
+
+            Assert.AreEqual(string.Empty, PathUtilities.GetPath(string.Empty));
+
+        }
+
+        // GetScheme
+
+        [TestMethod]
+        public void TestGetSchemeWithUrl() {
+
+            Assert.AreEqual("https", PathUtilities.GetScheme(@"https://stackoverflow.com/questions/"));
+
+        }
+        [TestMethod]
+        public void TestGetSchemeWithDriveLetter() {
+
+            Assert.AreEqual(string.Empty, PathUtilities.GetScheme(@"C:\Windows"));
+
+        }
+        [TestMethod]
+        public void TestGetSchemeWithEmptyString() {
+
+            Assert.AreEqual(string.Empty, PathUtilities.GetScheme(string.Empty));
+
+        }
+        [TestMethod]
+        public void TestGetSchemeWithInvalidCharacters() {
+
+            Assert.AreEqual(string.Empty, PathUtilities.GetScheme(@"inv@lid://stackoverflow.com/"));
+
+        }
+        [TestMethod]
+        public void TestGetSchemeWithNoColon() {
+
+            Assert.AreEqual(string.Empty, PathUtilities.GetScheme(@"//stackoverflow.com/"));
+
+        }
+        [TestMethod]
+        public void TestGetSchemeWithMultipleColons() {
+
+            Assert.AreEqual("inval", PathUtilities.GetScheme(@"inval:d://stackoverflow.com/"));
+
+        }
+        [TestMethod]
+        public void TestGetSchemeWithNoAuthority() {
+
+            Assert.AreEqual("https", PathUtilities.GetScheme(@"https:"));
 
         }
 
