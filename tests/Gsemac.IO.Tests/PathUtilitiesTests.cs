@@ -6,6 +6,27 @@ namespace Gsemac.IO.Tests {
     [TestClass]
     public class PathUtilitiesTests {
 
+        // GetPath
+
+        [TestMethod]
+        public void TestGetPathWithUrl() {
+
+            Assert.AreEqual("/questions/", PathUtilities.GetPath(@"https://stackoverflow.com/questions/"));
+
+        }
+        [TestMethod]
+        public void TestGetPathWithDriveLetter() {
+
+            Assert.AreEqual(@"windows\", PathUtilities.GetPath(@"C:\windows\"));
+
+        }
+        [TestMethod]
+        public void TestGetPathWithEmptyString() {
+
+            Assert.AreEqual(string.Empty, PathUtilities.GetPath(string.Empty));
+
+        }
+
         // GetRelativePath
 
         [TestMethod]
@@ -104,6 +125,51 @@ namespace Gsemac.IO.Tests {
         public void TestGetSchemeWithNoAuthority() {
 
             Assert.AreEqual("https", PathUtilities.GetScheme(@"https:"));
+
+        }
+
+        // GetRoot
+
+        [TestMethod]
+        public void TestGetRootWithUrl() {
+
+            Assert.AreEqual("https://stackoverflow.com", PathUtilities.GetRoot(@"https://stackoverflow.com/questions/"));
+
+        }
+        [TestMethod]
+        public void TestGetRootWithUrlWithBackslashes() {
+
+            Assert.AreEqual(@"https:\\stackoverflow.com", PathUtilities.GetRoot(@"https:\\stackoverflow.com\questions\"));
+
+        }
+        [TestMethod]
+        public void TestGetRootWithUncPath() {
+
+            Assert.AreEqual(@"\\user\documents", PathUtilities.GetRoot(@"\\user\documents\file.txt"));
+
+        }
+        [TestMethod]
+        public void TestGetRootWithDriveLetter() {
+
+            Assert.AreEqual(@"C:", PathUtilities.GetRoot(@"C:\Windows"));
+
+        }
+        [TestMethod]
+        public void TestGetRootWithIllegalCharacters() {
+
+            Assert.AreEqual(@"C:", PathUtilities.GetRoot(@"C:\Wi|ndows"));
+
+        }
+        [TestMethod]
+        public void TestGetRootWithAbsolutePath() {
+
+            Assert.AreEqual(@"\", PathUtilities.GetRoot(@"\a\b"));
+
+        }
+        [TestMethod]
+        public void TestGetRootWithEmptyString() {
+
+            Assert.AreEqual(string.Empty, PathUtilities.GetRoot(string.Empty));
 
         }
 

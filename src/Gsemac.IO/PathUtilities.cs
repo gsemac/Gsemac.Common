@@ -20,11 +20,11 @@ namespace Gsemac.IO {
 
             string relativePath = path;
 
-            if (!string.IsNullOrWhiteSpace(relativePath)) {
+            if (!string.IsNullOrWhiteSpace(relativePath))
+                relativePath = path.Substring(GetRoot(path).Length);
 
-                relativePath = TrimDirectorySeparators(path.Substring(GetRoot(path).Length));
-
-            }
+            if (!IsUrl(path))
+                relativePath = TrimLeftDirectorySeparators(relativePath);
 
             return relativePath;
 
@@ -91,7 +91,27 @@ namespace Gsemac.IO {
         }
         public static string GetRoot(string path) {
 
-            return System.IO.Path.GetPathRoot(path);
+            string rootPath = string.Empty;
+            string scheme = GetScheme(path);
+
+            if (!string.IsNullOrWhiteSpace(scheme)) {
+
+                Match rootMatch = Regex.Match(path.Substring(scheme.Length), @":[\/\\]{2}[^\/\\]+(?:[\/\\]|$)");
+
+                if (rootMatch.Success)
+                    rootPath = path.Substring(0, scheme.Length + rootMatch.Length);
+
+            }
+            else if (!string.IsNullOrEmpty(path)) {
+
+                rootPath = System.IO.Path.GetPathRoot(path);
+
+            }
+
+            if (!string.IsNullOrEmpty(rootPath) && !rootPath.All(c => c.Equals(System.IO.Path.DirectorySeparatorChar) || c.Equals(System.IO.Path.AltDirectorySeparatorChar)))
+                rootPath = TrimRightDirectorySeparators(rootPath);
+
+            return rootPath;
 
         }
 
@@ -257,6 +277,11 @@ namespace Gsemac.IO {
             return isTemporaryFilePath;
 
         }
+        public static bool IsUrl(string path) {
+
+            return !string.IsNullOrWhiteSpace(GetScheme(path));
+
+        }
 
         public static string AnonymizePath(string path) {
 
@@ -295,12 +320,12 @@ namespace Gsemac.IO {
             return path?.Trim(System.IO.Path.DirectorySeparatorChar, System.IO.Path.AltDirectorySeparatorChar);
 
         }
-        public static string TrimLeadingDirectorySeparators(string path) {
+        public static string TrimLeftDirectorySeparators(string path) {
 
             return path?.TrimStart(System.IO.Path.DirectorySeparatorChar, System.IO.Path.AltDirectorySeparatorChar);
 
         }
-        public static string TrimFollowingDirectorySeparators(string path) {
+        public static string TrimRightDirectorySeparators(string path) {
 
             return path?.TrimEnd(System.IO.Path.DirectorySeparatorChar, System.IO.Path.AltDirectorySeparatorChar);
 
