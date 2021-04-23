@@ -115,7 +115,7 @@ namespace Gsemac.IO {
 
         }
 
-        public static string GetFileName(string path) {
+        public static string GetFilename(string path) {
 
             // This process should work for both remote and local paths.
 
@@ -148,16 +148,16 @@ namespace Gsemac.IO {
             return result;
 
         }
-        public static string GetFileNameWithoutExtension(string path) {
+        public static string GetFilenameWithoutExtension(string path) {
 
-            string fileName = GetFileName(path);
+            string fileName = GetFilename(path);
 
             return StringUtilities.BeforeLast(fileName, ".");
 
         }
         public static string GetFileExtension(string path) {
 
-            string filename = GetFileName(path);
+            string filename = GetFilename(path);
 
             if (filename is null)
                 return string.Empty;

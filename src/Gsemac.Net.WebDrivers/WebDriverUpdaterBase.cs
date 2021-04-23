@@ -131,7 +131,7 @@ namespace Gsemac.Net.WebDrivers {
 
                 try {
 
-                    string filePathInArchive = PathUtilities.GetFileName(webDriverExecutablePath);
+                    string filePathInArchive = PathUtilities.GetFilename(webDriverExecutablePath);
 
                     OnLog.Info($"Extracting {filePathInArchive}");
 

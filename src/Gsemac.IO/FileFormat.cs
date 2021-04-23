@@ -25,7 +25,7 @@ namespace Gsemac.IO {
             if (string.IsNullOrWhiteSpace(filePath))
                 throw new ArgumentException(filePath);
 
-            string filename = PathUtilities.GetFileName(filePath);
+            string filename = PathUtilities.GetFilename(filePath);
             string ext = PathUtilities.GetFileExtension(filename);
 
             if (string.IsNullOrWhiteSpace(ext))

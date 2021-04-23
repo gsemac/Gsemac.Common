@@ -12,7 +12,7 @@ namespace Gsemac.Net.GitHub {
         public string Url => GetUrl();
         public string CommitHash { get; set; }
         public string CommitMessage { get; set; }
-        public string Name => Uri.UnescapeDataString(PathUtilities.GetFileName(Url));
+        public string Name => Uri.UnescapeDataString(PathUtilities.GetFilename(Url));
         public string Path => Uri.UnescapeDataString(gitHubUrl.Path);
         public bool IsDirectory { get; set; }
         public DateTimeOffset LastModified { get; set; }
