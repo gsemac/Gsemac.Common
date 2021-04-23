@@ -279,6 +279,11 @@ namespace Gsemac.IO.Tests {
         [TestMethod]
         public void TestIsLocalPathWithAbsoluteDirectoryPath() {
 
+            // The path "\user\documents\" could be:
+            // - A relative path as part of a local or remote path.
+            // - A rooted local path.
+            // We'll assume that it is a rooted local path rather than treating it as indeterminate.
+
             Assert.IsTrue(PathUtilities.IsLocalPath(@"\user\documents\", verifyPathExists: false));
 
         }
@@ -291,9 +296,10 @@ namespace Gsemac.IO.Tests {
         [TestMethod]
         public void TestIsLocalPathWithAbsoluteDirectoryPathWithInvalidCharacters() {
 
+            // See TestIsLocalPathWithAbsoluteDirectoryPath for discussion.
             // IsLocalPath does not attempt to do any validation.
 
-            Assert.IsTrue(PathUtilities.IsLocalPath(@"documents|\", verifyPathExists: false));
+            Assert.IsTrue(PathUtilities.IsLocalPath(@"\documents|\", verifyPathExists: false));
 
         }
         [TestMethod]

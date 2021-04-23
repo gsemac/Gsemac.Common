@@ -22,7 +22,7 @@ namespace Gsemac.IO {
 
             if (!string.IsNullOrWhiteSpace(relativePath)) {
 
-                relativePath = TrimDirectorySeparators(path.Substring(System.IO.Path.GetPathRoot(path).Length));
+                relativePath = TrimDirectorySeparators(path.Substring(GetRoot(path).Length));
 
             }
 
@@ -87,6 +87,11 @@ namespace Gsemac.IO {
                 return match.Groups[1].Value;
 
             return string.Empty;
+
+        }
+        public static string GetRoot(string path) {
+
+            return System.IO.Path.GetPathRoot(path);
 
         }
 
@@ -407,16 +412,20 @@ namespace Gsemac.IO {
                     // "IsFile" returns true for both local file and directory paths.
                     // "IsUnc" will return true for paths beginning with "\\" or "//" (the latter case gets turned into "file://"). 
 
-                    isLocalPath = testUri.IsFile && !testUri.IsUnc;
-
-                    if (isLocalPath && verifyPathExists)
-                        isLocalPath = PathExists(testUri.LocalPath);
+                    isLocalPath = testUri.IsFile && !testUri.IsUnc &&
+                        (!verifyPathExists || PathExists(testUri.LocalPath));
 
                 }
-                else if (new char[] { System.IO.Path.AltDirectorySeparatorChar, System.IO.Path.DirectorySeparatorChar }.All(c => c != path.First()) && Uri.TryCreate(path, UriKind.Relative, out _)) {
+                else if (new char[] { System.IO.Path.AltDirectorySeparatorChar, System.IO.Path.DirectorySeparatorChar }.Any(c => c == path.First())) {
+
+                    // Rooted paths that don't specify a scheme will be considered local.
+
+                    isLocalPath = !verifyPathExists || PathExists(testUri.LocalPath);
+
+                }
+                else if (Uri.TryCreate(path, UriKind.Relative, out _)) {
 
                     // Check the full path for this relative path.
-                    // We initially avoid cases where the path begins with a directory separator as those should be considered rooted.
 
                     path = System.IO.Path.GetFullPath(path);
 
@@ -435,7 +444,7 @@ namespace Gsemac.IO {
 
             // URLs starting with path separators are not rooted, but relative to the root.
 
-            if (isUrl && path.StartsWith("/") || path.StartsWith("\\"))
+            if (isUrl && (path.StartsWith("/") || path.StartsWith("\\")))
                 return false;
 
             string directorySeparatorsStr = System.IO.Path.DirectorySeparatorChar.ToString() + System.IO.Path.AltDirectorySeparatorChar.ToString();
