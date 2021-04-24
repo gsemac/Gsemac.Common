@@ -7,11 +7,15 @@ namespace Gsemac.IO.Logging {
 
         // Public members
 
-        public ConsoleLogger() {
+        public ConsoleLogger() :
+            this(LoggerOptions.Default) {
+        }
+        public ConsoleLogger(ILoggerOptions options) {
         }
         public ConsoleLogger(bool enabled) :
             base(enabled) {
         }
+
 
         // Protected members
 
