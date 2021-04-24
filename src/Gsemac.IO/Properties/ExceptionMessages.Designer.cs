@@ -79,6 +79,15 @@ namespace Gsemac.IO.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The MIME type was malformed..
+        /// </summary>
+        internal static string MalformedMimeType {
+            get {
+                return ResourceManager.GetString("MalformedMimeType", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Stream does not support seeking..
         /// </summary>
         internal static string StreamDoesNotSupportSeeking {
