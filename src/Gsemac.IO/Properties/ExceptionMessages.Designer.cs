@@ -70,6 +70,15 @@ namespace Gsemac.IO.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The file was not in the correct format..
+        /// </summary>
+        internal static string IncorrectFileFormat {
+            get {
+                return ResourceManager.GetString("IncorrectFileFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Stream does not support seeking..
         /// </summary>
         internal static string StreamDoesNotSupportSeeking {
@@ -84,6 +93,15 @@ namespace Gsemac.IO.Properties {
         internal static string StreamDoesNotSupportThisOperation {
             get {
                 return ResourceManager.GetString("StreamDoesNotSupportThisOperation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The file format is not supported..
+        /// </summary>
+        internal static string UnsupportedFileFormat {
+            get {
+                return ResourceManager.GetString("UnsupportedFileFormat", resourceCulture);
             }
         }
     }

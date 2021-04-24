@@ -120,10 +120,16 @@
   <data name="CannotAccessAClosedStream" xml:space="preserve">
     <value>Cannot access a closed stream.</value>
   </data>
+  <data name="IncorrectFileFormat" xml:space="preserve">
+    <value>The file was not in the correct format.</value>
+  </data>
   <data name="StreamDoesNotSupportSeeking" xml:space="preserve">
     <value>Stream does not support seeking.</value>
   </data>
   <data name="StreamDoesNotSupportThisOperation" xml:space="preserve">
     <value>Stream does not support this operation.</value>
+  </data>
+  <data name="UnsupportedFileFormat" xml:space="preserve">
+    <value>The file format is not supported.</value>
   </data>
 </root>

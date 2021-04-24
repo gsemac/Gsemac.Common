@@ -9,7 +9,7 @@ namespace Gsemac.IO {
         // Public members
 
         public FileFormatException() :
-            this("The file was not in the correct format.") {
+            this(Properties.ExceptionMessages.IncorrectFileFormat) {
         }
         public FileFormatException(string message) :
             base(message) {
