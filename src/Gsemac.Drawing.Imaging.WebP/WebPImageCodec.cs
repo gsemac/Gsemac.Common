@@ -40,7 +40,7 @@ namespace Gsemac.Drawing.Imaging {
 
             return new[]{
                 ".webp"
-            }.Select(ext => FileFormat.FromFileExtension(ext));
+            }.Select(ext => FileFormatFactory.Default.FromFileExtension(ext));
 
         }
 
