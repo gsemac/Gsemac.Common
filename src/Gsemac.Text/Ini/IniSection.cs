@@ -22,10 +22,10 @@ namespace Gsemac.Text.Ini {
             Name = name;
 
         }
-        public IniSection(string name, IIniDocument parentIniData) :
+        internal IniSection(string name, IIniDocument parentDocument) :
             this(name) {
 
-            this.parentIniData = parentIniData;
+            this.parentIniData = parentDocument;
 
         }
 
