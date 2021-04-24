@@ -6,55 +6,17 @@ using System.Linq;
 
 namespace Gsemac.Drawing.Imaging {
 
-    public static class ImageCodec {
+    public class ImageCodecFactory :
+        IImageCodecFactory {
 
         // Public members
 
-        public static IEnumerable<IFileFormat> SupportedFileFormats => GetSupportedImageFormats();
-        public static IEnumerable<IFileFormat> NativelySupportedFileFormats => GetNativelySupportedImageFormats();
+        public IEnumerable<IFileFormat> SupportedFileFormats => GetSupportedImageFormats();
+        public IEnumerable<IFileFormat> NativelySupportedFileFormats => GetNativelySupportedImageFormats();
 
-        public static bool IsSupportedFileFormat(string filePath) {
+        public static ImageCodecFactory Default => new ImageCodecFactory();
 
-            string ext = PathUtilities.GetFileExtension(filePath).ToLowerInvariant();
-
-            if (string.IsNullOrWhiteSpace(ext))
-                return false;
-
-            return IsSupportedFileFormat(FileFormat.FromFileExtension(ext));
-
-        }
-        public static bool IsSupportedFileFormat(IFileFormat fileFormat) {
-
-            return SupportedFileFormats.Any(supportedImageFormat => supportedImageFormat.Equals(fileFormat));
-
-        }
-        public static bool IsNativelySupportedFileFormat(string filePath) {
-
-            string ext = PathUtilities.GetFileExtension(filePath).ToLowerInvariant();
-
-            if (string.IsNullOrWhiteSpace(ext))
-                return false;
-
-            return IsNativelySupportedFileFormat(FileFormat.FromFileExtension(ext));
-
-        }
-        public static bool IsNativelySupportedFileFormat(IFileFormat fileFormat) {
-
-            return NativelySupportedFileFormats.Any(supportedImageFormat => supportedImageFormat.Equals(fileFormat));
-
-        }
-
-        public static IImageCodec FromFileExtension(string filePath) {
-
-            string ext = PathUtilities.GetFileExtension(filePath);
-
-            if (string.IsNullOrWhiteSpace(ext))
-                return null;
-
-            return FromFileFormat(FileFormat.FromFileExtension(ext));
-
-        }
-        public static IImageCodec FromFileFormat(IFileFormat imageFormat) {
+        public IImageCodec Create(IFileFormat imageFormat) {
 
             return GetImageCodecs(imageFormat).FirstOrDefault(codec => codec.IsSupportedFileFormat(imageFormat));
 

@@ -1,5 +1,6 @@
 ﻿using Gsemac.Drawing.Extensions;
 using Gsemac.IO;
+using Gsemac.IO.Extensions;
 using System;
 using System.IO;
 using System.Linq;
@@ -29,7 +30,7 @@ namespace Gsemac.Drawing.Imaging {
             string destinationExt = Path.GetExtension(destinationFilePath);
             bool overwriteSourceFile = sourceFilePath.Equals(destinationFilePath, StringComparison.OrdinalIgnoreCase);
 
-            if (!ImageCodec.IsSupportedFileFormat(sourceExt) || !ImageCodec.IsSupportedFileFormat(destinationExt))
+            if (!ImageCodecFactory.Default.IsSupportedFileFormat(sourceExt) || !ImageCodecFactory.Default.IsSupportedFileFormat(destinationExt))
                 throw new UnsupportedFileFormatException();
 
             if (sourceExt.Equals(destinationExt, StringComparison.OrdinalIgnoreCase) &&
@@ -49,7 +50,7 @@ namespace Gsemac.Drawing.Imaging {
 
                 IImage image;
 
-                using (image = imageFactory.FromFile(sourceFilePath)) {
+                using (image = imageFactory.Create(sourceFilePath)) {
 
                     image = ImageFilter.ApplyAll(image, options.Filters);
 

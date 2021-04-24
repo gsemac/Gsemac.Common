@@ -1,21 +1,19 @@
 ﻿using Gsemac.Drawing.Imaging;
-using Gsemac.Drawing.Imaging.Extensions;
-using Gsemac.IO;
 
 namespace Gsemac.Drawing {
 
     public class ImageFactory :
-        IImageFactory {
+        ImageFactoryBase {
 
-        public IImage FromFile(string filePath) {
+        // Public members
 
-            IImageCodec imageCodec = ImageCodec.FromFileExtension(filePath);
+        public static ImageFactory Default => new ImageFactory();
 
-            if (imageCodec is null)
-                throw new UnsupportedFileFormatException();
-
-            return imageCodec.Decode(filePath);
-
+        public ImageFactory() :
+            this(ImageCodecFactory.Default) {
+        }
+        public ImageFactory(IImageCodecFactory imageCodecFactory) :
+            base(imageCodecFactory) {
         }
 
     }

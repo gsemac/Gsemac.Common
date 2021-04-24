@@ -20,7 +20,7 @@ namespace Gsemac.Drawing.Imaging {
 
         // Public members
 
-        public IEnumerable<IFileFormat> SupportedFileFormats => ImageCodec.NativelySupportedFileFormats;
+        public IEnumerable<IFileFormat> SupportedFileFormats => ImageCodecFactory.Default.NativelySupportedFileFormats;
 
         public GdiImageCodec() {
         }

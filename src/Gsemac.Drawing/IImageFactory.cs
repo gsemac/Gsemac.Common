@@ -1,8 +1,11 @@
-﻿namespace Gsemac.Drawing {
+﻿using Gsemac.IO;
 
-    public interface IImageFactory {
+namespace Gsemac.Drawing {
 
-        IImage FromFile(string filePath);
+    public interface IImageFactory :
+        IHasSupportedFileFormats {
+
+        IImage Create(string filePath);
 
     }
 
