@@ -1,9 +1,8 @@
 ﻿using System.Collections.Generic;
-using System.IO;
 
 namespace Gsemac.Text.Ini {
 
-    public interface IIniData :
+    public interface IIniDocument :
          IEnumerable<IIniSection> {
 
         IIniSection this[string key] { get; set; }
@@ -13,9 +12,6 @@ namespace Gsemac.Text.Ini {
         void AddSection(IIniSection section);
         IIniSection GetSection(string name);
         bool RemoveSection(string name);
-
-        void Save(string filePath);
-        void Save(Stream stream);
 
     }
 

@@ -8,8 +8,8 @@ using System.Text.RegularExpressions;
 
 namespace Gsemac.Text.Ini {
 
-    public class IniData :
-        IIniData {
+    public class IniDocument :
+        IIniDocument {
 
         // Public members
 
@@ -20,8 +20,8 @@ namespace Gsemac.Text.Ini {
 
         public IIniSection DefaultSection => this[string.Empty];
 
-        public IniData() { }
-        public IniData(IIniOptions options) {
+        public IniDocument() { }
+        public IniDocument(IIniOptions options) {
 
             this.options = options;
 
@@ -43,19 +43,6 @@ namespace Gsemac.Text.Ini {
         public bool RemoveSection(string name) {
 
             return sections.Remove(GetKey(name));
-
-        }
-
-        public void Save(string filePath) {
-
-            using (FileStream fs = new FileStream(filePath, FileMode.Create))
-                Save(fs);
-
-        }
-        public void Save(Stream stream) {
-
-            using (MemoryStream ms = new MemoryStream(Encoding.UTF8.GetBytes(ToString())))
-                ms.CopyTo(stream);
 
         }
 
@@ -131,36 +118,36 @@ namespace Gsemac.Text.Ini {
 
         }
 
-        public static IniData Parse(string iniString) {
+        public static IniDocument Parse(string iniString) {
 
             return Parse(iniString, new IniOptions());
 
         }
-        public static IniData Parse(string iniString, IIniOptions options) {
+        public static IniDocument Parse(string iniString, IIniOptions options) {
 
             using (MemoryStream ms = new MemoryStream(Encoding.UTF8.GetBytes(iniString)))
                 return FromStream(ms);
 
         }
-        public static IniData FromFile(string filePath) {
+        public static IniDocument FromFile(string filePath) {
 
             return FromFile(filePath, new IniOptions());
 
         }
-        public static IniData FromFile(string filePath, IIniOptions options) {
+        public static IniDocument FromFile(string filePath, IIniOptions options) {
 
             using (FileStream fs = new FileStream(filePath, FileMode.Open))
                 return FromStream(fs);
 
         }
-        public static IniData FromStream(Stream stream) {
+        public static IniDocument FromStream(Stream stream) {
 
             return FromStream(stream, new IniOptions());
 
         }
-        public static IniData FromStream(Stream stream, IIniOptions options) {
+        public static IniDocument FromStream(Stream stream, IIniOptions options) {
 
-            IniData result = new IniData(options);
+            IniDocument result = new IniDocument(options);
 
             IIniSection lastSection = null;
             IIniProperty lastProperty = null;

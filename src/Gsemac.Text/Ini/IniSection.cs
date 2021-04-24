@@ -22,7 +22,7 @@ namespace Gsemac.Text.Ini {
             Name = name;
 
         }
-        public IniSection(string name, IIniData parentIniData) :
+        public IniSection(string name, IIniDocument parentIniData) :
             this(name) {
 
             this.parentIniData = parentIniData;
@@ -76,7 +76,7 @@ namespace Gsemac.Text.Ini {
         // Private members
 
         private readonly IDictionary<string, IIniProperty> properties = new OrderedDictionary<string, IIniProperty>();
-        private readonly IIniData parentIniData = null;
+        private readonly IIniDocument parentIniData = null;
         private bool addedToParent = false;
 
         private string GetKey(string propertyName) {
