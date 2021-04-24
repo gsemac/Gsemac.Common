@@ -3,35 +3,35 @@
 namespace Gsemac.Reflection.Tests {
 
     [TestClass]
-    public class ObjectUtilitiesTests {
+    public class TypeUtilitiesTests {
 
         // TryCast
 
         [TestMethod]
         public void TryCastStringToEnumWithValidName() {
 
-            Assert.IsTrue(ObjectUtilities.TryCast("Item3", out TestEnum enumValue));
+            Assert.IsTrue(TypeUtilities.TryCast("Item3", out TestEnum enumValue));
             Assert.AreEqual(TestEnum.Item3, enumValue);
 
         }
         [TestMethod]
         public void TryCastStringToEnumWithValidCaseInsensitiveName() {
 
-            Assert.IsTrue(ObjectUtilities.TryCast("item3", out TestEnum enumValue));
+            Assert.IsTrue(TypeUtilities.TryCast("item3", out TestEnum enumValue));
             Assert.AreEqual(TestEnum.Item3, enumValue);
 
         }
         [TestMethod]
         public void TryCastStringToEnumWithValidIntegralString() {
 
-            Assert.IsTrue(ObjectUtilities.TryCast("2", out TestEnum enumValue));
+            Assert.IsTrue(TypeUtilities.TryCast("2", out TestEnum enumValue));
             Assert.AreEqual(TestEnum.Item3, enumValue);
 
         }
         [TestMethod]
         public void TryCastIntToEnumWithValidValue() {
 
-            Assert.IsTrue(ObjectUtilities.TryCast(2, out TestEnum enumValue));
+            Assert.IsTrue(TypeUtilities.TryCast(2, out TestEnum enumValue));
             Assert.AreEqual(TestEnum.Item3, enumValue);
 
         }
