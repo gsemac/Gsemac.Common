@@ -50,7 +50,7 @@ namespace Gsemac.Drawing.Imaging {
 
                 IImage image;
 
-                using (image = imageFactory.Create(sourceFilePath)) {
+                using (image = imageFactory.FromFile(sourceFilePath)) {
 
                     image = ImageFilter.ApplyAll(image, options.Filters);
 

@@ -14,7 +14,7 @@ namespace Gsemac.Drawing.Imaging {
 
         public static ImageOptimizerFactory Default => new ImageOptimizerFactory();
 
-        public IImageOptimizer Create(IFileFormat imageFormat) {
+        public IImageOptimizer FromFileFormat(IFileFormat imageFormat) {
 
             return GetImageOptimizers().FirstOrDefault(optimizer => optimizer.IsSupportedFileFormat(imageFormat));
 

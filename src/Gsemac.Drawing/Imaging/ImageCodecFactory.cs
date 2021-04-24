@@ -16,7 +16,7 @@ namespace Gsemac.Drawing.Imaging {
 
         public static ImageCodecFactory Default => new ImageCodecFactory();
 
-        public IImageCodec Create(IFileFormat imageFormat) {
+        public IImageCodec FromFileFormat(IFileFormat imageFormat) {
 
             return GetImageCodecs(imageFormat).FirstOrDefault(codec => codec.IsSupportedFileFormat(imageFormat));
 
@@ -48,7 +48,7 @@ namespace Gsemac.Drawing.Imaging {
                 ".tif",
                 ".tiff"
             }).OrderBy(type => type)
-            .Select(ext => FileFormat.FromFileExtension(ext))
+            .Select(ext => FileFormatFactory.Default.FromFileExtension(ext))
             .Distinct();
 
         }

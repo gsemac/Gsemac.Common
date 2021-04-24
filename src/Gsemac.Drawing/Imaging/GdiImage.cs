@@ -82,17 +82,17 @@ namespace Gsemac.Drawing.Imaging {
         private static IFileFormat GetImageFormatFromImageFormat(System.Drawing.Imaging.ImageFormat imageFormat) {
 
             if (imageFormat.Equals(System.Drawing.Imaging.ImageFormat.Bmp))
-                return FileFormat.FromFileExtension(".bmp");
+                return FileFormatFactory.Default.FromFileExtension(".bmp");
             else if (imageFormat.Equals(System.Drawing.Imaging.ImageFormat.Gif))
-                return FileFormat.FromFileExtension(".gif");
+                return FileFormatFactory.Default.FromFileExtension(".gif");
             else if (imageFormat.Equals(System.Drawing.Imaging.ImageFormat.Exif))
-                return FileFormat.FromFileExtension(".exif");
+                return FileFormatFactory.Default.FromFileExtension(".exif");
             else if (imageFormat.Equals(System.Drawing.Imaging.ImageFormat.Jpeg))
                 return ImageFormat.Jpeg;
             else if (imageFormat.Equals(System.Drawing.Imaging.ImageFormat.Png))
                 return ImageFormat.Png;
             else if (imageFormat.Equals(System.Drawing.Imaging.ImageFormat.Tiff))
-                return FileFormat.FromFileExtension(".tiff");
+                return FileFormatFactory.Default.FromFileExtension(".tiff");
             else
                 return null;
 

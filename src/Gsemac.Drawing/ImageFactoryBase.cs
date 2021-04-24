@@ -12,9 +12,9 @@ namespace Gsemac.Drawing {
 
         public IEnumerable<IFileFormat> SupportedFileFormats => imageCodecFactory.SupportedFileFormats;
 
-        public IImage Create(string filePath) {
+        public IImage FromFile(string filePath) {
 
-            IImageCodec imageCodec = imageCodecFactory.Create(filePath);
+            IImageCodec imageCodec = imageCodecFactory.FromFileExtension(filePath);
 
             if (imageCodec is null)
                 throw new UnsupportedFileFormatException();

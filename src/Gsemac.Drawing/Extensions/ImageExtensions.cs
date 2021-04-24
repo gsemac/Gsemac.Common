@@ -21,7 +21,7 @@ namespace Gsemac.Drawing.Extensions {
         }
         public static void Save(this IImage image, Stream stream, IFileFormat imageFormat, IImageEncoderOptions encoderOptions) {
 
-            IImageEncoder encoder = ImageCodecFactory.Default.Create(imageFormat);
+            IImageEncoder encoder = ImageCodecFactory.Default.FromFileFormat(imageFormat);
 
             if (encoder is null)
                 throw new UnsupportedFileFormatException();
@@ -30,7 +30,7 @@ namespace Gsemac.Drawing.Extensions {
 
             if (stream.CanSeek && encoderOptions.OptimizationMode != ImageOptimizationMode.None) {
 
-                IImageOptimizer imageOptimizer = ImageOptimizerFactory.Default.Create(imageFormat);
+                IImageOptimizer imageOptimizer = ImageOptimizerFactory.Default.FromFileFormat(imageFormat);
 
                 if (!(imageOptimizer is null)) {
 
@@ -51,7 +51,7 @@ namespace Gsemac.Drawing.Extensions {
         }
         public static void Save(this IImage image, string filePath, IImageEncoderOptions encoderOptions) {
 
-            IFileFormat imageFormat = FileFormat.FromFileExtension(filePath);
+            IFileFormat imageFormat = FileFormatFactory.Default.FromFileExtension(filePath);
 
             if (imageFormat is null)
                 throw new UnsupportedFileFormatException();

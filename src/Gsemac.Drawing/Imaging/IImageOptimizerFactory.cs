@@ -5,7 +5,7 @@ namespace Gsemac.Drawing.Imaging {
     public interface IImageOptimizerFactory :
         IHasSupportedFileFormats {
 
-        IImageOptimizer Create(IFileFormat imageFormat);
+        IImageOptimizer FromFileFormat(IFileFormat imageFormat);
 
     }
 
