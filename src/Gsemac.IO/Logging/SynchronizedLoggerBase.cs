@@ -19,8 +19,14 @@
 
         public SynchronizedLoggerBase() {
         }
+        public SynchronizedLoggerBase(ILoggerOptions options) :
+            base(options) {
+        }
         public SynchronizedLoggerBase(bool enabled) :
             base(enabled) {
+        }
+        public SynchronizedLoggerBase(bool enabled, ILoggerOptions options) :
+          base(enabled, options) {
         }
 
         // Private members

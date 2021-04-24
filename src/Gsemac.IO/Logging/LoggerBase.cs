@@ -41,16 +41,13 @@ namespace Gsemac.IO.Logging {
 
             }
         }
-        public ILogHeaderCollection Headers { get; set; } = new LogHeaderCollection();
-        public bool IgnoreExceptions { get; set; } = true;
-        public ILogMessageFormatter LogMessageFormatter { get; set; } = new LogMessageFormatter();
 
         public virtual void Log(ILogMessage message) {
 
             try {
 
                 if (Enabled)
-                    Log(message, LogMessageFormatter.Format(message));
+                    Log(message, options.MessageFormatter.Format(message));
 
                 // Event handlers are always invoked, even when the logger is disabled.
 
@@ -59,7 +56,7 @@ namespace Gsemac.IO.Logging {
             }
             catch (Exception ex) {
 
-                if (!IgnoreExceptions)
+                if (!options.IgnoreExceptions)
                     throw ex;
 
             }
@@ -71,8 +68,15 @@ namespace Gsemac.IO.Logging {
         protected LoggerBase() :
             this(true) {
         }
-        protected LoggerBase(bool enabled) {
+        protected LoggerBase(ILoggerOptions options) :
+           this(true, options) {
+        }
+        protected LoggerBase(bool enabled) :
+            this(enabled, LoggerOptions.Default) {
+        }
+        protected LoggerBase(bool enabled, ILoggerOptions options) {
 
+            this.options = options;
             this.enabled = enabled;
 
             if (enabled)
@@ -95,7 +99,7 @@ namespace Gsemac.IO.Logging {
 
                         // If exceptions are ignored, exceptions can be thrown in event handlers without interrupting other event handlers.
 
-                        if (!IgnoreExceptions)
+                        if (!options.IgnoreExceptions)
                             throw ex;
 
                     }
@@ -114,7 +118,7 @@ namespace Gsemac.IO.Logging {
             // This will not trigger the event handlers, and they will have headers written separately (when they add event handlers).
 
             if (!wroteHeaders)
-                WriteHeaders((sender, e) => Log(e.Message, LogMessageFormatter.Format(e.Message)));
+                WriteHeaders((sender, e) => Log(e.Message, options.MessageFormatter.Format(e.Message)));
 
             wroteHeaders = true;
 
@@ -124,7 +128,7 @@ namespace Gsemac.IO.Logging {
 
             // Keys are copied into an array so we don't run into trouble if the headers are modified in another thread.
 
-            foreach (string key in Headers?.Keys.ToArray()) {
+            foreach (string key in options.Headers?.Keys.ToArray()) {
 
                 string headerName = key;
                 string headerValue = "";
@@ -134,12 +138,12 @@ namespace Gsemac.IO.Logging {
 
                 try {
 
-                    headerValue = Headers[key];
+                    headerValue = options.Headers[key];
 
                 }
                 catch (Exception ex) {
 
-                    if (!IgnoreExceptions)
+                    if (!options.IgnoreExceptions)
                         throw ex;
 
                     headerValue = ex.ToString();
@@ -156,7 +160,7 @@ namespace Gsemac.IO.Logging {
                 }
                 catch (Exception ex) {
 
-                    if (!IgnoreExceptions)
+                    if (!options.IgnoreExceptions)
                         throw ex;
 
                 }
@@ -168,6 +172,7 @@ namespace Gsemac.IO.Logging {
         // Private members
 
         private readonly object loggedEventMutex = new object();
+        private readonly ILoggerOptions options;
         private bool enabled = true;
         private LogEventHandler loggedEvent;
         private bool wroteHeaders = false;
