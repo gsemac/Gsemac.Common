@@ -46,7 +46,27 @@ namespace Gsemac.IO {
 
         }
 
+        public override bool Equals(object obj) {
+
+            if (obj is null)
+                return false;
+
+            return ReferenceEquals(this, obj) ||
+                (obj is IMimeType mimeType && ToString().Equals(mimeType.ToString(), StringComparison.OrdinalIgnoreCase));
+
+        }
+        public override int GetHashCode() {
+
+            return ToString().GetHashCode();
+
+        }
+
         public override string ToString() {
+
+            return ToString(withParameters: true);
+
+        }
+        public string ToString(bool withParameters) {
 
             StringBuilder sb = new StringBuilder();
 
@@ -54,7 +74,7 @@ namespace Gsemac.IO {
             sb.Append('/');
             sb.Append(Subtype);
 
-            if (Parameters is object) {
+            if (withParameters && Parameters is object) {
 
                 foreach (var parameter in Parameters.Where(pair => !string.IsNullOrWhiteSpace(pair.Key) && !string.IsNullOrWhiteSpace(pair.Value))) {
 

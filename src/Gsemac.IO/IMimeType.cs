@@ -8,6 +8,8 @@ namespace Gsemac.IO {
         string Subtype { get; }
         IDictionary<string, string> Parameters { get; }
 
+        string ToString(bool withParameters);
+
     }
 
 }

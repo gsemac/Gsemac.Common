@@ -11,7 +11,7 @@ namespace Gsemac.IO.Extensions {
             if (string.IsNullOrWhiteSpace(ext))
                 return false;
 
-            return obj.IsSupportedFileFormat(FileFormat.FromFileExtension(ext));
+            return obj.IsSupportedFileFormat(FileFormatFactory.Default.FromFileExtension(ext));
 
         }
         public static bool IsSupportedFileFormat(this IHasSupportedFileFormats obj, IFileFormat fileFormat) {

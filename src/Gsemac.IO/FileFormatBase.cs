@@ -11,7 +11,7 @@ namespace Gsemac.IO {
 
         public abstract IEnumerable<string> Extensions { get; }
         public abstract IEnumerable<IFileSignature> Signatures { get; }
-        public abstract string MimeType { get; }
+        public abstract IMimeType MimeType { get; }
 
         public int CompareTo(object obj) {
 
@@ -32,7 +32,7 @@ namespace Gsemac.IO {
             if (Equals(other))
                 return 0;
 
-            return (MimeType ?? "").ToLowerInvariant().CompareTo((other.MimeType ?? "").ToLowerInvariant());
+            return (MimeType?.ToString() ?? "").ToLowerInvariant().CompareTo((other.MimeType?.ToString() ?? "").ToLowerInvariant());
 
         }
         public override bool Equals(object obj) {
@@ -53,16 +53,13 @@ namespace Gsemac.IO {
         }
         public override int GetHashCode() {
 
-            return (MimeType.ToLowerInvariant() ?? Extensions?.FirstOrDefault()?.ToLowerInvariant()).GetHashCode();
+            return (MimeType.ToString().ToLowerInvariant() ?? Extensions?.FirstOrDefault()?.ToLowerInvariant()).GetHashCode();
 
         }
 
         public override string ToString() {
 
-            if (string.IsNullOrWhiteSpace(MimeType))
-                return "application/octet-stream";
-
-            return MimeType;
+            return MimeType?.ToString();
 
         }
 

@@ -83,7 +83,7 @@ namespace Gsemac.Drawing.Imaging {
                 ".tiff",
                 ".webp",
             }.OrderBy(ext => ext)
-            .Select(ext => FileFormat.FromFileExtension(ext))
+            .Select(ext => FileFormatFactory.Default.FromFileExtension(ext))
             .Distinct();
 
         }

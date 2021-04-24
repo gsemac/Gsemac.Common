@@ -17,7 +17,7 @@ namespace Gsemac.IO.Compression {
             if (string.IsNullOrWhiteSpace(ext))
                 return false;
 
-            return IsSupportedFileFormat(FileFormat.FromFileExtension(ext));
+            return IsSupportedFileFormat(FileFormatFactory.Default.FromFileExtension(ext));
 
         }
         public static bool IsSupportedFileFormat(IFileFormat fileFormat) {
@@ -33,7 +33,7 @@ namespace Gsemac.IO.Compression {
             if (string.IsNullOrWhiteSpace(ext))
                 return null;
 
-            return FromFileFormat(FileFormat.FromFileExtension(ext));
+            return FromFileFormat(FileFormatFactory.Default.FromFileExtension(ext));
 
         }
         public static IArchiveDecoder FromFileFormat(IFileFormat fileFormat) {

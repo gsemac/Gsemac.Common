@@ -11,7 +11,7 @@ namespace Gsemac.IO.Compression {
             new FileSignature(0x50, 0x4B, 0x05, 0x06),
             new FileSignature(0x50, 0x4B, 0x07, 0x08),
         };
-        public override string MimeType => "application/zip";
+        public override IMimeType MimeType => new MimeType("application/zip");
 
     }
 

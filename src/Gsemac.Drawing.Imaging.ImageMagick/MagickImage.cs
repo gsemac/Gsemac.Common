@@ -78,7 +78,7 @@ namespace Gsemac.Drawing.Imaging {
             if (string.IsNullOrEmpty(ext))
                 throw new UnsupportedFileFormatException();
 
-            return FileFormat.FromFileExtension(ext);
+            return FileFormatFactory.Default.FromFileExtension(ext);
 
         }
 
