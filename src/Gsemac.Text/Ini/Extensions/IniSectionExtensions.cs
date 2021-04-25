@@ -1,4 +1,5 @@
-﻿using Gsemac.Reflection.Extensions;
+﻿using Gsemac.Reflection;
+using Gsemac.Reflection.Extensions;
 using System;
 using System.Globalization;
 
@@ -27,20 +28,7 @@ namespace Gsemac.Text.Ini.Extensions {
 
                 try {
 
-                    Type convertType = typeof(T);
-
-                    if (convertType.IsNullableType())
-                        convertType = Nullable.GetUnderlyingType(convertType);
-
-                    object convertedPropertyValue = Convert.ChangeType(property.Value, convertType, CultureInfo.InvariantCulture);
-
-                    if (!(convertedPropertyValue is null)) {
-
-                        propertyValue = (T)convertedPropertyValue;
-
-                        return true;
-
-                    }
+                    return TypeUtilities.TryCast(property.Value, out propertyValue);
 
                 }
                 catch (FormatException) { }

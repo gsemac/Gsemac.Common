@@ -1,6 +1,7 @@
 ﻿using Gsemac.Reflection.Extensions;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 
 namespace Gsemac.Reflection {
@@ -57,14 +58,44 @@ namespace Gsemac.Reflection {
         }
         public static bool TryCast(object obj, Type type, out object result) {
 
+            bool success = true;
+
             try {
 
-                if (type.IsEnum)
-                    return EnumUtilities.TryParse(obj, type, ignoreCase: true, out result);
+                if (type.IsNullableType() && obj is null) {
 
-                result = Convert.ChangeType(obj, type);
+                    // If the type is nullable and we have a null object, we can trivially create an instance of the nullable type.
+                    // It's important to use null explicitly instead of obj, because CreateInstance will change "null" arguments to "default" for primitive types.
 
-                return true;
+                    result = Activator.CreateInstance(type, null);
+
+                }
+                else {
+
+                    // If we have a nullable type and object is not null, we need to cast to the underlying type.
+                    // This is because Convert.ChangeType will fail for nullable types.
+
+                    Type newType = type.IsNullableType() ?
+                       Nullable.GetUnderlyingType(type) :
+                       type;
+
+                    if (newType.IsEnum) {
+
+                        success = EnumUtilities.TryParse(obj, newType, ignoreCase: true, out result);
+
+                    }
+                    else {
+
+                        result = Convert.ChangeType(obj, newType, CultureInfo.InvariantCulture);
+
+                    }
+
+                    // If we managed to cast the object to the underlying type, then we can easily construct an instance of the nullable type using the casted object.
+
+                    if (type.IsNullableType() && success && result is object)
+                        result = Activator.CreateInstance(type, result);
+
+                }
 
             }
             catch (Exception) {
@@ -74,9 +105,11 @@ namespace Gsemac.Reflection {
 
                 result = default;
 
-                return false;
+                success = false;
 
             }
+
+            return success;
 
         }
 
