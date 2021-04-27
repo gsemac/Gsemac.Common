@@ -11,15 +11,15 @@ using System.Text.RegularExpressions;
 
 namespace Gsemac.Net.GitHub {
 
-    public class WebGitHubClient :
+    public class GitHubWebClient :
         IGitHubClient {
 
         // Public members
 
-        public WebGitHubClient() :
+        public GitHubWebClient() :
             this(new HttpWebRequestFactory()) {
         }
-        public WebGitHubClient(IHttpWebRequestFactory webRequestFactory) {
+        public GitHubWebClient(IHttpWebRequestFactory webRequestFactory) {
 
             this.webRequestFactory = webRequestFactory;
 

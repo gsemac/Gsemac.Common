@@ -44,7 +44,7 @@ namespace Gsemac.Net.WebDrivers {
 
             string releasesUrl = "https://github.com/mozilla/geckodriver/releases/latest";
 
-            IGitHubClient gitHubClient = new WebGitHubClient(webRequestFactory);
+            IGitHubClient gitHubClient = new GitHubWebClient(webRequestFactory);
             IRelease release = gitHubClient.GetLatestRelease(releasesUrl);
 
             IReleaseAsset asset = release.Assets.Where(a => a.Name.Contains(GetPlatformOS()))
