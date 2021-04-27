@@ -10,7 +10,6 @@ namespace Gsemac.Net {
         string Host { get; }
         string Hostname { get; }
         int? Port { get; }
-        string Root { get; }
         string Path { get; }
         string Fragment { get; }
         IDictionary<string, string> QueryParameters { get; }

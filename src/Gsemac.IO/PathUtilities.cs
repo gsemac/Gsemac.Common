@@ -23,7 +23,7 @@ namespace Gsemac.IO {
             string relativePath = path;
 
             if (!string.IsNullOrWhiteSpace(relativePath))
-                relativePath = path.Substring(GetRoot(path).Length);
+                relativePath = path.Substring(GetRootPath(path).Length);
 
             if (!IsUrl(path))
                 relativePath = TrimLeftDirectorySeparators(relativePath);
@@ -48,6 +48,43 @@ namespace Gsemac.IO {
                 return fullInputPath.Substring(index + fullRelativeToPath.Length, fullInputPath.Length - (index + fullRelativeToPath.Length));
             else
                 return fullPath;
+
+        }
+        public static string GetRootPath(string path, IPathInfo pathInfo = null) {
+
+            string rootPath = string.Empty;
+            string scheme = GetScheme(path);
+
+            if (!string.IsNullOrWhiteSpace(scheme)) {
+
+                Match rootMatch = Regex.Match(path.Substring(scheme.Length), @":[\/\\]{2}[^\/\\]+(?:[\/\\]|$)");
+
+                if (rootMatch.Success)
+                    rootPath = path.Substring(0, scheme.Length + rootMatch.Length);
+
+            }
+            else if (!string.IsNullOrEmpty(path)) {
+
+                // If the path starts with a single slash, consider that to be the root.
+                // Don't consider the path rooted if it's a URL that starts with a forward slash (it's relative).
+
+                if (!(pathInfo is object && pathInfo.IsUrl && (path.StartsWith("/") || path.StartsWith("\\")))) {
+
+                    Match rootMatch = Regex.Match(path, @"^([\/\\]{1})[^\/\\]");
+
+                    if (rootMatch.Success)
+                        rootPath = rootMatch.Groups[1].Value;
+                    else
+                        rootPath = System.IO.Path.GetPathRoot(path);
+
+                }
+
+            }
+
+            if (!string.IsNullOrEmpty(rootPath) && !rootPath.All(c => c.Equals(System.IO.Path.DirectorySeparatorChar) || c.Equals(System.IO.Path.AltDirectorySeparatorChar)))
+                rootPath = TrimRightDirectorySeparators(rootPath);
+
+            return rootPath;
 
         }
         public static IEnumerable<string> GetPathSegments(string path) {
@@ -89,31 +126,6 @@ namespace Gsemac.IO {
                 return match.Groups[1].Value;
 
             return string.Empty;
-
-        }
-        public static string GetRoot(string path) {
-
-            string rootPath = string.Empty;
-            string scheme = GetScheme(path);
-
-            if (!string.IsNullOrWhiteSpace(scheme)) {
-
-                Match rootMatch = Regex.Match(path.Substring(scheme.Length), @":[\/\\]{2}[^\/\\]+(?:[\/\\]|$)");
-
-                if (rootMatch.Success)
-                    rootPath = path.Substring(0, scheme.Length + rootMatch.Length);
-
-            }
-            else if (!string.IsNullOrEmpty(path)) {
-
-                rootPath = System.IO.Path.GetPathRoot(path);
-
-            }
-
-            if (!string.IsNullOrEmpty(rootPath) && !rootPath.All(c => c.Equals(System.IO.Path.DirectorySeparatorChar) || c.Equals(System.IO.Path.AltDirectorySeparatorChar)))
-                rootPath = TrimRightDirectorySeparators(rootPath);
-
-            return rootPath;
 
         }
 
@@ -422,13 +434,13 @@ namespace Gsemac.IO {
             return isLocalPath;
 
         }
-        public static bool IsPathRooted(string path, bool isUrl = false) {
+        public static bool IsPathRooted(string path, IPathInfo pathInfo = null) {
 
             // "System.IO.Path.IsPathRooted" throws an exception for paths longer than the maximum path length, as well as for malformed paths (e.g. paths containing invalid characters).
 
             // URLs starting with path separators are not rooted, but relative to the root.
 
-            if (isUrl && (path.StartsWith("/") || path.StartsWith("\\")))
+            if (pathInfo is object && pathInfo.IsUrl && (path.StartsWith("/") || path.StartsWith("\\")))
                 return false;
 
             string directorySeparatorsStr = System.IO.Path.DirectorySeparatorChar.ToString() + System.IO.Path.AltDirectorySeparatorChar.ToString();

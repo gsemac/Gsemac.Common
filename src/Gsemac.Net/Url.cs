@@ -26,7 +26,6 @@ namespace Gsemac.Net {
         }
         public string Hostname { get; set; }
         public int? Port { get; set; }
-        public string Root => GetRoot();
         public string Path { get; set; }
         public string Fragment { get; set; }
         public IDictionary<string, string> QueryParameters { get; private set; }
@@ -60,7 +59,7 @@ namespace Gsemac.Net {
 
             // Add rooth path.
 
-            sb.Append(Root);
+            sb.Append(GetRoot());
 
             if (!string.IsNullOrEmpty(Path)) {
 

@@ -145,43 +145,65 @@ namespace Gsemac.IO.Tests {
         [TestMethod]
         public void TestGetRootWithUrl() {
 
-            Assert.AreEqual("https://stackoverflow.com", PathUtilities.GetRoot(@"https://stackoverflow.com/questions/"));
+            Assert.AreEqual("https://stackoverflow.com", PathUtilities.GetRootPath(@"https://stackoverflow.com/questions/"));
+
+        }
+        [TestMethod]
+        public void TestGetRootWithRelativeUrl() {
+
+            Assert.AreEqual(string.Empty, PathUtilities.GetRootPath(@"/?tab=interesting", new PathInfo() {
+                IsUrl = true,
+            }));
+
+        }
+        [TestMethod]
+        public void TestGetRootWithRelativePath() {
+
+            Assert.AreEqual(string.Empty, PathUtilities.GetRootPath(@"some/path"));
+
+        }
+        [TestMethod]
+        public void TestGetRootWithRelativePathWithForwardSlash() {
+
+            // PathUtilities.GetRootPath can't tell the difference between regular relative paths and relative URLs on its own.
+
+            Assert.AreEqual("/", PathUtilities.GetRootPath(@"/?tab=interesting"));
 
         }
         [TestMethod]
         public void TestGetRootWithUrlWithBackslashes() {
 
-            Assert.AreEqual(@"https:\\stackoverflow.com", PathUtilities.GetRoot(@"https:\\stackoverflow.com\questions\"));
+            Assert.AreEqual(@"https:\\stackoverflow.com", PathUtilities.GetRootPath(@"https:\\stackoverflow.com\questions\"));
 
         }
         [TestMethod]
         public void TestGetRootWithUncPath() {
 
-            Assert.AreEqual(@"\\user\documents", PathUtilities.GetRoot(@"\\user\documents\file.txt"));
+            Assert.AreEqual(@"\\user\documents", PathUtilities.GetRootPath(@"\\user\documents\file.txt"));
 
         }
         [TestMethod]
         public void TestGetRootWithDriveLetter() {
 
-            Assert.AreEqual(@"C:", PathUtilities.GetRoot(@"C:\Windows"));
+            Assert.AreEqual(@"C:", PathUtilities.GetRootPath(@"C:\Windows"));
 
         }
         [TestMethod]
         public void TestGetRootWithIllegalCharacters() {
 
-            Assert.AreEqual(@"C:", PathUtilities.GetRoot(@"C:\Wi|ndows"));
+            Assert.AreEqual(@"C:", PathUtilities.GetRootPath(@"C:\Wi|ndows"));
 
         }
         [TestMethod]
         public void TestGetRootWithAbsolutePath() {
 
-            Assert.AreEqual(@"\", PathUtilities.GetRoot(@"\a\b"));
+            Assert.AreEqual(@"\", PathUtilities.GetRootPath(@"\a\b"));
 
         }
         [TestMethod]
         public void TestGetRootWithEmptyString() {
 
-            Assert.AreEqual(string.Empty, PathUtilities.GetRoot(string.Empty));
+            Assert.AreEqual(string.Empty, PathUtilities.GetRootPath(string.Empty));
 
         }
 
