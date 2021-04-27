@@ -136,6 +136,48 @@ namespace Gsemac.Net.Tests {
 
         }
 
+        // Host
+
+        [TestMethod]
+        public void TestGetHost() {
+
+            Assert.AreEqual("stackoverflow.com", new Url("https://stackoverflow.com/").Host);
+
+        }
+        [TestMethod]
+        public void TestGetHostWithSubdomain() {
+
+            Assert.AreEqual("subdomain.stackoverflow.com", new Url("https://subdomain.stackoverflow.com/").Host);
+
+        }
+        [TestMethod]
+        public void TestGetHostWithPort() {
+
+            Assert.AreEqual("stackoverflow.com:443", new Url("https://stackoverflow.com:443/").Host);
+
+        }
+
+        // Hostname
+
+        [TestMethod]
+        public void TestGetHostname() {
+
+            Assert.AreEqual("stackoverflow.com", new Url("https://stackoverflow.com/").Hostname);
+
+        }
+        [TestMethod]
+        public void TestGetHostnameWithSubdomain() {
+
+            Assert.AreEqual("subdomain.stackoverflow.com", new Url("https://subdomain.stackoverflow.com/").Hostname);
+
+        }
+        [TestMethod]
+        public void TestGetHostnameWithPort() {
+
+            Assert.AreEqual("stackoverflow.com", new Url("https://stackoverflow.com:443/").Hostname);
+
+        }
+
     }
 
 }
