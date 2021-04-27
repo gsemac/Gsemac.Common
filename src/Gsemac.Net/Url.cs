@@ -297,8 +297,8 @@ namespace Gsemac.Net {
             if (!Regex.Match(scheme, @"^([\w][\w+-.]+):?$").Success)
                 throw new ArgumentException(Properties.ExceptionMessages.SchemeContainsInvalidCharacters, nameof(scheme));
 
-            if (!scheme.EndsWith(":"))
-                scheme += ":";
+            if (scheme.EndsWith(":"))
+                scheme = scheme.Substring(0, scheme.Length - 1);
 
             this.scheme = scheme;
 

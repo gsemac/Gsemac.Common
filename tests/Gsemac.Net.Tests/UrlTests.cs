@@ -11,7 +11,7 @@ namespace Gsemac.Net.Tests {
         [TestMethod]
         public void TestGetScheme() {
 
-            Assert.AreEqual("https:", new Url("https://stackoverflow.com/").Scheme);
+            Assert.AreEqual("https", new Url("https://stackoverflow.com/").Scheme);
 
         }
         [TestMethod]
