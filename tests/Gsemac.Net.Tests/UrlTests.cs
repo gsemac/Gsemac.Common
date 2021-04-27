@@ -214,6 +214,51 @@ namespace Gsemac.Net.Tests {
 
         }
 
+        // Port
+
+        [TestMethod]
+        public void TestGetPort() {
+
+            Assert.AreEqual(80, new Url("https://stackoverflow.com:80/").Port);
+
+        }
+        [TestMethod]
+        public void TestGetPortWithoutPort() {
+
+            Assert.AreEqual(null, new Url("https://stackoverflow.com/").Port);
+
+        }
+        [TestMethod]
+        public void TestGetPortAfterSetHostWithPort() {
+
+            IUrl url = new Url("https://stackoverflow.com:443/") {
+                Host = "stackoverflow.com:8080",
+            };
+
+            Assert.AreEqual(8080, url.Port);
+
+        }
+        [TestMethod]
+        public void TestToStringAfterSetPort() {
+
+            IUrl url = new Url("https://stackoverflow.com:443/") {
+                Port = 8080,
+            };
+
+            Assert.AreEqual("https://stackoverflow.com:8080/", url.ToString());
+
+        }
+        [TestMethod]
+        public void TestToStringAfterSetPortToNull() {
+
+            IUrl url = new Url("https://stackoverflow.com:443/") {
+                Port = null,
+            };
+
+            Assert.AreEqual("https://stackoverflow.com/", url.ToString());
+
+        }
+
         // GetDomainName
 
         [TestMethod]
