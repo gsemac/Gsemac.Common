@@ -7,6 +7,8 @@ using System.Text.RegularExpressions;
 
 namespace Gsemac.IO {
 
+    public delegate string CharReplacementEvaluatorDelegate(char inputChar);
+
     public static class PathUtilities {
 
         // Public members
@@ -309,9 +311,30 @@ namespace Gsemac.IO {
             return path;
 
         }
-        public static string SanitizePath(string path, string invalidCharacterReplacement = "_") {
+        public static string SanitizePath(string path, SanitizePathOptions options = SanitizePathOptions.Default) {
 
-            return ReplaceInvalidPathChars(path, invalidCharacterReplacement, InvalidPathCharsOptions.Default | InvalidPathCharsOptions.PreserveDirectoryStructure);
+            if (options.HasFlag(SanitizePathOptions.UseEquivalentValidPathChars)) {
+
+                bool inQuotes = false;
+
+                return SanitizePath(path, c => GetEquivalentValidPathChar(c, ref inQuotes), options);
+
+            }
+            else {
+
+                return SanitizePath(path, string.Empty, options);
+
+            }
+
+        }
+        public static string SanitizePath(string path, string replacement, SanitizePathOptions options = SanitizePathOptions.Default) {
+
+            return SanitizePath(path, c => replacement, options);
+
+        }
+        public static string SanitizePath(string path, CharReplacementEvaluatorDelegate replacementEvaluator, SanitizePathOptions options = SanitizePathOptions.Default) {
+
+            return ReplaceInvalidPathChars(path, replacementEvaluator, options);
 
         }
 
@@ -341,70 +364,6 @@ namespace Gsemac.IO {
                 path.Split(System.IO.Path.DirectorySeparatorChar, System.IO.Path.AltDirectorySeparatorChar));
 
             return path;
-
-        }
-        public static string ReplaceInvalidPathChars(string path, InvalidPathCharsOptions options = InvalidPathCharsOptions.Default) {
-
-            return ReplaceInvalidPathChars(path, "_", options);
-
-        }
-        public static string ReplaceInvalidPathChars(string path, string replacement, InvalidPathCharsOptions options = InvalidPathCharsOptions.Default) {
-
-            return ReplaceInvalidPathChars(path, _ => replacement, options);
-
-        }
-        public static string ReplaceInvalidPathChars(string path, ICharReplacementEvaluator replacementEvaluator, InvalidPathCharsOptions options = InvalidPathCharsOptions.Default) {
-
-            return ReplaceInvalidPathChars(path, replacementEvaluator.Replace, options);
-
-        }
-        public static string ReplaceInvalidPathChars(string path, CharReplacementEvaluatorDelegate replacementEvaluator, InvalidPathCharsOptions options = InvalidPathCharsOptions.Default) {
-
-            string rootPath = string.Empty;
-            IEnumerable<char> invalidCharacters = Enumerable.Empty<char>();
-
-            if (options.HasFlag(InvalidPathCharsOptions.ReplaceInvalidPathChars))
-                invalidCharacters = invalidCharacters.Concat(System.IO.Path.GetInvalidPathChars());
-
-            if (options.HasFlag(InvalidPathCharsOptions.ReplaceInvalidFileNameChars))
-                invalidCharacters = invalidCharacters.Concat(System.IO.Path.GetInvalidFileNameChars());
-
-            if (options.HasFlag(InvalidPathCharsOptions.PreserveDirectoryStructure)) {
-
-                // The root of the path might contain characters that would be invalid file name characters (e.g. ':' in "C:\").
-                // In order to preserve the root path information, we'll remove it for now and add it back later.
-
-                rootPath = System.IO.Path.GetPathRoot(ReplaceInvalidPathChars(path, InvalidPathCharsOptions.ReplaceInvalidPathChars));
-
-                path = path.Substring(rootPath.Length);
-
-                invalidCharacters = invalidCharacters.Where(c => c != System.IO.Path.DirectorySeparatorChar && c != System.IO.Path.AltDirectorySeparatorChar);
-
-            }
-
-            HashSet<char> invalidCharacterLookup = new HashSet<char>(invalidCharacters);
-            StringBuilder pathBuilder = new StringBuilder();
-
-            foreach (char c in path.ToCharArray()) {
-
-                if (invalidCharacterLookup.Contains(c))
-                    pathBuilder.Append(replacementEvaluator(c));
-                else
-                    pathBuilder.Append(c);
-
-            }
-
-            path = pathBuilder.ToString();
-
-            if (!string.IsNullOrEmpty(rootPath))
-                path = System.IO.Path.Combine(rootPath, path);
-
-            return path;
-
-        }
-        public static string GetEquivalentValidPathChar(char inputChar) {
-
-            return new EquivalentValidPathCharEvaluator().Replace(inputChar);
 
         }
 
@@ -483,7 +442,7 @@ namespace Gsemac.IO {
             // For the purpose of checking the length, replace all illegal characters in the path.
             // This will ensure Path methods don't throw.
 
-            path = ReplaceInvalidPathChars(path, " ", InvalidPathCharsOptions.PreserveDirectoryStructure);
+            path = ReplaceInvalidPathChars(path, " ", SanitizePathOptions.PreserveDirectoryStructure);
 
             path = System.IO.Path.GetFullPath(path);
 
@@ -550,6 +509,154 @@ namespace Gsemac.IO {
         // Private members
 
         private static readonly object uniquePathMutex = new object();
+
+        private static string ReplaceInvalidPathChars(string path, SanitizePathOptions options = SanitizePathOptions.Default) {
+
+            return ReplaceInvalidPathChars(path, "_", options);
+
+        }
+        private static string ReplaceInvalidPathChars(string path, string replacement, SanitizePathOptions options = SanitizePathOptions.Default) {
+
+            return ReplaceInvalidPathChars(path, c => replacement, options);
+
+        }
+        private static string ReplaceInvalidPathChars(string path, CharReplacementEvaluatorDelegate replacementEvaluator, SanitizePathOptions options = SanitizePathOptions.Default) {
+
+            string rootPath = string.Empty;
+            IEnumerable<char> invalidCharacters = Enumerable.Empty<char>();
+
+            if (options.HasFlag(SanitizePathOptions.StripInvalidPathChars))
+                invalidCharacters = invalidCharacters.Concat(System.IO.Path.GetInvalidPathChars());
+
+            if (options.HasFlag(SanitizePathOptions.StripInvalidFilenameChars))
+                invalidCharacters = invalidCharacters.Concat(System.IO.Path.GetInvalidFileNameChars());
+
+            if (options.HasFlag(SanitizePathOptions.PreserveDirectoryStructure)) {
+
+                // The root of the path might contain characters that would be invalid file name characters (e.g. ':' in "C:\").
+                // In order to preserve the root path information, we'll remove it for now and add it back later.
+
+                rootPath = System.IO.Path.GetPathRoot(ReplaceInvalidPathChars(path, SanitizePathOptions.StripInvalidPathChars));
+
+                path = path.Substring(rootPath.Length);
+
+                invalidCharacters = invalidCharacters.Where(c => c != System.IO.Path.DirectorySeparatorChar && c != System.IO.Path.AltDirectorySeparatorChar);
+
+            }
+
+            // Strip repeated directory separators.
+
+            if (options.HasFlag(SanitizePathOptions.StripRepeatedDirectorySeparators)) {
+
+                path = Regex.Replace(path, $@"[{Regex.Escape(System.IO.Path.DirectorySeparatorChar.ToString())}{Regex.Escape(System.IO.Path.AltDirectorySeparatorChar.ToString())}]+", m => {
+
+                    if (m.Value.First() == System.IO.Path.DirectorySeparatorChar)
+                        return System.IO.Path.DirectorySeparatorChar.ToString();
+                    else if (m.Value.First() == System.IO.Path.AltDirectorySeparatorChar)
+                        return System.IO.Path.AltDirectorySeparatorChar.ToString();
+                    else
+                        return m.Value;
+
+                });
+
+            }
+
+            HashSet<char> invalidCharacterLookup = new HashSet<char>(invalidCharacters);
+            StringBuilder pathBuilder = new StringBuilder();
+
+            foreach (char c in path.ToCharArray()) {
+
+                if (invalidCharacterLookup.Contains(c))
+                    pathBuilder.Append(replacementEvaluator(c));
+                else
+                    pathBuilder.Append(c);
+
+            }
+
+            path = pathBuilder.ToString();
+
+            if (!string.IsNullOrEmpty(rootPath))
+                path = System.IO.Path.Combine(rootPath, path);
+
+            return path;
+
+        }
+        private static string GetEquivalentValidPathChar(char inputChar, ref bool inQuotes) {
+
+            switch (inputChar) {
+
+                case '\0':
+                case '\u0001':
+                case '\u0002':
+                case '\u0003':
+                case '\u0004':
+                case '\u0005':
+                case '\u0006':
+                case '\a':
+                case '\b':
+                case '\n':
+                case '\v':
+                case '\f':
+                case '\r':
+                case '\u000e':
+                case '\u000f':
+                case '\u0010':
+                case '\u0011':
+                case '\u0012':
+                case '\u0013':
+                case '\u0014':
+                case '\u0015':
+                case '\u0016':
+                case '\u0017':
+                case '\u0018':
+                case '\u0019':
+                case '\u001a':
+                case '\u001b':
+                case '\u001c':
+                case '\u001d':
+                case '\u001e':
+                case '\u001f':
+                    return string.Empty;
+
+                case '\t':
+                    return " ";
+
+                case '"':
+
+                    inQuotes = !inQuotes;
+
+                    return !inQuotes ? "”" : "“";
+
+                case '*':
+                    return "＊";
+
+                case '/':
+                    return "⁄";
+
+                case ':':
+                    return "∶";
+
+                case '<':
+                    return "＜";
+
+                case '>':
+                    return "＞";
+
+                case '?':
+                    return "？";
+
+                case '\\':
+                    return "＼";
+
+                case '|':
+                    return "｜";
+
+                default:
+                    return inputChar.ToString();
+
+            }
+
+        }
 
     }
 

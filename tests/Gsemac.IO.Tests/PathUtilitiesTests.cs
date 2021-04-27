@@ -292,39 +292,39 @@ namespace Gsemac.IO.Tests {
 
         }
 
-        // ReplaceInvalidPathChars
+        // SanitizePath
 
         [TestMethod]
-        public void TestReplaceInvalidPathCharsWithRootedPath() {
+        public void TestSanitizePathWithRootedPath() {
 
-            // ReplaceInvalidPathChars does not attempt to maintain the directory structure.
+            // SanitizePath attempts to maintain the directory structure by default.
 
-            Assert.AreEqual(@"C__Users_Admin_Documents", PathUtilities.ReplaceInvalidPathChars(@"C:\Users\Admin\Documents"));
+            Assert.AreEqual(@"C:\Users\Admin\Documents", PathUtilities.SanitizePath(@"C:\Users\Admin\Documents"));
 
         }
         [TestMethod]
-        public void TestReplaceInvalidPathCharsWithReplacement() {
+        public void TestSanitizePathWithReplacement() {
 
-            Assert.AreEqual(@"C++Users+Admin+Documents", PathUtilities.ReplaceInvalidPathChars(@"C:\Users\Admin\Documents", "+"));
-
-        }
-        [TestMethod]
-        public void TestReplaceInvalidPathCharsWithEmptyReplacement() {
-
-            Assert.AreEqual(@"CUsersAdminDocuments", PathUtilities.ReplaceInvalidPathChars(@"C:\Users\Admin\Documents", string.Empty));
+            Assert.AreEqual(@"C++Users+Admin+Documents", PathUtilities.SanitizePath(@"C:\Users\Admin\Documents", "+", SanitizePathOptions.StripInvalidChars));
 
         }
         [TestMethod]
-        public void TestReplaceInvalidPathCharsWithReplacementEvaluatorDelegate() {
+        public void TestSanitizePathWithEmptyReplacement() {
 
-            Assert.AreEqual(@"C++Users+Admin+Documents", PathUtilities.ReplaceInvalidPathChars(@"C:\Users\Admin\Documents", _ => "+"));
+            Assert.AreEqual(@"CUsersAdminDocuments", PathUtilities.SanitizePath(@"C:\Users\Admin\Documents", string.Empty, SanitizePathOptions.StripInvalidChars));
 
         }
         [TestMethod]
-        public void TestReplaceInvalidPathCharsWithICharReplacementEvaluator() {
+        public void TestSanitizePathWithReplacementEvaluatorDelegate() {
+
+            Assert.AreEqual(@"C++Users+Admin+Documents", PathUtilities.SanitizePath(@"C:\Users\Admin\Documents", _ => "+", SanitizePathOptions.StripInvalidChars));
+
+        }
+        [TestMethod]
+        public void TestSanitizePathWithEquivalentValidPathChars() {
 
             Assert.AreEqual(@"“C∶＼Users＼Admin＼Documents”",
-                PathUtilities.ReplaceInvalidPathChars(@"""C:\Users\Admin\Documents""", new EquivalentValidPathCharEvaluator()));
+                PathUtilities.SanitizePath(@"""C:\Users\Admin\Documents""", SanitizePathOptions.UseEquivalentValidPathChars));
 
         }
 
