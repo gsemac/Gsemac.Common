@@ -15,6 +15,18 @@ namespace Gsemac.Net.Tests {
 
         }
         [TestMethod]
+        public void TestGetSchemeWithNoScheme() {
+
+            Assert.AreEqual(string.Empty, new Url("//stackoverflow.com/").Scheme);
+
+        }
+        [TestMethod]
+        public void TestGetSchemeWithNoSchemeAndNoForwardSlashes() {
+
+            Assert.AreEqual(string.Empty, new Url("stackoverflow.com/").Scheme);
+
+        }
+        [TestMethod]
         public void TestToStringAfterSetSchemeWithColon() {
 
             IUrl url = new Url("https://stackoverflow.com/") {
@@ -32,6 +44,12 @@ namespace Gsemac.Net.Tests {
             };
 
             Assert.AreEqual("http://stackoverflow.com/", url.ToString());
+
+        }
+        [TestMethod]
+        public void TestToStringWithNoScheme() {
+
+            Assert.AreEqual("//stackoverflow.com/", new Url("//stackoverflow.com/").ToString());
 
         }
         [TestMethod]

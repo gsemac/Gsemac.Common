@@ -31,7 +31,7 @@ namespace Gsemac.Net {
 
         public Url(string url) {
 
-            Match match = Regex.Match(url, @"^(?<scheme>.+?:)\/\/(?<credentials>.+?:.+?@)?(?<hostname>.+?)(?<path>\/.*?)?(?<query>\?.+?)?(?<fragment>#.+?)?$");
+            Match match = Regex.Match(url, @"^(?<scheme>.+?:)?(?:\/\/)?(?<credentials>.+?:.+?@)?(?<hostname>.+?)(?<path>\/.*?)?(?<query>\?.+?)?(?<fragment>#.+?)?$");
 
             if (!match.Success)
                 throw new ArgumentException(Properties.ExceptionMessages.MalformedUrl, nameof(url));
@@ -200,10 +200,14 @@ namespace Gsemac.Net {
 
             // Add scheme.
 
-            sb.Append(Scheme);
+            if (!string.IsNullOrWhiteSpace(Scheme)) {
 
-            if (!Scheme.EndsWith(":"))
-                sb.Append(":");
+                sb.Append(Scheme);
+
+                if (!Scheme.EndsWith(":"))
+                    sb.Append(":");
+
+            }
 
             sb.Append("//");
 
@@ -294,11 +298,15 @@ namespace Gsemac.Net {
 
         private void SetScheme(string scheme) {
 
-            if (!Regex.Match(scheme, @"^([\w][\w+-.]+):?$").Success)
-                throw new ArgumentException(Properties.ExceptionMessages.SchemeContainsInvalidCharacters, nameof(scheme));
+            if (!string.IsNullOrEmpty(scheme)) {
 
-            if (scheme.EndsWith(":"))
-                scheme = scheme.Substring(0, scheme.Length - 1);
+                if (!Regex.Match(scheme, @"^(?<scheme>[\w][\w+-.]+):?$").Success)
+                    throw new ArgumentException(Properties.ExceptionMessages.SchemeContainsInvalidCharacters, nameof(scheme));
+
+                if (scheme.EndsWith(":"))
+                    scheme = scheme.Substring(0, scheme.Length - 1);
+
+            }
 
             this.scheme = scheme;
 
