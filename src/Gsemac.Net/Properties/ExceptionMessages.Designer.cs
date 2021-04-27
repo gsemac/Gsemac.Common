@@ -68,5 +68,14 @@ namespace Gsemac.Net.Properties {
                 return ResourceManager.GetString("MalformedUrl", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The scheme contains invalid characters..
+        /// </summary>
+        internal static string SchemeContainsInvalidCharacters {
+            get {
+                return ResourceManager.GetString("SchemeContainsInvalidCharacters", resourceCulture);
+            }
+        }
     }
 }

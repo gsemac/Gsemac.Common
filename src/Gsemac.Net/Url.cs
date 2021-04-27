@@ -14,7 +14,10 @@ namespace Gsemac.Net {
 
         // Public members
 
-        public string Scheme { get; set; }
+        public string Scheme {
+            get => scheme;
+            set => SetScheme(value);
+        }
         public string Username { get; set; }
         public string Password { get; set; }
         public string Host => GetHost();
@@ -53,7 +56,8 @@ namespace Gsemac.Net {
                 else
                     throw new ArgumentException(Properties.ExceptionMessages.MalformedUrl, nameof(url));
 
-            } else {
+            }
+            else {
 
                 Hostname = hostname;
 
@@ -160,6 +164,8 @@ namespace Gsemac.Net {
 
         // Private members
 
+        private string scheme;
+
         private static readonly Lazy<IEnumerable<string>> publicSuffixList = new Lazy<IEnumerable<string>>(BuildPublicSuffixList);
 
         private string GetHost() {
@@ -183,7 +189,12 @@ namespace Gsemac.Net {
             StringBuilder sb = new StringBuilder();
 
             sb.Append(Scheme);
+
+            if (!Scheme.EndsWith(":"))
+                sb.Append(":");
+
             sb.Append("//");
+
             sb.Append(Host);
 
             return sb.ToString();
@@ -225,6 +236,17 @@ namespace Gsemac.Net {
 
         }
 
+        private void SetScheme(string scheme) {
+
+            if (!Regex.Match(scheme, @"^([\w][\w+-.]+):?$").Success)
+                throw new ArgumentException(Properties.ExceptionMessages.SchemeContainsInvalidCharacters, nameof(scheme));
+
+            if (!scheme.EndsWith(":"))
+                scheme += ":";
+
+            this.scheme = scheme;
+
+        }
 
     }
 
