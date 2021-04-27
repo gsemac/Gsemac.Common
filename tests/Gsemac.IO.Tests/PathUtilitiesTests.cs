@@ -110,6 +110,12 @@ namespace Gsemac.IO.Tests {
 
         }
         [TestMethod]
+        public void TestGetSchemeWithRelativePath() {
+
+            Assert.AreEqual(string.Empty, PathUtilities.GetScheme(@"/questions/"));
+
+        }
+        [TestMethod]
         public void TestGetSchemeWithNoColon() {
 
             Assert.AreEqual(string.Empty, PathUtilities.GetScheme(@"//stackoverflow.com/"));
@@ -119,6 +125,12 @@ namespace Gsemac.IO.Tests {
         public void TestGetSchemeWithMultipleColons() {
 
             Assert.AreEqual("inval", PathUtilities.GetScheme(@"inval:d://stackoverflow.com/"));
+
+        }
+        [TestMethod]
+        public void TestGetSchemeWithNoSchemeAndColonInPath() {
+
+            Assert.AreEqual(string.Empty, PathUtilities.GetScheme(@"//website.com/path:path"));
 
         }
         [TestMethod]
