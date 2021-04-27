@@ -41,6 +41,36 @@ namespace Gsemac.Net.Tests {
 
         }
 
+        // Username
+
+        [TestMethod]
+        public void TestGetUsername() {
+
+            Assert.AreEqual("username", new Url("https://username:password@stackoverflow.com/").Username);
+
+        }
+        [TestMethod]
+        public void TestToStringAfterSetUsernameWithoutPassword() {
+
+            IUrl url = new Url("https://stackoverflow.com/") {
+                Username = "username",
+            };
+
+            Assert.AreEqual("https://username@stackoverflow.com/", url.ToString());
+
+        }
+        [TestMethod]
+        public void TestToStringAfterSetUsernameWithPassword() {
+
+            IUrl url = new Url("https://stackoverflow.com/") {
+                Username = "username",
+                Password = "password",
+            };
+
+            Assert.AreEqual("https://username:password@stackoverflow.com/", url.ToString());
+
+        }
+
     }
 
 }

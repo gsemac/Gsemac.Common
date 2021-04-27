@@ -31,19 +31,19 @@ namespace Gsemac.Net {
 
         public Url(string url) {
 
-            Match match = Regex.Match(url, @"^(.+?:)\/\/(.+?)(\/.*?)?(\?.+?)?(#.+?)?$");
+            Match match = Regex.Match(url, @"^(?<scheme>.+?:)\/\/(?<credentials>.+?:.+?@)?(?<hostname>.+?)(?<path>\/.*?)?(?<query>\?.+?)?(?<fragment>#.+?)?$");
 
             if (!match.Success)
                 throw new ArgumentException(Properties.ExceptionMessages.MalformedUrl, nameof(url));
 
-            Scheme = match.Groups[1].Value;
-            Path = match.Groups[3].Value;
-            QueryParameters = ParseQueryParameters(match.Groups[4].Value.Substring(Math.Min(match.Groups[4].Length, 1)));
-            Fragment = match.Groups[5].Value.Substring(Math.Min(match.Groups[5].Length, 1));
+            Scheme = match.Groups["scheme"].Value;
+            Path = match.Groups["path"].Value;
+            QueryParameters = ParseQueryParameters(match.Groups["query"].Value);
+            Fragment = ParseFragment(match.Groups["fragment"].Value);
 
             // Parse the hostname and port.
 
-            string hostname = match.Groups[2].Value;
+            string hostname = match.Groups["hostname"].Value;
 
             if (hostname.Contains(":")) {
 
@@ -65,7 +65,7 @@ namespace Gsemac.Net {
 
             // Parse the credentials.
 
-            var credentials = ParseCredentials(url);
+            var credentials = ParseCredentials(match.Groups["credentials"].Value);
 
             if (credentials is object) {
 
@@ -80,6 +80,8 @@ namespace Gsemac.Net {
 
             StringBuilder sb = new StringBuilder();
 
+            // Add rooth path.
+
             sb.Append(Root);
 
             if (!string.IsNullOrEmpty(Path)) {
@@ -91,12 +93,16 @@ namespace Gsemac.Net {
 
             }
 
+            // Add query parameters.
+
             if (QueryParameters is object && QueryParameters.Any()) {
 
                 sb.Append("?");
                 sb.Append(string.Join("&", QueryParameters.Select(p => $"{p.Key}={p.Value}")));
 
             }
+
+            // Add fragment.
 
             if (!string.IsNullOrWhiteSpace(Fragment)) {
 
@@ -172,7 +178,11 @@ namespace Gsemac.Net {
 
             StringBuilder sb = new StringBuilder();
 
+            // Add hostname.
+
             sb.Append(Hostname);
+
+            // Add port.
 
             if (Port.HasValue) {
 
@@ -188,12 +198,36 @@ namespace Gsemac.Net {
 
             StringBuilder sb = new StringBuilder();
 
+            // Add scheme.
+
             sb.Append(Scheme);
 
             if (!Scheme.EndsWith(":"))
                 sb.Append(":");
 
             sb.Append("//");
+
+            // Add username/password.
+
+            if (!string.IsNullOrWhiteSpace(Username)) {
+
+                sb.Append(Username);
+
+                // If the user doesn't set a password, don't include one.
+                // However, if the password is the empty string, include an empty password (this is what cURL does). 
+                // https://catonmat.net/cookbooks/curl/use-basic-http-authentication
+
+                if (!string.IsNullOrEmpty(Password) || Password is object)
+                    sb.Append(":");
+
+                if (!string.IsNullOrEmpty(Password))
+                    sb.Append(Password);
+
+                sb.Append("@");
+
+            }
+
+            // Add host.
 
             sb.Append(Host);
 
@@ -216,23 +250,45 @@ namespace Gsemac.Net {
 
         }
 
-        private static Tuple<string, string> ParseCredentials(string url) {
+        private static Tuple<string, string> ParseCredentials(string credentialsStr) {
 
-            Match match = Regex.Match(url, @"\/\/(?<username>[^:]+):(?<password>[^@]+)@");
-
-            if (!match.Success)
+            if (string.IsNullOrEmpty(credentialsStr))
                 return null;
 
-            return Tuple.Create(match.Groups["username"].Value, match.Groups["password"].Value);
+            if (credentialsStr.EndsWith("@"))
+                credentialsStr = credentialsStr.Substring(0, credentialsStr.Length - 1);
+
+            string[] usernamePassword = credentialsStr.Split(new[] { ':' }, 2);
+
+            if (usernamePassword.Count() < 2)
+                return null;
+
+            return Tuple.Create(usernamePassword[0], usernamePassword[1]);
 
         }
         private static IDictionary<string, string> ParseQueryParameters(string queryParametersStr) {
+
+            queryParametersStr = queryParametersStr ?? "";
+
+            if (queryParametersStr.StartsWith("?"))
+                queryParametersStr = queryParametersStr.Substring(1);
 
             return (queryParametersStr ?? "")
                 .Split('&')
                 .Where(p => !string.IsNullOrWhiteSpace(p))
                 .Select(p => p.Split(new[] { '=' }, 2))
                 .ToDictionary(p => p.First(), p => p.Last());
+
+        }
+        private static string ParseFragment(string fragmentStr) {
+
+            if (string.IsNullOrEmpty(fragmentStr))
+                return string.Empty;
+
+            if (fragmentStr.StartsWith("#"))
+                fragmentStr = fragmentStr.Substring(1);
+
+            return fragmentStr;
 
         }
 
