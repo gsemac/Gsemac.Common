@@ -115,6 +115,30 @@ namespace Gsemac.Net {
 
         }
 
+        public static Url Parse(string url) {
+
+            return new Url(url);
+
+        }
+        public static bool TryParse(string url, out Url result) {
+
+            try {
+
+                result = Parse(url);
+
+                return true;
+
+            }
+            catch (ArgumentException) {
+
+                result = null;
+
+                return false;
+
+            }
+
+        }
+
         public static string GetHostname(string url) {
 
             Match hostnameMatch = Regex.Match(url ?? "", @"^(?:[^\s:]+:\/\/|\/\/)?([^\/:]+)");
