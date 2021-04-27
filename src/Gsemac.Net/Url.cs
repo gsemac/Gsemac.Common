@@ -20,59 +20,37 @@ namespace Gsemac.Net {
         }
         public string Username { get; set; }
         public string Password { get; set; }
-        public string Host => GetHost();
+        public string Host {
+            get => GetHost();
+            set => SetHost(value);
+        }
         public string Hostname { get; set; }
-        public string DomainName => GetDomainName(ToString());
         public int? Port { get; set; }
         public string Root => GetRoot();
         public string Path { get; set; }
         public string Fragment { get; set; }
-        public IDictionary<string, string> QueryParameters { get; }
+        public IDictionary<string, string> QueryParameters { get; private set; }
 
         public Url(string url) {
 
-            Match match = Regex.Match(url, @"^(?<scheme>.+?:)?(?:\/\/)?(?<credentials>.+?:.+?@)?(?<hostname>.+?)(?<path>\/.*?)?(?<query>\?.+?)?(?<fragment>#.+?)?$");
+            Match match = Regex.Match(url, @"^(?<scheme>.+?:)?(?:\/\/)?(?<credentials>.+?:.+?@)?(?<host>.+?)?(?<path>\/.*?)?(?<query>\?.+?)?(?<fragment>#.+?)?$");
 
             if (!match.Success)
                 throw new ArgumentException(Properties.ExceptionMessages.MalformedUrl, nameof(url));
 
             Scheme = match.Groups["scheme"].Value;
             Path = match.Groups["path"].Value;
-            QueryParameters = ParseQueryParameters(match.Groups["query"].Value);
-            Fragment = ParseFragment(match.Groups["fragment"].Value);
+
+            SetQueryParameters(match.Groups["query"].Value);
+            SetFragment(match.Groups["fragment"].Value);
 
             // Parse the hostname and port.
 
-            string hostname = match.Groups["hostname"].Value;
-
-            if (hostname.Contains(":")) {
-
-                string[] hostParts = hostname.Split(':');
-
-                Hostname = hostParts[0];
-
-                if (hostParts.Count() > 1 && int.TryParse(hostParts[1], NumberStyles.Integer, CultureInfo.InvariantCulture, out int port))
-                    Port = port;
-                else
-                    throw new ArgumentException(Properties.ExceptionMessages.MalformedUrl, nameof(url));
-
-            }
-            else {
-
-                Hostname = hostname;
-
-            }
+            SetHost(match.Groups["host"].Value);
 
             // Parse the credentials.
 
-            var credentials = ParseCredentials(match.Groups["credentials"].Value);
-
-            if (credentials is object) {
-
-                Username = credentials.Item1;
-                Password = credentials.Item2;
-
-            }
+            SetCredentials(match.Groups["credentials"].Value);
 
         }
 
@@ -141,7 +119,7 @@ namespace Gsemac.Net {
 
         public static string GetHostname(string url) {
 
-            Match hostnameMatch = Regex.Match(url ?? "", @"^(?:[^\s:]+:\/\/|\/\/)?([^\/:]+)");
+            Match hostnameMatch = Regex.Match(url ?? "", @"^(?:[^\s:]+:\/\/|\/\/)?(?<hostname>[^\/:]+)");
 
             if (hostnameMatch.Success)
                 return hostnameMatch.Groups[1].Value.TrimEnd('.'); // trim trailing period from fully-qualified domain name
@@ -263,63 +241,6 @@ namespace Gsemac.Net {
 
         }
 
-        private static IEnumerable<string> BuildPublicSuffixList() {
-
-            // To determine the suffix, we use the Public Suffix List:
-            // https://publicsuffix.org/list/public_suffix_list.dat
-
-            IEnumerable<string> suffixes = Encoding.UTF8.GetString(Properties.Resources.public_suffix_list)
-                   .Split(new string[] { Environment.NewLine }, StringSplitOptions.None)
-                   .Where(x => !string.IsNullOrWhiteSpace(x) && !x.StartsWith("//"))
-                   .Select(x => '.' + x.TrimStart('*', '!', '.'))
-                   .OrderByDescending(x => x.Length);
-
-            return suffixes;
-
-        }
-
-        private static Tuple<string, string> ParseCredentials(string credentialsStr) {
-
-            if (string.IsNullOrEmpty(credentialsStr))
-                return null;
-
-            if (credentialsStr.EndsWith("@"))
-                credentialsStr = credentialsStr.Substring(0, credentialsStr.Length - 1);
-
-            string[] usernamePassword = credentialsStr.Split(new[] { ':' }, 2);
-
-            if (usernamePassword.Count() < 2)
-                return null;
-
-            return Tuple.Create(usernamePassword[0], usernamePassword[1]);
-
-        }
-        private static IDictionary<string, string> ParseQueryParameters(string queryParametersStr) {
-
-            queryParametersStr = queryParametersStr ?? "";
-
-            if (queryParametersStr.StartsWith("?"))
-                queryParametersStr = queryParametersStr.Substring(1);
-
-            return (queryParametersStr ?? "")
-                .Split('&')
-                .Where(p => !string.IsNullOrWhiteSpace(p))
-                .Select(p => p.Split(new[] { '=' }, 2))
-                .ToDictionary(p => p.First(), p => p.Last());
-
-        }
-        private static string ParseFragment(string fragmentStr) {
-
-            if (string.IsNullOrEmpty(fragmentStr))
-                return string.Empty;
-
-            if (fragmentStr.StartsWith("#"))
-                fragmentStr = fragmentStr.Substring(1);
-
-            return fragmentStr;
-
-        }
-
         private void SetScheme(string scheme) {
 
             if (!string.IsNullOrEmpty(scheme)) {
@@ -333,6 +254,89 @@ namespace Gsemac.Net {
             }
 
             this.scheme = scheme;
+
+        }
+        private void SetHost(string host) {
+
+            if (!string.IsNullOrEmpty(host) && host.Contains(":")) {
+
+                string[] hostParts = host.Split(':');
+
+                Hostname = hostParts[0];
+
+                if (hostParts.Count() > 1 && int.TryParse(hostParts[1], NumberStyles.Integer, CultureInfo.InvariantCulture, out int port))
+                    Port = port;
+                else
+                    throw new ArgumentException(Properties.ExceptionMessages.MalformedUrl, nameof(host));
+
+            }
+            else {
+
+                Hostname = host;
+                Port = null;
+
+            }
+
+        }
+        private void SetCredentials(string credentialsStr) {
+
+            if (!string.IsNullOrEmpty(credentialsStr)) {
+
+                if (credentialsStr.EndsWith("@"))
+                    credentialsStr = credentialsStr.Substring(0, credentialsStr.Length - 1);
+
+                string[] usernamePassword = credentialsStr.Split(new[] { ':' }, 2);
+
+                if (usernamePassword.Count() == 2) {
+
+                    this.Username = usernamePassword[0];
+                    this.Password = usernamePassword[1];
+
+                }
+
+            }
+
+
+        }
+        private void SetQueryParameters(string queryParametersStr) {
+
+            queryParametersStr = queryParametersStr ?? "";
+
+            if (queryParametersStr.StartsWith("?"))
+                queryParametersStr = queryParametersStr.Substring(1);
+
+            this.QueryParameters = (queryParametersStr ?? "")
+                .Split('&')
+                .Where(p => !string.IsNullOrWhiteSpace(p))
+                .Select(p => p.Split(new[] { '=' }, 2))
+                .ToDictionary(p => p.First(), p => p.Last());
+
+        }
+        private void SetFragment(string fragmentStr) {
+
+            if (!string.IsNullOrEmpty(fragmentStr)) {
+
+                if (fragmentStr.StartsWith("#"))
+                    fragmentStr = fragmentStr.Substring(1);
+
+                this.Fragment = fragmentStr;
+
+            }
+
+        }
+
+        private static IEnumerable<string> BuildPublicSuffixList() {
+
+            // To determine the suffix, we use the Public Suffix List:
+            // https://publicsuffix.org/list/public_suffix_list.dat
+
+            IEnumerable<string> suffixes = Encoding.UTF8.GetString(Properties.Resources.public_suffix_list)
+                   .Split(new string[] { Environment.NewLine }, StringSplitOptions.None)
+                   .Where(x => !string.IsNullOrWhiteSpace(x) && !x.StartsWith("//"))
+                   .Select(x => '.' + x.TrimStart('*', '!', '.'))
+                   .OrderByDescending(x => x.Length);
+
+            return suffixes;
 
         }
 

@@ -9,7 +9,6 @@ namespace Gsemac.Net {
         string Password { get; }
         string Host { get; }
         string Hostname { get; }
-        string DomainName { get; }
         int? Port { get; }
         string Root { get; }
         string Path { get; }
