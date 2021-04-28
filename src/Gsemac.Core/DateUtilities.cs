@@ -34,6 +34,11 @@ namespace Gsemac.Core {
             return ToUnixTimeSeconds(DateTimeOffset.Now);
 
         }
+        public static long CurrentUnixTimeMilliseconds() {
+
+            return ToUnixTimeMilliseconds(DateTimeOffset.Now);
+
+        }
 
         public static string ToIso8601(DateTimeOffset input) {
 
