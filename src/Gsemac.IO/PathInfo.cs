@@ -3,7 +3,8 @@
     public class PathInfo :
         IPathInfo {
 
-        public bool IsUrl { get; set; } = false;
+        public bool? IsUrl { get; set; }
+        public bool? IsRooted { get; set; }
 
     }
 

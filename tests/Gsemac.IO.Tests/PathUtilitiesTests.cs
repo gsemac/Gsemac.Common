@@ -140,7 +140,7 @@ namespace Gsemac.IO.Tests {
 
         }
 
-        // GetRoot
+        // GetRootPath
 
         [TestMethod]
         public void TestGetRootWithUrl() {
@@ -204,6 +204,43 @@ namespace Gsemac.IO.Tests {
         public void TestGetRootWithEmptyString() {
 
             Assert.AreEqual(string.Empty, PathUtilities.GetRootPath(string.Empty));
+
+        }
+
+        // GetPathDepth
+
+        [TestMethod]
+        public void TestGetPathDepthWithUrl() {
+
+            Assert.AreEqual(1, PathUtilities.GetPathDepth("https://stackoverflow.com/questions/"));
+
+        }
+        [TestMethod]
+        public void TestGetPathDepthWithUrlWithoutScheme() {
+
+            // Non-rooted paths are treated like relative paths, whether or not they resemble a URL.
+
+            Assert.AreEqual(2, PathUtilities.GetPathDepth("website.com/test/"));
+
+        }
+        [TestMethod]
+        public void TestGetPathDepthWithUrlWithoutPath() {
+
+            // Non-rooted paths are treated like relative paths, whether or not they resemble a URL.
+
+            Assert.AreEqual(1, PathUtilities.GetPathDepth("website.com/"));
+
+        }
+        [TestMethod]
+        public void TestGetPathDepthWithoutRootDomain() {
+
+            Assert.AreEqual(4, PathUtilities.GetPathDepth("/this/is/a/path/"));
+
+        }
+        [TestMethod]
+        public void TestGetPathDepthWithLocalPath() {
+
+            Assert.AreEqual(2, PathUtilities.GetPathDepth(@"C:\Program Files\Adobe"));
 
         }
 

@@ -2,7 +2,8 @@
 
     public interface IPathInfo {
 
-        bool IsUrl { get; }
+        bool? IsUrl { get; }
+        bool? IsRooted { get; }
 
     }
 

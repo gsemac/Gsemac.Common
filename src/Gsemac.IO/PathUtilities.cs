@@ -68,7 +68,7 @@ namespace Gsemac.IO {
                 // If the path starts with a single slash, consider that to be the root.
                 // Don't consider the path rooted if it's a URL that starts with a forward slash (it's relative).
 
-                if (!(pathInfo is object && pathInfo.IsUrl && (path.StartsWith("/") || path.StartsWith("\\")))) {
+                if (!((pathInfo?.IsUrl ?? false) && (path.StartsWith("/") || path.StartsWith("\\")))) {
 
                     Match rootMatch = Regex.Match(path, @"^([\/\\]{1})[^\/\\]");
 
@@ -116,6 +116,22 @@ namespace Gsemac.IO {
 
             foreach (string segment in remainingSegments)
                 yield return segment;
+
+        }
+        public static int GetPathDepth(string path, PathDepthOptions options = PathDepthOptions.Default) {
+
+            if (string.IsNullOrWhiteSpace(path))
+                return 0;
+
+            path = NormalizeDirectorySeparators(TrimLeftDirectorySeparators(GetPath(path)));
+
+            if (options.HasFlag(PathDepthOptions.IgnoreTrailingDirectorySeparators))
+                path = TrimRightDirectorySeparators(path);
+
+            if (string.IsNullOrWhiteSpace(path))
+                return 0;
+
+            return path.Split(new[] { System.IO.Path.DirectorySeparatorChar }).Count();
 
         }
         public static string GetScheme(string path) {
@@ -440,7 +456,7 @@ namespace Gsemac.IO {
 
             // URLs starting with path separators are not rooted, but relative to the root.
 
-            if (pathInfo is object && pathInfo.IsUrl && (path.StartsWith("/") || path.StartsWith("\\")))
+            if ((pathInfo?.IsUrl ?? false) && (path.StartsWith("/") || path.StartsWith("\\")))
                 return false;
 
             string directorySeparatorsStr = System.IO.Path.DirectorySeparatorChar.ToString() + System.IO.Path.AltDirectorySeparatorChar.ToString();
