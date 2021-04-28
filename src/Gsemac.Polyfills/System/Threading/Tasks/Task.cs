@@ -6,7 +6,9 @@ namespace Gsemac.Polyfills.System.Threading.Tasks {
 
     public static class Task {
 
-        // .NET Framework 4.0 an earlier do not have Task.Delay defined
+        // For .NET Framework 4.0 and earlier
+
+        public static global::System.Threading.Tasks.Task CompletedTask => FromResult(0);
 
         public static global::System.Threading.Tasks.Task Delay(int millisecondsDelay, CancellationToken cancellationToken) {
 
@@ -46,6 +48,16 @@ namespace Gsemac.Polyfills.System.Threading.Tasks {
         public static global::System.Threading.Tasks.Task Delay(TimeSpan delay) {
 
             return Delay(delay, CancellationToken.None);
+
+        }
+
+        public static Task<T> FromResult<T>(T value) {
+
+            var completionSource = new TaskCompletionSource<T>();
+
+            completionSource.SetResult(value);
+
+            return completionSource.Task;
 
         }
 
