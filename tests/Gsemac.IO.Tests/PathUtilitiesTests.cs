@@ -1,5 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using System.Linq;
 
 namespace Gsemac.IO.Tests {
 
@@ -189,7 +190,7 @@ namespace Gsemac.IO.Tests {
 
         }
         [TestMethod]
-        public void TestGetRootWithIllegalCharacters() {
+        public void TestGetRootWithInvalidCharacters() {
 
             Assert.AreEqual(@"C:", PathUtilities.GetRootPath(@"C:\Wi|ndows"));
 
@@ -204,6 +205,36 @@ namespace Gsemac.IO.Tests {
         public void TestGetRootWithEmptyString() {
 
             Assert.AreEqual(string.Empty, PathUtilities.GetRootPath(string.Empty));
+
+        }
+
+        // GetPathSegments
+
+        [TestMethod]
+        public void TestGetPathSegmentsWithUrl() {
+
+            Assert.IsTrue(PathUtilities.GetPathSegments(@"https://stackoverflow.com/users/").SequenceEqual(new[] {
+                @"https://stackoverflow.com/",
+                @"users/",
+            }));
+
+        }
+        [TestMethod]
+        public void TestGetPathSegmentsWithLocalPath() {
+
+            Assert.IsTrue(PathUtilities.GetPathSegments(@"c:\path\file.jpg").SequenceEqual(new[] {
+                @"c:\",
+                @"path\",
+                "file.jpg",
+            }));
+
+        }
+        [TestMethod]
+        public void TestGetPathSegmentsWithUncPath() {
+
+            Assert.IsTrue(PathUtilities.GetPathSegments(@"\\user\documents").SequenceEqual(new[] {
+                @"\\user\documents",
+            }));
 
         }
 
@@ -374,6 +405,18 @@ namespace Gsemac.IO.Tests {
 
         }
         [TestMethod]
+        public void TestSanitizePathWithRootedPathPreservesLeadingDirectorySeparator() {
+
+            Assert.AreEqual(@"\Users\Admin\Documents", PathUtilities.SanitizePath(@"\Users\Admin\Documents"));
+
+        }
+        [TestMethod]
+        public void TestSanitizePathWithRelativePath() {
+
+            Assert.AreEqual(@"Users\Admin\Documents", PathUtilities.SanitizePath(@"Users\Admin\Documents"));
+
+        }
+        [TestMethod]
         public void TestSanitizePathWithReplacement() {
 
             Assert.AreEqual(@"C++Users+Admin+Documents", PathUtilities.SanitizePath(@"C:\Users\Admin\Documents", "+", SanitizePathOptions.StripInvalidChars));
@@ -414,6 +457,12 @@ namespace Gsemac.IO.Tests {
         public void TestSanitizePathWithUrlStripsExcessForwardSlashesAfterScheme() {
 
             Assert.AreEqual(@"https://stackoverflow.com/questions/", PathUtilities.SanitizePath(@"https://///////stackoverflow.com/questions/"));
+
+        }
+        [TestMethod]
+        public void TestSanitizePathWithInvalidCharacters() {
+
+            Assert.AreEqual(@"\documents\", PathUtilities.SanitizePath(@"\documents|\"));
 
         }
 

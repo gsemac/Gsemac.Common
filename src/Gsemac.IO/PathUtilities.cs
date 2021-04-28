@@ -91,20 +91,21 @@ namespace Gsemac.IO {
 
             // Get the root of the path first, as it might contain multiple directory separators.
 
-            string pathRoot = System.IO.Path.GetPathRoot(path);
+            string pathRoot = GetRootPath(path);
 
             if (!string.IsNullOrEmpty(pathRoot)) {
+
+                path = path.Substring(pathRoot.Length);
 
                 // On Windows, GetPathRoot can return just a drive letter (e.g. "C:"). To signify that this is a path, append a directory separator.
                 // The separator is not always appended, because it might be a single separator (e.g. "/") on Unix systems.
 
-                if (pathRoot.Last() != System.IO.Path.DirectorySeparatorChar && pathRoot.Last() != System.IO.Path.AltDirectorySeparatorChar) {
+                if (StartsWithDirectorySeparatorChar(path) && !EndsWithDirectorySeparatorChar(pathRoot)) {
 
-                    pathRoot += System.IO.Path.DirectorySeparatorChar.ToString();
+                    pathRoot = pathRoot + path.First();
+                    path = path.Substring(1);
 
                 }
-
-                path = path.Substring(pathRoot.Length);
 
                 yield return pathRoot;
 
@@ -112,7 +113,8 @@ namespace Gsemac.IO {
 
             // Return the remaining segments.
 
-            IEnumerable<string> remainingSegments = StringUtilities.SplitAfter(path, System.IO.Path.DirectorySeparatorChar, System.IO.Path.AltDirectorySeparatorChar);
+            IEnumerable<string> remainingSegments = StringUtilities.SplitAfter(path, System.IO.Path.DirectorySeparatorChar, System.IO.Path.AltDirectorySeparatorChar)
+                .Where(segment => !string.IsNullOrEmpty(segment));
 
             foreach (string segment in remainingSegments)
                 yield return segment;
@@ -561,17 +563,10 @@ namespace Gsemac.IO {
 
             // To match the behavior of popular web browsers, trim excess forward slashes after the scheme when using HTTP/HTTPS.
             // https://github.com/whatwg/url/issues/118
-
             // This is only done when the "PreserveDirectoryStructure" flag is toggled, because otherwise the slashes are replaced anyway (as may be desired).
 
-            if (options.HasFlag(SanitizePathOptions.PreserveDirectoryStructure)) {
-
-                string scheme = GetScheme(path);
-
-                if (!string.IsNullOrEmpty(scheme) && path.Length > scheme.Length)
-                    path = scheme + "://" + path.Substring(scheme.Length + 1).TrimStart('/');
-
-            }
+            if (options.HasFlag(SanitizePathOptions.PreserveDirectoryStructure))
+                StripRepeatedForwardSlashesAfterScheme(path);
 
             // Normalize directory separators.
 
@@ -589,15 +584,10 @@ namespace Gsemac.IO {
                 // The root of the path might contain characters that would be invalid file name characters (e.g. ':' in "C:\").
                 // In order to preserve the root path information, we'll remove it for now and add it back later.
 
-                Match rootOrSchemeMatch = Regex.Match(path, @"^(?:[^\\\/]+):(?:[\\\/]{1,2})?|^[\\\/]{2}");
+                rootOrScheme = GetRootOrScheme(path);
 
-                if (rootOrSchemeMatch.Success) {
-
-                    rootOrScheme = rootOrSchemeMatch.Value;
-
+                if (!string.IsNullOrEmpty(rootOrScheme))
                     path = path.Substring(rootOrScheme.Length);
-
-                }
 
                 invalidCharacters = invalidCharacters.Where(c => c != System.IO.Path.DirectorySeparatorChar && c != System.IO.Path.AltDirectorySeparatorChar);
 
@@ -605,20 +595,8 @@ namespace Gsemac.IO {
 
             // Strip repeated directory separators.
 
-            if (options.HasFlag(SanitizePathOptions.StripRepeatedDirectorySeparators)) {
-
-                path = Regex.Replace(path, $@"[{Regex.Escape(System.IO.Path.DirectorySeparatorChar.ToString())}{Regex.Escape(System.IO.Path.AltDirectorySeparatorChar.ToString())}]+", m => {
-
-                    if (m.Value.First() == System.IO.Path.DirectorySeparatorChar)
-                        return System.IO.Path.DirectorySeparatorChar.ToString();
-                    else if (m.Value.First() == System.IO.Path.AltDirectorySeparatorChar)
-                        return System.IO.Path.AltDirectorySeparatorChar.ToString();
-                    else
-                        return m.Value;
-
-                });
-
-            }
+            if (options.HasFlag(SanitizePathOptions.StripRepeatedDirectorySeparators))
+                StripRepeatedDirectorySeparators(path);
 
             HashSet<char> invalidCharacterLookup = new HashSet<char>(invalidCharacters);
             StringBuilder pathBuilder = new StringBuilder();
@@ -714,6 +692,57 @@ namespace Gsemac.IO {
                     return inputChar.ToString();
 
             }
+
+        }
+        private static string StripRepeatedForwardSlashesAfterScheme(string path) {
+
+            string scheme = GetScheme(path);
+
+            if (!string.IsNullOrEmpty(scheme) && path.Length > scheme.Length)
+                path = scheme + "://" + path.Substring(scheme.Length + 1).TrimStart('/');
+
+            return path;
+
+        }
+        private static string StripRepeatedDirectorySeparators(string path) {
+
+            path = Regex.Replace(path, $@"[{Regex.Escape(System.IO.Path.DirectorySeparatorChar.ToString())}{Regex.Escape(System.IO.Path.AltDirectorySeparatorChar.ToString())}]+", m => {
+
+                if (m.Value.First() == System.IO.Path.DirectorySeparatorChar)
+                    return System.IO.Path.DirectorySeparatorChar.ToString();
+                else if (m.Value.First() == System.IO.Path.AltDirectorySeparatorChar)
+                    return System.IO.Path.AltDirectorySeparatorChar.ToString();
+                else
+                    return m.Value;
+
+            });
+
+            return path;
+
+        }
+        private static string GetRootOrScheme(string path) {
+
+            // Returns things like "\\", "C:\", "https://", etc.
+
+            Match rootOrSchemeMatch = Regex.Match(path, @"^(?:[^\\\/]+):(?:[\\\/]{1,2})?|^[\\\/]{2}");
+
+            return rootOrSchemeMatch.Success ?
+                rootOrSchemeMatch.Value :
+                string.Empty;
+
+        }
+        private static bool StartsWithDirectorySeparatorChar(string path) {
+
+            return !string.IsNullOrEmpty(path) &&
+                (path.StartsWith(System.IO.Path.DirectorySeparatorChar.ToString()) ||
+                path.StartsWith(System.IO.Path.AltDirectorySeparatorChar.ToString()));
+
+        }
+        private static bool EndsWithDirectorySeparatorChar(string path) {
+
+            return !string.IsNullOrEmpty(path) &&
+                (path.EndsWith(System.IO.Path.DirectorySeparatorChar.ToString()) ||
+                path.EndsWith(System.IO.Path.AltDirectorySeparatorChar.ToString()));
 
         }
 
