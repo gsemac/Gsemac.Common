@@ -3,11 +3,11 @@ using System.Collections.Generic;
 
 namespace Gsemac.Drawing.Imaging {
 
-    public class JpegFileFormat :
+    public sealed class JpegFileFormat :
         FileFormatBase {
 
-        public override IEnumerable<string> Extensions => new string[] { ".jpeg", ".jpg" };
-        public override IEnumerable<IFileSignature> Signatures => new IFileSignature[] {
+        public override IEnumerable<string> Extensions => new[] { ".jpeg", ".jpg" };
+        public override IEnumerable<IFileSignature> Signatures => new[] {
             new FileSignature(0xFF, 0xD8, 0xFF, 0xD8),
             new FileSignature(0xFF, 0xD8, 0xFF, 0xE0, 0x00, 0x10, 0x4A, 0x46, 0x49, 0x46, 0x00, 0x01),
             new FileSignature(0xFF, 0xD8, 0xFF, 0xEE),

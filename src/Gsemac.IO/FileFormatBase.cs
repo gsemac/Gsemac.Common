@@ -10,7 +10,7 @@ namespace Gsemac.IO {
         // Public members
 
         public abstract IEnumerable<string> Extensions { get; }
-        public abstract IEnumerable<IFileSignature> Signatures { get; }
+        public virtual IEnumerable<IFileSignature> Signatures => Enumerable.Empty<IFileSignature>();
         public abstract IMimeType MimeType { get; }
 
         public int CompareTo(object obj) {
