@@ -24,6 +24,7 @@
 
 	<ItemGroup>
 		<Content Include="Gsemac.Net.targets" PackagePath="build/Gsemac.Net.targets" />
+    <Content Include="licenses\*" Pack="true" PackagePath="contentFiles\licenses" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -31,6 +32,15 @@
 	  <ProjectReference Include="..\Gsemac.IO\Gsemac.IO.csproj" />
 	  <ProjectReference Include="..\Gsemac.Polyfills\Gsemac.Polyfills.csproj" />
 	  <ProjectReference Include="..\Gsemac.Text\Gsemac.Text.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Compile Update="Properties\ExceptionMessages.Designer.cs">
+	    <DesignTime>True</DesignTime>
+	  </Compile>
+	  <Compile Update="Properties\Resources.Designer.cs">
+	    <DesignTime>True</DesignTime>
+	  </Compile>
 	</ItemGroup>
 
 </Project>
