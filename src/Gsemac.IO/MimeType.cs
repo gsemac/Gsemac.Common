@@ -91,6 +91,30 @@ namespace Gsemac.IO {
 
         }
 
+        public static MimeType Parse(string mimeType) {
+
+            return new MimeType(mimeType);
+
+        }
+        public static bool TryParse(string mimeType, out MimeType result) {
+
+            try {
+
+                result = Parse(mimeType);
+
+                return true;
+
+            }
+            catch (ArgumentException) {
+
+                result = null;
+
+                return false;
+
+            }
+
+        }
+
         // Private members
 
         private void ParseTypeAndSubtype(string typeAndSubtype) {
