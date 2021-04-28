@@ -9,9 +9,10 @@ namespace Gsemac.IO {
         StripInvalidFilenameChars = 2,
         PreserveDirectoryStructure = 4,
         StripRepeatedDirectorySeparators = 8,
-        UseEquivalentValidPathChars = StripInvalidChars | 16,
+        NormalizeDirectorySeparators = 16,
+        UseEquivalentValidPathChars = StripInvalidChars | 32,
         StripInvalidChars = StripInvalidPathChars | StripInvalidFilenameChars,
-        Default = StripInvalidChars | PreserveDirectoryStructure
+        Default = StripInvalidChars | PreserveDirectoryStructure | NormalizeDirectorySeparators
     }
 
 }

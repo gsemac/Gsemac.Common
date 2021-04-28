@@ -398,6 +398,39 @@ namespace Gsemac.IO.Tests {
                 PathUtilities.SanitizePath(@"""C:\Users\Admin\Documents""", SanitizePathOptions.UseEquivalentValidPathChars));
 
         }
+        [TestMethod]
+        public void TestSanitizePathWithUncPathPreservesLeadingForwardSlashes() {
+
+            Assert.AreEqual(@"\\user\documents", PathUtilities.SanitizePath(@"\\user\documents"));
+
+        }
+        [TestMethod]
+        public void TestSanitizePathWithUrlPreservesForwardSlashesAfterScheme() {
+
+            Assert.AreEqual(@"https://stackoverflow.com/questions/", PathUtilities.SanitizePath(@"https://stackoverflow.com/questions/"));
+
+        }
+        [TestMethod]
+        public void TestSanitizePathWithUrlStripsExcessForwardSlashesAfterScheme() {
+
+            Assert.AreEqual(@"https://stackoverflow.com/questions/", PathUtilities.SanitizePath(@"https://///////stackoverflow.com/questions/"));
+
+        }
+
+        // NormalizeDirectorySeparators
+
+        [TestMethod]
+        public void TestNormalizeDirectorySeparatorsWithLocalPath() {
+
+            Assert.AreEqual(@"C:\Users\Admin\Documents", PathUtilities.NormalizeDirectorySeparators(@"C:\Users/Admin/Documents"));
+
+        }
+        [TestMethod]
+        public void TestNormalizeDirectorySeparatorsWithUrl() {
+
+            Assert.AreEqual(@"https://stackoverflow.com/", PathUtilities.NormalizeDirectorySeparators(@"https://stackoverflow.com\"));
+
+        }
 
         // IsLocalPath
 

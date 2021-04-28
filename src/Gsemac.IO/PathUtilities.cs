@@ -383,10 +383,16 @@ namespace Gsemac.IO {
         }
         public static string NormalizeDirectorySeparators(string path) {
 
-            return NormalizeDirectorySeparators(path, System.IO.Path.DirectorySeparatorChar);
+            char directorySeparatorChar = System.IO.Path.DirectorySeparatorChar;
+
+            if (IsUrl(path))
+                directorySeparatorChar = '/';
+
+            return NormalizeDirectorySeparators(path, directorySeparatorChar);
 
         }
         public static string NormalizeDirectorySeparators(string path, char directorySeparatorChar) {
+
 
             path = string.Join(directorySeparatorChar.ToString(),
                 path.Split(System.IO.Path.DirectorySeparatorChar, System.IO.Path.AltDirectorySeparatorChar));
@@ -540,7 +546,7 @@ namespace Gsemac.IO {
 
         private static string ReplaceInvalidPathChars(string path, SanitizePathOptions options = SanitizePathOptions.Default) {
 
-            return ReplaceInvalidPathChars(path, "_", options);
+            return ReplaceInvalidPathChars(path, string.Empty, options);
 
         }
         private static string ReplaceInvalidPathChars(string path, string replacement, SanitizePathOptions options = SanitizePathOptions.Default) {
@@ -550,8 +556,27 @@ namespace Gsemac.IO {
         }
         private static string ReplaceInvalidPathChars(string path, CharReplacementEvaluatorDelegate replacementEvaluator, SanitizePathOptions options = SanitizePathOptions.Default) {
 
-            string rootPath = string.Empty;
+            string rootOrScheme = string.Empty;
             IEnumerable<char> invalidCharacters = Enumerable.Empty<char>();
+
+            // To match the behavior of popular web browsers, trim excess forward slashes after the scheme when using HTTP/HTTPS.
+            // https://github.com/whatwg/url/issues/118
+
+            // This is only done when the "PreserveDirectoryStructure" flag is toggled, because otherwise the slashes are replaced anyway (as may be desired).
+
+            if (options.HasFlag(SanitizePathOptions.PreserveDirectoryStructure)) {
+
+                string scheme = GetScheme(path);
+
+                if (!string.IsNullOrEmpty(scheme) && path.Length > scheme.Length)
+                    path = scheme + "://" + path.Substring(scheme.Length + 1).TrimStart('/');
+
+            }
+
+            // Normalize directory separators.
+
+            if (options.HasFlag(SanitizePathOptions.NormalizeDirectorySeparators))
+                path = NormalizeDirectorySeparators(path);
 
             if (options.HasFlag(SanitizePathOptions.StripInvalidPathChars))
                 invalidCharacters = invalidCharacters.Concat(System.IO.Path.GetInvalidPathChars());
@@ -564,9 +589,15 @@ namespace Gsemac.IO {
                 // The root of the path might contain characters that would be invalid file name characters (e.g. ':' in "C:\").
                 // In order to preserve the root path information, we'll remove it for now and add it back later.
 
-                rootPath = System.IO.Path.GetPathRoot(ReplaceInvalidPathChars(path, SanitizePathOptions.StripInvalidPathChars));
+                Match rootOrSchemeMatch = Regex.Match(path, @"^(?:[^\\\/]+):(?:[\\\/]{1,2})?|^[\\\/]{2}");
 
-                path = path.Substring(rootPath.Length);
+                if (rootOrSchemeMatch.Success) {
+
+                    rootOrScheme = rootOrSchemeMatch.Value;
+
+                    path = path.Substring(rootOrScheme.Length);
+
+                }
 
                 invalidCharacters = invalidCharacters.Where(c => c != System.IO.Path.DirectorySeparatorChar && c != System.IO.Path.AltDirectorySeparatorChar);
 
@@ -603,8 +634,8 @@ namespace Gsemac.IO {
 
             path = pathBuilder.ToString();
 
-            if (!string.IsNullOrEmpty(rootPath))
-                path = System.IO.Path.Combine(rootPath, path);
+            if (!string.IsNullOrEmpty(rootOrScheme))
+                path = rootOrScheme + TrimLeftDirectorySeparators(path);
 
             return path;
 
