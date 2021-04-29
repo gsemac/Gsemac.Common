@@ -12,7 +12,6 @@ namespace Gsemac.Drawing.Imaging {
         // Public members
 
         public IEnumerable<IFileFormat> SupportedFileFormats => GetSupportedImageFormats();
-        public IEnumerable<IFileFormat> NativelySupportedFileFormats => GetNativelySupportedImageFormats();
 
         public static ImageCodecFactory Default => new ImageCodecFactory();
 
@@ -34,22 +33,6 @@ namespace Gsemac.Drawing.Imaging {
             return GetImageCodecs().SelectMany(codec => codec.SupportedFileFormats)
                 .Distinct()
                 .OrderBy(type => type);
-
-        }
-        private static IEnumerable<IFileFormat> GetNativelySupportedImageFormats() {
-
-            return new List<string>(new[]{
-                ".bmp",
-                ".gif",
-                ".exif",
-                ".jpg",
-                ".jpeg",
-                ".png",
-                ".tif",
-                ".tiff"
-            }).OrderBy(type => type)
-            .Select(ext => FileFormatFactory.Default.FromFileExtension(ext))
-            .Distinct();
 
         }
         private static IEnumerable<IImageCodec> GetImageCodecs(IFileFormat imageFormat) {

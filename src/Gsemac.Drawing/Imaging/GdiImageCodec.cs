@@ -1,7 +1,5 @@
 ﻿#if NETFRAMEWORK
 
-using Gsemac.Drawing.Imaging;
-using Gsemac.Drawing.Imaging.Extensions;
 using Gsemac.IO;
 using Gsemac.IO.Extensions;
 using Gsemac.Reflection.Plugins;
@@ -20,7 +18,7 @@ namespace Gsemac.Drawing.Imaging {
 
         // Public members
 
-        public IEnumerable<IFileFormat> SupportedFileFormats => ImageCodecFactory.Default.NativelySupportedFileFormats;
+        public IEnumerable<IFileFormat> SupportedFileFormats => GetNativelySupportedImageFormats();
 
         public GdiImageCodec() {
         }
@@ -58,8 +56,19 @@ namespace Gsemac.Drawing.Imaging {
             // When we create a new Bitmap from the Image, we lose information about its original format (it just becomes a memory Bitmap).
             // This GdiImage constructor allows us to preserve the original format information.
 
-            using (System.Drawing.Image imageFromStream = System.Drawing.Image.FromStream(stream))
+            using (Image imageFromStream = Image.FromStream(stream))
                 return new GdiImage(new Bitmap(imageFromStream), imageFromStream.RawFormat, this);
+
+        }
+
+        public static bool IsSupportedFileFormat(string filePath) {
+
+            return new GdiImageCodec().IsSupportedFileFormat(filePath);
+
+        }
+        public static bool IsSupportedFileFormat(IFileFormat fileFormat) {
+
+            return new GdiImageCodec().IsSupportedFileFormat(fileFormat);
 
         }
 
@@ -67,7 +76,7 @@ namespace Gsemac.Drawing.Imaging {
 
         private readonly IFileFormat imageFormat;
 
-        private void EncodeBitmap(System.Drawing.Image image, Stream stream, IImageEncoderOptions encoderOptions) {
+        private void EncodeBitmap(Image image, Stream stream, IImageEncoderOptions encoderOptions) {
 
             using (EncoderParameters encoderParameters = new EncoderParameters(1))
             using (EncoderParameter qualityParameter = new EncoderParameter(Encoder.Quality, encoderOptions.Quality)) {
@@ -86,6 +95,22 @@ namespace Gsemac.Drawing.Imaging {
 
         }
 
+        private static IEnumerable<IFileFormat> GetNativelySupportedImageFormats() {
+
+            return new List<string>(new[]{
+                ".bmp",
+                ".gif",
+                ".exif",
+                ".jpg",
+                ".jpeg",
+                ".png",
+                ".tif",
+                ".tiff"
+            }).OrderBy(type => type)
+            .Select(ext => FileFormatFactory.Default.FromFileExtension(ext))
+            .Distinct();
+
+        }
         private static System.Drawing.Imaging.ImageFormat GetImageFormatFromFileExtension(string fileExtension) {
 
             switch (fileExtension.ToLowerInvariant()) {
