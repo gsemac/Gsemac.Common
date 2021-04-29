@@ -12,6 +12,18 @@
 
         public static LoggerOptions Default => new LoggerOptions();
 
+        public LoggerOptions() { }
+        public LoggerOptions(ILoggerOptions options) {
+
+            this.LogDirectoryPath = options.LogDirectoryPath;
+            this.Headers = options.Headers;
+            this.IgnoreExceptions = options.IgnoreExceptions;
+            this.MessageFormatter = options.MessageFormatter;
+            this.FilenameFormatter = options.FilenameFormatter;
+            this.RetentionPolicy = options.RetentionPolicy;
+
+        }
+
     }
 
 }
