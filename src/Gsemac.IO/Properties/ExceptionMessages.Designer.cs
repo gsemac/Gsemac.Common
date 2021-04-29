@@ -70,6 +70,24 @@ namespace Gsemac.IO.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The file &apos;{0}&apos; already exists..
+        /// </summary>
+        internal static string FileAlreadyExists {
+            get {
+                return ResourceManager.GetString("FileAlreadyExists", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Could not find file &apos;{0}&apos;..
+        /// </summary>
+        internal static string FileNotFound {
+            get {
+                return ResourceManager.GetString("FileNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The file was not in the correct format..
         /// </summary>
         internal static string IncorrectFileFormat {
@@ -84,6 +102,15 @@ namespace Gsemac.IO.Properties {
         internal static string MalformedMimeType {
             get {
                 return ResourceManager.GetString("MalformedMimeType", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The operation timed out..
+        /// </summary>
+        internal static string OperationTimedOut {
+            get {
+                return ResourceManager.GetString("OperationTimedOut", resourceCulture);
             }
         }
         

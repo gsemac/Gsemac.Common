@@ -120,11 +120,20 @@
   <data name="CannotAccessAClosedStream" xml:space="preserve">
     <value>Cannot access a closed stream.</value>
   </data>
+  <data name="FileAlreadyExists" xml:space="preserve">
+    <value>The file '{0}' already exists.</value>
+  </data>
+  <data name="FileNotFound" xml:space="preserve">
+    <value>Could not find file '{0}'.</value>
+  </data>
   <data name="IncorrectFileFormat" xml:space="preserve">
     <value>The file was not in the correct format.</value>
   </data>
   <data name="MalformedMimeType" xml:space="preserve">
     <value>The MIME type was malformed.</value>
+  </data>
+  <data name="OperationTimedOut" xml:space="preserve">
+    <value>The operation timed out.</value>
   </data>
   <data name="StreamDoesNotSupportSeeking" xml:space="preserve">
     <value>Stream does not support seeking.</value>
