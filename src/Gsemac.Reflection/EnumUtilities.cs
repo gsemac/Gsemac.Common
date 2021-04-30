@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Globalization;
+using System.Linq;
 
 namespace Gsemac.Reflection {
 
     public static class EnumUtilities {
-
 
         public static bool TryParse(object obj, Type enumType, out object result) {
 
