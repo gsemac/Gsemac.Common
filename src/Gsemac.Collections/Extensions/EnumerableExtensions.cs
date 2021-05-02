@@ -6,6 +6,8 @@ namespace Gsemac.Collections.Extensions {
 
     public static class EnumerableExtensions {
 
+        // Public members
+
         public static IEnumerable<T> TakeLast<T>(this IEnumerable<T> source, int length) {
 
             return source.Skip(Math.Max(0, source.Count() - length));
@@ -58,6 +60,16 @@ namespace Gsemac.Collections.Extensions {
             return source.GroupBy(selector).Select(item => item.First());
 
         }
+
+        public static IEnumerable<T> Shuffle<T>(this IEnumerable<T> source) {
+
+            return source.OrderBy((item) => random.Next());
+
+        }
+
+        // Private members
+
+        private static readonly Random random = new Random();
 
     }
 
