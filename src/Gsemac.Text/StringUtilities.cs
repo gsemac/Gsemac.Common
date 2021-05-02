@@ -452,6 +452,7 @@ namespace Gsemac.Text {
             // These cases are based on instances found "in the wild", and are not guaranteed to be perfect because we cannot be sure what the original encoding was.
 
             sb.Replace(@"â€™", @"'");
+            sb.Replace(@"â€“", @"–");
             sb.Replace(@"â˜†", @"☆");
 
             return sb.ToString();

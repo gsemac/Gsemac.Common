@@ -94,7 +94,7 @@ namespace Gsemac.Text.Tests {
         [TestMethod]
         public void TestUnescapeWithBrokenEncoding() {
 
-            Assert.AreEqual("'☆", StringUtilities.Unescape("â€™â˜†"));
+            Assert.AreEqual("'–☆", StringUtilities.Unescape("â€™â€“â˜†"));
 
         }
         [TestMethod]
