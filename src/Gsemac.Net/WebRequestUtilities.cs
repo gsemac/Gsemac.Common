@@ -145,8 +145,10 @@ namespace Gsemac.Net {
                 }
                 catch (WebException ex) {
 
+                    // ex.Response will be a regular HttpWebResponse instead of an IHttpWebResponse when the request fails.
+
                     using (WebResponse webResponse = ex.Response)
-                        statusCode = (webResponse as IHttpWebResponse)?.StatusCode;
+                        statusCode = (webResponse as HttpWebResponse)?.StatusCode;
 
                     lastException = ex;
 
@@ -217,7 +219,7 @@ namespace Gsemac.Net {
 
         }
 
-        public static long GetFileSize(IHttpWebRequest httpWebRequest) {
+        public static long GetRemoteFileSize(IHttpWebRequest httpWebRequest) {
 
             if (httpWebRequest is null)
                 throw new ArgumentNullException(nameof(httpWebRequest));
@@ -276,26 +278,26 @@ namespace Gsemac.Net {
                 throw lastException ?? new Exception($"Unable to obtain file size from {httpWebRequest.RequestUri}.");
 
         }
-        public static long GetFileSize(HttpWebRequest httpWebRequest) {
+        public static long GetRemoteFileSize(HttpWebRequest httpWebRequest) {
 
-            return GetFileSize(new HttpWebRequestWrapper(httpWebRequest));
-
-        }
-        public static long GetFileSize(Uri uri) {
-
-            return GetFileSize(new HttpWebRequestFactory().Create(uri));
+            return GetRemoteFileSize(new HttpWebRequestWrapper(httpWebRequest));
 
         }
-        public static long GetFileSize(string uri) {
+        public static long GetRemoteFileSize(Uri uri) {
 
-            return GetFileSize(new Uri(uri));
+            return GetRemoteFileSize(new HttpWebRequestFactory().Create(uri));
 
         }
-        public static bool TryGetFileSize(IHttpWebRequest httpWebRequest, out long fileSize) {
+        public static long GetRemoteFileSize(string uri) {
+
+            return GetRemoteFileSize(new Uri(uri));
+
+        }
+        public static bool TryGetRemoteFileSize(IHttpWebRequest httpWebRequest, out long fileSize) {
 
             try {
 
-                fileSize = GetFileSize(httpWebRequest);
+                fileSize = GetRemoteFileSize(httpWebRequest);
 
                 return true;
 
@@ -309,23 +311,56 @@ namespace Gsemac.Net {
             }
 
         }
-        public static bool TryGetFileSize(HttpWebRequest httpWebRequest, out long fileSize) {
+        public static bool TryGetRemoteFileSize(HttpWebRequest httpWebRequest, out long fileSize) {
 
-            return TryGetFileSize(new HttpWebRequestWrapper(httpWebRequest), out fileSize);
-
-        }
-        public static bool TryGetFileSize(Uri uri, out long fileSize) {
-
-            return TryGetFileSize(new HttpWebRequestFactory().Create(uri), out fileSize);
+            return TryGetRemoteFileSize(new HttpWebRequestWrapper(httpWebRequest), out fileSize);
 
         }
-        public static bool TryGetFileSize(string uri, out long fileSize) {
+        public static bool TryGetRemoteFileSize(Uri uri, out long fileSize) {
 
-            return TryGetFileSize(new Uri(uri), out fileSize);
+            return TryGetRemoteFileSize(new HttpWebRequestFactory().Create(uri), out fileSize);
+
+        }
+        public static bool TryGetRemoteFileSize(string uri, out long fileSize) {
+
+            return TryGetRemoteFileSize(new Uri(uri), out fileSize);
+
+        }
+        public static bool RemoteFileExists(IHttpWebRequest httpWebRequest) {
+
+            try {
+
+                return GetHttpStatusCode(httpWebRequest) == HttpStatusCode.OK;
+            }
+            catch (WebException ex) {
+
+                // ex.Response will be a regular HttpWebResponse instead of an IHttpWebResponse when the request fails.
+
+                if ((ex.Response as HttpWebResponse)?.StatusCode == HttpStatusCode.NotFound)
+                    return false;
+
+                throw ex;
+
+            }
+
+        }
+        public static bool RemoteFileExists(HttpWebRequest httpWebRequest) {
+
+            return RemoteFileExists(new HttpWebRequestWrapper(httpWebRequest));
+
+        }
+        public static bool RemoteFileExists(Uri uri) {
+
+            return RemoteFileExists(new HttpWebRequestFactory().Create(uri));
+
+        }
+        public static bool RemoteFileExists(string uri) {
+
+            return RemoteFileExists(new Uri(uri));
 
         }
 
-        public static DateTimeOffset GetServerDateTime(IHttpWebRequest httpWebRequest) {
+        public static DateTimeOffset GetRemoteDateTime(IHttpWebRequest httpWebRequest) {
 
             string originalMethod = httpWebRequest.Method;
 
@@ -348,26 +383,26 @@ namespace Gsemac.Net {
             throw new Exception($"Unable to obtain date from {httpWebRequest.RequestUri}.");
 
         }
-        public static DateTimeOffset GetServerDateTime(HttpWebRequest httpWebRequest) {
+        public static DateTimeOffset GetRemoteDateTime(HttpWebRequest httpWebRequest) {
 
-            return GetServerDateTime(new HttpWebRequestWrapper(httpWebRequest));
-
-        }
-        public static DateTimeOffset GetServerDateTime(Uri uri) {
-
-            return GetServerDateTime(new HttpWebRequestFactory().Create(uri));
+            return GetRemoteDateTime(new HttpWebRequestWrapper(httpWebRequest));
 
         }
-        public static DateTimeOffset GetServerDateTime(string uri) {
+        public static DateTimeOffset GetRemoteDateTime(Uri uri) {
 
-            return GetServerDateTime(new Uri(uri));
+            return GetRemoteDateTime(new HttpWebRequestFactory().Create(uri));
 
         }
-        public static bool TryGetServerDateTime(IHttpWebRequest httpWebRequest, out DateTimeOffset date) {
+        public static DateTimeOffset GetRemoteDateTime(string uri) {
+
+            return GetRemoteDateTime(new Uri(uri));
+
+        }
+        public static bool TryGetRemoteDateTime(IHttpWebRequest httpWebRequest, out DateTimeOffset date) {
 
             try {
 
-                date = GetServerDateTime(httpWebRequest);
+                date = GetRemoteDateTime(httpWebRequest);
 
                 return true;
 
@@ -381,19 +416,19 @@ namespace Gsemac.Net {
             }
 
         }
-        public static bool TryGetServerDateTime(HttpWebRequest httpWebRequest, out DateTimeOffset date) {
+        public static bool TryGetRemoteDateTime(HttpWebRequest httpWebRequest, out DateTimeOffset date) {
 
-            return TryGetServerDateTime(new HttpWebRequestWrapper(httpWebRequest), out date);
-
-        }
-        public static bool TryGetServerDateTime(Uri uri, out DateTimeOffset date) {
-
-            return TryGetServerDateTime(new HttpWebRequestFactory().Create(uri), out date);
+            return TryGetRemoteDateTime(new HttpWebRequestWrapper(httpWebRequest), out date);
 
         }
-        public static bool TryGetServerDateTime(string uri, out DateTimeOffset date) {
+        public static bool TryGetRemoteDateTime(Uri uri, out DateTimeOffset date) {
 
-            return TryGetServerDateTime(new Uri(uri), out date);
+            return TryGetRemoteDateTime(new HttpWebRequestFactory().Create(uri), out date);
+
+        }
+        public static bool TryGetRemoteDateTime(string uri, out DateTimeOffset date) {
+
+            return TryGetRemoteDateTime(new Uri(uri), out date);
 
         }
 
