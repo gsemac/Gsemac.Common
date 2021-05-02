@@ -1,4 +1,5 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Gsemac.Collections.Extensions;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Linq;
 
@@ -82,21 +83,33 @@ namespace Gsemac.Core.Tests {
         // Other
 
         [TestMethod]
-        public void TestComparison() {
+        public void TestComparisonWithDifferentVersionNumbers() {
 
-            SemVersion[] versions = new SemVersion[] {
-                new SemVersion("1.4.4"),
-                new SemVersion("1.2.0"),
-                new SemVersion("1.2.0-alpha"),
+            SemVersion[] sortedVersions = new SemVersion[] {
                 new SemVersion("0.1.0"),
+                new SemVersion("1.2.0-alpha"),
+                new SemVersion("1.2.0"),
+                new SemVersion("1.4.4"),
             };
 
-            CollectionAssert.AreEqual(new SemVersion[] {
-                new SemVersion("0.1.0"),
-                new SemVersion("1.2.0-alpha"),
-                new SemVersion("1.2.0"),
-                new SemVersion("1.4.4"),
-            }, versions.OrderBy(v => v).ToArray());
+            CollectionAssert.AreEqual(sortedVersions, sortedVersions.Shuffle().OrderBy(v => v).ToArray());
+
+        }
+        [TestMethod]
+        public void TestComparisonWithDifferentPreReleases() {
+
+            SemVersion[] sortedVersions = new SemVersion[] {
+                new SemVersion("1.0.0-alpha"),
+                new SemVersion("1.0.0-alpha.1"),
+                new SemVersion("1.0.0-alpha.beta"),
+                new SemVersion("1.0.0-beta"),
+                new SemVersion("1.0.0-beta.2"),
+                new SemVersion("1.0.0-beta.11"),
+                new SemVersion("1.0.0-rc.1"),
+                new SemVersion("1.0.0"),
+            };
+
+            CollectionAssert.AreEqual(sortedVersions, sortedVersions.Shuffle().OrderBy(v => v).ToArray());
 
         }
 
