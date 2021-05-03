@@ -11,7 +11,11 @@ namespace Gsemac.Drawing.Imaging {
         PluginBase,
         IImageOptimizer {
 
-        public IEnumerable<IFileFormat> SupportedFileFormats => new MagickImageCodec().SupportedFileFormats;
+        public IEnumerable<IFileFormat> GetSupportedFileFormats() {
+
+            return new MagickImageCodec().GetSupportedFileFormats();
+
+        }
 
         public bool Optimize(Stream stream, ImageOptimizationMode optimizationMode) {
 

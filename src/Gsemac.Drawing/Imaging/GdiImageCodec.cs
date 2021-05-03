@@ -18,8 +18,6 @@ namespace Gsemac.Drawing.Imaging {
 
         // Public members
 
-        public IEnumerable<IFileFormat> SupportedFileFormats => GetNativelySupportedImageFormats();
-
         public GdiImageCodec() {
         }
         public GdiImageCodec(IFileFormat imageFormat) {
@@ -58,6 +56,12 @@ namespace Gsemac.Drawing.Imaging {
 
             using (Image imageFromStream = Image.FromStream(stream))
                 return new GdiImage(new Bitmap(imageFromStream), imageFromStream.RawFormat, this);
+
+        }
+
+        public IEnumerable<IFileFormat> GetSupportedFileFormats() {
+
+            return GetNativelySupportedImageFormats();
 
         }
 

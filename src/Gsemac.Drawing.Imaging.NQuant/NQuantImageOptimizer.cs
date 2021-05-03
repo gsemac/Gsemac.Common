@@ -18,10 +18,14 @@ namespace Gsemac.Drawing.Imaging {
 
         // Public members
 
-        public IEnumerable<IFileFormat> SupportedFileFormats => GetSupportedImageFormats();
-
         public NQuantImageOptimizer() :
             base(1) {
+        }
+
+        public IEnumerable<IFileFormat> GetSupportedFileFormats() {
+
+            return GetSupportedImageFormats();
+
         }
 
         public bool Optimize(Stream stream, ImageOptimizationMode optimizationMode) {
@@ -30,9 +34,9 @@ namespace Gsemac.Drawing.Imaging {
 
                 WuQuantizer quantizer = new WuQuantizer();
 
-                using (Bitmap bitmap = (Bitmap)System.Drawing.Image.FromStream(stream)) {
+                using (Bitmap bitmap = (Bitmap)Image.FromStream(stream)) {
 
-                    using (System.Drawing.Image quantized = quantizer.QuantizeImage(bitmap)) {
+                    using (Image quantized = quantizer.QuantizeImage(bitmap)) {
 
                         stream.Seek(0, SeekOrigin.Begin);
                         stream.SetLength(0);

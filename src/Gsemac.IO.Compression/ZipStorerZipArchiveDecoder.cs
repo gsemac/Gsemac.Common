@@ -10,12 +10,16 @@ namespace Gsemac.IO.Compression {
 
         // Public members
 
-        public IEnumerable<IFileFormat> SupportedFileFormats => new[] {
-            ArchiveFormat.Zip
-        };
-
         public ZipStorerZipArchiveDecoder() :
             base(1) {
+        }
+
+        public IEnumerable<IFileFormat> GetSupportedFileFormats() {
+
+            return new[] {
+                ArchiveFormat.Zip
+            };
+
         }
 
         public IArchive Decode(Stream stream, FileAccess fileAccess = FileAccess.ReadWrite, bool leaveOpen = false, IArchiveOptions options = null) {

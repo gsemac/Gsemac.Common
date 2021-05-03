@@ -11,9 +11,13 @@ namespace Gsemac.Drawing.Imaging {
 
         // Public members
 
-        public IEnumerable<IFileFormat> SupportedFileFormats => GetSupportedImageFormats();
-
         public static ImageCodecFactory Default => new ImageCodecFactory();
+
+        public IEnumerable<IFileFormat> GetSupportedFileFormats() {
+
+            return GetSupportedImageFormats();
+
+        }
 
         public IImageCodec FromFileFormat(IFileFormat imageFormat) {
 
@@ -30,7 +34,7 @@ namespace Gsemac.Drawing.Imaging {
         }
         private static IEnumerable<IFileFormat> GetSupportedImageFormats() {
 
-            return GetImageCodecs().SelectMany(codec => codec.SupportedFileFormats)
+            return GetImageCodecs().SelectMany(codec => codec.GetSupportedFileFormats())
                 .Distinct()
                 .OrderBy(type => type);
 

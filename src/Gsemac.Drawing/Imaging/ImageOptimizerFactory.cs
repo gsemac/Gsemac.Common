@@ -10,9 +10,13 @@ namespace Gsemac.Drawing.Imaging {
 
         // Public members
 
-        public IEnumerable<IFileFormat> SupportedFileFormats => GetSupportedImageFormats();
-
         public static ImageOptimizerFactory Default => new ImageOptimizerFactory();
+
+        public IEnumerable<IFileFormat> GetSupportedFileFormats() {
+
+            return GetSupportedImageFormats();
+
+        }
 
         public IImageOptimizer FromFileFormat(IFileFormat imageFormat) {
 
@@ -24,7 +28,7 @@ namespace Gsemac.Drawing.Imaging {
 
         private static IEnumerable<IFileFormat> GetSupportedImageFormats() {
 
-            return GetImageOptimizers().SelectMany(optimizer => optimizer.SupportedFileFormats)
+            return GetImageOptimizers().SelectMany(optimizer => optimizer.GetSupportedFileFormats())
                 .OrderBy(type => type)
                 .Distinct();
 

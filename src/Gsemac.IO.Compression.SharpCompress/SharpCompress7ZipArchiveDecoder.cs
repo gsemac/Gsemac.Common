@@ -12,9 +12,13 @@ namespace Gsemac.IO.Compression {
 
         // Public members
 
-        public IEnumerable<IFileFormat> SupportedFileFormats => new[] {
-            ArchiveFormat.SevenZip
-        };
+        public IEnumerable<IFileFormat> GetSupportedFileFormats() {
+
+            return new[] {
+                ArchiveFormat.SevenZip
+            };
+
+        }
 
         public IArchive Decode(Stream stream, FileAccess fileAccess = FileAccess.ReadWrite, bool leaveOpen = false, IArchiveOptions options = null) {
 

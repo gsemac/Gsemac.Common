@@ -13,12 +13,18 @@ namespace Gsemac.IO {
 
         public static FileFormatFactory Default => new FileFormatFactory();
 
+        public IEnumerable<IFileFormat> GetKnownFileFormats() {
+
+            return knownFileFormats.Value;
+
+        }
+
         public IFileFormat FromMimeType(IMimeType mimeType) {
 
             if (mimeType is null)
                 throw new ArgumentNullException(nameof(mimeType));
 
-            IFileFormat fileFormat = GetKnownFileFormats()
+            IFileFormat fileFormat = GetKnownFileFormatsInternal()
                 .Where(format => format.MimeType.Equals(mimeType))
                 .FirstOrDefault();
 
@@ -44,7 +50,7 @@ namespace Gsemac.IO {
             else
                 ext = PathUtilities.NormalizeFileExtension(ext);
 
-            IFileFormat fileFormat = GetKnownFileFormats()
+            IFileFormat fileFormat = GetKnownFileFormatsInternal()
                 .Where(format => format.Extensions.Any(formatExt => formatExt.Equals(ext, StringComparison.OrdinalIgnoreCase)))
                 .FirstOrDefault();
 
@@ -67,7 +73,7 @@ namespace Gsemac.IO {
                     .OfType<IFileFormat>();
 
         }
-        private static IEnumerable<IFileFormat> GetKnownFileFormats() {
+        private static IEnumerable<IFileFormat> GetKnownFileFormatsInternal() {
 
             return knownFileFormats.Value;
 

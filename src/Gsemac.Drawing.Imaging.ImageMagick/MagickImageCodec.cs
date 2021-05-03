@@ -18,8 +18,6 @@ namespace Gsemac.Drawing.Imaging {
 
         // Public members
 
-        public IEnumerable<IFileFormat> SupportedFileFormats => GetSupportedImageFormats();
-
         public MagickImageCodec() :
             base(1) {
         }
@@ -30,6 +28,12 @@ namespace Gsemac.Drawing.Imaging {
                 throw new UnsupportedFileFormatException();
 
             this.imageFormat = imageFormat;
+
+        }
+
+        public IEnumerable<IFileFormat> GetSupportedFileFormats() {
+
+            return GetSupportedImageFormats();
 
         }
 

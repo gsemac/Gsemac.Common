@@ -16,7 +16,7 @@ namespace Gsemac.IO.Extensions {
         }
         public static bool IsSupportedFileFormat(this IHasSupportedFileFormats obj, IFileFormat fileFormat) {
 
-            return obj.SupportedFileFormats.Any(supportedFileFormat => supportedFileFormat.Equals(fileFormat));
+            return obj.GetSupportedFileFormats().Any(supportedFileFormat => supportedFileFormat.Equals(fileFormat));
 
         }
 

@@ -46,7 +46,7 @@ namespace Gsemac.IO.Compression {
 
         private static IEnumerable<IFileFormat> GetSupportedArchiveFormats() {
 
-            return CompressionPluginLoader.GetArchiveDecoders().SelectMany(decoder => decoder.SupportedFileFormats)
+            return CompressionPluginLoader.GetArchiveDecoders().SelectMany(decoder => decoder.GetSupportedFileFormats())
                 .OrderBy(type => type)
                 .Distinct();
 
