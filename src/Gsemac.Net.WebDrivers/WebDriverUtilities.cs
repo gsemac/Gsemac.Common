@@ -6,6 +6,7 @@ namespace Gsemac.Net.WebDrivers {
     public static class WebDriverUtilities {
 
         public const string ChromeDriverExecutablePath = "chromedriver.exe";
+        public const string EdgeDriverExecutablePath = "msedgedriver.exe";
         public const string GeckoDriverExecutablePath = "geckodriver.exe";
 
         public static void KillWebDriverProcesses(string webDriverExecutablePath) {

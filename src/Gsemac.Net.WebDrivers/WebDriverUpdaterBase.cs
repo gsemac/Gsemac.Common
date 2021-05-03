@@ -19,12 +19,15 @@ namespace Gsemac.Net.WebDrivers {
 
         // Public members
 
-        public IWebDriverMetadata UpdateWebDriver(IWebBrowserInfo webBrowserInfo) {
+        public IWebDriverInfo UpdateWebDriver(IWebBrowserInfo webBrowserInfo) {
+
+            if (webBrowserInfo is null)
+                throw new ArgumentNullException(nameof(webBrowserInfo));
 
             if (!IsSupportedWebBrowser(webBrowserInfo))
-                throw new ArgumentException("The given web browser is not valid for this updater.", nameof(webBrowserInfo));
+                throw new ArgumentException(string.Format(Properties.ExceptionMessages.UnsupportedWebBrowser, webBrowserInfo.Name), nameof(webBrowserInfo));
 
-            IWebDriverMetadata webDriverInfo = GetCurrentWebDriverFileInfo();
+            IWebDriverInfo webDriverInfo = GetWebDriverInfo();
             bool updateRequired = !webDriverInfo.Version?.Equals(webBrowserInfo.Version) ?? true;
 
             if (updateRequired) {
@@ -33,7 +36,7 @@ namespace Gsemac.Net.WebDrivers {
 
                 if (DownloadWebDriver(webBrowserInfo)) {
 
-                    webDriverInfo = new WebDriverMetadata() {
+                    webDriverInfo = new WebDriverInfo() {
                         ExecutablePath = GetWebDriverExecutablePath(),
                         Version = webBrowserInfo.Version
                     };
@@ -44,7 +47,7 @@ namespace Gsemac.Net.WebDrivers {
 
             }
             else
-                OnLog.Info("Web driver is up-to-date");
+                OnLog.Info($"Web driver is up to date ({webBrowserInfo.Version})");
 
             return webDriverInfo;
 
@@ -54,15 +57,16 @@ namespace Gsemac.Net.WebDrivers {
 
         protected LogEventHelper OnLog => new LogEventHelper("Web Driver Updater", Log);
 
-        protected WebDriverUpdaterBase(IHttpWebRequestFactory webRequestFactory) {
+        protected WebDriverUpdaterBase(WebBrowserId webBrowserId, IHttpWebRequestFactory webRequestFactory, IWebDriverUpdaterOptions webDriverUpdaterOptions) {
 
+            this.webBrowserId = webBrowserId;
             this.webRequestFactory = webRequestFactory;
+            this.webDriverUpdaterOptions = webDriverUpdaterOptions;
 
         }
 
+        protected abstract Uri GetWebDriverUri(IWebBrowserInfo webBrowserInfo, IHttpWebRequestFactory webRequestFactory);
         protected abstract string GetWebDriverExecutablePath();
-        protected abstract Uri GetWebDriverDownloadUri(IWebBrowserInfo webBrowserInfo);
-        protected abstract bool IsSupportedWebBrowser(IWebBrowserInfo webBrowserInfo);
 
         protected void OnDownloadFileProgressChanged(object sender, DownloadFileProgressChangedEventArgs e) {
 
@@ -77,43 +81,54 @@ namespace Gsemac.Net.WebDrivers {
 
         // Private members
 
+        private readonly WebBrowserId webBrowserId;
         private readonly IHttpWebRequestFactory webRequestFactory;
+        private readonly IWebDriverUpdaterOptions webDriverUpdaterOptions;
 
-        private string GetWebDriverMetadataFilePath() {
+        private string GetWebDriverInfoFilePath() {
 
             return PathUtilities.SetFileExtension(GetWebDriverExecutablePath(), ".json");
 
         }
+        private IWebDriverInfo GetWebDriverInfo() {
 
-        private IWebDriverMetadata GetCurrentWebDriverFileInfo() {
-
-            string webDriverMetadataFilePath = GetWebDriverMetadataFilePath();
+            string webDriverMetadataFilePath = GetWebDriverInfoFilePath();
 
             if (File.Exists(webDriverMetadataFilePath)) {
 
                 string metadataJson = File.ReadAllText(webDriverMetadataFilePath);
 
-                return JsonConvert.DeserializeObject<WebDriverMetadata>(metadataJson);
+                return JsonConvert.DeserializeObject<WebDriverInfo>(metadataJson);
 
             }
             else
-                return new WebDriverMetadata();
+                return new WebDriverInfo();
 
         }
-        private void SaveWebDriverInfo(IWebDriverMetadata webDriverInfo) {
+        private void SaveWebDriverInfo(IWebDriverInfo webDriverInfo) {
 
-            string webDriverMetadataFilePath = GetWebDriverMetadataFilePath();
+            string webDriverMetadataFilePath = GetWebDriverInfoFilePath();
 
             File.WriteAllText(webDriverMetadataFilePath, JsonConvert.SerializeObject(webDriverInfo, Formatting.Indented));
+
+        }
+
+        protected bool IsSupportedWebBrowser(IWebBrowserInfo webBrowserInfo) {
+
+            return webBrowserId == WebBrowserId.Unknown ||
+                webBrowserId.Equals(webBrowserInfo.Id);
 
         }
         private bool DownloadWebDriver(IWebBrowserInfo webBrowserInfo) {
 
             string webDriverExecutablePath = GetWebDriverExecutablePath();
 
+            if (!PathUtilities.IsPathRooted(webDriverExecutablePath) && !string.IsNullOrWhiteSpace(webDriverUpdaterOptions.WebDriverDirectoryPath))
+                webDriverExecutablePath = Path.Combine(webDriverUpdaterOptions.WebDriverDirectoryPath, WebDriverUtilities.GeckoDriverExecutablePath);
+
             OnLog.Info("Getting web driver download url");
 
-            Uri webDriverDownloadUri = GetWebDriverDownloadUri(webBrowserInfo);
+            Uri webDriverDownloadUri = GetWebDriverUri(webBrowserInfo, webRequestFactory);
             string downloadFilePath = PathUtilities.SetFileExtension(Path.GetTempFileName(), ".zip");
 
             if (webDriverDownloadUri is object) {

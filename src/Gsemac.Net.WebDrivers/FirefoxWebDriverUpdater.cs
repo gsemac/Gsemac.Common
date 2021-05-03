@@ -1,13 +1,8 @@
-﻿using Gsemac.IO;
-using Gsemac.IO.Compression;
-using Gsemac.Net.Extensions;
-using Gsemac.Net.GitHub;
+﻿using Gsemac.Net.GitHub;
 using Gsemac.Net.GitHub.Extensions;
 using Gsemac.Net.WebBrowsers;
 using System;
-using System.IO;
 using System.Linq;
-using System.Net;
 
 namespace Gsemac.Net.WebDrivers {
 
@@ -23,24 +18,12 @@ namespace Gsemac.Net.WebDrivers {
             this(new HttpWebRequestFactory(), webDriverUpdaterOptions) {
         }
         public FirefoxWebDriverUpdater(IHttpWebRequestFactory webRequestFactory, IWebDriverUpdaterOptions webDriverUpdaterOptions) :
-            base(webRequestFactory) {
-
-            this.webRequestFactory = webRequestFactory;
-            this.webDriverUpdaterOptions = webDriverUpdaterOptions;
-
+            base(WebBrowserId.Firefox, webRequestFactory, webDriverUpdaterOptions) {
         }
 
         // Protected members
 
-        protected override string GetWebDriverExecutablePath() {
-
-            if (string.IsNullOrWhiteSpace(webDriverUpdaterOptions.WebDriverDirectoryPath))
-                return WebDriverUtilities.GeckoDriverExecutablePath;
-
-            return Path.Combine(webDriverUpdaterOptions.WebDriverDirectoryPath, WebDriverUtilities.GeckoDriverExecutablePath);
-
-        }
-        protected override Uri GetWebDriverDownloadUri(IWebBrowserInfo webBrowserInfo) {
+        protected override Uri GetWebDriverUri(IWebBrowserInfo webBrowserInfo, IHttpWebRequestFactory webRequestFactory) {
 
             string releasesUrl = "https://github.com/mozilla/geckodriver/releases/latest";
 
@@ -58,16 +41,13 @@ namespace Gsemac.Net.WebDrivers {
             return null;
 
         }
-        protected override bool IsSupportedWebBrowser(IWebBrowserInfo webBrowserInfo) {
+        protected override string GetWebDriverExecutablePath() {
 
-            return webBrowserInfo.Id == WebBrowserId.Firefox;
+            return WebDriverUtilities.GeckoDriverExecutablePath;
 
         }
 
         // Private members
-
-        private readonly IHttpWebRequestFactory webRequestFactory;
-        private readonly IWebDriverUpdaterOptions webDriverUpdaterOptions;
 
         private string GetPlatformOS() {
 

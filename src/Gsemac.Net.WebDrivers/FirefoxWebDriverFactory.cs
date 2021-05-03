@@ -2,7 +2,6 @@
 using Gsemac.Net.WebBrowsers;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Firefox;
-using System;
 using System.IO;
 
 namespace Gsemac.Net.WebDrivers {
@@ -18,35 +17,21 @@ namespace Gsemac.Net.WebDrivers {
         public FirefoxWebDriverFactory(IWebDriverOptions webDriverOptions) :
             this(webDriverOptions, WebDriverFactoryOptions.Default) {
         }
+        public FirefoxWebDriverFactory(IWebDriverFactoryOptions webDriverFactoryOptions) :
+            this(WebDriverOptions.Default, webDriverFactoryOptions) {
+        }
         public FirefoxWebDriverFactory(IWebDriverOptions webDriverOptions, IWebDriverFactoryOptions webDriverFactoryOptions) :
-           this(new HttpWebRequestFactory(), webDriverOptions, webDriverFactoryOptions) {
+            this(new HttpWebRequestFactory(), webDriverOptions, webDriverFactoryOptions) {
         }
-        public FirefoxWebDriverFactory(IHttpWebRequestFactory webRequestFactory, IWebDriverOptions webDriverOptions, IWebDriverFactoryOptions webDriverFactoryOptions) {
-
-            this.webRequestFactory = webRequestFactory;
-            this.webDriverOptions = webDriverOptions;
-            this.webDriverFactoryOptions = webDriverFactoryOptions;
-
+        public FirefoxWebDriverFactory(IHttpWebRequestFactory webRequestFactory, IWebDriverOptions webDriverOptions, IWebDriverFactoryOptions webDriverFactoryOptions) :
+            base(WebBrowserId.Firefox, webRequestFactory, webDriverOptions, webDriverFactoryOptions) {
         }
 
-        public override IWebDriver Create() {
+        // Protected members
 
-            return Create(webDriverFactoryOptions.DefaultWebBrowser ?? WebBrowserInfo.GetWebBrowserInfo(WebBrowserId.Firefox));
+        protected override IWebDriver GetWebDriver(IWebBrowserInfo webBrowserInfo, IWebDriverOptions webDriverOptions) {
 
-        }
-        public override IWebDriver Create(IWebBrowserInfo webBrowserInfo) {
-
-            if (webBrowserInfo.Id != WebBrowserId.Firefox)
-                throw new ArgumentException("The given web browser is not valid for this factory.", nameof(webBrowserInfo));
-
-            // Get the web driver executable path.
-
-            OnLog.Info($"Creating web driver ({webBrowserInfo})");
-
-            string webDriverExecutablePath = Path.GetFullPath(GetWebDriverExecutablePath(webBrowserInfo));
-            string webDriverDirectoryPath = Path.GetDirectoryName(webDriverExecutablePath);
-
-            // Create the driver service.
+            string webDriverDirectoryPath = Path.GetDirectoryName(webDriverOptions.WebDriverExecutablePath);
 
             FirefoxDriverService driverService = FirefoxDriverService.CreateDefaultService(webDriverDirectoryPath);
 
@@ -56,88 +41,34 @@ namespace Gsemac.Net.WebDrivers {
                 BrowserExecutableLocation = webBrowserInfo.ExecutablePath
             };
 
-            ConfigureDriverOptions(driverOptions);
+            ConfigureDriverOptions(driverOptions, webDriverOptions);
 
             FirefoxDriver driver = new FirefoxDriver(driverService, driverOptions);
 
-            ConfigureDriver(driver);
+            ConfigureDriver(driver, webDriverOptions);
 
             return driver;
 
         }
+        protected override string GetWebDriverExecutablePath() {
 
-        // Protected members
+            return WebDriverUtilities.GeckoDriverExecutablePath;
 
-        protected override void Dispose(bool disposing) {
+        }
+        protected override IWebDriverUpdater GetUpdater(IHttpWebRequestFactory httpWebRequestFactory, IWebDriverUpdaterOptions webDriverUpdaterOptions) {
 
-            if (disposing && !isDisposed) {
-
-                if (webDriverFactoryOptions.KillWebDriverProcessesOnDispose) {
-
-                    OnLog.Info($"Killing web driver processes");
-
-                    WebDriverUtilities.KillWebDriverProcesses(GetWebDriverExecutablePath(null));
-
-                }
-
-                isDisposed = true;
-
-            }
-
-            base.Dispose(disposing);
+            return new FirefoxWebDriverUpdater(httpWebRequestFactory, webDriverUpdaterOptions);
 
         }
 
         // Private members
-
-        private readonly IHttpWebRequestFactory webRequestFactory;
-        private readonly IWebDriverOptions webDriverOptions;
-        private readonly IWebDriverFactoryOptions webDriverFactoryOptions;
-        private bool isDisposed = false;
-
-        private string GetWebDriverExecutablePath(IWebBrowserInfo webBrowserInfo) {
-
-            if (!string.IsNullOrWhiteSpace(webDriverOptions.WebDriverExecutablePath))
-                return webDriverOptions.WebDriverExecutablePath;
-
-            if (webBrowserInfo is object && webDriverFactoryOptions.AutoUpdateEnabled) {
-
-                OnLog.Info($"Checking for web driver updates");
-
-                IWebDriverMetadata webDriverInfo = GetWebDriverUpdater().UpdateWebDriver(webBrowserInfo);
-
-                if (!string.IsNullOrWhiteSpace(webDriverInfo?.ExecutablePath))
-                    return webDriverInfo.ExecutablePath;
-
-            }
-
-            if (string.IsNullOrWhiteSpace(webDriverFactoryOptions.WebDriverDirectoryPath))
-                return WebDriverUtilities.GeckoDriverExecutablePath;
-
-            return Path.Combine(webDriverFactoryOptions.WebDriverDirectoryPath, WebDriverUtilities.GeckoDriverExecutablePath);
-
-        }
-        private IWebDriverUpdater GetWebDriverUpdater() {
-
-            IWebDriverUpdater updater = new FirefoxWebDriverUpdater(webRequestFactory, new WebDriverUpdaterOptions() {
-                WebDriverDirectoryPath = webDriverFactoryOptions.WebDriverDirectoryPath
-            });
-
-            updater.Log += OnLog.Log;
-
-            updater.DownloadFileProgressChanged += OnDownloadFileProgressChanged;
-            updater.DownloadFileCompleted += OnDownloadFileCompleted;
-
-            return updater;
-
-        }
 
         private void ConfigureDriverService(FirefoxDriverService service) {
 
             service.HideCommandPromptWindow = true;
 
         }
-        private void ConfigureDriverOptions(FirefoxOptions options) {
+        private void ConfigureDriverOptions(FirefoxOptions options, IWebDriverOptions webDriverOptions) {
 
             if (webDriverOptions.Headless)
                 options.AddArgument("--headless");
@@ -183,7 +114,7 @@ namespace Gsemac.Net.WebDrivers {
             profile.SetPreference("dom.webdriver.enabled", false);
 
         }
-        private void ConfigureDriver(FirefoxDriver driver) {
+        private void ConfigureDriver(FirefoxDriver driver, IWebDriverOptions webDriverOptions) {
 
             driver.Manage().Window.Position = webDriverOptions.WindowPosition;
 

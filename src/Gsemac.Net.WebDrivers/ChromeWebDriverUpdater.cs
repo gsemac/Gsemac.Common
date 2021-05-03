@@ -1,7 +1,6 @@
 ﻿using Gsemac.Net.Extensions;
 using Gsemac.Net.WebBrowsers;
 using System;
-using System.IO;
 using System.Net;
 
 namespace Gsemac.Net.WebDrivers {
@@ -18,24 +17,12 @@ namespace Gsemac.Net.WebDrivers {
             this(new HttpWebRequestFactory(), webDriverUpdaterOptions) {
         }
         public ChromeWebDriverUpdater(IHttpWebRequestFactory webRequestFactory, IWebDriverUpdaterOptions webDriverUpdaterOptions) :
-            base(webRequestFactory) {
-
-            this.webRequestFactory = webRequestFactory;
-            this.webDriverUpdaterOptions = webDriverUpdaterOptions;
-
+            base(WebBrowserId.Chrome, webRequestFactory, webDriverUpdaterOptions) {
         }
 
         // Protected members
 
-        protected override string GetWebDriverExecutablePath() {
-
-            if (string.IsNullOrWhiteSpace(webDriverUpdaterOptions.WebDriverDirectoryPath))
-                return WebDriverUtilities.ChromeDriverExecutablePath;
-
-            return Path.Combine(webDriverUpdaterOptions.WebDriverDirectoryPath, WebDriverUtilities.ChromeDriverExecutablePath);
-
-        }
-        protected override Uri GetWebDriverDownloadUri(IWebBrowserInfo webBrowserInfo) {
+        protected override Uri GetWebDriverUri(IWebBrowserInfo webBrowserInfo, IHttpWebRequestFactory webRequestFactory) {
 
             Uri versionUri = new Uri("https://chromedriver.storage.googleapis.com/LATEST_RELEASE");
 
@@ -69,16 +56,13 @@ namespace Gsemac.Net.WebDrivers {
             return null;
 
         }
-        protected override bool IsSupportedWebBrowser(IWebBrowserInfo webBrowserInfo) {
+        protected override string GetWebDriverExecutablePath() {
 
-            return webBrowserInfo.Id == WebBrowserId.Chrome;
+            return WebDriverUtilities.ChromeDriverExecutablePath;
 
         }
 
         // Private members
-
-        private readonly IHttpWebRequestFactory webRequestFactory;
-        private readonly IWebDriverUpdaterOptions webDriverUpdaterOptions;
 
         private string GetPlatformOS() {
 
@@ -88,7 +72,6 @@ namespace Gsemac.Net.WebDrivers {
             return "win32";
 
         }
-
 
     }
 

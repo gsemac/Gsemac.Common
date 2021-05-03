@@ -22,6 +22,24 @@ namespace Gsemac.Net.WebDrivers {
 
         public static WebDriverOptions Default => new WebDriverOptions();
 
+        public WebDriverOptions() { }
+        public WebDriverOptions(IWebDriverOptions other) {
+
+            this.Uri = other.Uri;
+            this.Proxy = other.Proxy;
+            this.Timeout = other.Timeout;
+            this.UserAgent = other.UserAgent;
+            this.WebDriverExecutablePath = other.WebDriverExecutablePath;
+            this.Headless = other.Headless;
+            this.WindowPosition = other.WindowPosition;
+            this.WindowSize = other.WindowSize;
+
+            this.PageLoadStrategy = other.PageLoadStrategy;
+            this.DisablePopUps = other.DisablePopUps;
+            this.Stealth = other.Stealth;
+
+        }
+
     }
 
 }

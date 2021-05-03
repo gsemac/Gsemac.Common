@@ -3,7 +3,6 @@ using Gsemac.Net.WebBrowsers;
 using Gsemac.Net.WebDrivers.Extensions;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
-using System;
 using System.IO;
 
 namespace Gsemac.Net.WebDrivers {
@@ -19,35 +18,21 @@ namespace Gsemac.Net.WebDrivers {
         public ChromeWebDriverFactory(IWebDriverOptions webDriverOptions) :
             this(webDriverOptions, WebDriverFactoryOptions.Default) {
         }
+        public ChromeWebDriverFactory(IWebDriverFactoryOptions webDriverFactoryOptions) :
+            this(WebDriverOptions.Default, webDriverFactoryOptions) {
+        }
         public ChromeWebDriverFactory(IWebDriverOptions webDriverOptions, IWebDriverFactoryOptions webDriverFactoryOptions) :
-           this(new HttpWebRequestFactory(), webDriverOptions, webDriverFactoryOptions) {
+            this(new HttpWebRequestFactory(), webDriverOptions, webDriverFactoryOptions) {
         }
-        public ChromeWebDriverFactory(IHttpWebRequestFactory webRequestFactory, IWebDriverOptions webDriverOptions, IWebDriverFactoryOptions webDriverFactoryOptions) {
-
-            this.webRequestFactory = webRequestFactory;
-            this.webDriverOptions = webDriverOptions;
-            this.webDriverFactoryOptions = webDriverFactoryOptions;
-
+        public ChromeWebDriverFactory(IHttpWebRequestFactory webRequestFactory, IWebDriverOptions webDriverOptions, IWebDriverFactoryOptions webDriverFactoryOptions) :
+            base(WebBrowserId.Chrome, webRequestFactory, webDriverOptions, webDriverFactoryOptions) {
         }
 
-        public override IWebDriver Create() {
+        // Protected members
 
-            return Create(webDriverFactoryOptions.DefaultWebBrowser ?? WebBrowserInfo.GetWebBrowserInfo(WebBrowserId.Chrome));
+        protected override IWebDriver GetWebDriver(IWebBrowserInfo webBrowserInfo, IWebDriverOptions webDriverOptions) {
 
-        }
-        public override IWebDriver Create(IWebBrowserInfo webBrowserInfo) {
-
-            if (webBrowserInfo.Id != WebBrowserId.Chrome)
-                throw new ArgumentException("The given web browser is not valid for this factory.", nameof(webBrowserInfo));
-
-            // Get the web driver executable path.
-
-            OnLog.Info($"Creating web driver ({webBrowserInfo})");
-
-            string webDriverExecutablePath = Path.GetFullPath(GetWebDriverExecutablePath(webBrowserInfo));
-            string webDriverDirectoryPath = Path.GetDirectoryName(webDriverExecutablePath);
-
-            // Create the driver service.
+            string webDriverDirectoryPath = Path.GetDirectoryName(webDriverOptions.WebDriverExecutablePath);
 
             ChromeDriverService driverService = ChromeDriverService.CreateDefaultService(webDriverDirectoryPath);
 
@@ -57,88 +42,34 @@ namespace Gsemac.Net.WebDrivers {
                 BinaryLocation = webBrowserInfo.ExecutablePath
             };
 
-            ConfigureDriverOptions(driverOptions);
+            ConfigureDriverOptions(driverOptions, webDriverOptions);
 
             ChromeDriver driver = new ChromeDriver(driverService, driverOptions);
 
-            ConfigureDriver(driver);
+            ConfigureDriver(driver, webDriverOptions);
 
             return driver;
 
         }
+        protected override string GetWebDriverExecutablePath() {
 
-        // Protected members
+            return WebDriverUtilities.ChromeDriverExecutablePath;
 
-        protected override void Dispose(bool disposing) {
+        }
+        protected override IWebDriverUpdater GetUpdater(IHttpWebRequestFactory httpWebRequestFactory, IWebDriverUpdaterOptions webDriverUpdaterOptions) {
 
-            if (disposing && !isDisposed) {
-
-                if (webDriverFactoryOptions.KillWebDriverProcessesOnDispose) {
-
-                    OnLog.Info($"Killing web driver processes");
-
-                    WebDriverUtilities.KillWebDriverProcesses(GetWebDriverExecutablePath(null));
-
-                }
-
-                isDisposed = true;
-
-            }
-
-            base.Dispose(disposing);
+            return new ChromeWebDriverUpdater(httpWebRequestFactory, webDriverUpdaterOptions);
 
         }
 
         // Private members
-
-        private readonly IHttpWebRequestFactory webRequestFactory;
-        private readonly IWebDriverOptions webDriverOptions;
-        private readonly IWebDriverFactoryOptions webDriverFactoryOptions;
-        private bool isDisposed = false;
-
-        private string GetWebDriverExecutablePath(IWebBrowserInfo webBrowserInfo) {
-
-            if (!string.IsNullOrWhiteSpace(webDriverOptions.WebDriverExecutablePath))
-                return webDriverOptions.WebDriverExecutablePath;
-
-            if (webBrowserInfo is object && webDriverFactoryOptions.AutoUpdateEnabled) {
-
-                OnLog.Info($"Checking for web driver updates");
-
-                IWebDriverMetadata webDriverInfo = GetWebDriverUpdater().UpdateWebDriver(webBrowserInfo);
-
-                if (!string.IsNullOrWhiteSpace(webDriverInfo?.ExecutablePath))
-                    return webDriverInfo.ExecutablePath;
-
-            }
-
-            if (string.IsNullOrWhiteSpace(webDriverFactoryOptions.WebDriverDirectoryPath))
-                return WebDriverUtilities.ChromeDriverExecutablePath;
-
-            return Path.Combine(webDriverFactoryOptions.WebDriverDirectoryPath, WebDriverUtilities.ChromeDriverExecutablePath);
-
-        }
-        private IWebDriverUpdater GetWebDriverUpdater() {
-
-            IWebDriverUpdater updater = new ChromeWebDriverUpdater(webRequestFactory, new WebDriverUpdaterOptions() {
-                WebDriverDirectoryPath = webDriverFactoryOptions.WebDriverDirectoryPath
-            });
-
-            updater.Log += OnLog.Log;
-
-            updater.DownloadFileProgressChanged += OnDownloadFileProgressChanged;
-            updater.DownloadFileCompleted += OnDownloadFileCompleted;
-
-            return updater;
-
-        }
 
         private void ConfigureDriverService(ChromeDriverService service) {
 
             service.HideCommandPromptWindow = true;
 
         }
-        private void ConfigureDriverOptions(ChromeOptions options) {
+        private void ConfigureDriverOptions(ChromeOptions options, IWebDriverOptions webDriverOptions) {
 
             if (webDriverOptions.Headless)
                 options.AddArgument("--headless");
@@ -161,7 +92,7 @@ namespace Gsemac.Net.WebDrivers {
             options.AddArgument("--disable-blink-features=AutomationControlled");
 
         }
-        private void ConfigureDriver(ChromeDriver driver) {
+        private void ConfigureDriver(ChromeDriver driver, IWebDriverOptions webDriverOptions) {
 
             if (webDriverOptions.Stealth) {
 

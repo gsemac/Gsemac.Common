@@ -1,4 +1,5 @@
-﻿using Gsemac.Net.WebBrowsers;
+﻿using Gsemac.IO.Logging;
+using Gsemac.Net.WebBrowsers;
 using OpenQA.Selenium;
 using System;
 using System.Collections.Generic;
@@ -6,9 +7,15 @@ using System.Collections.Generic;
 namespace Gsemac.Net.WebDrivers {
 
     public sealed class WebDriverFactory :
-         WebDriverFactoryBase {
+         IWebDriverFactory {
 
         // Public members
+
+        public event DownloadFileProgressChangedEventHandler DownloadFileProgressChanged;
+        public event DownloadFileCompletedEventHandler DownloadFileCompleted;
+        public event LogEventHandler Log;
+
+        public static WebDriverFactory Default => new WebDriverFactory();
 
         public WebDriverFactory() :
             this(WebDriverOptions.Default) {
@@ -19,7 +26,10 @@ namespace Gsemac.Net.WebDrivers {
         public WebDriverFactory(IWebDriverFactoryOptions webDriverFactoryOptions) :
             this(WebDriverOptions.Default, webDriverFactoryOptions) {
         }
-        public WebDriverFactory(IWebDriverOptions webDriverOptions, IWebDriverFactoryOptions webDriverFactoryOptions) {
+        public WebDriverFactory(IWebDriverOptions webDriverOptions, IWebDriverFactoryOptions webDriverFactoryOptions) :
+            this(HttpWebRequestFactory.Default, webDriverOptions, webDriverFactoryOptions) {
+        }
+        public WebDriverFactory(IHttpWebRequestFactory webRequestFactory, IWebDriverOptions webDriverOptions, IWebDriverFactoryOptions webDriverFactoryOptions) {
 
             if (webDriverOptions is null)
                 throw new ArgumentNullException(nameof(webDriverOptions));
@@ -27,30 +37,35 @@ namespace Gsemac.Net.WebDrivers {
             if (webDriverFactoryOptions is null)
                 throw new ArgumentNullException(nameof(webDriverFactoryOptions));
 
+            if (webRequestFactory is null)
+                throw new ArgumentNullException(nameof(webRequestFactory));
+
+            this.webRequestFactory = webRequestFactory;
             this.webDriverOptions = webDriverOptions;
             this.webDriverFactoryOptions = webDriverFactoryOptions;
 
         }
 
-        public override IWebDriver Create() {
+        public IWebDriver Create() {
 
             return Create(webDriverFactoryOptions.DefaultWebBrowser ?? WebBrowserInfo.GetDefaultWebBrowserInfo());
 
         }
-        public override IWebDriver Create(IWebBrowserInfo webBrowserInfo) {
+        public IWebDriver Create(IWebBrowserInfo webBrowserInfo) {
 
             if (isDisposed)
                 throw new ObjectDisposedException(nameof(WebDriverFactory));
 
-            return GetOrCreateFactory(webBrowserInfo.Id).Create(webBrowserInfo);
+            if (webBrowserInfo is null)
+                throw new ArgumentNullException(nameof(webBrowserInfo));
+
+            return GetOrCreateFactory(webBrowserInfo).Create(webBrowserInfo);
 
         }
 
-        // Protected members
+        public void Dispose() {
 
-        protected override void Dispose(bool disposing) {
-
-            if (!isDisposed && disposing) {
+            if (!isDisposed) {
 
                 isDisposed = true;
 
@@ -59,47 +74,49 @@ namespace Gsemac.Net.WebDrivers {
 
             }
 
-            base.Dispose(disposing);
-
         }
 
         // Private members
 
+        private readonly IHttpWebRequestFactory webRequestFactory;
         private readonly IWebDriverOptions webDriverOptions;
         private readonly IWebDriverFactoryOptions webDriverFactoryOptions;
         private readonly IDictionary<WebBrowserId, IWebDriverFactory> factoryDict = new Dictionary<WebBrowserId, IWebDriverFactory>();
-        private readonly object factoryDictLock = new object();
         private bool isDisposed = false;
 
-        private IWebDriverFactory GetOrCreateFactory(WebBrowserId webBrowserId) {
+        private IWebDriverFactory GetOrCreateFactory(IWebBrowserInfo webBrowserInfo) {
 
             IWebDriverFactory factory = null;
 
-            lock (factoryDictLock) {
+            lock (factoryDict) {
 
-                if (!factoryDict.TryGetValue(webBrowserId, out factory)) {
+                if (!factoryDict.TryGetValue(webBrowserInfo.Id, out factory)) {
 
-                    switch (webBrowserId) {
+                    switch (webBrowserInfo.Id) {
 
                         case WebBrowserId.Chrome:
-                            factoryDict[webBrowserId] = new ChromeWebDriverFactory(webDriverOptions, webDriverFactoryOptions);
+                            factoryDict[webBrowserInfo.Id] = new ChromeWebDriverFactory(webDriverOptions, webDriverFactoryOptions);
+                            break;
+
+                        case WebBrowserId.Edge:
+                            factoryDict[webBrowserInfo.Id] = new EdgeWebDriverFactory(webDriverOptions, webDriverFactoryOptions);
                             break;
 
                         case WebBrowserId.Firefox:
-                            factoryDict[webBrowserId] = new FirefoxWebDriverFactory(webDriverOptions, webDriverFactoryOptions);
+                            factoryDict[webBrowserInfo.Id] = new FirefoxWebDriverFactory(webDriverOptions, webDriverFactoryOptions);
                             break;
 
                         default:
-                            throw new ArgumentException("The given web browser is not supported.");
+                            throw new ArgumentException(string.Format(Properties.ExceptionMessages.UnsupportedWebBrowser, webBrowserInfo.Name), nameof(webBrowserInfo));
 
                     }
 
-                    factory = factoryDict[webBrowserId];
+                    factory = factoryDict[webBrowserInfo.Id];
 
-                    factory.Log += OnLog.Log;
+                    factory.Log += Log;
 
-                    factory.DownloadFileCompleted += OnDownloadFileCompleted;
-                    factory.DownloadFileProgressChanged += OnDownloadFileProgressChanged;
+                    factory.DownloadFileCompleted += DownloadFileCompleted;
+                    factory.DownloadFileProgressChanged += DownloadFileProgressChanged;
 
                 }
 
@@ -108,6 +125,7 @@ namespace Gsemac.Net.WebDrivers {
             return factory;
 
         }
+
 
     }
 

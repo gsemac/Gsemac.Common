@@ -1,4 +1,5 @@
-﻿using Gsemac.Net.WebBrowsers;
+﻿using Gsemac.IO.Logging;
+using Gsemac.Net.WebBrowsers;
 using Gsemac.Net.WebDrivers.Extensions;
 using OpenQA.Selenium;
 using System;
@@ -9,19 +10,20 @@ using System.Threading;
 
 namespace Gsemac.Net.WebDrivers {
 
-    public class PooledWebDriverFactory :
-        WebDriverFactoryBase {
+    public sealed class PooledWebDriverFactory :
+        IWebDriverFactory {
 
         // Public members
 
-        public override event DownloadFileProgressChangedEventHandler DownloadFileProgressChanged {
+        public event DownloadFileProgressChangedEventHandler DownloadFileProgressChanged {
             add => baseFactory.DownloadFileProgressChanged += value;
             remove => baseFactory.DownloadFileProgressChanged -= value;
         }
-        public override event DownloadFileCompletedEventHandler DownloadFileCompleted {
+        public event DownloadFileCompletedEventHandler DownloadFileCompleted {
             add => baseFactory.DownloadFileCompleted += value;
             remove => baseFactory.DownloadFileCompleted -= value;
         }
+        public event LogEventHandler Log;
 
         public PooledWebDriverFactory() :
             this(PooledWebDriverFactoryOptions.Default) {
@@ -48,22 +50,20 @@ namespace Gsemac.Net.WebDrivers {
             this(baseFactory, new PooledWebDriverFactoryOptions(options)) {
         }
 
-        public override IWebDriver Create() {
+        public IWebDriver Create() {
 
             return CreateInternal(webBrowserInfo: options.DefaultWebBrowser);
 
         }
-        public override IWebDriver Create(IWebBrowserInfo webBrowserInfo) {
+        public IWebDriver Create(IWebBrowserInfo webBrowserInfo) {
 
             return CreateInternal(webBrowserInfo);
 
         }
 
-        // Protected members
+        public void Dispose() {
 
-        protected override void Dispose(bool disposing) {
-
-            if (disposing && !isDisposed) {
+            if (!isDisposed) {
 
                 lock (poolLock) {
 
@@ -188,6 +188,8 @@ namespace Gsemac.Net.WebDrivers {
 
         }
 
+        private LogEventHelper OnLog => new LogEventHelper("Web Driver Factory", Log);
+
         private readonly IPooledWebDriverFactoryOptions options;
         private readonly IWebDriverFactory baseFactory;
         private readonly bool disposeFactory;
@@ -210,7 +212,9 @@ namespace Gsemac.Net.WebDrivers {
             if (options.PoolSize < 1)
                 throw new ArgumentOutOfRangeException(nameof(options), "The pool size must be at least 1.");
 
-            baseFactory.Log += OnLog.Log;
+            // A lambda is used instead of adding OnLog.Log directly so event handlers added after this point are still invoked.
+
+            baseFactory.Log += (sender, e) => OnLog.Log(e.Message);
 
         }
 
@@ -304,7 +308,7 @@ namespace Gsemac.Net.WebDrivers {
 
                     IWebDriver webDriver = webBrowserInfo is null ? baseFactory.Create() : baseFactory.Create(webBrowserInfo);
 
-                    webDriverItem = new PoolItem(currentWebDriverId++, webBrowserInfo?.Id ?? WebBrowserId.Unidentified, webDriver);
+                    webDriverItem = new PoolItem(currentWebDriverId++, webBrowserInfo?.Id ?? WebBrowserId.Unknown, webDriver);
 
                     spawnedDrivers.Add(webDriverItem);
 
@@ -328,7 +332,7 @@ namespace Gsemac.Net.WebDrivers {
 
                     if (pool.Count() > 0) {
 
-                        PoolItem webDriverItem = pool.FirstOrDefault(item => (webBrowserInfo?.Id ?? WebBrowserId.Unidentified) == item.WebBrowserId);
+                        PoolItem webDriverItem = pool.FirstOrDefault(item => (webBrowserInfo?.Id ?? WebBrowserId.Unknown) == item.WebBrowserId);
 
                         if (webDriverItem is object) {
 

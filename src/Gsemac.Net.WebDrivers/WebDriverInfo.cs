@@ -4,8 +4,8 @@ using System;
 
 namespace Gsemac.Net.WebDrivers {
 
-    internal class WebDriverMetadata :
-        IWebDriverMetadata {
+    internal class WebDriverInfo :
+        IWebDriverInfo {
 
         [JsonProperty("version"), JsonConverter(typeof(VersionConverter))]
         public Version Version { get; set; }
