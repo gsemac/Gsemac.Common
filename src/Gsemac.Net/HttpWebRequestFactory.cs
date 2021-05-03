@@ -10,6 +10,8 @@ namespace Gsemac.Net {
 
         public bool OverrideAutomaticRedirection { get; set; } = false;
 
+        public static HttpWebRequestFactory Default => new HttpWebRequestFactory();
+
         public HttpWebRequestFactory() :
             this(HttpWebRequestOptions.Default) {
         }
