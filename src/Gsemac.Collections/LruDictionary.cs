@@ -41,7 +41,7 @@ namespace Gsemac.Collections {
         }
         public bool Remove(TKey key) {
 
-            if (nodeDict.TryGetValue(key, out LinkedListNode<DictItem> node)) {
+            if (nodeDict.TryGetValue(key, out LinkedListNode<KeyValuePair<TKey, TValue>> node)) {
 
                 values.Remove(node);
 
@@ -59,7 +59,7 @@ namespace Gsemac.Collections {
         }
         public bool TryGetValue(TKey key, out TValue value) {
 
-            if (nodeDict.TryGetValue(key, out LinkedListNode<DictItem> node)) {
+            if (nodeDict.TryGetValue(key, out LinkedListNode<KeyValuePair<TKey, TValue>> node)) {
 
                 value = node.Value.Value;
 
@@ -120,24 +120,10 @@ namespace Gsemac.Collections {
 
         // Private members
 
-        private class DictItem {
+        private readonly LinkedList<KeyValuePair<TKey, TValue>> values = new LinkedList<KeyValuePair<TKey, TValue>>();
+        private readonly IDictionary<TKey, LinkedListNode<KeyValuePair<TKey, TValue>>> nodeDict = new Dictionary<TKey, LinkedListNode<KeyValuePair<TKey, TValue>>>();
 
-            public TKey Key { get; }
-            public TValue Value { get; }
-
-            public DictItem(TKey key, TValue value) {
-
-                Key = key;
-                Value = value;
-
-            }
-
-        }
-
-        private readonly LinkedList<DictItem> values = new LinkedList<DictItem>();
-        private readonly IDictionary<TKey, LinkedListNode<DictItem>> nodeDict = new Dictionary<TKey, LinkedListNode<DictItem>>();
-
-        private void SetMostRecent(LinkedListNode<DictItem> node) {
+        private void SetMostRecent(LinkedListNode<KeyValuePair<TKey, TValue>> node) {
 
             values.Remove(node);
 
@@ -148,7 +134,7 @@ namespace Gsemac.Collections {
 
             if (values.Any()) {
 
-                LinkedListNode<DictItem> nodeToRemove = values.Last;
+                LinkedListNode<KeyValuePair<TKey, TValue>> nodeToRemove = values.Last;
 
                 bool removedFromDict = nodeDict.Remove(nodeToRemove.Value.Key);
 
@@ -173,7 +159,7 @@ namespace Gsemac.Collections {
             if (!Remove(key) && Count >= Capacity)
                 EvictOldest();
 
-            nodeDict[key] = values.AddFirst(new DictItem(key, value));
+            nodeDict[key] = values.AddFirst(new KeyValuePair<TKey, TValue>(key, value));
 
             Debug.Assert(Count <= Capacity);
 
