@@ -9,28 +9,32 @@ namespace Gsemac.IO.Logging {
         // Public members
 
         public string TimestampFormat { get; } = "HH:mm:ss";
-        public int ColumnWidth { get; } = 12;
+
+        public void SetColumnWidth(int index, int width) {
+
+            if (index < 0 || index >= columnWidths.Length)
+                throw new ArgumentOutOfRangeException(nameof(index));
+
+            if (width <= 0)
+                throw new ArgumentOutOfRangeException(nameof(width));
+
+            columnWidths[index] = width;
+
+        }
 
         public string Format(ILogMessage message) {
 
             StringBuilder sb = new StringBuilder();
 
-            string timestamp = FormatTimestamp(DateTime.Now).PadRight(ColumnWidth);
-            string source = FormatSource(message.Source).PadRight(ColumnWidth);
-
-            if (ColumnWidth > 0) {
-
-                timestamp = timestamp.Substring(0, ColumnWidth);
-                source = source.Substring(0, ColumnWidth);
-
-            }
+            string timestamp = FormatTimestamp(DateTime.Now).PadRight(columnWidths[0]).Substring(0, columnWidths[0]);
+            string source = FormatSource(message.Source).PadRight(columnWidths[1]).Substring(0, columnWidths[1]);
 
             sb.Append(timestamp);
-            sb.Append(source);
-            sb.Append(FormatLogLevel(message.LogLevel));
-
             sb.Append(" ");
-
+            sb.Append(source);
+            sb.Append(" ");
+            sb.Append(FormatLogLevel(message.LogLevel));
+            sb.Append(" ");
             sb.AppendLine(FormatMessage(message.Message));
 
             if (message.Exception != null)
@@ -81,6 +85,10 @@ namespace Gsemac.IO.Logging {
             return exception?.ToString();
 
         }
+
+        // Private members
+
+        private readonly int[] columnWidths = new int[] { 8, 11 };
 
     }
 
