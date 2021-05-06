@@ -20,7 +20,11 @@ namespace Gsemac.Drawing.Imaging {
 
         // Public members
 
-        public IEnumerable<IFileFormat> SupportedFileFormats => GetSupportedImageFormats();
+        public IEnumerable<IFileFormat> GetSupportedFileFormats() {
+           
+            return GetSupportedImageFormats();
+
+        }
 
         public void Encode(IImage image, Stream stream, IImageEncoderOptions encoderOptions) {
 
