@@ -24,7 +24,7 @@ namespace Gsemac.Net.Extensions {
 
         }
 
-        public static void DownloadFileSync(this WebClient client, Uri address, string fileName) {
+        public static void DownloadFileSync(this WebClient client, Uri address, string filename) {
 
             // Events are only fired when downloading asynchronously with DownloadFileAsync.
             // This method allows for synchronous downloads while still firing events. 
@@ -43,13 +43,18 @@ namespace Gsemac.Net.Extensions {
 
             lock (mutex) {
 
-                client.DownloadFileAsync(address, fileName, mutex);
+                client.DownloadFileAsync(address, filename, mutex);
 
                 Monitor.Wait(mutex);
 
             }
 
             client.DownloadFileCompleted -= handleDownloadComplete;
+
+        }
+        public static void DownloadFileSync(this WebClient client, string address, string filename) {
+
+            DownloadFileSync(client, new Uri(address), filename);
 
         }
 
