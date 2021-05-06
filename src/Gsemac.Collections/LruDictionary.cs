@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -20,7 +21,7 @@ namespace Gsemac.Collections {
 
         public TValue this[TKey key] {
             get => GetValue(key);
-            set => SetValue(key, value);
+            set => SetValue(key, value, replace: true);
         }
 
         public LruDictionary(int capacity) {
@@ -36,7 +37,7 @@ namespace Gsemac.Collections {
         }
         public void Add(TKey key, TValue value) {
 
-            SetValue(key, value);
+            SetValue(key, value, replace: false);
 
         }
         public bool Remove(TKey key) {
@@ -79,7 +80,7 @@ namespace Gsemac.Collections {
         }
         public void Add(KeyValuePair<TKey, TValue> item) {
 
-            SetValue(item.Key, item.Value);
+            SetValue(item.Key, item.Value, replace: false);
 
         }
         public void Clear() {
@@ -151,13 +152,16 @@ namespace Gsemac.Collections {
             if (TryGetValue(key, out TValue value))
                 return value;
             else
-                throw new KeyNotFoundException("The given key was not present in the dictionary.");
+                throw new KeyNotFoundException(Properties.ExceptionMessages.KeyNotFound);
 
         }
-        private void SetValue(TKey key, TValue value) {
+        private void SetValue(TKey key, TValue value, bool replace) {
 
             if (!Remove(key) && Count >= Capacity)
                 EvictOldest();
+
+            if (!replace && ContainsKey(key))
+                throw new ArgumentException(Properties.ExceptionMessages.KeyAlreadyExists, nameof(key));
 
             nodeDict[key] = values.AddFirst(new KeyValuePair<TKey, TValue>(key, value));
 
