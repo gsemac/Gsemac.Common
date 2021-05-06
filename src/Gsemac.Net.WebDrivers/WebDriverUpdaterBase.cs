@@ -19,7 +19,7 @@ namespace Gsemac.Net.WebDrivers {
 
         // Public members
 
-        public IWebDriverInfo UpdateWebDriver(IWebBrowserInfo webBrowserInfo) {
+        public IWebDriverInfo Update(IWebBrowserInfo webBrowserInfo) {
 
             if (webBrowserInfo is null)
                 throw new ArgumentNullException(nameof(webBrowserInfo));
