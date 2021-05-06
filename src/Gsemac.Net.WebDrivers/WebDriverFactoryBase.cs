@@ -122,12 +122,23 @@ namespace Gsemac.Net.WebDrivers {
 
                 if (updater is object) {
 
-                    OnLog.Info($"Checking for web driver updates");
+                    try {
 
-                    IWebDriverInfo webDriverInfo = updater.Update(webBrowserInfo);
+                        IWebDriverInfo webDriverInfo = updater.Update(webBrowserInfo);
 
-                    if (!string.IsNullOrWhiteSpace(webDriverInfo?.ExecutablePath))
-                        return webDriverInfo.ExecutablePath;
+                        if (!string.IsNullOrWhiteSpace(webDriverInfo?.ExecutablePath))
+                            return webDriverInfo.ExecutablePath;
+
+                    }
+                    catch (Exception ex) {
+
+                        OnLog.Error(ex.ToString());
+
+                        if (!webDriverFactoryOptions.IgnoreUpdateErrors)
+                            throw ex;
+
+                    }
+
 
                 }
 
