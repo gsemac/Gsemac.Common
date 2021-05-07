@@ -1,13 +1,13 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using Gsemac.Collections;
+using System;
 using System.Windows.Forms;
 
 namespace Gsemac.Forms {
 
     public class ListViewItemComparer :
-          IComparer,
-          IComparer<ListViewItem> {
+          ListViewItemComparerBase {
+
+        // Public members
 
         public int Column { get; set; }
         public SortOrder SortOrder { get; set; }
@@ -22,26 +22,32 @@ namespace Gsemac.Forms {
 
         }
 
-        public int Compare(object x, object y) {
-
-            ListViewItem lhs = x as ListViewItem;
-            ListViewItem rhs = y as ListViewItem;
-
-            return Compare(lhs, rhs);
-
-        }
-        public int Compare(ListViewItem x, ListViewItem y) {
+        public override int Compare(ListViewItem x, ListViewItem y) {
 
             ListViewItem lhs = SortOrder == SortOrder.Descending ? y : x;
             ListViewItem rhs = SortOrder == SortOrder.Descending ? x : y;
 
-            string lhsStr = lhs.SubItems[Column].Text;
-            string rhsStr = rhs.SubItems[Column].Text;
+            if (SortOrder == SortOrder.None) {
 
-            if (DateTime.TryParse(lhsStr, out DateTime lhsDate) && DateTime.TryParse(rhsStr, out DateTime rhsDate))
-                return lhsDate.CompareTo(rhsDate);
-            else
-                return lhsStr.CompareTo(rhsStr);
+                // Allow the tag to be used to reset the original sort order.
+
+                if (lhs.Tag is int lhsTag && rhs.Tag is int rhsTag)
+                    return lhsTag.CompareTo(rhsTag);
+
+                return 0;
+
+            }
+            else {
+
+                string lhsStr = lhs.SubItems[Column].Text;
+                string rhsStr = rhs.SubItems[Column].Text;
+
+                if (DateTime.TryParse(lhsStr, out DateTime lhsDate) && DateTime.TryParse(rhsStr, out DateTime rhsDate))
+                    return lhsDate.CompareTo(rhsDate);
+                else
+                    return new NaturalSortComparer().Compare(lhsStr, rhsStr);
+
+            }
 
         }
 
