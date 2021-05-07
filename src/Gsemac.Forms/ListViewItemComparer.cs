@@ -12,6 +12,9 @@ namespace Gsemac.Forms {
         public int Column { get; set; }
         public SortOrder SortOrder { get; set; }
 
+        public ListViewItemComparer(int column) :
+            this(column, SortOrder.Ascending) {
+        }
         public ListViewItemComparer(int column, SortOrder sortOrder) {
 
             SortOrder = sortOrder;
