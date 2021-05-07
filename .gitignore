@@ -339,6 +339,7 @@ ASALocalRun/
 # BeatPulse healthcheck temp database
 healthchecksdb
 ConsoleApp1/
+WindowsFormsApp1/
 
 # Include DLLs in the repository.
 !/src/*/lib/**/
