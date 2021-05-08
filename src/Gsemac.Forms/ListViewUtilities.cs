@@ -45,6 +45,10 @@ namespace Gsemac.Forms {
 
         public static void SetHeaderSortingEnabled(ListView listView, bool enabled) {
 
+            // This prevents us from adding the event handler twice.
+
+            listView.ColumnClick -= ListViewColumnClickEventHandler;
+            
             if (enabled) {
 
                 foreach (var pair in listView.Items.Cast<ListViewItem>().Select((item, index) => Tuple.Create(item, index))) {
@@ -56,10 +60,6 @@ namespace Gsemac.Forms {
 
                 listView.ColumnClick += ListViewColumnClickEventHandler;
 
-            }
-            else {
-
-                listView.ColumnClick -= ListViewColumnClickEventHandler;
             }
 
         }
