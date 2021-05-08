@@ -89,7 +89,8 @@ namespace Gsemac.Net.WebDrivers {
 
             // Disable the "navigator.webdriver" property.
 
-            options.AddArgument("--disable-blink-features=AutomationControlled");
+            if (webDriverOptions.Stealth)
+                options.AddArgument("--disable-blink-features=AutomationControlled");
 
         }
         private void ConfigureDriver(ChromeDriver driver, IWebDriverOptions webDriverOptions) {
