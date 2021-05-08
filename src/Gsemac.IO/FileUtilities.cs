@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using System.IO;
 using System.Security.Cryptography;
 using System.Threading;
@@ -44,6 +45,87 @@ namespace Gsemac.IO {
             catch (UnauthorizedAccessException) {
 
                 return false;
+
+            }
+
+        }
+
+        public static string FormatBytes(long totalBytes, int decimalPlaces = 1, ByteFormat byteFormat = ByteFormat.Binary) {
+
+            // Based on the answer given here: https://stackoverflow.com/a/14488941 (JLRishe)
+
+            if (decimalPlaces < 0)
+                throw new ArgumentOutOfRangeException(string.Format(Properties.ExceptionMessages.MustBeGreaterThanZero, nameof(decimalPlaces)), nameof(decimalPlaces));
+
+            string[] suffixes;
+            long power;
+
+            switch (byteFormat) {
+
+                case ByteFormat.Binary:
+
+                    power = 1024;
+                    suffixes = new[] { "bytes", "KiB", "MiB", "GiB", "TiB", "PiB", "EiB", "ZiB", "YiB", };
+
+                    break;
+
+                case ByteFormat.Decimal:
+
+                    power = 1000;
+                    suffixes = new[] { "bytes", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB", };
+
+                    break;
+
+                case ByteFormat.BinaryBits:
+
+                    power = 1024;
+                    totalBytes *= 8; // Convert to bits
+                    suffixes = new[] { "bits", "Kib", "Mib", "Gib", "Tib", "Pib", "Eib", "Zib", "Yib", };
+
+                    break;
+
+                case ByteFormat.DecimalBits:
+
+                    power = 1000;
+                    totalBytes *= 8; // Convert to bits
+                    suffixes = new[] { "bits", "Kb", "Mb", "Gb", "Tb", "Pb", "Eb", "Zb", "Yb", };
+
+                    break;
+
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(byteFormat));
+
+            }
+
+            string formatStr = "{0:n" + decimalPlaces.ToString(CultureInfo.InvariantCulture) + "} {1}";
+
+            if (totalBytes < 0) {
+
+                return "-" + FormatBytes(Math.Abs(totalBytes), decimalPlaces);
+
+            }
+            else if (totalBytes == 0) {
+
+                return string.Format(formatStr, totalBytes, suffixes[0]);
+
+            }
+            else {
+
+                int order = Math.Min((int)Math.Log(totalBytes, power), suffixes.Length - 1); // 0 = bytes, 1 = KiB, 2 = MiB, ...
+                double adjustedQuantity = totalBytes / Math.Pow(power, order);
+
+                // If rounding the value puts us over the threshold (it will be rounded by String.Format), move up to the next order.
+
+                double threshold = 0.97;
+
+                if (order < suffixes.Length - 1 && Math.Round(adjustedQuantity, decimalPlaces) >= (power * threshold)) {
+
+                    order += 1;
+                    adjustedQuantity /= power;
+
+                }
+
+                return string.Format(formatStr, adjustedQuantity, suffixes[order]);
 
             }
 

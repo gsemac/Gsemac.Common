@@ -132,6 +132,9 @@
   <data name="MalformedMimeType" xml:space="preserve">
     <value>The MIME type was malformed.</value>
   </data>
+  <data name="MustBeGreaterThanZero" xml:space="preserve">
+    <value>'{0}' must be greater than zero.</value>
+  </data>
   <data name="OperationTimedOut" xml:space="preserve">
     <value>The operation timed out.</value>
   </data>

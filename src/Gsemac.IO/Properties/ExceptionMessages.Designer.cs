@@ -106,6 +106,15 @@ namespace Gsemac.IO.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to &apos;{0}&apos; must be greater than zero..
+        /// </summary>
+        internal static string MustBeGreaterThanZero {
+            get {
+                return ResourceManager.GetString("MustBeGreaterThanZero", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The operation timed out..
         /// </summary>
         internal static string OperationTimedOut {
