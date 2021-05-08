@@ -18,8 +18,11 @@ namespace Gsemac.Net.Extensions {
             if (proxy is null)
                 return true;
 
+            // Under .NET Framework, "GetProxy" returns the passed URI if it is not proxied.
+            // Under .NET Core+, "GetProxy" returns null if the URI is not proxied.
+
             return proxy.IsBypassed(destination) ||
-                proxy.GetProxy(destination).Equals(destination);
+                (proxy.GetProxy(destination)?.Equals(destination) ?? true);
 
         }
 
