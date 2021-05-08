@@ -21,7 +21,7 @@ namespace Gsemac.Drawing.Imaging {
         // Public members
 
         public IEnumerable<IFileFormat> GetSupportedFileFormats() {
-           
+
             return GetSupportedImageFormats();
 
         }
@@ -34,7 +34,7 @@ namespace Gsemac.Drawing.Imaging {
         }
         public IImage Decode(Stream stream) {
 
-            return ImageUtilities.CreateImageFromBitmap(DecodeWebPBitmap(stream), SupportedFileFormats.First(), this);
+            return ImageUtilities.CreateImageFromBitmap(DecodeWebPBitmap(stream), GetSupportedFileFormats().First(), this);
 
         }
 
