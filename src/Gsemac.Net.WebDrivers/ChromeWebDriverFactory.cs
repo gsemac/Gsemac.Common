@@ -32,23 +32,7 @@ namespace Gsemac.Net.WebDrivers {
 
         protected override IWebDriver GetWebDriver(IWebBrowserInfo webBrowserInfo, IWebDriverOptions webDriverOptions) {
 
-            string webDriverDirectoryPath = Path.GetDirectoryName(webDriverOptions.WebDriverExecutablePath);
-
-            ChromeDriverService driverService = ChromeDriverService.CreateDefaultService(webDriverDirectoryPath);
-
-            ConfigureDriverService(driverService);
-
-            ChromeOptions driverOptions = new ChromeOptions {
-                BinaryLocation = webBrowserInfo.ExecutablePath
-            };
-
-            ConfigureDriverOptions(driverOptions, webDriverOptions);
-
-            ChromeDriver driver = new ChromeDriver(driverService, driverOptions);
-
-            ConfigureDriver(driver, webDriverOptions);
-
-            return driver;
+            return GetWebDriverInternal(webBrowserInfo, webDriverOptions, overriddenUserAgent: string.Empty);
 
         }
         protected override string GetWebDriverExecutablePath() {
@@ -64,18 +48,47 @@ namespace Gsemac.Net.WebDrivers {
 
         // Private members
 
+        private IWebDriver GetWebDriverInternal(IWebBrowserInfo webBrowserInfo, IWebDriverOptions webDriverOptions, string overriddenUserAgent) {
+
+            string webDriverDirectoryPath = Path.GetDirectoryName(webDriverOptions.WebDriverExecutablePath);
+
+            ChromeDriverService driverService = ChromeDriverService.CreateDefaultService(webDriverDirectoryPath);
+
+            ConfigureDriverService(driverService);
+
+            ChromeOptions driverOptions = new ChromeOptions {
+                BinaryLocation = webBrowserInfo.ExecutablePath
+            };
+
+            ConfigureDriverOptions(driverOptions, webDriverOptions, overriddenUserAgent);
+
+            IWebDriver driver = new ChromeDriver(driverService, driverOptions);
+
+            ConfigureDriver(driver as ChromeDriver, webDriverOptions);
+
+            if (string.IsNullOrEmpty(overriddenUserAgent))
+                driver = OverrideHeadlessUserAgent(driver, webBrowserInfo, webDriverOptions);
+
+            return driver;
+
+        }
+
         private void ConfigureDriverService(ChromeDriverService service) {
 
             service.HideCommandPromptWindow = true;
 
         }
-        private void ConfigureDriverOptions(ChromeOptions options, IWebDriverOptions webDriverOptions) {
+        private void ConfigureDriverOptions(ChromeOptions options, IWebDriverOptions webDriverOptions, string overriddenUserAgent) {
 
             if (webDriverOptions.Headless)
                 options.AddArgument("--headless");
 
-            if (!string.IsNullOrEmpty(webDriverOptions.UserAgent))
-                options.AddArgument($"--user-agent={webDriverOptions.UserAgent}");
+            string userAgent = !string.IsNullOrEmpty(webDriverOptions.UserAgent) ?
+                webDriverOptions.UserAgent :
+                overriddenUserAgent;
+
+            if (!string.IsNullOrEmpty(userAgent))
+                options.AddArgument($"--user-agent={userAgent}");
 
             if (!webDriverOptions.Proxy.IsEmpty())
                 options.AddArgument($"--proxy-server={webDriverOptions.Proxy.ToProxyString()}");
@@ -115,6 +128,37 @@ namespace Gsemac.Net.WebDrivers {
             }
 
             driver.Manage().Window.Position = webDriverOptions.WindowPosition;
+
+        }
+
+        private IWebDriver OverrideHeadlessUserAgent(IWebDriver webDriver, IWebBrowserInfo webBrowserInfo, IWebDriverOptions webDriverOptions) {
+
+            if (webDriverOptions.Stealth && webDriverOptions.Headless && string.IsNullOrWhiteSpace(webDriverOptions.UserAgent)) {
+
+                string userAgent = webDriver.GetUserAgent();
+
+                // The user agent will contain the string "HeadlessChrome" when using headless mode.
+
+                if (userAgent.Contains("HeadlessChrome/")) {
+
+                    OnLog.Info("HeadlessChrome detected; patching user agent");
+
+                    string newUserAgent = userAgent.Replace("HeadlessChrome/", "Chrome/");
+
+                    // Recreate the web driver using the new user agent string.
+
+                    webDriver.Quit();
+                    webDriver.Dispose();
+
+                    return GetWebDriverInternal(webBrowserInfo, webDriverOptions, newUserAgent);
+
+                }
+
+            }
+
+            // Return the web driver unmodified.
+
+            return webDriver;
 
         }
 
