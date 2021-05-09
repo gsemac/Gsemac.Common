@@ -111,12 +111,15 @@ namespace Gsemac.Net.WebDrivers {
 
             // Disable the "navigator.webdriver" property.
 
-            profile.SetPreference("dom.webdriver.enabled", false);
+            if (webDriverOptions.Stealth)
+                profile.SetPreference("dom.webdriver.enabled", false);
 
         }
         private void ConfigureDriver(FirefoxDriver driver, IWebDriverOptions webDriverOptions) {
 
             driver.Manage().Window.Position = webDriverOptions.WindowPosition;
+
+            
 
         }
 
