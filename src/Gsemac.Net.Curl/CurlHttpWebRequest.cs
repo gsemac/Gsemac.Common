@@ -40,12 +40,7 @@ namespace Gsemac.Net.Curl {
 
             Task curlTask = Task.Factory.StartNew(() => {
 
-                // We shouldn't need to check if libcurl is initialized, because it's reference counted and can be called multiple times.
-                // However, repeated calls to curl_global_cleanup are crashing my program, so for the time being I'm not pairing it with this.
-                // It's up the user to call curl_global_cleanup once when they're done using it. 
-
-                if (!LibCurl.IsInitialized) // Check so ref count will not be increased (only one call to curl_global_cleanup required after multiple requests)
-                    LibCurl.GlobalInit();
+                GlobalInit();
 
                 try {
 
@@ -90,7 +85,7 @@ namespace Gsemac.Net.Curl {
 
                     stream.Close();
 
-                    //LibCurl.GlobalCleanup();
+                    GlobalCleanup();
 
                 }
 
@@ -105,6 +100,27 @@ namespace Gsemac.Net.Curl {
         // Private members
 
         private readonly ICurlWebRequestOptions options;
+        private readonly object globalInitLock = new object();
+
+        private void GlobalInit() {
+
+            lock (globalInitLock) {
+
+                // We shouldn't need to check if libcurl is initialized, because it's reference counted and can be called multiple times.
+                // However, repeated calls to curl_global_cleanup are crashing my program, so for the time being I'm not pairing it with this.
+                // It's up the user to call curl_global_cleanup once when they're done using it. 
+
+                if (!LibCurl.IsInitialized) // Check so ref count will not be increased (only one call to curl_global_cleanup required after multiple requests)
+                    LibCurl.GlobalInit();
+
+            }
+
+        }
+        private void GlobalCleanup() {
+
+            //LibCurl.GlobalCleanup();
+
+        }
 
         private string GetAcceptEncoding() {
 

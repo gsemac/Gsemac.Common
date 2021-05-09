@@ -8,14 +8,7 @@ namespace Gsemac.Net.Curl {
 
         // Public members
 
-        public static bool IsInitialized {
-            get {
-
-                lock (globalInitMutex)
-                    return globalInitRefCount > 0;
-
-            }
-        }
+        public static bool IsInitialized => globalInitRefCount > 0;
 
         public static CurlCode GlobalInit(CurlGlobal flags = CurlGlobal.Default) {
 
