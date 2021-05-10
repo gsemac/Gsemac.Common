@@ -44,7 +44,7 @@ namespace Gsemac.Net.Extensions {
 
             // If this URI is not proxied, return an empty string.
 
-            if (proxyUri.Equals(destination))
+            if (proxyUri is null || proxyUri.Equals(destination))
                 return string.Empty;
 
             StringBuilder sb = new StringBuilder();
