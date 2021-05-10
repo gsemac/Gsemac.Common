@@ -6,7 +6,7 @@ namespace Gsemac.Net {
         IDisposable {
 
         bool ReadStatusLine(out IHttpStatusLine statusLine);
-        bool ReadNextHeader(out IHttpHeader header);
+        bool ReadHeader(out IHttpHeader header);
 
     }
 

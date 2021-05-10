@@ -6,7 +6,7 @@ namespace Gsemac.Net.Extensions {
 
         public static IEnumerable<IHttpHeader> ReadHeaders(this IHttpHeadersReader reader) {
 
-            while (reader.ReadNextHeader(out IHttpHeader header))
+            while (reader.ReadHeader(out IHttpHeader header))
                 yield return header;
 
         }

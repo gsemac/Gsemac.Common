@@ -26,7 +26,7 @@ namespace Gsemac.Net {
             return statusLine is object;
 
         }
-        public bool ReadNextHeader(out IHttpHeader header) {
+        public bool ReadHeader(out IHttpHeader header) {
 
             string nextLine;
 
