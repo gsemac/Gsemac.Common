@@ -8,7 +8,7 @@
         /// <summary>
         /// Initializes a new instance of the <see cref="BinCurlHttpWebResponse"/> class.
         /// </summary>
-        public BinCurlHttpWebResponse(IHttpWebRequest parentRequest, BinCurlProcessStream responseStream) :
+        internal BinCurlHttpWebResponse(IHttpWebRequest parentRequest, BinCurlProcessStream responseStream) :
             base(parentRequest, responseStream) {
         }
 

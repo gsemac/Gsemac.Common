@@ -1,5 +1,7 @@
 ﻿using System.IO;
+using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace Gsemac.Net.Curl {
 
@@ -8,10 +10,10 @@ namespace Gsemac.Net.Curl {
 
         // Public members
 
-        public CurlHttpWebResponse(IHttpWebRequest parentRequest, Stream responseStream, CancellationTokenSource cancellationTokenSource) :
-            base(parentRequest, responseStream) {
+        internal CurlHttpWebResponse(IHttpWebRequest parentRequest, Stream responseStream, Task task, CancellationTokenSource taskCancellationTokenSource) :
+            base(parentRequest, responseStream, () => task.Exception?.InnerExceptions.First()) {
 
-            this.cancellationTokenSource = cancellationTokenSource;
+            this.taskCancellationTokenSource = taskCancellationTokenSource;
 
         }
 
@@ -19,8 +21,8 @@ namespace Gsemac.Net.Curl {
 
             // Cancel the thread reading data from curl.
 
-            cancellationTokenSource.Cancel();
-            cancellationTokenSource.Dispose();
+            taskCancellationTokenSource.Cancel();
+            taskCancellationTokenSource.Dispose();
 
             base.Close();
 
@@ -28,7 +30,7 @@ namespace Gsemac.Net.Curl {
 
         // Private members
 
-        private readonly CancellationTokenSource cancellationTokenSource;
+        private readonly CancellationTokenSource taskCancellationTokenSource;
 
     }
 

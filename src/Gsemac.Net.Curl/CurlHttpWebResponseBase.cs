@@ -20,6 +20,9 @@ namespace Gsemac.Net.Curl {
         // Protected members
 
         protected CurlHttpWebResponseBase(IHttpWebRequest parentRequest, Stream responseStream) :
+            this(parentRequest, responseStream, () => null) {
+        }
+        protected CurlHttpWebResponseBase(IHttpWebRequest parentRequest, Stream responseStream, Func<Exception> exceptionFactory) :
             base(parentRequest.RequestUri, responseStream) {
 
             responseUri = parentRequest.RequestUri;
@@ -33,22 +36,35 @@ namespace Gsemac.Net.Curl {
 
             // Check status code for success.
 
-            if (StatusCode == 0) {
+            Exception ex = null;
+
+            if (exceptionFactory is object)
+                ex = exceptionFactory();
+
+            if (ex is object) {
+
+                // An exception occurred while processing the request.
+
+                throw ex;
+
+            }
+            else if (StatusCode == 0) {
 
                 // We didn't read a status code from the stream at all.
 
-                throw new WebException("Received an empty response.", null, WebExceptionStatus.ServerProtocolViolation, this);
+                throw new WebException(Properties.ExceptionMessages.ConnectedPartyDidNotRespond, null, WebExceptionStatus.ServerProtocolViolation, this);
 
             }
-            else if ((int)StatusCode >= 400 && (int)StatusCode < 600) {
+            else if (WebRequestUtilities.IsErrorStatusCode(StatusCode)) {
 
                 // We got a response, but didn't get a success code.
 
-                throw new WebException($"The remote server returned an error: ({(int)StatusCode}) {StatusDescription}.", null, WebExceptionStatus.ProtocolError, this);
+                throw new WebException(string.Format(Properties.ExceptionMessages.RemoteServerReturnedAnError, (int)StatusCode, StatusDescription), null, WebExceptionStatus.ProtocolError, this);
 
             }
 
         }
+
 
         // Private members
 
@@ -90,7 +106,7 @@ namespace Gsemac.Net.Curl {
                     if (wasRedirected) {
 
                         if (!Uri.TryCreate(responseUri, locationHeader, out locationUri))
-                            throw new WebException("Cannot handle redirect from HTTP/HTTPS protocols to other dissimilar ones.", null, WebExceptionStatus.ProtocolError, this);
+                            throw new WebException(Properties.ExceptionMessages.CannotHandleRedirectFromProtocolToDissimilarOnes, null, WebExceptionStatus.ProtocolError, this);
 
                     }
 

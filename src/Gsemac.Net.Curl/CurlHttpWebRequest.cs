@@ -74,7 +74,10 @@ namespace Gsemac.Net.Curl {
 
                         // Execute the request.
 
-                        LibCurl.EasyPerform(easyHandle);
+                        CurlCode resultCode = LibCurl.EasyPerform(easyHandle);
+
+                        if (resultCode != CurlCode.OK)
+                            throw new CurlException(resultCode);
 
                     }
 
@@ -93,7 +96,7 @@ namespace Gsemac.Net.Curl {
 
             HaveResponse = true;
 
-            return new CurlHttpWebResponse(this, stream, cancellationTokenSource);
+            return new CurlHttpWebResponse(this, stream, curlTask, cancellationTokenSource);
 
         }
 

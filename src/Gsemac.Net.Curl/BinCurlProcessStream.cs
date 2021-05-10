@@ -29,7 +29,7 @@ namespace Gsemac.Net.Curl {
             Abort(true);
 
             // Check if curl exited with an error, and throw an exception if so.
-            BinCurlException ex = GetException();
+            CurlException ex = GetException();
 
             // Close the base stream before throwing to ensure it's properly cleaned up first.
             base.Close();
@@ -42,15 +42,15 @@ namespace Gsemac.Net.Curl {
         // Protected members
 
         /// <summary>
-        /// Returns a <see cref="BinCurlException"/> if curl exited with error, or null if it exited without error.
+        /// Returns a <see cref="CurlException"/> if curl exited with error, or null if it exited without error.
         /// </summary>
-        /// <returns>A <see cref="BinCurlException"/> if curl exited with error, or null if it exited without error.</returns>
-        protected BinCurlException GetException() {
+        /// <returns>A <see cref="CurlException"/> if curl exited with error, or null if it exited without error.</returns>
+        protected CurlException GetException() {
 
             if (!ProcessExited)
                 return null;
 
-            BinCurlException result = null;
+            CurlException result = null;
 
             try {
 
@@ -58,7 +58,7 @@ namespace Gsemac.Net.Curl {
 
                 if (exitCode == -1) {
 
-                    result = new BinCurlException(exitCode, "Process was terminated prematurely.");
+                    result = new CurlException(exitCode);
 
                 }
                 else if (exitCode != 0) {
@@ -82,9 +82,9 @@ namespace Gsemac.Net.Curl {
                     Match errorMessageMatch = Regex.Match(stdErrOutput, @"curl:\s*\((\d+)\)\s*(.+?)$", RegexOptions.Multiline);
 
                     if (errorMessageMatch.Success)
-                        result = new BinCurlException(exitCode, errorMessageMatch.Groups[2].Value.Trim());
+                        result = new CurlException(exitCode, errorMessageMatch.Groups[2].Value.Trim());
                     else
-                        result = new BinCurlException(exitCode);
+                        result = new CurlException(exitCode);
 
                 }
 
