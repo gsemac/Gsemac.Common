@@ -74,7 +74,7 @@ namespace Gsemac.Net.Curl {
 
         private void ReadHttpHeaders(Stream responseStream) {
 
-            using (IHttpResponseReader reader = new HttpResponseReader(responseStream)) {
+            using (IHttpHeadersReader reader = new HttpHeadersReader(responseStream)) {
 
                 // Curl will output multiple sets of headers if we are redirected.
 
@@ -85,7 +85,7 @@ namespace Gsemac.Net.Curl {
                     // We might fail to read the status line if we had a redirect that wasn't followed (i.e. "AllowAutoRedirect" is false).
                     // In that case, there are no other responses to read.
 
-                    if (!reader.TryReadStatusLine(out IHttpStatusLine statusLine))
+                    if (!reader.ReadStatusLine(out IHttpStatusLine statusLine))
                         break;
 
                     ProtocolVersion = statusLine.ProtocolVersion;
