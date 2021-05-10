@@ -1,6 +1,9 @@
-﻿namespace Gsemac.Net.Curl {
+﻿using System;
 
-    public interface ICurlDataCopier {
+namespace Gsemac.Net.Curl {
+
+    public interface ICurlDataCopier :
+        IDisposable {
 
         WriteFunctionCallback Header { get; }
         ReadFunctionCallback Read { get; }

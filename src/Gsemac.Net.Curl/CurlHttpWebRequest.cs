@@ -38,7 +38,7 @@ namespace Gsemac.Net.Curl {
             CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
             CancellationToken cancellationToken = cancellationTokenSource.Token;
 
-            Task curlTask = Task.Factory.StartNew((Action)(() => {
+            Task curlTask = Task.Factory.StartNew(() => {
 
                 try {
 
@@ -60,7 +60,7 @@ namespace Gsemac.Net.Curl {
                         LibCurl.EasySetOpt(easyHandle, CurlOption.TcpKeepAlive, KeepAlive ? 1 : 0);
 
                         if (File.Exists(options.CABundlePath))
-                            LibCurl.EasySetOpt(easyHandle, CurlOption.CaInfo, options.CABundlePath);
+                            LibCurl.EasySetOpt(easyHandle, CurlOption.CAInfo, options.CABundlePath);
 
                         SetCertificateValidationEnabled(easyHandle);
                         SetCookies(easyHandle);
@@ -71,17 +71,19 @@ namespace Gsemac.Net.Curl {
 
                         // Execute the request.
 
-                        ICurlDataCopier dataCopier = new CurlDataCopier(requestStream, responseStream, cancellationToken);
+                        using (ICurlDataCopier dataCopier = new CurlDataCopier(requestStream, responseStream, cancellationToken)) {
 
-                        LibCurl.EasySetOpt(easyHandle, CurlOption.HeaderFunction, dataCopier.Header);
-                        LibCurl.EasySetOpt(easyHandle, CurlOption.ReadFunction, dataCopier.Read);
-                        LibCurl.EasySetOpt(easyHandle, CurlOption.WriteFunction, dataCopier.Write);
-                        LibCurl.EasySetOpt(easyHandle, CurlOption.ProgessFunction, dataCopier.Progress);
+                            LibCurl.EasySetOpt(easyHandle, CurlOption.HeaderFunction, dataCopier.Header);
+                            LibCurl.EasySetOpt(easyHandle, CurlOption.ReadFunction, dataCopier.Read);
+                            LibCurl.EasySetOpt(easyHandle, CurlOption.WriteFunction, dataCopier.Write);
+                            LibCurl.EasySetOpt(easyHandle, CurlOption.ProgessFunction, dataCopier.Progress);
 
-                        CurlCode resultCode = LibCurl.EasyPerform(easyHandle);
+                            CurlCode resultCode = LibCurl.EasyPerform(easyHandle);
 
-                        if (resultCode != CurlCode.OK)
-                            throw new CurlException(resultCode);
+                            if (resultCode != CurlCode.OK)
+                                throw new CurlException(resultCode);
+
+                        }
 
                     }
 
@@ -96,7 +98,7 @@ namespace Gsemac.Net.Curl {
 
                 }
 
-            }), cancellationToken);
+            }, cancellationToken);
 
             HaveResponse = true;
 

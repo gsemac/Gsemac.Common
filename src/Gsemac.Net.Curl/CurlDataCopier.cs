@@ -5,7 +5,7 @@ using System.Threading;
 
 namespace Gsemac.Net.Curl {
 
-    public class CurlDataCopier :
+    public sealed class CurlDataCopier :
         ICurlDataCopier {
 
         // Public members
@@ -46,35 +46,43 @@ namespace Gsemac.Net.Curl {
 
         }
 
+        public void Dispose() {
+
+            // CurlDataCopier only implements IDisposable to ensure deterministic behavior.
+            // When the callback delegates are passed to Curl, the garbage collector doesn't realize the object is still in use, and it can become eligible for collection.
+            // See "When do I need to use GC.KeepAlive?" for a discussion on this topic: https://devblogs.microsoft.com/oldnewthing/20100813-00/?p=13153
+
+        }
+
         // Private members
 
         private readonly Stream responseStream;
         private readonly Stream requestStream;
         private readonly CancellationToken cancellationToken = CancellationToken.None;
 
-        private UIntPtr HeaderFunctionImpl(IntPtr data, UIntPtr size, UIntPtr nmemb, IntPtr userdata) {
+        private UIntPtr HeaderFunctionImpl(IntPtr data, UIntPtr size, UIntPtr nMemb, IntPtr userData) {
 
-            return WriteFunctionImpl(data, size, nmemb, userdata);
+            return WriteFunctionImpl(data, size, nMemb, userData);
 
         }
-        private UIntPtr ReadFunctionImpl(IntPtr buffer, UIntPtr size, UIntPtr nitems, IntPtr userdata) {
+        private UIntPtr ReadFunctionImpl(IntPtr buffer, UIntPtr size, UIntPtr nItems, IntPtr userData) {
 
             if (requestStream is null)
                 return UIntPtr.Zero;
 
-            int length = (int)size * (int)nitems;
+            int length = (int)size * (int)nItems;
             byte[] readBuffer = new byte[length];
 
             int bytesRead = requestStream.Read(readBuffer, 0, length);
 
-            Marshal.Copy(readBuffer, 0, buffer, length);
+            Marshal.Copy(readBuffer, 0, buffer, bytesRead);
 
             return (UIntPtr)bytesRead;
 
         }
-        private UIntPtr WriteFunctionImpl(IntPtr data, UIntPtr size, UIntPtr nmemb, IntPtr userdata) {
+        private UIntPtr WriteFunctionImpl(IntPtr data, UIntPtr size, UIntPtr nMemb, IntPtr userData) {
 
-            int length = (int)size * (int)nmemb;
+            int length = (int)size * (int)nMemb;
             byte[] buffer = new byte[length];
 
             Marshal.Copy(data, buffer, 0, length);
@@ -85,7 +93,7 @@ namespace Gsemac.Net.Curl {
             return (UIntPtr)length;
 
         }
-        private int ProgressFunctionImpl(IntPtr clientp, double dltotal, double dlnow, double ultotal, double ulnow) {
+        private int ProgressFunctionImpl(IntPtr clientP, double dlTotal, double dlNow, double ulTotal, double ulNow) {
 
             // Returning a non-zero value will cause the transfer to abort with code CURLE_ABORTED_BY_CALLBACK.
 
@@ -95,6 +103,7 @@ namespace Gsemac.Net.Curl {
             return 0;
 
         }
+
 
     }
 

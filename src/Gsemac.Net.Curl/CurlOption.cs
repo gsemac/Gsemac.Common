@@ -74,7 +74,7 @@ namespace Gsemac.Net.Curl {
         Interface = CurlOptType.StringPoint + 62,
         KrbLevel = CurlOptType.StringPoint + 63,
         SslVerifyPeer = CurlOptType.Long + 64,
-        CaInfo = CurlOptType.StringPoint + 65,
+        CAInfo = CurlOptType.StringPoint + 65,
         MaxRedirs = CurlOptType.Long + 68,
         FileTime = CurlOptType.Long + 69,
         TelnetOptions = CurlOptType.SListPoint + 70,
