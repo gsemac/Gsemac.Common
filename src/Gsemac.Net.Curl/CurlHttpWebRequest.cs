@@ -40,9 +40,9 @@ namespace Gsemac.Net.Curl {
 
             Task curlTask = Task.Factory.StartNew(() => {
 
-                GlobalInit();
-
                 try {
+
+                    GlobalInit();
 
                     using (CurlEasyHandle easyHandle = LibCurl.EasyInit())
                     using (SList headers = new SList())
