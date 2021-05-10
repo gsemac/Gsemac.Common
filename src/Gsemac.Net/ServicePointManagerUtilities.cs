@@ -9,6 +9,11 @@ namespace Gsemac.Net {
 
         // Public members
 
+        public static bool CertificateValidationEnabled {
+            get => IsCertificateValidationEnabled();
+            set => SetCertificateValidationEnabled(value);
+        }
+
         public static bool IsCertificateValidationEnabled() {
 
             return System.Net.ServicePointManager.ServerCertificateValidationCallback != ServerCertificateValidationCallback;
