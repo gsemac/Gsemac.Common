@@ -75,7 +75,7 @@ namespace Gsemac.Net.Curl {
                         break;
 
                     default:
-                        sb.Append($"The operation returned an error: {(int)resultCode}");
+                        sb.Append($"The operation returned with error code {(int)resultCode}");
                         break;
 
                 }

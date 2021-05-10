@@ -66,6 +66,7 @@ namespace Gsemac.Net.Curl {
                         if (File.Exists(options.CABundlePath))
                             LibCurl.EasySetOpt(easyHandle, CurlOption.CaInfo, options.CABundlePath);
 
+                        SetCertificateValidationEnabled(easyHandle);
                         SetCookies(easyHandle);
                         SetCredentials(easyHandle);
                         SetHeaders(easyHandle, headers);
@@ -160,6 +161,12 @@ namespace Gsemac.Net.Curl {
 
         }
 
+        private void SetCertificateValidationEnabled(CurlEasyHandle easyHandle) {
+
+            if (!ServicePointManagerUtilities.CertificateValidationEnabled)
+                LibCurl.EasySetOpt(easyHandle, CurlOption.SslVerifyHost, 0);
+
+        }
         private void SetCookies(CurlEasyHandle easyHandle) {
 
             string cookieHeader = CookieContainer?.GetCookieHeader(RequestUri);

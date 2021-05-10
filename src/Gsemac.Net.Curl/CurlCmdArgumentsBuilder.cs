@@ -63,6 +63,14 @@ namespace Gsemac.Net.Curl {
             return this;
 
         }
+        public CurlCmdArgumentsBuilder WithCertificateValidation(bool certificateValidationEnabled) {
+
+            if (!certificateValidationEnabled)
+                AddArgument("--insecure");
+
+            return this;
+
+        }
         public CurlCmdArgumentsBuilder WithCookies(CookieContainer cookieContainer, Uri requestUri = null) {
 
             if (requestUri is null)
