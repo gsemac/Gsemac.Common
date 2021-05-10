@@ -29,7 +29,7 @@ namespace Gsemac.Net.Curl {
 
         public override WebResponse GetResponse() {
 
-            Stream stream = new ProducerConsumerStream(8192) {
+            Stream responseStream = new ProducerConsumerStream(8192) {
                 Blocking = true,
                 ReadTimeout = Timeout,
                 WriteTimeout = Timeout,
@@ -38,7 +38,7 @@ namespace Gsemac.Net.Curl {
             CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
             CancellationToken cancellationToken = cancellationTokenSource.Token;
 
-            Task curlTask = Task.Factory.StartNew(() => {
+            Task curlTask = Task.Factory.StartNew((Action)(() => {
 
                 try {
 
@@ -46,16 +46,12 @@ namespace Gsemac.Net.Curl {
 
                     using (CurlEasyHandle easyHandle = LibCurl.EasyInit())
                     using (SList headers = new SList())
-                    using (MemoryStream postDataStream = new MemoryStream(GetRequestStream(validateMethod: false).ToArray())) {
+                    using (MemoryStream requestStream = new MemoryStream(GetRequestStream(validateMethod: false).ToArray())) {
 
-                        CurlCallbackHelper dataCopier = new CurlCallbackHelper(stream, postDataStream, cancellationToken);
-
-                        dataCopier.SetCallbacks(easyHandle);
-
-                        LibCurl.EasySetOpt(easyHandle, CurlOption.Url, RequestUri.AbsoluteUri);
+                        LibCurl.EasySetOpt(easyHandle, CurlOption.Url, base.RequestUri.AbsoluteUri);
                         LibCurl.EasySetOpt(easyHandle, CurlOption.FollowLocation, AllowAutoRedirect ? 1 : 0);
                         LibCurl.EasySetOpt(easyHandle, CurlOption.MaxRedirs, MaximumAutomaticRedirections);
-                        LibCurl.EasySetOpt(easyHandle, CurlOption.Timeout, Timeout);
+                        LibCurl.EasySetOpt(easyHandle, CurlOption.Timeout, base.Timeout);
                         LibCurl.EasySetOpt(easyHandle, CurlOption.HttpVersion, (int)GetHttpVersion());
 
                         if (AutomaticDecompression != DecompressionMethods.None)
@@ -75,6 +71,13 @@ namespace Gsemac.Net.Curl {
 
                         // Execute the request.
 
+                        ICurlDataCopier dataCopier = new CurlDataCopier(requestStream, responseStream, cancellationToken);
+
+                        LibCurl.EasySetOpt(easyHandle, CurlOption.HeaderFunction, dataCopier.Header);
+                        LibCurl.EasySetOpt(easyHandle, CurlOption.ReadFunction, dataCopier.Read);
+                        LibCurl.EasySetOpt(easyHandle, CurlOption.WriteFunction, dataCopier.Write);
+                        LibCurl.EasySetOpt(easyHandle, CurlOption.ProgessFunction, dataCopier.Progress);
+
                         CurlCode resultCode = LibCurl.EasyPerform(easyHandle);
 
                         if (resultCode != CurlCode.OK)
@@ -87,17 +90,17 @@ namespace Gsemac.Net.Curl {
 
                     // Close the stream to indicate that we're done writing to it, unblocking readers.
 
-                    stream.Close();
+                    responseStream.Close();
 
                     GlobalCleanup();
 
                 }
 
-            }, cancellationToken);
+            }), cancellationToken);
 
             HaveResponse = true;
 
-            return new CurlHttpWebResponse(this, stream, curlTask, cancellationTokenSource);
+            return new CurlHttpWebResponse(this, responseStream, curlTask, cancellationTokenSource);
 
         }
 

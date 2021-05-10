@@ -2,8 +2,8 @@
 
 namespace Gsemac.Net.Curl {
 
-    public delegate UIntPtr ReadFunctionCallback(IntPtr buffer, UIntPtr size, UIntPtr nitems, IntPtr userdata);
-    public delegate UIntPtr WriteFunctionCallback(IntPtr data, UIntPtr size, UIntPtr nmemb, IntPtr userdata);
-    public delegate int ProgressFunctionCallback(IntPtr clientp, double dltotal, double dlnow, double ultotal, double ulnow);
+    public delegate UIntPtr ReadFunctionCallback(IntPtr buffer, UIntPtr size, UIntPtr nItems, IntPtr userData);
+    public delegate UIntPtr WriteFunctionCallback(IntPtr data, UIntPtr size, UIntPtr nMemb, IntPtr userData);
+    public delegate int ProgressFunctionCallback(IntPtr clientP, double dlTotal, double dlNow, double ulTotal, double ulNow);
 
 }
