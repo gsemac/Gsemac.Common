@@ -219,6 +219,12 @@ namespace Gsemac.Net {
 
         }
 
+        public static bool IsErrorStatusCode(HttpStatusCode statusCode) {
+
+            return (int)statusCode >= 400 && (int)statusCode < 600;
+
+        }
+
         public static long GetRemoteFileSize(IHttpWebRequest httpWebRequest) {
 
             if (httpWebRequest is null)
