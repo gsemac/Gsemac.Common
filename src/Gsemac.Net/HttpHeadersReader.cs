@@ -59,33 +59,6 @@ namespace Gsemac.Net {
 
         }
 
-        public IHttpStatusLine ReadStatusLine() {
-
-            string statusLine = reader.ReadLine();
-
-            return HttpStatusLine.Parse(statusLine);
-
-        }
-        public bool TryReadStatusLine(out IHttpStatusLine result) {
-
-            string statusLine = reader.ReadLine();
-
-            return HttpStatusLine.TryParse(statusLine, out result);
-
-        }
-        public IEnumerable<IHttpHeader> ReadHeaders() {
-
-            List<IHttpHeader> headers = new List<IHttpHeader>();
-
-            string header;
-
-            while (!string.IsNullOrWhiteSpace(header = reader.ReadLine()))
-                headers.Add(HttpHeader.Parse(header));
-
-            return headers;
-
-        }
-
         public void Dispose() {
 
             if (!disposedValue) {
