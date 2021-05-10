@@ -79,6 +79,27 @@ namespace Gsemac.Net.Curl.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Could not resolve host..
+        /// </summary>
+        internal static string CurlCouldntResolveHost {
+            get {
+                return ResourceManager.GetString("CurlCouldntResolveHost", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to SSL: no alternative certificate subject name matches target host name
+        ///More details here: https://curl.se/docs/sslcerts.html
+        ///
+        ///curl failed to verify the legitimacy of the server and therefore could not establish a secure connection to it. To learn more about this situation and how to fix it, please visit the web page mentioned above..
+        /// </summary>
+        internal static string CurlPeerFailedVerification {
+            get {
+                return ResourceManager.GetString("CurlPeerFailedVerification", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The remote server returned an error: ({0}) {1}..
         /// </summary>
         internal static string RemoteServerReturnedAnError {

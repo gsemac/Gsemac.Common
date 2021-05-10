@@ -44,8 +44,9 @@ namespace Gsemac.Net.Curl {
             if (ex is object) {
 
                 // An exception occurred while processing the request.
+                // The exception (probably a CurlException) is wrapped in a WebException to match what would be thrown by a regular HttpWebResponse.
 
-                throw ex;
+                throw new WebException(ex.Message, ex);
 
             }
             else if (StatusCode == 0) {

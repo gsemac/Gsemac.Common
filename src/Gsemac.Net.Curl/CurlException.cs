@@ -71,7 +71,11 @@ namespace Gsemac.Net.Curl {
                         break;
 
                     case CurlCode.CouldntResolveHost:
-                        sb.Append($"No such host is known.");
+                        sb.Append(Properties.ExceptionMessages.CurlCouldntResolveHost);
+                        break;
+
+                    case CurlCode.PeerFailedVerification:
+                        sb.Append(Properties.ExceptionMessages.CurlPeerFailedVerification);
                         break;
 
                     default:
