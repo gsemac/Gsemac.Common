@@ -1,5 +1,4 @@
-﻿using Gsemac.Net.Extensions;
-using System.Net;
+﻿using System.Net;
 
 namespace Gsemac.Net {
 
