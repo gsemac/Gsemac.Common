@@ -9,6 +9,11 @@ namespace Gsemac.Net.Extensions {
             return new WebClientFactory(webRequestFactory);
 
         }
+        public static IHttpWebRequest Create(this IHttpWebRequestFactory webRequestFactory, string url) {
+
+            return webRequestFactory.Create(new System.Uri(url));
+
+        }
         public static WebClient CreateWebClient(this IHttpWebRequestFactory webRequestFactory) {
 
             return webRequestFactory.ToWebClientFactory().Create();
