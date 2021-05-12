@@ -3,12 +3,14 @@ using System.IO;
 using System.Net;
 using System.Net.Cache;
 using System.Net.Security;
+using System.Runtime.Serialization;
 using System.Security.Cryptography.X509Certificates;
 using System.Security.Principal;
 
 namespace Gsemac.Net {
 
-    public class HttpWebRequestWrapper :
+    [Serializable]
+    internal class HttpWebRequestWrapper :
         WebRequest,
         IHttpWebRequest {
 
@@ -43,6 +45,12 @@ namespace Gsemac.Net {
         }
         public HttpWebRequestWrapper(string requestUri) :
             this(new Uri(requestUri)) {
+        }
+
+        // Protected members
+
+        protected HttpWebRequestWrapper(SerializationInfo serializationInfo, StreamingContext streamingContext) :
+            base(serializationInfo, streamingContext) {
         }
 
         // Private members

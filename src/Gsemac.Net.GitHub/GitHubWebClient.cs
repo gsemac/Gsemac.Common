@@ -27,7 +27,7 @@ namespace Gsemac.Net.GitHub {
 
         public IRepository GetRepository(string url) {
 
-            using (WebClient webClient = CreateWebClient()) {
+            using (IWebClient webClient = CreateWebClient()) {
 
                 HtmlDocument htmlDocument = new HtmlDocument();
 
@@ -42,7 +42,7 @@ namespace Gsemac.Net.GitHub {
 
             string nextPageUrl = new Repository(url).ReleasesUrl;
 
-            using (WebClient webClient = CreateWebClient()) {
+            using (IWebClient webClient = CreateWebClient()) {
 
                 HtmlDocument htmlDocument = new HtmlDocument();
 
@@ -80,7 +80,7 @@ namespace Gsemac.Net.GitHub {
             if (string.IsNullOrWhiteSpace(gitHubUrl.Tree))
                 branchName = GetRepository(url).DefaultBranchName;
 
-            using (WebClient webClient = CreateWebClient()) {
+            using (IWebClient webClient = CreateWebClient()) {
 
                 HtmlDocument htmlDocument = new HtmlDocument();
 
@@ -108,7 +108,7 @@ namespace Gsemac.Net.GitHub {
 
         private readonly IHttpWebRequestFactory webRequestFactory;
 
-        private WebClient CreateWebClient() {
+        private IWebClient CreateWebClient() {
 
             return webRequestFactory.ToWebClientFactory().Create();
 

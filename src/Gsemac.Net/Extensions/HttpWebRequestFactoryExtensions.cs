@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Net;
 
 namespace Gsemac.Net.Extensions {
 
@@ -15,7 +14,7 @@ namespace Gsemac.Net.Extensions {
             return webRequestFactory.Create(new Uri(url));
 
         }
-        public static WebClient CreateWebClient(this IHttpWebRequestFactory webRequestFactory) {
+        public static IWebClient CreateWebClient(this IHttpWebRequestFactory webRequestFactory) {
 
             return webRequestFactory.ToWebClientFactory().Create();
 

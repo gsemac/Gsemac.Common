@@ -5,7 +5,8 @@ using System.Net;
 namespace Gsemac.Net {
 
     public abstract class WebClientBase :
-        WebClient {
+        WebClient,
+        IWebClient {
 
         // Protected members
 

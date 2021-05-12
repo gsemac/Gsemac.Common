@@ -139,7 +139,7 @@ namespace Gsemac.Net.WebDrivers {
 
                 OnLog.Info($"Downloading {webDriverDownloadUri}");
 
-                using (WebClient webClient = webRequestFactory.ToWebClientFactory().Create()) {
+                using (IWebClient webClient = webRequestFactory.ToWebClientFactory().Create()) {
 
                     webClient.DownloadProgressChanged += (sender, e) => OnDownloadFileProgressChanged(this, new DownloadFileProgressChangedEventArgs(webDriverDownloadUri, downloadFilePath, e));
                     webClient.DownloadFileCompleted += (sender, e) => OnDownloadFileCompleted(this, new DownloadFileCompletedEventArgs(webDriverDownloadUri, downloadFilePath, e.Error is null));

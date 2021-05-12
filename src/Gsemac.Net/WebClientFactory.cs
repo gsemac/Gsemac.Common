@@ -5,10 +5,10 @@
 
         // Public members
 
-        public WebClientFactory() {
+        public static WebClientFactory Default => new WebClientFactory();
 
-            webRequestFactory = null;
-
+        public WebClientFactory() :
+            this(HttpWebRequestFactory.Default) {
         }
         public WebClientFactory(IHttpWebRequestFactory webRequestFactory) {
 
@@ -16,11 +16,9 @@
 
         }
 
-        public System.Net.WebClient Create() {
+        public IWebClient Create() {
 
-            return webRequestFactory is null ?
-                new System.Net.WebClient() :
-                new WebClient(webRequestFactory);
+            return new WebClient(webRequestFactory);
 
         }
 

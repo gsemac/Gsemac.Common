@@ -4,7 +4,7 @@ using System.Net;
 
 namespace Gsemac.Net {
 
-    public class HttpWebResponseWrapper :
+    internal class HttpWebResponseWrapper :
         WebResponse,
         IHttpWebResponse {
 

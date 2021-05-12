@@ -10,21 +10,41 @@ namespace Gsemac.Net.Extensions {
 
         public static void DownloadFile(this WebClient client, Uri address) {
 
+            DownloadFile(new WebClientWrapper(client), address);
+
+        }
+        public static void DownloadFile(this IWebClient client, Uri address) {
+
             client.DownloadFile(address, PathUtilities.SanitizePath(PathUtilities.GetFilename(address.AbsoluteUri), SanitizePathOptions.StripInvalidFilenameChars));
 
         }
         public static void DownloadFile(this WebClient client, string address) {
+
+            DownloadFile(new WebClientWrapper(client), address);
+
+        }
+        public static void DownloadFile(this IWebClient client, string address) {
 
             DownloadFile(client, new Uri(address));
 
         }
         public static void DownloadFileAsync(this WebClient client, Uri address) {
 
+            DownloadFileAsync(new WebClientWrapper(client), address);
+
+        }
+        public static void DownloadFileAsync(this IWebClient client, Uri address) {
+
             client.DownloadFileAsync(address, PathUtilities.GetFilename(address.AbsoluteUri));
 
         }
 
         public static void DownloadFileSync(this WebClient client, Uri address, string filename) {
+
+            DownloadFileSync(new WebClientWrapper(client), address, filename);
+
+        }
+        public static void DownloadFileSync(this IWebClient client, Uri address, string filename) {
 
             // Events are only fired when downloading asynchronously with DownloadFileAsync.
             // This method allows for synchronous downloads while still firing events. 
@@ -54,11 +74,23 @@ namespace Gsemac.Net.Extensions {
         }
         public static void DownloadFileSync(this WebClient client, string address, string filename) {
 
+            DownloadFileSync(new WebClientWrapper(client), address, filename);
+
+        }
+        public static void DownloadFileSync(this IWebClient client, string address, string filename) {
+
             DownloadFileSync(client, new Uri(address), filename);
 
         }
 
         public static WebClient WithOptions(this WebClient client, IHttpWebRequestOptions options) {
+
+            WithOptions(new WebClientWrapper(client), options);
+
+            return client;
+
+        }
+        public static IWebClient WithOptions(this IWebClient client, IHttpWebRequestOptions options) {
 
             client.Headers[HttpRequestHeader.Accept] = options.Accept;
             client.Headers[HttpRequestHeader.AcceptLanguage] = options.AcceptLanguage;

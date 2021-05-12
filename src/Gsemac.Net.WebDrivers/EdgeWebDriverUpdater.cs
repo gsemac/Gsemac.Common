@@ -37,7 +37,7 @@ namespace Gsemac.Net.WebDrivers {
             // We'll get an XML document listing all web driver versions available for this version of Edge.
             // There might not be one for this specific version, so we'll pick the closest.
 
-            using (WebClient client = webRequestFactory.CreateWebClient()) {
+            using (IWebClient client = webRequestFactory.CreateWebClient()) {
 
                 int maxResults = 999;
                 string responseXml = client.DownloadString($"https://msedgewebdriverstorage.blob.core.windows.net/edgewebdriver?prefix={edgeMajorVersionStr}&delimiter=%2F&maxresults={maxResults}&restype=container&comp=list");
