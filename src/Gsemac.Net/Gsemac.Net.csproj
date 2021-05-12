@@ -17,11 +17,11 @@
 		<DebugType>none</DebugType>
 		<DebugSymbols>false</DebugSymbols>
 	</PropertyGroup>
-
+  
 	<ItemGroup Condition="$(DefineConstants.Contains('NETFRAMEWORK'))">
 		<Reference Include="System.Security" />
 	</ItemGroup>
-
+  
 	<ItemGroup>
 		<Content Include="Gsemac.Net.targets" PackagePath="build/Gsemac.Net.targets" />
     <Content Include="licenses\*" Pack="true" PackagePath="contentFiles\licenses" />

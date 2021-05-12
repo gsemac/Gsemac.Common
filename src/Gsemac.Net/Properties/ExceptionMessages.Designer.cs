@@ -61,6 +61,15 @@ namespace Gsemac.Net.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The inner handler has not been set..
+        /// </summary>
+        internal static string InnerHandlerHasNotBeenSet {
+            get {
+                return ResourceManager.GetString("InnerHandlerHasNotBeenSet", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The URL was malformed..
         /// </summary>
         internal static string MalformedUrl {

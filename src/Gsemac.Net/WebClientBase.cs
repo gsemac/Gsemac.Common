@@ -1,6 +1,7 @@
 ﻿using Gsemac.Net.Extensions;
 using System;
 using System.Net;
+using System.Threading;
 
 namespace Gsemac.Net {
 
@@ -10,6 +11,9 @@ namespace Gsemac.Net {
 
         // Protected members
 
+        protected WebClientBase() :
+            this(HttpWebRequestFactory.Default) {
+        }
         protected WebClientBase(IHttpWebRequestFactory webRequestFactory) {
 
             this.webRequestFactory = webRequestFactory;
@@ -18,6 +22,15 @@ namespace Gsemac.Net {
             // This would not be necessary if we could override the Proxy property, but alas, we cannot.
 
             Proxy = new PlaceholderWebProxy(Proxy);
+
+        }
+        protected WebClientBase(WebRequestHandler webRequestHandler) :
+            this(HttpWebRequestFactory.Default, webRequestHandler) {
+        }
+        protected WebClientBase(IHttpWebRequestFactory webRequestFactory, WebRequestHandler webRequestHandler) :
+            this(webRequestFactory) {
+
+            this.webRequestHandler = webRequestHandler;
 
         }
 
@@ -50,6 +63,25 @@ namespace Gsemac.Net {
                 return baseWebRequest;
 
             }
+
+        }
+        protected override WebResponse GetWebResponse(WebRequest request) {
+
+            return webRequestHandler.Send(request, CancellationToken.None);
+
+        }
+
+        protected override void Dispose(bool disposing) {
+
+            if (disposing && !isDisposed) {
+
+                webRequestHandler.Dispose();
+
+                isDisposed = true;
+
+            }
+
+            base.Dispose(disposing);
 
         }
 
@@ -95,6 +127,8 @@ namespace Gsemac.Net {
         }
 
         private readonly IHttpWebRequestFactory webRequestFactory;
+        private readonly WebRequestHandler webRequestHandler = new WebRequestHandler();
+        private bool isDisposed = false;
 
     }
 
