@@ -40,7 +40,7 @@ namespace Gsemac.Net {
                         response.StatusCode == HttpStatusCode.RedirectMethod ||
                         response.StatusCode == HttpStatusCode.RedirectKeepVerb)) {
 
-                        if (response.Headers.TryGetHeaderValue(HttpResponseHeader.Location, out string locationValue) && !string.IsNullOrWhiteSpace(locationValue)) {
+                        if (response.Headers.TryGetHeader(HttpResponseHeader.Location, out string locationValue) && !string.IsNullOrWhiteSpace(locationValue)) {
 
                             // Follow the redirect to the new location.
 
@@ -245,7 +245,7 @@ namespace Gsemac.Net {
 
                     using (WebResponse webResponse = httpWebRequest.GetResponse()) {
 
-                        if (webResponse.Headers.TryGetHeaderValue(HttpResponseHeader.ContentLength, out string contentLength) &&
+                        if (webResponse.Headers.TryGetHeader(HttpResponseHeader.ContentLength, out string contentLength) &&
                             long.TryParse(contentLength, NumberStyles.Integer, CultureInfo.InvariantCulture, out long parsedContentLength)) {
 
                             fileSize = parsedContentLength;
@@ -374,7 +374,7 @@ namespace Gsemac.Net {
 
                 using (WebResponse webResponse = httpWebRequest.GetResponse()) {
 
-                    if (webResponse.Headers.TryGetHeaderValue(HttpResponseHeader.Date, out string date) && DateUtilities.TryParseHttpHeader(date, out DateTimeOffset parsedDate))
+                    if (webResponse.Headers.TryGetHeader(HttpResponseHeader.Date, out string date) && DateUtilities.TryParseHttpHeader(date, out DateTimeOffset parsedDate))
                         return parsedDate;
 
                 }

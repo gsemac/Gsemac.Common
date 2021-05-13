@@ -99,7 +99,7 @@ namespace Gsemac.Net.Curl {
 
                     // Update response URI and continue reading headers if we were redirected.
 
-                    bool wasRedirected = Headers.TryGetHeaderValue(HttpResponseHeader.Location, out string locationHeader);
+                    bool wasRedirected = Headers.TryGetHeader(HttpResponseHeader.Location, out string locationHeader);
                     Uri locationUri = null;
 
                     readHeaders = wasRedirected;
@@ -113,7 +113,7 @@ namespace Gsemac.Net.Curl {
 
                     // Get cookies.
 
-                    if (Headers.TryGetHeaderValue(HttpResponseHeader.SetCookie, out string setCookieHeader))
+                    if (Headers.TryGetHeader(HttpResponseHeader.SetCookie, out string setCookieHeader))
                         cookies.SetCookies(responseUri, setCookieHeader);
 
                     // Update the response URI.
@@ -126,7 +126,7 @@ namespace Gsemac.Net.Curl {
 
                 // Get charset.
 
-                if (Headers.TryGetHeaderValue(HttpResponseHeader.ContentType, out string contentTypeHeader)) {
+                if (Headers.TryGetHeader(HttpResponseHeader.ContentType, out string contentTypeHeader)) {
 
                     Match charsetMatch = Regex.Match(contentTypeHeader, @"charset=([^\s]+)");
 

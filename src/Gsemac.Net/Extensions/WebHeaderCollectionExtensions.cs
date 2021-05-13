@@ -14,7 +14,7 @@ namespace Gsemac.Net.Extensions {
 
         }
 
-        public static bool TryGetHeaderValue(this WebHeaderCollection headerCollection, string headerName, out string value) {
+        public static bool TryGetHeader(this WebHeaderCollection headerCollection, string headerName, out string value) {
 
             value = default;
 
@@ -41,7 +41,7 @@ namespace Gsemac.Net.Extensions {
             }
 
         }
-        public static bool TryGetHeaderValue(this WebHeaderCollection headerCollection, HttpRequestHeader requestHeader, out string value) {
+        public static bool TryGetHeader(this WebHeaderCollection headerCollection, HttpRequestHeader requestHeader, out string value) {
 
             value = default;
 
@@ -62,7 +62,7 @@ namespace Gsemac.Net.Extensions {
             }
 
         }
-        public static bool TryGetHeaderValue(this WebHeaderCollection headerCollection, HttpResponseHeader responseHeader, out string value) {
+        public static bool TryGetHeader(this WebHeaderCollection headerCollection, HttpResponseHeader responseHeader, out string value) {
 
             value = default;
 
@@ -84,7 +84,7 @@ namespace Gsemac.Net.Extensions {
 
         }
 
-        public static bool TrySetHeaderValue(this WebHeaderCollection headerCollection, string headerName, string value) {
+        public static bool TrySetHeader(this WebHeaderCollection headerCollection, string headerName, string value) {
 
             if (headerCollection is null)
                 return false;
@@ -103,7 +103,7 @@ namespace Gsemac.Net.Extensions {
             }
 
         }
-        public static bool TrySetHeaderValue(this WebHeaderCollection headerCollection, HttpRequestHeader requestHeader, string value) {
+        public static bool TrySetHeader(this WebHeaderCollection headerCollection, HttpRequestHeader requestHeader, string value) {
 
             if (headerCollection is null)
                 return false;
@@ -122,7 +122,7 @@ namespace Gsemac.Net.Extensions {
             }
 
         }
-        public static bool TrySetHeaderValue(this WebHeaderCollection headerCollection, HttpResponseHeader responseHeader, string value) {
+        public static bool TrySetHeader(this WebHeaderCollection headerCollection, HttpResponseHeader responseHeader, string value) {
 
             if (headerCollection is null)
                 return false;
