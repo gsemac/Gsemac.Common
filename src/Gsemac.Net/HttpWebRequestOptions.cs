@@ -5,6 +5,8 @@ namespace Gsemac.Net {
     public class HttpWebRequestOptions :
         IHttpWebRequestOptions {
 
+        // Public members
+
         public string Accept { get; set; } = "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8";
         public string AcceptLanguage { get; set; } = "en-US,en;q=0.5";
         public DecompressionMethods AutomaticDecompression { get; set; } = DecompressionMethods.Deflate | DecompressionMethods.GZip;
@@ -14,30 +16,27 @@ namespace Gsemac.Net {
         public string UserAgent { get; set; } = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.66 Safari/537.36";
 
         public static HttpWebRequestOptions Default => new HttpWebRequestOptions();
+        public static HttpWebRequestOptions Empty {
+            get {
+
+                return new HttpWebRequestOptions() {
+                    Accept = string.Empty,
+                    AcceptLanguage = string.Empty,
+                    AutomaticDecompression = DecompressionMethods.None,
+                    Cookies = null,
+                    Credentials = null,
+                    Proxy = null,
+                    UserAgent = string.Empty,
+                };
+
+            }
+        }
 
         public HttpWebRequestOptions() {
         }
         public HttpWebRequestOptions(IHttpWebRequestOptions other, bool copyIfNull = true) {
 
-            if (copyIfNull || !string.IsNullOrWhiteSpace(other.Accept))
-                Accept = other.Accept;
-
-            if (copyIfNull || !string.IsNullOrWhiteSpace(other.AcceptLanguage))
-                AcceptLanguage = other.AcceptLanguage;
-
-            AutomaticDecompression = other.AutomaticDecompression;
-
-            if (copyIfNull || other.Cookies is object)
-                Cookies = other.Cookies;
-
-            if (copyIfNull || other.Credentials is object)
-                Credentials = other.Credentials;
-
-            if (copyIfNull || other.Proxy is object)
-                Proxy = other.Proxy;
-
-            if (copyIfNull || !string.IsNullOrWhiteSpace(other.UserAgent))
-                UserAgent = other.UserAgent;
+            Combine(other, copyIfNull);
 
         }
 
@@ -57,6 +56,43 @@ namespace Gsemac.Net {
         public static HttpWebRequestOptions FromHttpWebRequest(HttpWebRequest httpWebRequest) {
 
             return FromHttpWebRequest(new HttpWebRequestWrapper(httpWebRequest));
+
+        }
+
+        public static HttpWebRequestOptions Combine(IHttpWebRequestOptions options1, IHttpWebRequestOptions options2, bool copyIfNull = true) {
+
+            HttpWebRequestOptions result = new HttpWebRequestOptions(options1);
+
+            result.Combine(options2);
+
+            return result;
+
+        }
+
+        // Private members
+
+        private void Combine(IHttpWebRequestOptions other, bool copyIfNull = true) {
+
+            if (copyIfNull || !string.IsNullOrWhiteSpace(other.Accept))
+                Accept = other.Accept;
+
+            if (copyIfNull || !string.IsNullOrWhiteSpace(other.AcceptLanguage))
+                AcceptLanguage = other.AcceptLanguage;
+
+            if (copyIfNull || other.AutomaticDecompression != DecompressionMethods.None)
+                AutomaticDecompression = other.AutomaticDecompression;
+
+            if (copyIfNull || other.Cookies is object)
+                Cookies = other.Cookies;
+
+            if (copyIfNull || other.Credentials is object)
+                Credentials = other.Credentials;
+
+            if (copyIfNull || other.Proxy is object)
+                Proxy = other.Proxy;
+
+            if (copyIfNull || !string.IsNullOrWhiteSpace(other.UserAgent))
+                UserAgent = other.UserAgent;
 
         }
 

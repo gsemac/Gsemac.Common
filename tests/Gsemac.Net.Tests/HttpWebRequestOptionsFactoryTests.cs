@@ -41,6 +41,21 @@ namespace Gsemac.Net.Tests {
             Assert.AreNotEqual("hello world", webRequestOptionsFactory.Create("https://stackoverflow.com/").UserAgent);
 
         }
+        [TestMethod]
+        public void TestCreateAfterAddingWithoutMatchWithSimilarUri() {
+
+            // HttpWebRequestOptionsFactory matches URIs to options by checking if the given URI is equal to or nested under the URI associated with the options.
+            // URIs with domain names such that one is a substring of the other should not be matched.
+
+            HttpWebRequestOptionsFactory webRequestOptionsFactory = new HttpWebRequestOptionsFactory();
+
+            webRequestOptionsFactory.Add(new Uri("https://stackoverflow.com"), new HttpWebRequestOptions() {
+                UserAgent = "hello world",
+            });
+
+            Assert.AreNotEqual("hello world", webRequestOptionsFactory.Create("https://stackoverflow.comm").UserAgent);
+
+        }
 
     }
 

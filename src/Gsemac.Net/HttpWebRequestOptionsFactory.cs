@@ -29,26 +29,45 @@ namespace Gsemac.Net {
 
         }
 
-        public void Add(Uri endpoint, IHttpWebRequestOptions options) {
+        public void Add(Uri endpoint, IHttpWebRequestOptions options, bool copyIfNull = true) {
 
             lock (webRequestOptions)
-                webRequestOptions[endpoint] = options;
+                webRequestOptions[endpoint] = new OptionsInfo(options, copyIfNull);
 
         }
 
         // Private members
 
+        private class OptionsInfo {
+
+            public IHttpWebRequestOptions WebRequestOptions { get; }
+            public bool CopyIfNull { get; }
+
+            public OptionsInfo(IHttpWebRequestOptions webRequestOptions, bool copyIfNull) {
+
+                WebRequestOptions = webRequestOptions;
+                CopyIfNull = copyIfNull;
+
+            }
+
+        }
+
         private readonly IHttpWebRequestOptions defaultWebRequestOptions;
-        private readonly IDictionary<Uri, IHttpWebRequestOptions> webRequestOptions = new Dictionary<Uri, IHttpWebRequestOptions>();
+        private readonly IDictionary<Uri, OptionsInfo> webRequestOptions = new Dictionary<Uri, OptionsInfo>();
 
         private IHttpWebRequestOptions GetOptions(Uri endpoint) {
 
             lock (webRequestOptions) {
 
-                return webRequestOptions.Where(pair => endpoint.AbsoluteUri.StartsWith(pair.Key.AbsoluteUri))
+                OptionsInfo optionsInfo = webRequestOptions.Where(pair => endpoint.AbsoluteUri.StartsWith(pair.Key.AbsoluteUri))
                     .OrderByDescending(pair => pair.Key.AbsoluteUri.Length)
                     .Select(pair => pair.Value)
-                    .FirstOrDefault() ?? defaultWebRequestOptions;
+                    .FirstOrDefault();
+
+                if (optionsInfo is null)
+                    return defaultWebRequestOptions;
+
+                return HttpWebRequestOptions.Combine(defaultWebRequestOptions, optionsInfo.WebRequestOptions, optionsInfo.CopyIfNull);
 
             }
 
