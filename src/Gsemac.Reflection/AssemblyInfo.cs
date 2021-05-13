@@ -11,13 +11,13 @@ namespace Gsemac.Reflection {
         // Public members
 
         public string Description => GetDescription();
-        public string Directory => System.IO.Path.GetDirectoryName(Location);
-        public string Filename => System.IO.Path.GetFileName(Location);
-        public string Location => assembly.Location;
-        public string Name => assembly.GetName().Name;
-        public string ProductName => !(fileVersionInfo is null) ? fileVersionInfo.ProductName : Name;
-        public Version ProductVersion => !(fileVersionInfo is null) ? Version.Parse(fileVersionInfo.ProductVersion) : Version;
-        public Version Version => assembly.GetName().Version;
+        public string Directory => GetDirectory();
+        public string Filename => GetFilename();
+        public string Location => GetLocation();
+        public string Name => GetName();
+        public string ProductName => GetProductName();
+        public Version ProductVersion => GetProductVersion();
+        public Version Version => GetVersion();
 
         public static AssemblyInfo CallingAssembly => new AssemblyInfo(Assembly.GetCallingAssembly());
         public static AssemblyInfo EntryAssembly => new AssemblyInfo(Assembly.GetEntryAssembly());
@@ -26,16 +26,23 @@ namespace Gsemac.Reflection {
         public AssemblyInfo(Assembly assembly) {
 
             this.assembly = assembly;
-
-            if (System.IO.File.Exists(Location))
-                fileVersionInfo = FileVersionInfo.GetVersionInfo(Location);
+            this.fileVersionInfo = new Lazy<FileVersionInfo>(GetFileVersionInfo);
 
         }
 
         // Private members
 
         private readonly Assembly assembly;
-        private readonly FileVersionInfo fileVersionInfo;
+        private readonly Lazy<FileVersionInfo> fileVersionInfo;
+
+        private FileVersionInfo GetFileVersionInfo() {
+
+            if (System.IO.File.Exists(Location))
+                return FileVersionInfo.GetVersionInfo(Location);
+
+            return null;
+
+        }
 
         private string GetDescription() {
 
@@ -45,6 +52,41 @@ namespace Gsemac.Reflection {
                 .FirstOrDefault();
 
             return descriptionAttribute?.Description ?? string.Empty;
+
+        }
+        private string GetDirectory() {
+
+            return System.IO.Path.GetDirectoryName(Location);
+
+        }
+        private string GetFilename() {
+
+            return System.IO.Path.GetFileName(Location);
+
+        }
+        private string GetLocation() {
+
+            return assembly.Location;
+
+        }
+        private string GetName() {
+
+            return assembly.GetName().Name;
+
+        }
+        private string GetProductName() {
+
+            return fileVersionInfo.Value?.ProductName ?? Name;
+
+        }
+        private Version GetProductVersion() {
+
+            return fileVersionInfo.Value?.ProductVersion is null ? Version : Version.Parse(fileVersionInfo.Value.ProductVersion);
+
+        }
+        private Version GetVersion() {
+
+            return assembly.GetName().Version;
 
         }
 
