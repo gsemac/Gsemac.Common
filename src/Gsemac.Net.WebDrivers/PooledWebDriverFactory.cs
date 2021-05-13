@@ -188,7 +188,7 @@ namespace Gsemac.Net.WebDrivers {
 
         }
 
-        private LogEventHelper OnLog => new LogEventHelper("Web Driver Factory", Log);
+        private LogEventHandlerWrapper OnLog => new LogEventHandlerWrapper(Log, "Web Driver Factory");
 
         private readonly IPooledWebDriverFactoryOptions options;
         private readonly IWebDriverFactory baseFactory;

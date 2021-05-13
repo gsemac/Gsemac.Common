@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Gsemac.Reflection;
+using System;
 using System.Linq;
 using System.Reflection;
 
@@ -41,6 +42,7 @@ namespace Gsemac.IO.Logging {
 
             }
         }
+        public virtual string Name => AssemblyInfo.EntryAssembly.Name;
 
         public virtual void Log(ILogMessage message) {
 

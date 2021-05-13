@@ -1,19 +1,19 @@
 ﻿namespace Gsemac.IO.Logging {
 
-    public class LogEventHelper {
+    public class LogEventHandlerWrapper {
 
         // Public members
 
-        public LogEventHelper(string sourceName, LogEventHandler logEventHandler) {
+        public LogEventHandlerWrapper(LogEventHandler logEventHandler, string name) {
 
-            this.sourceName = sourceName;
-            this.logEventHandler = logEventHandler;
+            this.name = logEventHandler;
+            this.sourceName = name;
 
         }
 
         public void Log(ILogMessage logMessage) {
 
-            logEventHandler?.Invoke(this, new LogEventArgs(logMessage));
+            name?.Invoke(this, new LogEventArgs(logMessage));
 
         }
         public void Log(LogLevel level, string source, string message) {
@@ -61,7 +61,7 @@
         // Private members
 
         private readonly string sourceName;
-        private readonly LogEventHandler logEventHandler;
+        private readonly LogEventHandler name;
 
     }
 

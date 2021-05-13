@@ -7,6 +7,7 @@
         event LogEventHandler Logged;
 
         bool Enabled { get; set; }
+        string Name { get; }
 
         void Log(ILogMessage message);
 

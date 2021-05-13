@@ -55,7 +55,7 @@ namespace Gsemac.Net.WebDrivers {
 
         // Protected members
 
-        protected LogEventHelper OnLog => new LogEventHelper("Web Driver Factory", Log);
+        protected LogEventHandlerWrapper OnLog => new LogEventHandlerWrapper(Log, "Web Driver Factory");
 
         protected WebDriverFactoryBase(WebBrowserId webBrowserId, IHttpWebRequestFactory httpWebRequestFactory, IWebDriverOptions webDriverOptions, IWebDriverFactoryOptions webDriverFactoryOptions) {
 
