@@ -1,8 +1,6 @@
-﻿using Gsemac.IO;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text.RegularExpressions;
 
 namespace Gsemac.Net {
 
@@ -23,6 +21,11 @@ namespace Gsemac.Net {
 
         }
 
+        public IHttpWebRequestOptions Create() {
+
+            return defaultWebRequestOptions;
+
+        }
         public IHttpWebRequestOptions Create(Uri requestUri) {
 
             return GetOptions(requestUri);
