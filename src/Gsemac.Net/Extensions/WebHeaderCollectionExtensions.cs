@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.Linq;
 using System.Net;
 
 namespace Gsemac.Net.Extensions {
@@ -139,6 +140,16 @@ namespace Gsemac.Net.Extensions {
                 return false;
 
             }
+
+        }
+        public static bool TrySetHeader(this WebHeaderCollection headerCollection, IHttpHeader header) {
+
+            return TrySetHeader(headerCollection, header.Name, header.Value);
+
+        }
+        public static bool TrySetHeaders(this WebHeaderCollection headerCollection, IEnumerable<IHttpHeader> headers) {
+
+            return !headers.All(header => headerCollection.TrySetHeader(header));
 
         }
 
