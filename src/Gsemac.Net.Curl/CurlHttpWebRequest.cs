@@ -52,12 +52,9 @@ namespace Gsemac.Net.Curl {
                         LibCurl.EasySetOpt(easyHandle, CurlOption.FollowLocation, AllowAutoRedirect ? 1 : 0);
                         LibCurl.EasySetOpt(easyHandle, CurlOption.MaxRedirs, MaximumAutomaticRedirections);
                         LibCurl.EasySetOpt(easyHandle, CurlOption.Timeout, base.Timeout);
-                        LibCurl.EasySetOpt(easyHandle, CurlOption.HttpVersion, (int)GetHttpVersion());
 
                         if (AutomaticDecompression != DecompressionMethods.None)
                             LibCurl.EasySetOpt(easyHandle, CurlOption.AcceptEncoding, GetAcceptEncoding());
-
-                        LibCurl.EasySetOpt(easyHandle, CurlOption.TcpKeepAlive, KeepAlive ? 1 : 0);
 
                         if (File.Exists(options.CABundlePath))
                             LibCurl.EasySetOpt(easyHandle, CurlOption.CAInfo, options.CABundlePath);
@@ -66,6 +63,8 @@ namespace Gsemac.Net.Curl {
                         SetCookies(easyHandle);
                         SetCredentials(easyHandle);
                         SetHeaders(easyHandle, headers);
+                        SetHttpVersion(easyHandle);
+                        SetKeepAlive(easyHandle);
                         SetMethod(easyHandle);
                         SetProxy(easyHandle);
 
@@ -146,7 +145,7 @@ namespace Gsemac.Net.Curl {
         }
         private CurlHttpVersion GetHttpVersion() {
 
-            if (!(ProtocolVersion is null)) {
+            if (ProtocolVersion is object) {
 
                 if (ProtocolVersion.Major == 1 && ProtocolVersion.Minor == 0)
                     return CurlHttpVersion.Http10;
@@ -192,12 +191,32 @@ namespace Gsemac.Net.Curl {
             }
 
         }
-        private void SetHeaders(CurlEasyHandle easyHandle, SList headers) {
+        private void SetHeaders(CurlEasyHandle easyHandle, SList headersList) {
 
-            foreach (string headerName in Headers.AllKeys)
-                headers.Append($"{headerName}: {Headers[headerName]}");
+            IEnumerable<IHttpHeader> headers = Headers.GetHeaders();
 
-            LibCurl.EasySetOpt(easyHandle, CurlOption.HttpHeader, headers.Handle);
+            foreach (IHttpHeader header in headers)
+                headersList.Append($"{header.Name}: {header.Value}");
+
+            // Adding the Accept-Encoding header manually ensures that it's below the Accept header.
+            // See See https://sansec.io/research/http-header-order-is-important
+
+            string acceptEncoding = GetAcceptEncoding();
+
+            if (!string.IsNullOrWhiteSpace(acceptEncoding))
+                headersList.Append($"Accept-Encoding: {acceptEncoding}");
+
+            LibCurl.EasySetOpt(easyHandle, CurlOption.HttpHeader, headersList.Handle);
+
+        }
+        private void SetHttpVersion(CurlEasyHandle easyHandle) {
+
+            LibCurl.EasySetOpt(easyHandle, CurlOption.HttpVersion, (int)GetHttpVersion());
+
+        }
+        private void SetKeepAlive(CurlEasyHandle easyHandle) {
+
+            LibCurl.EasySetOpt(easyHandle, CurlOption.TcpKeepAlive, KeepAlive ? 1 : 0);
 
         }
         private void SetMethod(CurlEasyHandle easyHandle) {
