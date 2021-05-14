@@ -47,6 +47,12 @@ namespace Gsemac.Net {
             this(new Uri(requestUri)) {
         }
 
+        internal WebRequest GetUnderlyingWebRequest() {
+
+            return httpWebRequest;
+
+        }
+
         // Protected members
 
         protected HttpWebRequestWrapper(SerializationInfo serializationInfo, StreamingContext streamingContext) :
