@@ -12,6 +12,7 @@ namespace Gsemac.Net {
 
     // Despite the RFC stating that header ordering doesn't matter, some CDNs will block requests if the headers are not in a certain order (e.g. Cloudflare).
     // See https://sansec.io/research/http-header-order-is-important
+    // This workaround is based on the answer given here: https://stackoverflow.com/a/63762847/5383169 (Jason)
 
     public class ReorderHeadersDelegatingWebRequestHandler :
         DelegatingWebRequestHandler {
