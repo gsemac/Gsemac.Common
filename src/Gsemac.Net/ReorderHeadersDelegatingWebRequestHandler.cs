@@ -33,7 +33,7 @@ namespace Gsemac.Net {
             if (request is null)
                 throw new ArgumentNullException(nameof(request));
 
-            TrySetWebHeaderCollection(request);
+            SetWebHeaderCollection(request);
 
             return base.Send(request, cancellationToken);
 
@@ -64,11 +64,7 @@ namespace Gsemac.Net {
 
                 // Add required headers that are normally added automatically (they won't be added by HttpWebRequest).
 
-                if (!headers.Any(h => h.Name.Equals("Host", StringComparison.OrdinalIgnoreCase)))
-                    headers.Add(new HttpHeader("Host", Url.GetHostname(webRequest.RequestUri.AbsoluteUri)));
-
-                if (webRequest.KeepAlive && !headers.Any(h => h.Name.Equals("Connection", StringComparison.OrdinalIgnoreCase)))
-                    headers.Add(new HttpHeader("Connection", "keep-alive"));
+                AddRequiredHeaders(headers, new HttpWebRequestWrapper(webRequest));
 
                 StringBuilder sb = new StringBuilder();
 
@@ -91,26 +87,11 @@ namespace Gsemac.Net {
 
             private readonly HttpWebRequest webRequest;
 
-            private int GetHeaderOrder(IHttpHeader header) {
 
-                string[] headerOrder = new[] {
-                    "host",
-                    "connection",
-                    "accept",
-                    "user-agent",
-                };
-
-                int order = headerOrder.IndexOf(header.Name.ToLowerInvariant());
-
-                return order < 0 ?
-                    headerOrder.Length :
-                    order;
-
-            }
 
         }
 
-        private bool TrySetWebHeaderCollection(WebRequest webRequest) {
+        private void SetWebHeaderCollection(WebRequest webRequest) {
 
             if (webRequest is HttpWebRequestWrapper webRequestWrapper)
                 webRequest = webRequestWrapper.GetUnderlyingWebRequest();
@@ -119,19 +100,50 @@ namespace Gsemac.Net {
 
                 FieldInfo fieldInfo = typeof(HttpWebRequest).GetField("_HttpRequestHeaders", BindingFlags.Instance | BindingFlags.NonPublic);
 
-                if (fieldInfo is null)
-                    return false;
-
-                fieldInfo.SetValue(httpWebRequest, new ReorderedWebHeaderCollection(httpWebRequest));
-
-                return true;
+                if (fieldInfo is object)
+                    fieldInfo.SetValue(httpWebRequest, new ReorderedWebHeaderCollection(httpWebRequest));
 
             }
             else {
 
-                return false;
+                // For a generic request, just reorder and reinsert each of the headers.
+
+                IList<IHttpHeader> headers = new List<IHttpHeader>(webRequest.Headers.GetHeaders());
+
+                if (webRequest is IHttpWebRequest iHttpWebRequest)
+                    AddRequiredHeaders(headers, iHttpWebRequest);
+
+                webRequest.Headers.Clear();
+
+                webRequest.Headers.TrySetHeaders(headers.OrderBy(header => GetHeaderOrder(header)));
 
             }
+
+        }
+
+        private static int GetHeaderOrder(IHttpHeader header) {
+
+            string[] headerOrder = new[] {
+                    "host",
+                    "connection",
+                    "accept",
+                    "user-agent",
+                };
+
+            int order = headerOrder.IndexOf(header.Name.ToLowerInvariant());
+
+            return order < 0 ?
+                headerOrder.Length :
+                order;
+
+        }
+        private static void AddRequiredHeaders(IList<IHttpHeader> headers, IHttpWebRequest webRequest) {
+
+            if (!headers.Any(h => h.Name.Equals("Host", StringComparison.OrdinalIgnoreCase)))
+                headers.Add(new HttpHeader("Host", Url.GetHostname(webRequest.RequestUri.AbsoluteUri)));
+
+            if (webRequest.KeepAlive && !headers.Any(h => h.Name.Equals("Connection", StringComparison.OrdinalIgnoreCase)))
+                headers.Add(new HttpHeader("Connection", "keep-alive"));
 
         }
 
