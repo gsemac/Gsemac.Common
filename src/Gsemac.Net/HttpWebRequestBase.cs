@@ -96,7 +96,7 @@ namespace Gsemac.Net {
         public int MaximumAutomaticRedirections { get; set; } = 50;
         public int MaximumResponseHeadersLength { get; set; } = HttpWebRequest.DefaultMaximumResponseHeadersLength;
         public bool Pipelined { get; set; } = true;
-        public Version ProtocolVersion { get; set; } = new Version(2, 0);
+        public Version ProtocolVersion { get; set; } = new Version(1, 1);
         public int ReadWriteTimeout { get; set; } = 300000;
         public string Referer {
             get => Headers[HttpRequestHeader.Referer];
