@@ -1,5 +1,6 @@
 ﻿using Gsemac.IO.Logging;
 using Gsemac.Net.WebBrowsers;
+using System.Threading;
 
 namespace Gsemac.Net.WebDrivers {
 
@@ -9,7 +10,7 @@ namespace Gsemac.Net.WebDrivers {
         event DownloadFileProgressChangedEventHandler DownloadFileProgressChanged;
         event DownloadFileCompletedEventHandler DownloadFileCompleted;
 
-        IWebDriverInfo Update(IWebBrowserInfo webBrowserInfo);
+        IWebDriverInfo Update(IWebBrowserInfo webBrowserInfo, CancellationToken cancellationToken);
 
     }
 

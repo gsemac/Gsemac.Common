@@ -3,6 +3,7 @@ using Gsemac.Net.WebBrowsers;
 using OpenQA.Selenium;
 using System;
 using System.IO;
+using System.Threading;
 
 namespace Gsemac.Net.WebDrivers {
 
@@ -78,6 +79,9 @@ namespace Gsemac.Net.WebDrivers {
 
             if (disposing && !isDisposed) {
 
+                updaterCancellationTokenSource.Cancel();
+                updaterCancellationTokenSource.Dispose();
+
                 if (webDriverFactoryOptions.KillWebDriverProcessesOnDispose) {
 
                     OnLog.Info($"Killing web driver processes");
@@ -109,6 +113,7 @@ namespace Gsemac.Net.WebDrivers {
         private readonly IHttpWebRequestFactory httpWebRequestFactory;
         private readonly IWebDriverOptions webDriverOptions;
         private readonly IWebDriverFactoryOptions webDriverFactoryOptions;
+        private readonly CancellationTokenSource updaterCancellationTokenSource = new CancellationTokenSource();
         private bool isDisposed = false;
 
         private string GetDriverExecutablePathInternal(IWebBrowserInfo webBrowserInfo) {
@@ -124,7 +129,7 @@ namespace Gsemac.Net.WebDrivers {
 
                     try {
 
-                        IWebDriverInfo webDriverInfo = updater.Update(webBrowserInfo);
+                        IWebDriverInfo webDriverInfo = updater.Update(webBrowserInfo, updaterCancellationTokenSource.Token);
 
                         if (!string.IsNullOrWhiteSpace(webDriverInfo?.ExecutablePath))
                             return webDriverInfo.ExecutablePath;

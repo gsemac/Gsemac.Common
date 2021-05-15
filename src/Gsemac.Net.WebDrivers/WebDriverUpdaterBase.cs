@@ -7,6 +7,7 @@ using Newtonsoft.Json;
 using System;
 using System.IO;
 using System.Net;
+using System.Threading;
 
 namespace Gsemac.Net.WebDrivers {
 
@@ -19,7 +20,7 @@ namespace Gsemac.Net.WebDrivers {
 
         // Public members
 
-        public IWebDriverInfo Update(IWebBrowserInfo webBrowserInfo) {
+        public IWebDriverInfo Update(IWebBrowserInfo webBrowserInfo, CancellationToken cancellationToken) {
 
             if (webBrowserInfo is null)
                 throw new ArgumentNullException(nameof(webBrowserInfo));
@@ -38,7 +39,7 @@ namespace Gsemac.Net.WebDrivers {
 
                 OnLog.Info($"Updating web driver to version {webBrowserInfo.Version}");
 
-                if (DownloadWebDriver(webBrowserInfo)) {
+                if (DownloadWebDriver(webBrowserInfo, cancellationToken)) {
 
                     webDriverInfo = new WebDriverInfo() {
                         ExecutablePath = GetWebDriverExecutablePath(),
@@ -123,7 +124,7 @@ namespace Gsemac.Net.WebDrivers {
                 webBrowserId.Equals(webBrowserInfo.Id);
 
         }
-        private bool DownloadWebDriver(IWebBrowserInfo webBrowserInfo) {
+        private bool DownloadWebDriver(IWebBrowserInfo webBrowserInfo, CancellationToken cancellationToken) {
 
             string webDriverExecutablePath = GetWebDriverExecutablePath();
 
@@ -144,7 +145,7 @@ namespace Gsemac.Net.WebDrivers {
                     webClient.DownloadProgressChanged += (sender, e) => OnDownloadFileProgressChanged(this, new DownloadFileProgressChangedEventArgs(webDriverDownloadUri, downloadFilePath, e));
                     webClient.DownloadFileCompleted += (sender, e) => OnDownloadFileCompleted(this, new DownloadFileCompletedEventArgs(webDriverDownloadUri, downloadFilePath, e.Error is null));
 
-                    webClient.DownloadFileSync(webDriverDownloadUri, downloadFilePath);
+                    webClient.DownloadFileSync(webDriverDownloadUri, downloadFilePath, cancellationToken);
 
                 }
 
