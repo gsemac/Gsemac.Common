@@ -10,7 +10,7 @@ using System.Security.Principal;
 namespace Gsemac.Net {
 
     [Serializable]
-    internal class HttpWebRequestWrapper :
+    public class HttpWebRequestWrapper :
         WebRequest,
         IHttpWebRequest {
 
