@@ -61,31 +61,41 @@ namespace Gsemac.Net.Extensions {
             // Based on the solution given here: https://stackoverflow.com/a/25834736 (user195275)
 
             object mutex = new object();
+            bool downloadCancelled = false;
+
+            if (cancellationToken != CancellationToken.None)
+                cancellationToken.Register(() => client.CancelAsync());
 
             void handleDownloadComplete(object sender, AsyncCompletedEventArgs e) {
 
+                downloadCancelled = e.Cancelled;
+
                 lock (e.UserState)
                     Monitor.Pulse(e.UserState);
-
-                if (e.Cancelled)
-                    throw new WebException(Properties.ExceptionMessages.TheRequestWasCancelled);
 
             }
 
             client.DownloadFileCompleted += handleDownloadComplete;
 
-            if (cancellationToken != CancellationToken.None)
-                cancellationToken.Register(() => client.CancelAsync());
+            try {
 
-            lock (mutex) {
+                lock (mutex) {
 
-                client.DownloadFileAsync(address, filename, mutex);
+                    client.DownloadFileAsync(address, filename, mutex);
 
-                Monitor.Wait(mutex);
+                    Monitor.Wait(mutex);
+
+                }
+
+            }
+            finally {
+
+                client.DownloadFileCompleted -= handleDownloadComplete;
 
             }
 
-            client.DownloadFileCompleted -= handleDownloadComplete;
+            if (downloadCancelled)
+                throw new WebException(Properties.ExceptionMessages.TheRequestWasCancelled);
 
         }
         public static void DownloadFileSync(this WebClient client, string address, string filename) {
