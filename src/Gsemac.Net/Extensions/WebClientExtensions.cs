@@ -44,7 +44,17 @@ namespace Gsemac.Net.Extensions {
             DownloadFileSync(new WebClientWrapper(client), address, filename);
 
         }
+        public static void DownloadFileSync(this WebClient client, Uri address, string filename, CancellationToken cancellationToken) {
+
+            DownloadFileSync(new WebClientWrapper(client), address, filename, cancellationToken);
+
+        }
         public static void DownloadFileSync(this IWebClient client, Uri address, string filename) {
+
+            DownloadFileSync(client, address, filename, CancellationToken.None);
+
+        }
+        public static void DownloadFileSync(this IWebClient client, Uri address, string filename, CancellationToken cancellationToken) {
 
             // Events are only fired when downloading asynchronously with DownloadFileAsync.
             // This method allows for synchronous downloads while still firing events. 
@@ -60,6 +70,9 @@ namespace Gsemac.Net.Extensions {
             }
 
             client.DownloadFileCompleted += handleDownloadComplete;
+
+            if (cancellationToken != CancellationToken.None)
+                cancellationToken.Register(() => client.CancelAsync());
 
             lock (mutex) {
 
@@ -77,9 +90,19 @@ namespace Gsemac.Net.Extensions {
             DownloadFileSync(new WebClientWrapper(client), address, filename);
 
         }
+        public static void DownloadFileSync(this WebClient client, string address, string filename, CancellationToken cancellationToken) {
+
+            DownloadFileSync(new WebClientWrapper(client), address, filename, cancellationToken);
+
+        }
         public static void DownloadFileSync(this IWebClient client, string address, string filename) {
 
             DownloadFileSync(client, new Uri(address), filename);
+
+        }
+        public static void DownloadFileSync(this IWebClient client, string address, string filename, CancellationToken cancellationToken) {
+
+            DownloadFileSync(client, new Uri(address), filename, cancellationToken);
 
         }
 
