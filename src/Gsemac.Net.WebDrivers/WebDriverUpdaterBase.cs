@@ -129,7 +129,7 @@ namespace Gsemac.Net.WebDrivers {
             string webDriverExecutablePath = GetWebDriverExecutablePath();
 
             if (!PathUtilities.IsPathRooted(webDriverExecutablePath) && !string.IsNullOrWhiteSpace(webDriverUpdaterOptions.WebDriverDirectoryPath))
-                webDriverExecutablePath = Path.Combine(webDriverUpdaterOptions.WebDriverDirectoryPath, WebDriverUtilities.GeckoDriverExecutablePath);
+                webDriverExecutablePath = Path.Combine(webDriverUpdaterOptions.WebDriverDirectoryPath, webDriverExecutablePath);
 
             OnLog.Info("Getting web driver download url");
 
