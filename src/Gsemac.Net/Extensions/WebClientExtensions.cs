@@ -67,6 +67,9 @@ namespace Gsemac.Net.Extensions {
                 lock (e.UserState)
                     Monitor.Pulse(e.UserState);
 
+                if (e.Cancelled)
+                    throw new WebException(Properties.ExceptionMessages.TheRequestWasCancelled);
+
             }
 
             client.DownloadFileCompleted += handleDownloadComplete;

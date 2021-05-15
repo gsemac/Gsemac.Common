@@ -86,5 +86,14 @@ namespace Gsemac.Net.Properties {
                 return ResourceManager.GetString("SchemeContainsInvalidCharacters", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The request was aborted: The request was canceled..
+        /// </summary>
+        internal static string TheRequestWasCancelled {
+            get {
+                return ResourceManager.GetString("TheRequestWasCancelled", resourceCulture);
+            }
+        }
     }
 }

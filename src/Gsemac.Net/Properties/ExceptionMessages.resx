@@ -126,4 +126,7 @@
   <data name="SchemeContainsInvalidCharacters" xml:space="preserve">
     <value>The scheme contains invalid characters.</value>
   </data>
+  <data name="TheRequestWasCancelled" xml:space="preserve">
+    <value>The request was aborted: The request was canceled.</value>
+  </data>
 </root>
