@@ -109,7 +109,7 @@ namespace Gsemac.Net.Curl {
                     bool wasRedirected = Headers.TryGetHeader(HttpResponseHeader.Location, out string locationHeader);
                     Uri locationUri = null;
 
-                    readHeaders = wasRedirected;
+                    readHeaders = wasRedirected || StatusCode == HttpStatusCode.Continue;
 
                     if (wasRedirected) {
 
