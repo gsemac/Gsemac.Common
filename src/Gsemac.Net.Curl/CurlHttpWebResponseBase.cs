@@ -25,10 +25,16 @@ namespace Gsemac.Net.Curl {
         protected CurlHttpWebResponseBase(IHttpWebRequest parentRequest, Stream responseStream, Func<Exception> exceptionFactory) :
             base(parentRequest.RequestUri, responseStream) {
 
-            responseUri = parentRequest.RequestUri;
+            this.responseUri = parentRequest.RequestUri;
+            this.responseStream = responseStream;
+            this.exceptionFactory = exceptionFactory;
 
             Method = parentRequest.Method;
             ProtocolVersion = parentRequest.ProtocolVersion;
+
+        }
+
+        protected internal void ReadHeadersFromResponseStream() {
 
             // Read headers from the stream before returning to the caller so our property values are valid.
 
@@ -66,11 +72,12 @@ namespace Gsemac.Net.Curl {
 
         }
 
-
         // Private members
 
         private Uri responseUri;
+        private readonly Stream responseStream;
         private readonly CookieContainer cookies = new CookieContainer();
+        private readonly Func<Exception> exceptionFactory;
 
         private void ReadHttpHeaders(Stream responseStream) {
 

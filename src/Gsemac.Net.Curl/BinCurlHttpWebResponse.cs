@@ -10,6 +10,9 @@
         /// </summary>
         internal BinCurlHttpWebResponse(IHttpWebRequest parentRequest, BinCurlProcessStream responseStream) :
             base(parentRequest, responseStream) {
+
+            ReadHeadersFromResponseStream();
+
         }
 
     }

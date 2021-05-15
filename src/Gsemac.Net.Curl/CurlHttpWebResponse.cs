@@ -15,6 +15,8 @@ namespace Gsemac.Net.Curl {
 
             this.taskCancellationTokenSource = taskCancellationTokenSource;
 
+            ReadHeadersFromResponseStream();
+
         }
 
         public override void Close() {
