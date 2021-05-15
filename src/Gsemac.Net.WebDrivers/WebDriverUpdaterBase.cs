@@ -42,7 +42,7 @@ namespace Gsemac.Net.WebDrivers {
                 if (DownloadWebDriver(webBrowserInfo, cancellationToken)) {
 
                     webDriverInfo = new WebDriverInfo() {
-                        ExecutablePath = GetWebDriverExecutablePath(),
+                        ExecutablePath = GetWebDriverExecutablePathInternal(),
                         Version = webBrowserInfo.Version
                     };
 
@@ -90,9 +90,19 @@ namespace Gsemac.Net.WebDrivers {
         private readonly IHttpWebRequestFactory webRequestFactory;
         private readonly IWebDriverUpdaterOptions webDriverUpdaterOptions;
 
+        private string GetWebDriverExecutablePathInternal() {
+
+            string webDriverExecutablePath = GetWebDriverExecutablePath();
+
+            if (!PathUtilities.IsPathRooted(webDriverExecutablePath) && !string.IsNullOrWhiteSpace(webDriverUpdaterOptions.WebDriverDirectoryPath))
+                webDriverExecutablePath = Path.Combine(webDriverUpdaterOptions.WebDriverDirectoryPath, webDriverExecutablePath);
+
+            return webDriverExecutablePath;
+
+        }
         private string GetWebDriverInfoFilePath() {
 
-            return PathUtilities.SetFileExtension(GetWebDriverExecutablePath(), ".json");
+            return PathUtilities.SetFileExtension(GetWebDriverExecutablePathInternal(), ".json");
 
         }
         private IWebDriverInfo GetWebDriverInfo() {
@@ -126,10 +136,7 @@ namespace Gsemac.Net.WebDrivers {
         }
         private bool DownloadWebDriver(IWebBrowserInfo webBrowserInfo, CancellationToken cancellationToken) {
 
-            string webDriverExecutablePath = GetWebDriverExecutablePath();
-
-            if (!PathUtilities.IsPathRooted(webDriverExecutablePath) && !string.IsNullOrWhiteSpace(webDriverUpdaterOptions.WebDriverDirectoryPath))
-                webDriverExecutablePath = Path.Combine(webDriverUpdaterOptions.WebDriverDirectoryPath, webDriverExecutablePath);
+            string webDriverExecutablePath = GetWebDriverExecutablePathInternal();
 
             OnLog.Info("Getting web driver download url");
 
