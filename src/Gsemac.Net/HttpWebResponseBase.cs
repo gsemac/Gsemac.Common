@@ -69,7 +69,7 @@ namespace Gsemac.Net {
             // This method gets called by Dispose(), but WebClient doesn't call Dispose(). Instead, it calls Close() on the response stream directly (bad design IMO).  
             // As a result, it's important that this method doesn't contain any important logic, and ONLY closes the response stream.
 
-            if (!streamClosed)
+            if (!streamClosed && responseStream is object)
                 responseStream.Close();
 
             streamClosed = true;
