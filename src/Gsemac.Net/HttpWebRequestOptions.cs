@@ -9,6 +9,7 @@ namespace Gsemac.Net {
 
         public string Accept { get; set; } = "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8";
         public string AcceptLanguage { get; set; } = "en-US,en;q=0.5";
+        public bool? AllowAutoRedirect { get; set; } = true;
         public DecompressionMethods AutomaticDecompression { get; set; } = DecompressionMethods.Deflate | DecompressionMethods.GZip;
         public CookieContainer Cookies { get; set; } = new CookieContainer();
         public ICredentials Credentials { get; set; }
@@ -45,6 +46,7 @@ namespace Gsemac.Net {
             return new HttpWebRequestOptions() {
                 Accept = httpWebRequest.Accept,
                 AcceptLanguage = httpWebRequest.Headers[HttpRequestHeader.AcceptLanguage],
+                AllowAutoRedirect = httpWebRequest.AllowAutoRedirect,
                 AutomaticDecompression = httpWebRequest.AutomaticDecompression,
                 Cookies = httpWebRequest.CookieContainer,
                 Credentials = httpWebRequest.Credentials,
@@ -78,6 +80,9 @@ namespace Gsemac.Net {
 
             if (copyIfNull || !string.IsNullOrWhiteSpace(other.AcceptLanguage))
                 AcceptLanguage = other.AcceptLanguage;
+
+            if (copyIfNull || other.AllowAutoRedirect.HasValue)
+                AllowAutoRedirect = other.AllowAutoRedirect;
 
             if (copyIfNull || other.AutomaticDecompression != DecompressionMethods.None)
                 AutomaticDecompression = other.AutomaticDecompression;

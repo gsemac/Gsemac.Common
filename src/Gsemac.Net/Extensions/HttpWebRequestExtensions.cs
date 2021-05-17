@@ -58,6 +58,9 @@ namespace Gsemac.Net.Extensions {
             if (copyIfNull || !string.IsNullOrWhiteSpace(options.AcceptLanguage))
                 httpWebRequest.Headers[HttpRequestHeader.AcceptLanguage] = options.AcceptLanguage;
 
+            if (copyIfNull || options.AllowAutoRedirect.HasValue)
+                httpWebRequest.AllowAutoRedirect = options.AllowAutoRedirect ?? httpWebRequest.AllowAutoRedirect;
+
             httpWebRequest.AutomaticDecompression = options.AutomaticDecompression;
 
             if (copyIfNull || options.Cookies is object)

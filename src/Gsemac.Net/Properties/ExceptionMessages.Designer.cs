@@ -61,6 +61,15 @@ namespace Gsemac.Net.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Cannot handle redirect from HTTP/HTTPS protocols to other dissimilar ones..
+        /// </summary>
+        internal static string CannotRedirectToDissimilarProtocols {
+            get {
+                return ResourceManager.GetString("CannotRedirectToDissimilarProtocols", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The inner handler has not been set..
         /// </summary>
         internal static string InnerHandlerHasNotBeenSet {
@@ -88,11 +97,29 @@ namespace Gsemac.Net.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The remote server returned an error: {0}..
+        /// </summary>
+        internal static string TheRemoteServerReturnedAnErrorWithStatusCode {
+            get {
+                return ResourceManager.GetString("TheRemoteServerReturnedAnErrorWithStatusCode", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The request was aborted: The request was canceled..
         /// </summary>
         internal static string TheRequestWasCancelled {
             get {
                 return ResourceManager.GetString("TheRequestWasCancelled", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Too many automatic redirections were attempted..
+        /// </summary>
+        internal static string TooManyAutomaticRedirections {
+            get {
+                return ResourceManager.GetString("TooManyAutomaticRedirections", resourceCulture);
             }
         }
     }

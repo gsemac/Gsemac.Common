@@ -8,8 +8,6 @@ namespace Gsemac.Net {
 
         // Public members
 
-        public bool OverrideAutomaticRedirection { get; set; } = false;
-
         public static HttpWebRequestFactory Default => new HttpWebRequestFactory();
 
         public HttpWebRequestFactory() :
@@ -29,9 +27,8 @@ namespace Gsemac.Net {
 
         public IHttpWebRequest Create(Uri requestUri) {
 
-            return new HttpWebRequestWrapper(requestUri) {
-                OverrideAutomaticRedirection = OverrideAutomaticRedirection,
-            }.WithOptions(optionsFactory.Create(requestUri));
+            return new HttpWebRequestWrapper(requestUri)
+                .WithOptions(optionsFactory.Create(requestUri));
 
         }
 
