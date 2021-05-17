@@ -14,15 +14,15 @@ namespace Gsemac.Net {
     // See https://sansec.io/research/http-header-order-is-important
     // This workaround is based on the answer given here: https://stackoverflow.com/a/63762847/5383169 (Jason)
 
-    public class ReorderHeadersDelegatingWebRequestHandler :
+    public class SortHeadersHandler :
         DelegatingWebRequestHandler {
 
         // Public members
 
-        public ReorderHeadersDelegatingWebRequestHandler() :
+        public SortHeadersHandler() :
             base() {
         }
-        public ReorderHeadersDelegatingWebRequestHandler(WebRequestHandler innerHandler) :
+        public SortHeadersHandler(WebRequestHandler innerHandler) :
             base(innerHandler) {
         }
 
