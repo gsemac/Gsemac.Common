@@ -8,12 +8,12 @@ namespace Gsemac.Net {
     // While redirections can be handled automatically be enabling "AllowAutoRedirect", the default implementation ignores the set-cookie header of intermediate responses.
     // This implementation preserves cookies set throughout the entire chain of requests.
 
-    public class FollowRedirectsHandler :
+    public class RedirectHandler :
         HttpWebRequestHandler {
 
         // Public members
 
-        public FollowRedirectsHandler(IHttpWebRequestFactory httpWebRequestFactory) {
+        public RedirectHandler(IHttpWebRequestFactory httpWebRequestFactory) {
 
             if (httpWebRequestFactory is null)
                 throw new ArgumentNullException(nameof(httpWebRequestFactory));
