@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using Gsemac.Net.Extensions;
+using System.Net;
 
 namespace Gsemac.Net {
 
@@ -13,6 +14,7 @@ namespace Gsemac.Net {
         public DecompressionMethods AutomaticDecompression { get; set; } = DecompressionMethods.Deflate | DecompressionMethods.GZip;
         public CookieContainer Cookies { get; set; } = new CookieContainer();
         public ICredentials Credentials { get; set; }
+        public WebHeaderCollection Headers { get; set; } = new WebHeaderCollection();
         public IWebProxy Proxy { get; set; } = WebProxyUtilities.GetDefaultProxy();
         public string UserAgent { get; set; } = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.66 Safari/537.36";
 
@@ -50,6 +52,7 @@ namespace Gsemac.Net {
                 AutomaticDecompression = httpWebRequest.AutomaticDecompression,
                 Cookies = httpWebRequest.CookieContainer,
                 Credentials = httpWebRequest.Credentials,
+                Headers = httpWebRequest.Headers.Clone(),
                 Proxy = httpWebRequest.Proxy,
                 UserAgent = httpWebRequest.UserAgent,
             };
@@ -65,7 +68,7 @@ namespace Gsemac.Net {
 
             HttpWebRequestOptions result = new HttpWebRequestOptions(options1);
 
-            result.Combine(options2);
+            result.Combine(options2, copyIfNull);
 
             return result;
 
@@ -92,6 +95,11 @@ namespace Gsemac.Net {
 
             if (copyIfNull || other.Credentials is object)
                 Credentials = other.Credentials;
+
+            if (Headers is null)
+                Headers = other.Headers.Clone();
+            else if (other.Headers is object)
+                other.Headers.CopyTo(Headers);
 
             if (copyIfNull || other.Proxy is object)
                 Proxy = other.Proxy;

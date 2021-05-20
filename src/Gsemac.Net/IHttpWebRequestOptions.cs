@@ -10,6 +10,7 @@ namespace Gsemac.Net {
         DecompressionMethods AutomaticDecompression { get; }
         CookieContainer Cookies { get; }
         ICredentials Credentials { get; }
+        WebHeaderCollection Headers { get; }
         IWebProxy Proxy { get; }
         string UserAgent { get; }
 

@@ -153,16 +153,41 @@ namespace Gsemac.Net.Extensions {
 
         }
 
-        public static void CopyTo(this WebHeaderCollection source, WebHeaderCollection desination) {
+        public static void CopyTo(this WebHeaderCollection source, WebHeaderCollection destination) {
+
+            if (source is null)
+                throw new ArgumentNullException(nameof(source));
+
+            if (destination is null)
+                throw new ArgumentNullException(nameof(destination));
 
             foreach (IHttpHeader header in source.GetHeaders())
-                desination[header.Name] = header.Value;
+                destination[header.Name] = header.Value;
 
         }
-        public static void CopyTo(this NameValueCollection source, WebHeaderCollection desination) {
+        public static void CopyTo(this NameValueCollection source, WebHeaderCollection destination) {
+
+            if (source is null)
+                throw new ArgumentNullException(nameof(source));
+
+            if (destination is null)
+                throw new ArgumentNullException(nameof(destination));
 
             foreach (string key in source.AllKeys)
-                desination[key] = source[key];
+                destination[key] = source[key];
+
+        }
+
+        public static WebHeaderCollection Clone(this WebHeaderCollection source) {
+
+            if (source is null)
+                throw new ArgumentNullException(nameof(source));
+
+            WebHeaderCollection webHeaderCollection = new WebHeaderCollection();
+
+            source.CopyTo(webHeaderCollection);
+
+            return webHeaderCollection;
 
         }
 

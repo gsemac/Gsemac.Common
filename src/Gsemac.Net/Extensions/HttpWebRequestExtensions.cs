@@ -69,6 +69,9 @@ namespace Gsemac.Net.Extensions {
             if (copyIfNull || options.Credentials is object)
                 httpWebRequest.Credentials = options.Credentials;
 
+            if (httpWebRequest.Headers is object && options.Headers is object)
+                options.Headers.CopyTo(httpWebRequest.Headers);
+
             if (copyIfNull || options.Proxy is object)
                 httpWebRequest.Proxy = options.Proxy;
 
