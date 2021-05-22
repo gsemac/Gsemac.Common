@@ -446,14 +446,25 @@ namespace Gsemac.Text {
         }
         private static string RepairTextEncoding(string input) {
 
+            // The "â€" sequence seems to be very common in garbled texts (mojibake).
+            // They are most likely the result of decoding UTF8 as windows-1252.
+
+            if (input.Contains("â€"))
+                input = Encoding.UTF8.GetString(Encoding.GetEncoding(1252).GetBytes(input));
+
+            // These extra cases are derived from instances found "in the wild".
+
             StringBuilder sb = new StringBuilder(input);
 
-            // Fix miscellaneous encoding issues.
-            // These cases are based on instances found "in the wild", and are not guaranteed to be perfect because we cannot be sure what the original encoding was.
-
-            sb.Replace(@"â€™", @"'");
+            sb.Replace(@"â€˜", @"‘");
+            sb.Replace(@"â€™", @"’");
+            sb.Replace(@"â€”", @"—");
             sb.Replace(@"â€“", @"–");
             sb.Replace(@"â˜†", @"☆");
+            sb.Replace(@"â€¢", @"-");
+            sb.Replace(@"â€¦", @"…");
+            sb.Replace(@"â€œ", @"“");
+            sb.Replace(@"â€", @"”");
 
             return sb.ToString();
 

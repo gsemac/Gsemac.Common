@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 
 namespace Gsemac.Text.Tests {
 
@@ -94,7 +95,9 @@ namespace Gsemac.Text.Tests {
         [TestMethod]
         public void TestUnescapeWithBrokenEncoding() {
 
-            Assert.AreEqual("'–☆", StringUtilities.Unescape("â€™â€“â˜†"));
+            Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+
+            Assert.AreEqual("’–☆", StringUtilities.Unescape("â€™â€“â˜†"));
 
         }
         [TestMethod]
