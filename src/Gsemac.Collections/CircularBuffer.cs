@@ -52,6 +52,13 @@ namespace Gsemac.Collections {
             Capacity = initialCapacity;
 
         }
+        public CircularBuffer(byte[] buffer) :
+            this(buffer.Length) {
+
+            this.fixedCapacity = true;
+            this.buffer = buffer;
+
+        }
 
         /// <summary>
         /// Adds a single byte to the queue.
@@ -208,6 +215,7 @@ namespace Gsemac.Collections {
         private const int growthFactor = 2;
         private const int minCapacity = 4;
 
+        private readonly bool fixedCapacity = false;
         private byte[] buffer;
         private int wpos = 0; // write position
         private int rpos = 0; // read position
@@ -235,11 +243,20 @@ namespace Gsemac.Collections {
 
             int spaceLeft = GetNumberOfBytesAvailableForWriting();
 
-            if (spaceLeft < spaceRequired + 1)
-                Capacity = Math.Max(Capacity + spaceRequired + 1 - spaceLeft, Math.Max(Capacity * growthFactor, minCapacity));
+            if (spaceLeft < spaceRequired + 1) {
+
+                if (!fixedCapacity)
+                    Capacity = Math.Max(Capacity + spaceRequired + 1 - spaceLeft, Math.Max(Capacity * growthFactor, minCapacity));
+                else
+                    throw new InvalidOperationException(Properties.ExceptionMessages.BufferHasNoSpaceLeft);
+
+            }
 
         }
         void SetCapacity(int capacity) {
+
+            if (fixedCapacity)
+                throw new InvalidOperationException(Properties.ExceptionMessages.BufferIsNotExpandable);
 
             byte[] newBuffer = new byte[capacity];
 

@@ -61,6 +61,24 @@ namespace Gsemac.Collections.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The buffer has no space left..
+        /// </summary>
+        internal static string BufferHasNoSpaceLeft {
+            get {
+                return ResourceManager.GetString("BufferHasNoSpaceLeft", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Buffer is not expandable..
+        /// </summary>
+        internal static string BufferIsNotExpandable {
+            get {
+                return ResourceManager.GetString("BufferIsNotExpandable", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to An item with the same key has already been added..
         /// </summary>
         internal static string KeyAlreadyExists {

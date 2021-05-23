@@ -117,6 +117,12 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="BufferHasNoSpaceLeft" xml:space="preserve">
+    <value>The buffer has no space left.</value>
+  </data>
+  <data name="BufferIsNotExpandable" xml:space="preserve">
+    <value>Buffer is not expandable.</value>
+  </data>
   <data name="KeyAlreadyExists" xml:space="preserve">
     <value>An item with the same key has already been added.</value>
   </data>
