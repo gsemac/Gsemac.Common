@@ -11,7 +11,7 @@ namespace Gsemac.IO {
         public override bool CanRead => stream1.CanRead && stream2.CanRead;
         public override bool CanSeek => stream1.CanSeek && stream2.CanSeek;
         public override bool CanWrite => stream1.CanWrite && stream2.CanWrite;
-        public override long Length => stream1.Length + stream2.Length;
+        public override long Length => GetLength();
         public override long Position {
             get => GetPosition();
             set => SetPosition(value);
@@ -27,6 +27,9 @@ namespace Gsemac.IO {
 
             this.stream1 = stream1;
             this.stream2 = stream2;
+
+            if (stream2.CanSeek)
+                stream2StartPos = stream2.Position;
 
         }
 
@@ -121,21 +124,27 @@ namespace Gsemac.IO {
 
         private readonly Stream stream1;
         private readonly Stream stream2;
+        private readonly long stream2StartPos = 0;
 
+        private long GetLength() {
+
+            return stream1.Length + (stream2.Length - stream2StartPos);
+
+        }
         private long GetPosition() {
 
             if (stream1.Position < stream1.Length)
                 return stream1.Position;
 
-            return stream1.Length + stream2.Position;
+            return stream1.Length + (stream2.Position - stream2StartPos);
 
         }
         private long SetPosition(long position) {
 
             if (position <= stream1.Length) {
 
-                if (stream2.Position > 0)
-                    stream2.Seek(0, SeekOrigin.Begin);
+                if (stream2.Position > stream2StartPos)
+                    stream2.Seek(stream2StartPos, SeekOrigin.Begin);
 
                 stream1.Seek(position, SeekOrigin.Begin);
 
@@ -145,7 +154,7 @@ namespace Gsemac.IO {
                 if (stream1.Position < stream1.Length)
                     stream1.Seek(0, SeekOrigin.End);
 
-                stream2.Seek(position - stream1.Position, SeekOrigin.Begin);
+                stream2.Seek(position - stream1.Length + stream2StartPos, SeekOrigin.Begin);
 
             }
 
