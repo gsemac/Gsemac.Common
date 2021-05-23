@@ -5,7 +5,7 @@ namespace Gsemac.Collections {
     /// <summary>
     /// Provides a queue interface over a byte buffer.
     /// </summary>
-    public class ByteQueue {
+    public class CircularBuffer {
 
         // Public members
 
@@ -39,17 +39,17 @@ namespace Gsemac.Collections {
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ByteQueue"/> class.
+        /// Initializes a new instance of the <see cref="CircularBuffer"/> class.
         /// </summary>
-        public ByteQueue() {
+        public CircularBuffer() {
         }
         /// <summary>
-        /// Initializes a new instance of the <see cref="ByteQueue"/> class.
+        /// Initializes a new instance of the <see cref="CircularBuffer"/> class.
         /// </summary>
-        /// <param name="capacity">Starting capacity of the underlying buffer.</param>
-        public ByteQueue(int capacity) {
+        /// <param name="initialCapacity">Starting capacity of the underlying buffer.</param>
+        public CircularBuffer(int initialCapacity) {
 
-            Capacity = capacity;
+            Capacity = initialCapacity;
 
         }
 
@@ -57,18 +57,9 @@ namespace Gsemac.Collections {
         /// Adds a single byte to the queue.
         /// </summary>
         /// <param name="value">Value to add.</param>
-        public void Enqueue(byte value) {
+        public void WriteByte(byte value) {
 
-            Enqueue(new byte[] { value });
-
-        }
-        /// <summary>
-        /// Adds an array of bytes to the queue.
-        /// </summary>
-        /// <param name="buffer">Values to add.</param>
-        public void Enqueue(byte[] buffer) {
-
-            Enqueue(buffer, 0, buffer.Length);
+            Write(new byte[] { value }, 0, 1);
 
         }
         /// <summary>
@@ -77,7 +68,7 @@ namespace Gsemac.Collections {
         /// <param name="buffer">Values to add.</param>
         /// <param name="offset">Starting offset in buffer.</param>
         /// <param name="count">Number of bytes to write from the buffer.</param>
-        public void Enqueue(byte[] buffer, int offset, int count) {
+        public void Write(byte[] buffer, int offset, int count) {
 
             int bytesToWrite = count;
 
@@ -125,26 +116,16 @@ namespace Gsemac.Collections {
         /// Reads a single byte from the queue.
         /// </summary>
         /// <returns>A single byte from the queue.</returns>
-        public byte Dequeue() {
+        public byte ReadByte() {
 
             if (Length <= 0)
                 throw new Exception("Queue was empty.");
 
             byte[] buffer = new byte[1];
 
-            Dequeue(buffer);
+            Read(buffer, 0, 1);
 
             return buffer[0];
-
-        }
-        /// <summary>
-        /// Reads an array of bytes from the queue, returning the number of bytes read.
-        /// </summary>
-        /// <param name="buffer">Buffer to read into.</param>
-        /// <returns>The number of bytes read.</returns>
-        public int Dequeue(byte[] buffer) {
-
-            return Dequeue(buffer, 0, buffer.Length);
 
         }
         /// <summary>
@@ -154,7 +135,7 @@ namespace Gsemac.Collections {
         /// <param name="offset">Offset at which to begin writing.</param>
         /// <param name="count">Maximum number of bytes to read.</param>
         /// <returns></returns>
-        public int Dequeue(byte[] buffer, int offset, int count) {
+        public int Read(byte[] buffer, int offset, int count) {
 
             int bytesToRead = count;
             int bytesRead = 0;

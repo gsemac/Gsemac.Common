@@ -6,27 +6,27 @@ using System.Text;
 namespace Gsemac.Collections.Tests {
 
     [TestClass]
-    public class ByteQueueTests {
+    public class CircularBufferTests {
 
         [TestMethod]
         public void TestLengthOfEmptyBufferIsZero() {
 
-            Assert.AreEqual(0, new ByteQueue().Length);
+            Assert.AreEqual(0, new CircularBuffer().Length);
 
         }
         [TestMethod]
         public void TestLengthOfEmptyBufferWithInitialCapacityIsZero() {
 
-            Assert.AreEqual(0, new ByteQueue(32).Length);
+            Assert.AreEqual(0, new CircularBuffer(32).Length);
 
         }
         [TestMethod]
         public void TestLengthAfterWrite() {
 
-            ByteQueue queue = new ByteQueue();
+            CircularBuffer queue = new CircularBuffer();
 
             byte[] input = Encoding.ASCII.GetBytes("hello world!");
-            queue.Enqueue(input, 0, input.Length);
+            queue.Write(input, 0, input.Length);
 
             Assert.AreEqual(input.Length, queue.Length);
 
@@ -34,13 +34,13 @@ namespace Gsemac.Collections.Tests {
         [TestMethod]
         public void TestWriteThenRead() {
 
-            ByteQueue queue = new ByteQueue();
+            CircularBuffer queue = new CircularBuffer();
 
             byte[] input = Encoding.ASCII.GetBytes("hello world!");
-            queue.Enqueue(input, 0, input.Length);
+            queue.Write(input, 0, input.Length);
 
             byte[] output = new byte[input.Length];
-            queue.Dequeue(output, 0, output.Length);
+            queue.Read(output, 0, output.Length);
 
             Assert.AreEqual(Encoding.ASCII.GetString(input), Encoding.ASCII.GetString(output));
 
@@ -48,19 +48,19 @@ namespace Gsemac.Collections.Tests {
         [TestMethod]
         public void TestWriteThenReadWithWrapAround() {
 
-            ByteQueue queue = new ByteQueue(10);
+            CircularBuffer queue = new CircularBuffer(10);
 
             byte[] input = Encoding.ASCII.GetBytes("123456");
-            queue.Enqueue(input, 0, input.Length);
+            queue.Write(input, 0, input.Length);
 
             byte[] output = new byte[input.Length];
-            queue.Dequeue(output, 0, output.Length);
+            queue.Read(output, 0, output.Length);
 
-            queue.Enqueue(input, 0, input.Length);
+            queue.Write(input, 0, input.Length);
 
             Array.Clear(output, 0, output.Length);
 
-            queue.Dequeue(output, 0, output.Length);
+            queue.Read(output, 0, output.Length);
 
             Assert.AreEqual(Encoding.ASCII.GetString(input), Encoding.ASCII.GetString(output));
 
@@ -68,24 +68,24 @@ namespace Gsemac.Collections.Tests {
         [TestMethod]
         public void TestReadAfterCapacityChanged() {
 
-            ByteQueue queue = new ByteQueue(20);
+            CircularBuffer queue = new CircularBuffer(20);
             int capacity = queue.Capacity;
 
             byte[] input = Encoding.ASCII.GetBytes("hello world!");
 
             // Write then read so the read head != 0.
 
-            queue.Enqueue(input, 0, input.Length);
+            queue.Write(input, 0, input.Length);
 
             byte[] output = new byte[input.Length];
-            queue.Dequeue(output, 0, output.Length);
+            queue.Read(output, 0, output.Length);
 
             // Write until the capacity changes.
 
             while (queue.Capacity == capacity)
-                queue.Enqueue(input, 0, input.Length);
+                queue.Write(input, 0, input.Length);
 
-            queue.Dequeue(output, 0, output.Length);
+            queue.Read(output, 0, output.Length);
 
             Assert.AreEqual(Encoding.ASCII.GetString(input), Encoding.ASCII.GetString(output));
 

@@ -69,7 +69,7 @@ namespace Gsemac.IO {
                     if (!Monitor.Wait(streamBuffer, ReadTimeout))
                         throw new TimeoutException();
 
-                return streamBuffer.Dequeue(buffer, offset, count);
+                return streamBuffer.Read(buffer, offset, count);
 
             }
 
@@ -83,7 +83,7 @@ namespace Gsemac.IO {
                 if (isClosed)
                     throw new ObjectDisposedException(ExceptionMessages.CannotAccessAClosedStream);
 
-                streamBuffer.Enqueue(buffer, offset, count);
+                streamBuffer.Write(buffer, offset, count);
 
                 // PulseAll is used instead of Pulse because a single reading thread may not read all of the available data.
 
@@ -122,7 +122,7 @@ namespace Gsemac.IO {
 
         // Private members
 
-        private readonly ByteQueue streamBuffer = new ByteQueue();
+        private readonly CircularBuffer streamBuffer = new CircularBuffer();
         private volatile bool isBlocking = false;
         private volatile bool isClosed = false;
 
