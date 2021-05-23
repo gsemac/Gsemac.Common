@@ -1,11 +1,12 @@
 ﻿using Gsemac.IO;
+using System.IO;
 
 namespace Gsemac.Drawing {
 
     public interface IImageFactory :
         IHasSupportedFileFormats {
 
-        IImage FromFile(string filePath);
+        IImage FromStream(Stream stream, IFileFormat imageFormat = null);
 
     }
 
