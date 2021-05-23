@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -11,6 +12,8 @@ namespace Gsemac.IO {
 
         public byte? this[int index] => signatureBytes[index];
 
+        public int Length => signatureBytes.Length;
+
         public FileSignature(params byte?[] signatureBytes) {
 
             this.signatureBytes = signatureBytes;
@@ -18,6 +21,13 @@ namespace Gsemac.IO {
         }
         public FileSignature(params int?[] signatureBytes) :
             this(signatureBytes.Select(i => (byte?)i).ToArray()) {
+        }
+
+        public bool IsMatch(IEnumerable<byte> bytes) {
+
+            return signatureBytes.Zip(bytes, (first, second) => Tuple.Create(first, second))
+                .All(pair => !pair.Item1.HasValue || pair.Item1 == pair.Item2);
+
         }
 
         public IEnumerator<byte?> GetEnumerator() {

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.IO;
 
 namespace Gsemac.IO {
 
@@ -8,6 +9,7 @@ namespace Gsemac.IO {
 
         IFileFormat FromMimeType(IMimeType mimeType);
         IFileFormat FromFileExtension(string fileExtension);
+        IFileFormat FromStream(Stream stream);
 
     }
 

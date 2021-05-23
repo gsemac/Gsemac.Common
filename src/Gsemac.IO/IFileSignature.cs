@@ -7,6 +7,10 @@ namespace Gsemac.IO {
 
         byte? this[int index] { get; }
 
+        int Length { get; }
+
+        bool IsMatch(IEnumerable<byte> bytes);
+
     }
 
 }
