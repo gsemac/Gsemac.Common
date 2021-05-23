@@ -113,6 +113,8 @@ namespace Gsemac.IO {
 
             }
 
+            base.Dispose(disposing);
+
         }
 
         // Private members
@@ -125,7 +127,7 @@ namespace Gsemac.IO {
             if (stream1.Position < stream1.Length)
                 return stream1.Position;
 
-            return stream1.Position + stream2.Position;
+            return stream1.Length + stream2.Position;
 
         }
         private long SetPosition(long position) {
