@@ -306,9 +306,9 @@ namespace Gsemac.IO {
         private Process process;
         private int exitCode = 0;
         private readonly ProcessStreamOptions options = ProcessStreamOptions.Default;
-        private ConcurrentMemoryStream stdoutStream;
-        private ConcurrentMemoryStream stderrStream;
-        private ConcurrentMemoryStream stdinStream;
+        private ConcurrentStream stdoutStream;
+        private ConcurrentStream stderrStream;
+        private ConcurrentStream stdinStream;
 
         private CancellationTokenSource cancelTokenSource = new CancellationTokenSource();
         private AutoResetEvent readerLock = new AutoResetEvent(false);
@@ -330,13 +330,13 @@ namespace Gsemac.IO {
                 startInfo.RedirectStandardInput = true;
 
             if (options.HasFlag(ProcessStreamOptions.RedirectStandardOutput) || options.HasFlag(ProcessStreamOptions.RedirectStandardErrorToStandardOutput))
-                stdoutStream = new ConcurrentMemoryStream();
+                stdoutStream = new ConcurrentStream();
 
             if (options.HasFlag(ProcessStreamOptions.RedirectStandardError))
-                stderrStream = new ConcurrentMemoryStream();
+                stderrStream = new ConcurrentStream();
 
             if (options.HasFlag(ProcessStreamOptions.RedirectStandardInput))
-                stdinStream = new ConcurrentMemoryStream();
+                stdinStream = new ConcurrentStream();
 
             if (process is null)
                 process = new Process { StartInfo = startInfo };

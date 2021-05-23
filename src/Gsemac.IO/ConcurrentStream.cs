@@ -9,7 +9,7 @@ namespace Gsemac.IO {
     /// <summary>
     /// Provides a view of a sequence of bytes that supports concurrent read/write operations.
     /// </summary>
-    public class ConcurrentMemoryStream :
+    public class ConcurrentStream :
         Stream {
 
         // Public members
@@ -42,15 +42,15 @@ namespace Gsemac.IO {
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ConcurrentMemoryStream"/> class.
+        /// Initializes a new instance of the <see cref="ConcurrentStream"/> class.
         /// </summary>
-        public ConcurrentMemoryStream() {
+        public ConcurrentStream() {
         }
         /// <summary>
-        /// Initializes a new instance of the <see cref="ConcurrentMemoryStream"/> class.
+        /// Initializes a new instance of the <see cref="ConcurrentStream"/> class.
         /// </summary>
         /// <param name="bufferSize">Initial size of the underlying buffer.</param>
-        public ConcurrentMemoryStream(int bufferSize) {
+        public ConcurrentStream(int bufferSize) {
 
             streamBuffer.Capacity = bufferSize;
 
