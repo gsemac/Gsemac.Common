@@ -19,9 +19,9 @@ namespace Gsemac.Win32 {
 
         // Private members
 
-        [DllImport("kernel32", EntryPoint = "AddDllDirectory", CharSet = CharSet.Auto, SetLastError = true)]
+        [DllImport("kernel32", EntryPoint = "AddDllDirectory", CharSet = CharSet.Unicode, SetLastError = true)]
         private static extern bool AddDllDirectoryNative(string newDirectory);
-        [DllImport("kernel32", EntryPoint = "SetDllDirectory", CharSet = CharSet.Auto, SetLastError = true)]
+        [DllImport("kernel32", EntryPoint = "SetDllDirectory", CharSet = CharSet.Unicode, SetLastError = true)]
         private static extern bool SetDllDirectoryNative(string lpPathName);
 
     }
