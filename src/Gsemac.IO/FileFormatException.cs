@@ -1,15 +1,17 @@
-﻿using System;
+﻿using Gsemac.IO.Properties;
+using System;
 using System.Runtime.Serialization;
 
 namespace Gsemac.IO {
 
+    [Serializable]
     public class FileFormatException :
         Exception {
 
         // Public members
 
         public FileFormatException() :
-            this(Properties.ExceptionMessages.IncorrectFileFormat) {
+            this(ExceptionMessages.IncorrectFileFormat) {
         }
         public FileFormatException(string message) :
             base(message) {

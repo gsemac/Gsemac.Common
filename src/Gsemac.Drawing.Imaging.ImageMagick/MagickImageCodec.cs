@@ -25,7 +25,7 @@ namespace Gsemac.Drawing.Imaging {
             base(1) {
 
             if (!this.IsSupportedFileFormat(imageFormat))
-                throw new UnsupportedFileFormatException();
+                throw new FileFormatException(IO.Properties.ExceptionMessages.UnsupportedFileFormat);
 
             this.imageFormat = imageFormat;
 
@@ -96,7 +96,7 @@ namespace Gsemac.Drawing.Imaging {
             MagickFormat? key = ImageMagickUtilities.GetMagickFormatFromFileExtension(fileExtension.ToLowerInvariant());
 
             if (!key.HasValue)
-                throw new UnsupportedFileFormatException();
+                throw new FileFormatException(IO.Properties.ExceptionMessages.UnsupportedFileFormat);
 
             return key.Value;
 

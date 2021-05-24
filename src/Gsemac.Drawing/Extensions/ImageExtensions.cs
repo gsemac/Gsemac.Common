@@ -24,7 +24,7 @@ namespace Gsemac.Drawing.Extensions {
             IImageEncoder encoder = ImageCodecFactory.Default.FromFileFormat(imageFormat);
 
             if (encoder is null)
-                throw new UnsupportedFileFormatException();
+                throw new FileFormatException(IO.Properties.ExceptionMessages.UnsupportedFileFormat);
 
             encoder.Encode(image, stream, encoderOptions);
 
@@ -54,7 +54,7 @@ namespace Gsemac.Drawing.Extensions {
             IFileFormat imageFormat = FileFormatFactory.Default.FromFileExtension(filePath);
 
             if (imageFormat is null)
-                throw new UnsupportedFileFormatException();
+                throw new FileFormatException(IO.Properties.ExceptionMessages.UnsupportedFileFormat);
 
             image.Save(filePath, imageFormat, encoderOptions);
 

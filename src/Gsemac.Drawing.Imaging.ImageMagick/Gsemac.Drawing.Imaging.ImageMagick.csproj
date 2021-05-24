@@ -41,4 +41,12 @@
 		<Content Include="licenses\*" Pack="true" PackagePath="contentFiles\licenses" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <Compile Include="..\Gsemac.IO\Properties\ExceptionMessages.Designer.cs" Link="Properties\IO\ExceptionMessages.Designer.cs" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="Properties\IO\" />
+	</ItemGroup>
+
 </Project>

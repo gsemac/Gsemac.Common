@@ -23,7 +23,7 @@ namespace Gsemac.Drawing.Imaging {
         public GdiImageCodec(IFileFormat imageFormat) {
 
             if (!this.IsSupportedFileFormat(imageFormat))
-                throw new UnsupportedFileFormatException();
+                throw new FileFormatException(IO.Properties.ExceptionMessages.UnsupportedFileFormat);
 
             this.imageFormat = imageFormat;
 

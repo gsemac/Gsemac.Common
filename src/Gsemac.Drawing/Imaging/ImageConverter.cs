@@ -31,7 +31,7 @@ namespace Gsemac.Drawing.Imaging {
             bool overwriteSourceFile = sourceFilePath.Equals(destinationFilePath, StringComparison.OrdinalIgnoreCase);
 
             if (!ImageCodecFactory.Default.IsSupportedFileFormat(sourceExt) || !ImageCodecFactory.Default.IsSupportedFileFormat(destinationExt))
-                throw new UnsupportedFileFormatException();
+                throw new FileFormatException(IO.Properties.ExceptionMessages.UnsupportedFileFormat);
 
             if (sourceExt.Equals(destinationExt, StringComparison.OrdinalIgnoreCase) &&
                 options.EncoderOptions.Equals(ImageEncoderOptions.Default) &&

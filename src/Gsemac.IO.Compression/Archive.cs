@@ -13,7 +13,7 @@ namespace Gsemac.IO.Compression {
             IArchiveDecoder decoder = ArchiveDecoder.FromFileExtension(filePath);
 
             if (decoder is null)
-                throw new UnsupportedFileFormatException();
+                throw new FileFormatException(Properties.ExceptionMessages.UnsupportedFileFormat);
 
             return decoder.DecodeFile(filePath, fileAccess, options);
 

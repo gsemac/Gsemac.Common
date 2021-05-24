@@ -44,7 +44,7 @@ namespace Gsemac.Drawing {
             IImageCodec imageCodec = imageCodecFactory.FromFileFormat(imageFormat);
 
             if (imageCodec is null)
-                throw new UnsupportedFileFormatException();
+                throw new FileFormatException(IO.Properties.ExceptionMessages.UnsupportedFileFormat);
 
             return imageCodec.Decode(stream);
 
