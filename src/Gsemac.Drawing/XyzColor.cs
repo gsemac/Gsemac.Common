@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Gsemac.Core;
+using System;
 using System.Drawing;
 
 namespace Gsemac.Drawing {
@@ -29,6 +30,27 @@ namespace Gsemac.Drawing {
 
             return RgbToXyz(color);
 
+        }
+
+        public override bool Equals(object obj) {
+
+            return GetHashCode() == obj.GetHashCode();
+
+        }
+        public override int GetHashCode() {
+
+            return new HashCodeBuilder()
+                .Add(X)
+                .Add(Y)
+                .Add(Z)
+                .Build();
+
+        }
+        public static bool operator ==(XyzColor left, XyzColor right) {
+            return left.Equals(right);
+        }
+        public static bool operator !=(XyzColor left, XyzColor right) {
+            return !(left == right);
         }
 
         // Private members
