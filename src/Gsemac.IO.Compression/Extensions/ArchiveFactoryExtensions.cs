@@ -4,7 +4,24 @@ namespace Gsemac.IO.Compression.Extensions {
 
     public static class ArchiveFactoryExtensions {
 
-        public static IArchive Open(this IArchiveFactory archiveFactory, string filePath, IFileFormat archiveFormat, IArchiveOptions archiveOptions = null) {
+        public static IArchive Open(this IArchiveFactory archiveFactory, string filePath) {
+
+            return Open(archiveFactory, filePath, null);
+
+        }
+        public static IArchive Open(this IArchiveFactory archiveFactory, string filePath, FileAccess fileAccess) {
+
+            return Open(archiveFactory, filePath, new ArchiveOptions() {
+                FileAccess = fileAccess,
+            });
+
+        }
+        public static IArchive Open(this IArchiveFactory archiveFactory, string filePath, IArchiveOptions archiveOptions) {
+
+            return Open(archiveFactory, filePath, null, archiveOptions);
+
+        }
+        public static IArchive Open(this IArchiveFactory archiveFactory, string filePath, IFileFormat archiveFormat, IArchiveOptions archiveOptions) {
 
             if (archiveFormat is null)
                 archiveFormat = FileFormatFactory.Default.FromFileExtension(filePath);
@@ -27,18 +44,12 @@ namespace Gsemac.IO.Compression.Extensions {
             }
 
         }
-        public static IArchive Open(this IArchiveFactory archiveFactory, string filePath, IArchiveOptions archiveOptions = null) {
+        public static IArchive Open(this IArchiveFactory archiveFactory, Stream stream, IArchiveOptions archiveOptions) {
 
-            return Open(archiveFactory, filePath, null, archiveOptions);
-
-        }
-        public static IArchive Open(this IArchiveFactory archiveFactory, string filePath, FileAccess fileAccess) {
-
-            return Open(archiveFactory, filePath, new ArchiveOptions() {
-                FileAccess = fileAccess,
-            });
+            return archiveFactory.Open(stream, archiveFormat: null, archiveOptions: archiveOptions);
 
         }
+
         public static IArchive OpenRead(this IArchiveFactory archiveFactory, string filePath) {
 
             return Open(archiveFactory, filePath, FileAccess.Read);
