@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.IO;
+using System.Text;
 
 namespace Gsemac.IO.Compression {
 
@@ -8,6 +9,8 @@ namespace Gsemac.IO.Compression {
         public string Comment { get; set; }
         public CompressionLevel CompressionLevel { get; set; } = CompressionLevel.Maximum;
         public Encoding Encoding { get; set; } = Encoding.UTF8;
+        public bool LeaveOpen { get; set; } = false;
+        public FileAccess FileAccess { get; set; } = FileAccess.ReadWrite;
 
         public static ArchiveOptions Default => new ArchiveOptions();
 

@@ -2,10 +2,10 @@
 
 namespace Gsemac.IO.Compression {
 
-    public class ArchiveEntryAlreadyExistsException :
+    public class ArchiveEntryExistsException :
         IOException {
 
-        public ArchiveEntryAlreadyExistsException() :
+        public ArchiveEntryExistsException() :
             base("An entry with this name already exists in the archive.") {
         }
 

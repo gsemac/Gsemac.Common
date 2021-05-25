@@ -1,33 +1,35 @@
 ﻿using Gsemac.IO.Compression.Extensions;
 using System.IO;
-using System.Linq;
 
 namespace Gsemac.IO.Compression {
 
-    public static class Archive {
+    public static class ArchiveUtilities {
 
         // Public members
 
-        public static IArchive Open(string filePath, FileAccess fileAccess = FileAccess.ReadWrite, IArchiveOptions options = null) {
+        public static IArchive Open(string filePath, IFileFormat archiveFormat, IArchiveOptions archiveOptions = null) {
 
-            IArchiveDecoder decoder = ArchiveDecoder.FromFileExtension(filePath);
-
-            if (decoder is null)
-                throw new FileFormatException(Properties.ExceptionMessages.UnsupportedFileFormat);
-
-            return decoder.DecodeFile(filePath, fileAccess, options);
+            return ArchiveFactory.Default.Open(filePath, archiveFormat, archiveOptions);
 
         }
-        public static IArchive Open(Stream stream, FileAccess fileAccess = FileAccess.ReadWrite, bool leaveOpen = false, IArchiveOptions options = null) {
+        public static IArchive Open(string filePath, IArchiveOptions archiveOptions = null) {
 
-            // #todo Detect the type of the archive from the first bytes of the stream.
+            return ArchiveFactory.Default.Open(filePath, archiveOptions);
 
-            return CompressionPluginLoader.GetArchiveDecoders().First()
-                .Decode(stream, fileAccess, leaveOpen, options);
+        }
+        public static IArchive Open(string filePath, FileAccess fileAccess) {
+
+            return ArchiveFactory.Default.Open(filePath, fileAccess);
+
         }
         public static IArchive OpenRead(string filePath) {
 
-            return Open(filePath, FileAccess.Read);
+            return ArchiveFactory.Default.OpenRead(filePath);
+
+        }
+        public static IArchive OpenWrite(string filePath) {
+
+            return ArchiveFactory.Default.OpenWrite(filePath);
 
         }
 

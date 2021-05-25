@@ -7,9 +7,9 @@ namespace Gsemac.IO.Compression {
 
         // Public members
 
-        public static IEnumerable<IArchiveDecoder> GetArchiveDecoders() {
+        public static IEnumerable<IArchiveFactory> GetArchiveFactories() {
 
-            return pluginLoader.GetPlugins<IArchiveDecoder>();
+            return pluginLoader.GetPlugins<IArchiveFactory>();
 
         }
 

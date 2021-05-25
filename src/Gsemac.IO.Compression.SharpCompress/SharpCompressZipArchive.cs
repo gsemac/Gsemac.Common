@@ -44,7 +44,7 @@ namespace Gsemac.IO.Compression {
                 if (overwrite)
                     DeleteEntry(existingEntry);
                 else
-                    throw new ArchiveEntryAlreadyExistsException();
+                    throw new ArchiveEntryExistsException();
 
             }
 
