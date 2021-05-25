@@ -18,7 +18,7 @@ namespace Gsemac.Net {
 
         protected virtual IHttpWebResponse Send(IHttpWebRequest request, CancellationToken cancellationToken) {
 
-            return (IHttpWebResponse)request.GetResponse();
+            return (IHttpWebResponse)base.Send((WebRequest)request, cancellationToken);
 
         }
         protected virtual Task<IHttpWebResponse> SendAsync(IHttpWebRequest request, CancellationToken cancellationToken) {
