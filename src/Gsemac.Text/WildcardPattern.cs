@@ -18,7 +18,7 @@ namespace Gsemac.Text {
 
         public bool IsMatch(string input) {
 
-            string[] split = pattern.Split(WildcardChar);
+            string[] split = pattern.Split(new[] { WildcardChar }, StringSplitOptions.RemoveEmptyEntries);
 
             if (split.Length > 1) {
 
