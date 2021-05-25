@@ -11,7 +11,7 @@ using System.Linq;
 
 namespace Gsemac.Drawing.Imaging {
 
-    [RequiresAssemblyOrType("nQuant.Core", "nQuant.WuQuantizer")]
+    [RequiresAssemblyOrTypes("nQuant.Core", "nQuant.WuQuantizer")]
     public class NQuantImageOptimizer :
         PluginBase,
         IImageOptimizer {

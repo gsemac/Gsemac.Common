@@ -10,8 +10,8 @@ using System.Linq;
 
 namespace Gsemac.Drawing.Imaging {
 
-    [RequiresAssemblyOrType("Magick.NET.Core", "ImageMagick.IMagickImage")]
-    [RequiresAssemblyOrType("Magick.NET-Q16-AnyCPU", "ImageMagick.MagickImage")]
+    [RequiresAssemblyOrTypes("Magick.NET.Core", "ImageMagick.IMagickImage")]
+    [RequiresAssemblyOrTypes("Magick.NET-Q16-AnyCPU", "ImageMagick.MagickImage")]
     public class MagickImageCodec :
         PluginBase,
         IImageCodec {

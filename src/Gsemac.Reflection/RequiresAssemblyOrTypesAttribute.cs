@@ -3,7 +3,7 @@
 namespace Gsemac.Reflection {
 
     [AttributeUsage(AttributeTargets.All, AllowMultiple = true)]
-    public sealed class RequiresAssemblyOrTypeAttribute :
+    public sealed class RequiresAssemblyOrTypesAttribute :
         Attribute,
         IRequirementAttribute {
 
@@ -11,17 +11,17 @@ namespace Gsemac.Reflection {
 
         public bool IsSatisfied => assemblyRequirement.IsSatisfied || typeRequirement.IsSatisfied;
 
-        public RequiresAssemblyOrTypeAttribute(string containingAssemblyName, string requiredTypeName) {
+        public RequiresAssemblyOrTypesAttribute(string containingAssemblyName, params string[] requiredTypeNames) {
 
             assemblyRequirement = new RequiresAssembliesAttribute(containingAssemblyName);
-            typeRequirement = new RequiresTypeAttribute(requiredTypeName);
+            typeRequirement = new RequiresTypesAttribute(requiredTypeNames);
 
         }
 
         // Private members
 
         private readonly RequiresAssembliesAttribute assemblyRequirement;
-        private readonly RequiresTypeAttribute typeRequirement;
+        private readonly RequiresTypesAttribute typeRequirement;
 
     }
 

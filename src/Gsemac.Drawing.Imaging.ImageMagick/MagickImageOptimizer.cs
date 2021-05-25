@@ -6,7 +6,7 @@ using System.IO;
 
 namespace Gsemac.Drawing.Imaging {
 
-    [RequiresAssemblyOrType("Magick.NET-Q16-AnyCPU", "ImageMagick.IImageOptimizer")]
+    [RequiresAssemblyOrTypes("Magick.NET-Q16-AnyCPU", "ImageMagick.IImageOptimizer")]
     public class MagickImageOptimizer :
         PluginBase,
         IImageOptimizer {
