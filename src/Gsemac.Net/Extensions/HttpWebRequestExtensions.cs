@@ -22,7 +22,7 @@ namespace Gsemac.Net.Extensions {
                     break;
 
                 case "connection":
-                    httpWebRequest.Connection = value;
+                    SetConnectionHeader(httpWebRequest, value);
                     break;
 
                 case "content-length":
@@ -222,6 +222,30 @@ namespace Gsemac.Net.Extensions {
 
         // Private members
 
+        private static void SetConnectionHeader(IHttpWebRequest httpWebRequest, string value) {
+
+            // The values "keep-alive" and "close" must not be set directly, or else an exception is thrown.
+
+            if (string.IsNullOrWhiteSpace(value))
+                value = "";
+
+            switch (value.Trim().ToLowerInvariant()) {
+
+                case "keep-alive":
+                    httpWebRequest.KeepAlive = true;
+                    break;
+
+                case "close":
+                    httpWebRequest.KeepAlive = false;
+                    break;
+
+                default:
+                    httpWebRequest.Connection = value;
+                    break;
+
+            }
+
+        }
         private static Tuple<long, long> ParseRangeHeader(string headerValue) {
 
             Match match = Regex.Match(headerValue, @"(\d+)-(\d+)");
