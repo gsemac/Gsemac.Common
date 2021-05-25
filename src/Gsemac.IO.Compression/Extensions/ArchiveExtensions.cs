@@ -12,7 +12,7 @@ namespace Gsemac.IO.Compression.Extensions {
         }
         public static void AddFile(this IArchive archive, string filePath, string entryName) {
 
-            archive.AddEntry(File.OpenRead(filePath), entryName, leaveOpen: false);
+            archive.AddEntry(File.OpenRead(filePath), entryName);
 
         }
         public static void AddAllFiles(this IArchive archive, string directoryPath) {

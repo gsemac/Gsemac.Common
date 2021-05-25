@@ -39,7 +39,7 @@ namespace Gsemac.IO.Compression {
 
         }
 
-        public override IArchiveEntry AddEntry(Stream stream, string entryName, bool overwrite = true, bool leaveOpen = false, IArchiveEntryOptions options = null) {
+        public override IArchiveEntry AddEntry(Stream stream, string entryName, IArchiveEntryOptions options = null) {
 
             throw new UnauthorizedAccessException("The archive is read-only.");
 

@@ -34,9 +34,9 @@ namespace Gsemac.IO.Compression {
                 throw new FileFormatException(Properties.ExceptionMessages.UnsupportedFileFormat);
 
             if (archiveFormat.Equals(new ZipFileFormat()))
-                return new SharpCompress7ZipArchive(stream, archiveOptions.FileAccess, archiveOptions.LeaveOpen, archiveOptions);
+                return new SharpCompress7ZipArchive(stream, archiveOptions.FileAccess, archiveOptions.LeaveStreamOpen, archiveOptions);
             else if (archiveFormat.Equals(new SevenZipFileFormat()))
-                return new SharpCompress7ZipArchive(stream, archiveOptions.FileAccess, archiveOptions.LeaveOpen, archiveOptions);
+                return new SharpCompress7ZipArchive(stream, archiveOptions.FileAccess, archiveOptions.LeaveStreamOpen, archiveOptions);
             else
                 throw new FileFormatException(Properties.ExceptionMessages.UnsupportedFileFormat);
 

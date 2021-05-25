@@ -14,7 +14,7 @@ namespace Gsemac.IO.Compression {
         public abstract string Comment { get; set; }
         public abstract CompressionLevel CompressionLevel { get; set; }
 
-        public abstract IArchiveEntry AddEntry(Stream stream, string entryName, bool overwrite = true, bool leaveOpen = false, IArchiveEntryOptions options = null);
+        public abstract IArchiveEntry AddEntry(Stream stream, string entryName, IArchiveEntryOptions options = null);
         public abstract IArchiveEntry GetEntry(string entryName);
         public abstract void DeleteEntry(IArchiveEntry entry);
         public abstract void ExtractEntry(IArchiveEntry entry, Stream outputStream);

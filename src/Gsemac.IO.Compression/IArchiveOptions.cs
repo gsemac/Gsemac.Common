@@ -8,7 +8,7 @@ namespace Gsemac.IO.Compression {
         string Comment { get; }
         CompressionLevel CompressionLevel { get; }
         Encoding Encoding { get; }
-        bool LeaveOpen { get; }
+        bool LeaveStreamOpen { get; }
         FileAccess FileAccess { get; }
 
     }

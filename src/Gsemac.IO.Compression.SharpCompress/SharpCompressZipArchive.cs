@@ -26,13 +26,16 @@ namespace Gsemac.IO.Compression {
 
         }
 
-        public override IArchiveEntry AddEntry(Stream stream, string entryName, bool overwrite = true, bool leaveOpen = false, IArchiveEntryOptions options = null) {
+        public override IArchiveEntry AddEntry(Stream stream, string entryName, IArchiveEntryOptions options = null) {
 
             if (stream is null)
                 throw new ArgumentNullException(nameof(stream));
 
             if (string.IsNullOrWhiteSpace(entryName))
                 throw new ArgumentNullException(nameof(entryName));
+
+            if (options is null)
+                options = ArchiveEntryOptions.Default;
 
             // The ZipArchive class does not overwrite existing files if one already exists at the same path, but adds a duplicate.
             // To simulate overwriting the existing file, we'll delete the original file first if it is present.
@@ -41,7 +44,7 @@ namespace Gsemac.IO.Compression {
 
             if (!(existingEntry is null)) {
 
-                if (overwrite)
+                if (options.Overwrite)
                     DeleteEntry(existingEntry);
                 else
                     throw new ArchiveEntryExistsException();
@@ -50,7 +53,7 @@ namespace Gsemac.IO.Compression {
 
             archiveModified = true;
 
-            return new SharpCompressZipArchiveEntry(archive.AddEntry(SanitizeEntryName(entryName), stream, closeStream: !leaveOpen));
+            return new SharpCompressZipArchiveEntry(archive.AddEntry(SanitizeEntryName(entryName), stream, closeStream: !options.LeaveStreamOpen));
 
         }
         public override IArchiveEntry GetEntry(string entryName) {
