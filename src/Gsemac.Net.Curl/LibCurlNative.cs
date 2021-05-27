@@ -72,9 +72,9 @@ namespace Gsemac.Net.Curl {
         [DllImport(X64DllPath, EntryPoint = "curl_easy_reset")]
         public static extern void EasyReset64(CurlEasyHandle handle);
 
-        [DllImport(X86DllPath, EntryPoint = "curl_slist_append", CharSet = CharSet.Unicode)]
+        [DllImport(X86DllPath, EntryPoint = "curl_slist_append", CharSet = CharSet.Ansi)]
         public static extern SListHandle SListAppend32(SListHandle handle, string @string);
-        [DllImport(X64DllPath, EntryPoint = "curl_slist_append", CharSet = CharSet.Unicode)]
+        [DllImport(X64DllPath, EntryPoint = "curl_slist_append", CharSet = CharSet.Ansi)]
         public static extern SListHandle SListAppend64(SListHandle handle, string @string);
 
         [DllImport(X86DllPath, EntryPoint = "curl_slist_free_all")]
