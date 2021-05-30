@@ -74,7 +74,7 @@ namespace Gsemac.Net.Extensions {
         }
         public static void SetHeader(this HttpWebRequest httpWebRequest, string headerName, string value) {
 
-            SetHeader(new HttpWebRequestWrapper(httpWebRequest), headerName, value);
+            SetHeader(new HttpWebRequestAdapter(httpWebRequest), headerName, value);
 
         }
         public static void SetHeader(this IHttpWebRequest httpWebRequest, HttpRequestHeader requestHeader, string value) {
@@ -140,7 +140,7 @@ namespace Gsemac.Net.Extensions {
         }
         public static void SetHeader(this HttpWebRequest httpWebRequest, HttpRequestHeader requestHeader, string value) {
 
-            SetHeader(new HttpWebRequestWrapper(httpWebRequest), requestHeader, value);
+            SetHeader(new HttpWebRequestAdapter(httpWebRequest), requestHeader, value);
 
         }
         public static void SetHeader(this IHttpWebRequest httpWebRequest, IHttpHeader header) {
@@ -150,7 +150,7 @@ namespace Gsemac.Net.Extensions {
         }
         public static void SetHeader(this HttpWebRequest httpWebRequest, IHttpHeader header) {
 
-            SetHeader(new HttpWebRequestWrapper(httpWebRequest), header);
+            SetHeader(new HttpWebRequestAdapter(httpWebRequest), header);
 
         }
         public static void SetHeaders(this IHttpWebRequest httpWebRequest, IEnumerable<IHttpHeader> headers) {
@@ -161,7 +161,7 @@ namespace Gsemac.Net.Extensions {
         }
         public static void SetHeaders(this HttpWebRequest httpWebRequest, IEnumerable<IHttpHeader> headers) {
 
-            SetHeaders(new HttpWebRequestWrapper(httpWebRequest), headers);
+            SetHeaders(new HttpWebRequestAdapter(httpWebRequest), headers);
 
         }
 
@@ -198,7 +198,7 @@ namespace Gsemac.Net.Extensions {
         }
         public static HttpWebRequest WithOptions(this HttpWebRequest httpWebRequest, IHttpWebRequestOptions options, bool copyIfNull = true) {
 
-            WithOptions(new HttpWebRequestWrapper(httpWebRequest), options, copyIfNull);
+            WithOptions(new HttpWebRequestAdapter(httpWebRequest), options, copyIfNull);
 
             return httpWebRequest;
 

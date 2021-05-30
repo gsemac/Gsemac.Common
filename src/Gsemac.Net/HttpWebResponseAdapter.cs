@@ -4,26 +4,26 @@ using System.Net;
 
 namespace Gsemac.Net {
 
-    public class HttpWebResponseWrapper :
+    public class HttpWebResponseAdapter :
         WebResponse,
         IHttpWebResponse {
 
         // Public members
 
-        public HttpWebResponseWrapper(WebResponse webResponse) {
+        public HttpWebResponseAdapter(WebResponse webResponse) {
 
             if (webResponse is null)
                 throw new ArgumentNullException(nameof(webResponse));
 
             if (webResponse is HttpWebResponse httpWebResponse)
                 this.httpWebResponse = httpWebResponse;
-            else if (webResponse is HttpWebResponseWrapper httpWebResponseWrapper)
+            else if (webResponse is HttpWebResponseAdapter httpWebResponseWrapper)
                 this.httpWebResponse = httpWebResponseWrapper.httpWebResponse;
             else
                 throw new ArgumentException("WebResponse was not an instance of HttpWebResponse.", nameof(webResponse));
 
         }
-        public HttpWebResponseWrapper(HttpWebResponse httpWebResponse) {
+        public HttpWebResponseAdapter(HttpWebResponse httpWebResponse) {
 
             if (httpWebResponse is null)
                 throw new ArgumentNullException(nameof(httpWebResponse));

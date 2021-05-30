@@ -60,7 +60,7 @@ namespace Gsemac.Net {
         }
         public static HttpWebRequestOptions FromHttpWebRequest(HttpWebRequest httpWebRequest) {
 
-            return FromHttpWebRequest(new HttpWebRequestWrapper(httpWebRequest));
+            return FromHttpWebRequest(new HttpWebRequestAdapter(httpWebRequest));
 
         }
 

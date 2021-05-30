@@ -8,7 +8,7 @@ using System.Text;
 
 namespace Gsemac.Net {
 
-    internal sealed class WebClientWrapper :
+    internal sealed class WebClientAdapter :
         IWebClient {
 
         // Public members
@@ -93,7 +93,7 @@ namespace Gsemac.Net {
             remove => webClient.UploadProgressChanged -= value;
         }
 
-        public WebClientWrapper(WebClient webClient) {
+        public WebClientAdapter(WebClient webClient) {
 
             this.webClient = webClient;
 

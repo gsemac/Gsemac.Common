@@ -10,13 +10,13 @@ using System.Security.Principal;
 namespace Gsemac.Net {
 
     [Serializable]
-    public class HttpWebRequestWrapper :
+    public class HttpWebRequestAdapter :
         WebRequest,
         IHttpWebRequest {
 
         // Public members
 
-        public HttpWebRequestWrapper(WebRequest webRequest) {
+        public HttpWebRequestAdapter(WebRequest webRequest) {
 
             if (webRequest is null)
                 throw new ArgumentNullException(nameof(webRequest));
@@ -27,7 +27,7 @@ namespace Gsemac.Net {
                 throw new ArgumentException("WebRequest was not an instance of class HttpWebRequest.", nameof(webRequest));
 
         }
-        public HttpWebRequestWrapper(HttpWebRequest httpWebRequest) {
+        public HttpWebRequestAdapter(HttpWebRequest httpWebRequest) {
 
             if (httpWebRequest is null)
                 throw new ArgumentNullException(nameof(httpWebRequest));
@@ -38,10 +38,10 @@ namespace Gsemac.Net {
             ImpersonationLevel = httpWebRequest.ImpersonationLevel;
 
         }
-        public HttpWebRequestWrapper(Uri requestUri) :
+        public HttpWebRequestAdapter(Uri requestUri) :
             this(Create(requestUri)) {
         }
-        public HttpWebRequestWrapper(string requestUri) :
+        public HttpWebRequestAdapter(string requestUri) :
             this(new Uri(requestUri)) {
         }
 
@@ -53,7 +53,7 @@ namespace Gsemac.Net {
 
         // Protected members
 
-        protected HttpWebRequestWrapper(SerializationInfo serializationInfo, StreamingContext streamingContext) :
+        protected HttpWebRequestAdapter(SerializationInfo serializationInfo, StreamingContext streamingContext) :
             base(serializationInfo, streamingContext) {
         }
 
@@ -124,7 +124,7 @@ namespace Gsemac.Net {
         public override Stream EndGetRequestStream(IAsyncResult asyncResult) => httpWebRequest.EndGetRequestStream(asyncResult);
         public override WebResponse EndGetResponse(IAsyncResult asyncResult) => httpWebRequest.EndGetResponse(asyncResult);
         public override Stream GetRequestStream() => httpWebRequest.GetRequestStream();
-        public override WebResponse GetResponse() => new HttpWebResponseWrapper(httpWebRequest.GetResponse());
+        public override WebResponse GetResponse() => new HttpWebResponseAdapter(httpWebRequest.GetResponse());
 
         // Inherited from IHttpWebRequest
 

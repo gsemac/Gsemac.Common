@@ -27,7 +27,7 @@ namespace Gsemac.Net {
 
         public IHttpWebRequest Create(Uri requestUri) {
 
-            return new HttpWebRequestWrapper(requestUri)
+            return new HttpWebRequestAdapter(requestUri)
                 .WithOptions(optionsFactory.Create(requestUri));
 
         }

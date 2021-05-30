@@ -10,7 +10,7 @@ namespace Gsemac.Net.Extensions {
 
         public static void DownloadFile(this WebClient client, Uri address) {
 
-            DownloadFile(new WebClientWrapper(client), address);
+            DownloadFile(new WebClientAdapter(client), address);
 
         }
         public static void DownloadFile(this IWebClient client, Uri address) {
@@ -20,7 +20,7 @@ namespace Gsemac.Net.Extensions {
         }
         public static void DownloadFile(this WebClient client, string address) {
 
-            DownloadFile(new WebClientWrapper(client), address);
+            DownloadFile(new WebClientAdapter(client), address);
 
         }
         public static void DownloadFile(this IWebClient client, string address) {
@@ -30,7 +30,7 @@ namespace Gsemac.Net.Extensions {
         }
         public static void DownloadFileAsync(this WebClient client, Uri address) {
 
-            DownloadFileAsync(new WebClientWrapper(client), address);
+            DownloadFileAsync(new WebClientAdapter(client), address);
 
         }
         public static void DownloadFileAsync(this IWebClient client, Uri address) {
@@ -41,12 +41,12 @@ namespace Gsemac.Net.Extensions {
 
         public static void DownloadFileSync(this WebClient client, Uri address, string filename) {
 
-            DownloadFileSync(new WebClientWrapper(client), address, filename);
+            DownloadFileSync(new WebClientAdapter(client), address, filename);
 
         }
         public static void DownloadFileSync(this WebClient client, Uri address, string filename, CancellationToken cancellationToken) {
 
-            DownloadFileSync(new WebClientWrapper(client), address, filename, cancellationToken);
+            DownloadFileSync(new WebClientAdapter(client), address, filename, cancellationToken);
 
         }
         public static void DownloadFileSync(this IWebClient client, Uri address, string filename) {
@@ -101,12 +101,12 @@ namespace Gsemac.Net.Extensions {
         }
         public static void DownloadFileSync(this WebClient client, string address, string filename) {
 
-            DownloadFileSync(new WebClientWrapper(client), address, filename);
+            DownloadFileSync(new WebClientAdapter(client), address, filename);
 
         }
         public static void DownloadFileSync(this WebClient client, string address, string filename, CancellationToken cancellationToken) {
 
-            DownloadFileSync(new WebClientWrapper(client), address, filename, cancellationToken);
+            DownloadFileSync(new WebClientAdapter(client), address, filename, cancellationToken);
 
         }
         public static void DownloadFileSync(this IWebClient client, string address, string filename) {
@@ -122,7 +122,7 @@ namespace Gsemac.Net.Extensions {
 
         public static WebClient WithOptions(this WebClient client, IHttpWebRequestOptions options) {
 
-            WithOptions(new WebClientWrapper(client), options);
+            WithOptions(new WebClientAdapter(client), options);
 
             return client;
 

@@ -34,7 +34,7 @@ namespace Gsemac.Net {
             switch (request) {
 
                 case HttpWebRequest httpWebRequest:
-                    httpWebResponse = Send(new HttpWebRequestWrapper(httpWebRequest), cancellationToken);
+                    httpWebResponse = Send(new HttpWebRequestAdapter(httpWebRequest), cancellationToken);
                     break;
 
                 case IHttpWebRequest iHttpWebRequest:
@@ -56,7 +56,7 @@ namespace Gsemac.Net {
             switch (request) {
 
                 case HttpWebRequest httpWebRequest:
-                    httpWebResponse = SendAsync(new HttpWebRequestWrapper(httpWebRequest), cancellationToken);
+                    httpWebResponse = SendAsync(new HttpWebRequestAdapter(httpWebRequest), cancellationToken);
                     break;
 
                 case IHttpWebRequest iHttpWebRequest:

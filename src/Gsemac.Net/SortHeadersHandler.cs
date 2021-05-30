@@ -64,7 +64,7 @@ namespace Gsemac.Net {
 
                 // Add required headers that are normally added automatically (they won't be added by HttpWebRequest).
 
-                AddRequiredHeaders(headers, new HttpWebRequestWrapper(webRequest));
+                AddRequiredHeaders(headers, new HttpWebRequestAdapter(webRequest));
 
                 StringBuilder sb = new StringBuilder();
 
@@ -93,7 +93,7 @@ namespace Gsemac.Net {
 
         private void SetWebHeaderCollection(WebRequest webRequest) {
 
-            if (webRequest is HttpWebRequestWrapper webRequestWrapper)
+            if (webRequest is HttpWebRequestAdapter webRequestWrapper)
                 webRequest = webRequestWrapper.GetUnderlyingWebRequest();
 
             if (webRequest is HttpWebRequest httpWebRequest) {
