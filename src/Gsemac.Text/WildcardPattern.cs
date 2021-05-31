@@ -12,13 +12,16 @@ namespace Gsemac.Text {
 
         public WildcardPattern(string pattern) {
 
+            if (pattern is null)
+                throw new ArgumentNullException(nameof(pattern));
+
             this.pattern = pattern;
 
         }
 
         public bool IsMatch(string input) {
 
-            string[] split = pattern.Split(new[] { WildcardChar }, StringSplitOptions.RemoveEmptyEntries);
+            string[] split = pattern.Split(new[] { WildcardChar }, StringSplitOptions.None);
 
             if (split.Length > 1) {
 
@@ -28,8 +31,12 @@ namespace Gsemac.Text {
                 return regex.IsMatch(input);
 
             }
-            else
-                return input.Equals(pattern, StringComparison.OrdinalIgnoreCase);
+            else {
+
+                return (string.IsNullOrEmpty(input) && string.IsNullOrEmpty(pattern)) ||
+                    input.Equals(pattern, StringComparison.OrdinalIgnoreCase);
+
+            }
 
         }
 
