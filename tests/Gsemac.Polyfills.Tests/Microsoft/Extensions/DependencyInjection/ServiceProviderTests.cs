@@ -6,6 +6,60 @@ namespace Gsemac.Polyfills.Microsoft.Extensions.DependencyInjection.Tests {
     [TestClass]
     public class ServiceProviderTests {
 
+        // Dispose
+
+        [TestMethod]
+        public void TestServiceProviderDisposesOfSingletonServices() {
+
+            ServiceProvider serviceProvider = new ServiceCollection()
+                .AddSingleton<MyDisposableService>()
+                .BuildServiceProvider();
+
+            MyDisposableService service = serviceProvider.GetService<MyDisposableService>();
+
+            Assert.IsFalse(service.Disposed);
+
+            serviceProvider.Dispose();
+
+            Assert.IsTrue(service.Disposed);
+
+        }
+        [TestMethod]
+        public void TestServiceProviderDisposesOfTransientServices() {
+
+            // The service provider must keep track of and dispose transient services that implement IDisposable.
+            // https://docs.microsoft.com/en-us/dotnet/core/extensions/dependency-injection-guidelines#example-anti-patterns
+
+            ServiceProvider serviceProvider = new ServiceCollection()
+                .AddTransient<MyDisposableService>()
+                .BuildServiceProvider();
+
+            MyDisposableService service = serviceProvider.GetService<MyDisposableService>();
+
+            Assert.IsFalse(service.Disposed);
+
+            serviceProvider.Dispose();
+
+            Assert.IsTrue(service.Disposed);
+
+        }
+        [TestMethod]
+        public void TestServiceProviderDisposesOfScopedServices() {
+
+            ServiceProvider serviceProvider = new ServiceCollection()
+                .AddScoped<MyDisposableService>()
+                .BuildServiceProvider(validateScopes: false);
+
+            MyDisposableService service = serviceProvider.GetService<MyDisposableService>();
+
+            Assert.IsFalse(service.Disposed);
+
+            serviceProvider.Dispose();
+
+            Assert.IsTrue(service.Disposed);
+
+        }
+
         // GetService
 
         [TestMethod]

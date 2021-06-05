@@ -1,4 +1,6 @@
-﻿namespace Gsemac.Polyfills.Microsoft.Extensions.DependencyInjection.Tests {
+﻿using System;
+
+namespace Gsemac.Polyfills.Microsoft.Extensions.DependencyInjection.Tests {
 
     internal interface IMyService { }
 
@@ -53,6 +55,20 @@
         public MyServiceWithMultipleConstructorsAndOptionalDependencies(MyServiceWithNoDependencies service1 = null, MyServiceWithNoDependencies service2 = null) {
 
             InvokedConstructorId = 2;
+
+        }
+
+    }
+
+    internal sealed class MyDisposableService :
+        IMyService,
+        IDisposable {
+
+        public bool Disposed { get; private set; } = false;
+
+        public void Dispose() {
+
+            Disposed = true;
 
         }
 
