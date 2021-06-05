@@ -8,7 +8,7 @@ namespace Gsemac.Polyfills.Microsoft.Extensions.DependencyInjection {
         IServiceProvider,
         IDisposable {
 
-        // Public members
+        // Internal members
 
         internal ServiceProvider(IServiceCollection services, ServiceProviderOptions options) {
 
@@ -34,6 +34,22 @@ namespace Gsemac.Polyfills.Microsoft.Extensions.DependencyInjection {
                 rootScope = this.CreateScope();
 
         }
+
+        internal ServiceDescriptor GetServiceDescriptor(Type serviceType) {
+
+            if (disposedValue)
+                throw new ObjectDisposedException(nameof(ServiceProvider));
+
+            // Note: No need to lock here, since the services dictionary will never be modified after it is created.
+
+            if (servicesDict.TryGetValue(serviceType, out IList<ServiceDescriptor> descriptors))
+                return descriptors.FirstOrDefault();
+
+            return null;
+
+        }
+
+        // Public members
 
         public object GetService(Type serviceType) {
 
@@ -62,19 +78,6 @@ namespace Gsemac.Polyfills.Microsoft.Extensions.DependencyInjection {
             }
 
             return serviceDescriptor?.ImplementationFactory(this);
-
-        }
-        internal ServiceDescriptor GetServiceDescriptor(Type serviceType) {
-
-            if (disposedValue)
-                throw new ObjectDisposedException(nameof(ServiceProvider));
-
-            // Note: No need to lock here, since the services dictionary will never be modified after it is created.
-
-            if (servicesDict.TryGetValue(serviceType, out IList<ServiceDescriptor> descriptors))
-                return descriptors.FirstOrDefault();
-
-            return null;
 
         }
 
