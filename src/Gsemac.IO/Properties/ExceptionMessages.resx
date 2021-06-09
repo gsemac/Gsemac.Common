@@ -144,6 +144,9 @@
   <data name="StreamDoesNotSupportThisOperation" xml:space="preserve">
     <value>Stream does not support this operation.</value>
   </data>
+  <data name="StreamDoesNotSupportWriting" xml:space="preserve">
+    <value>Stream does not support writing.</value>
+  </data>
   <data name="UnsupportedFileFormat" xml:space="preserve">
     <value>The file format is not supported.</value>
   </data>

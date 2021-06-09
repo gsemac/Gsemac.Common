@@ -7,30 +7,6 @@ using System.Threading.Tasks;
 
 namespace Gsemac.IO {
 
-    public enum ProcessStreamOptions {
-
-        /// <summary>
-        /// Redirect Standard Input to the stream.
-        /// </summary>
-        RedirectStandardOutput = 1,
-        /// <summary>
-        /// Redirect writes to the stream to Standard Input.
-        /// </summary>
-        RedirectStandardInput = 2,
-        /// <summary>
-        /// Redirect Standard Error to the stream.
-        /// </summary>
-        RedirectStandardError = 4,
-
-        /// <summary>
-        /// Redirect Standard Output and Standard Error to the same stream.
-        /// </summary>
-        RedirectStandardErrorToStandardOutput = RedirectStandardError | 8,
-
-        Default = RedirectStandardOutput | RedirectStandardInput | RedirectStandardError
-
-    }
-
     /// <summary>
     /// Provides a stream-base interface for interacting with a process.
     /// </summary>
@@ -39,14 +15,14 @@ namespace Gsemac.IO {
 
         // Public members
 
-        public override bool CanRead => true;
+        public override bool CanRead => GetCanRead();
         public override bool CanSeek => false;
         public override bool CanWrite => options.HasFlag(ProcessStreamOptions.RedirectStandardInput);
         public override bool CanTimeout => true;
-        public override long Length => throw new NotSupportedException("Stream does not support seeking.");
+        public override long Length => throw new NotSupportedException(Properties.ExceptionMessages.StreamDoesNotSupportSeeking);
         public override long Position {
-            get => throw new NotSupportedException("Stream does not support seeking.");
-            set => throw new NotSupportedException("Stream does not support seeking.");
+            get => throw new NotSupportedException(Properties.ExceptionMessages.StreamDoesNotSupportSeeking);
+            set => throw new NotSupportedException(Properties.ExceptionMessages.StreamDoesNotSupportSeeking);
         }
         public override int ReadTimeout { get; set; } = Timeout.Infinite;
         public override int WriteTimeout { get; set; } = Timeout.Infinite;
@@ -62,7 +38,7 @@ namespace Gsemac.IO {
         /// <summary>
         /// Returns true if the process has exited.
         /// </summary>
-        public bool ProcessExited => process == null || process.HasExited;
+        public bool ProcessExited => process is null || process.HasExited;
         /// <summary>
         /// Returns the exit code of the process.
         /// </summary>
@@ -86,7 +62,7 @@ namespace Gsemac.IO {
         /// <exception cref="Exception">
         /// Standard Error is not being redirected.
         /// </exception>
-        public Stream StandardErrorStream {
+        public Stream StandardError {
             get {
 
                 if (stderrStream is null)
@@ -103,8 +79,7 @@ namespace Gsemac.IO {
         /// <param name="filename">File path to the process.</param>
         /// <param name="options">Output flags.</param>
         public ProcessStream(string filename, ProcessStreamOptions options = ProcessStreamOptions.Default) :
-            this(filename, "", options) {
-
+            this(filename, string.Empty, options) {
         }
         /// <summary>
         /// Initializes a new instance of the <see cref="ProcessStream"/> class.
@@ -128,6 +103,7 @@ namespace Gsemac.IO {
             this.options = options;
 
             // Start the process immediately.
+
             StartProcess(startInfo);
 
         }
@@ -186,12 +162,12 @@ namespace Gsemac.IO {
                 return 0;
 
         }
-        public override long Seek(long offset, SeekOrigin origin) => throw new NotSupportedException("Stream does not support seeking.");
-        public override void SetLength(long value) => throw new NotSupportedException("Stream does not support this operation.");
+        public override long Seek(long offset, SeekOrigin origin) => throw new NotSupportedException(Properties.ExceptionMessages.StreamDoesNotSupportSeeking);
+        public override void SetLength(long value) => throw new NotSupportedException(Properties.ExceptionMessages.StreamDoesNotSupportThisOperation);
         public override void Write(byte[] buffer, int offset, int count) {
 
             if (!CanWrite)
-                throw new NotSupportedException("Stream does not support writing.");
+                throw new NotSupportedException(Properties.ExceptionMessages.StreamDoesNotSupportWriting);
 
             // Write to standard input.
 
@@ -202,10 +178,12 @@ namespace Gsemac.IO {
         public override void Close() {
 
             // Flush pending writes to the process.
+
             Flush();
 
             // When explicitly closed, wait for reader tasks to finish.
-            Abort(true);
+
+            AbortProcess(waitForReaderThreadsToExit: true);
 
             if (process != null) {
 
@@ -240,56 +218,14 @@ namespace Gsemac.IO {
 
         }
 
-        /// <summary>
-        /// Blocks until the underlying process exits.
-        /// </summary>
-        public void WaitForExit() {
-
-            if (!ProcessExited) {
-
-                process.WaitForExit();
-
-                CancelTasksAndWait(true);
-
-            }
-
-        }
-        /// <summary>
-        /// Blocks until the underlying process exits.
-        /// </summary>
-        /// <param name="milliseconds">Wait timeout im milliseconds.</param>
-        public void WaitForExit(int milliseconds) {
-
-            if (!ProcessExited) {
-
-                process.WaitForExit(milliseconds);
-
-                if (ProcessExited)
-                    CancelTasksAndWait(true);
-
-            }
-
-        }
-        /// <summary>
-        /// Aborts the underlying process.
-        /// </summary>
-        /// <param name="waitForReadsToFinish">If true, waits for all read threads to finish before returning.</param>
-        public void Abort(bool waitForReadsToFinish = false) {
-
-            CancelTasksAndWait(waitForReadsToFinish);
-
-        }
-
         // Protected members
-
-        protected Process Process { get; }
 
         protected override void Dispose(bool disposing) {
 
             if (disposing) {
 
                 // Abort before calling Close() so we don't wait for reader tasks to finish.
-                Abort(false);
+                AbortProcess(false);
 
                 Close();
 
@@ -306,14 +242,23 @@ namespace Gsemac.IO {
         private Process process;
         private int exitCode = 0;
         private readonly ProcessStreamOptions options = ProcessStreamOptions.Default;
-        private ConcurrentStream stdoutStream;
-        private ConcurrentStream stderrStream;
-        private ConcurrentStream stdinStream;
+        private ConcurrentMemoryStream stdoutStream;
+        private ConcurrentMemoryStream stderrStream;
+        private ConcurrentMemoryStream stdinStream;
 
         private CancellationTokenSource cancelTokenSource = new CancellationTokenSource();
         private AutoResetEvent readerLock = new AutoResetEvent(false);
         private readonly List<Task> tasks = new List<Task>();
         private int tasksUsingStdOutStream = 0;
+
+        private bool GetCanRead() {
+
+            // Consider the stream to be readable if we are able to read from stdin.
+
+            return options.HasFlag(ProcessStreamOptions.RedirectStandardOutput) ||
+                (options.HasFlag(ProcessStreamOptions.RedirectStandardError) && options.HasFlag(ProcessStreamOptions.RedirectStandardErrorToStandardOutput));
+
+        }
 
         private void CreateProcess(ProcessStartInfo startInfo) {
 
@@ -330,13 +275,13 @@ namespace Gsemac.IO {
                 startInfo.RedirectStandardInput = true;
 
             if (options.HasFlag(ProcessStreamOptions.RedirectStandardOutput) || options.HasFlag(ProcessStreamOptions.RedirectStandardErrorToStandardOutput))
-                stdoutStream = new ConcurrentStream();
+                stdoutStream = new ConcurrentMemoryStream();
 
             if (options.HasFlag(ProcessStreamOptions.RedirectStandardError))
-                stderrStream = new ConcurrentStream();
+                stderrStream = new ConcurrentMemoryStream();
 
             if (options.HasFlag(ProcessStreamOptions.RedirectStandardInput))
-                stdinStream = new ConcurrentStream();
+                stdinStream = new ConcurrentMemoryStream();
 
             if (process is null)
                 process = new Process { StartInfo = startInfo };
@@ -363,6 +308,34 @@ namespace Gsemac.IO {
                     StartStandardErrorReaderTask();
 
             }
+
+        }
+        private void AbortProcess(bool waitForReaderThreadsToExit) {
+
+            CancelReaderThreadsAndWait(waitForReaderThreadsToExit);
+
+        }
+        private void CancelReaderThreadsAndWait(bool waitForReaderThreadsToExit) {
+
+            // Cancel all tasks.
+
+            if (!waitForReaderThreadsToExit && cancelTokenSource != null)
+                cancelTokenSource.Cancel();
+
+            // Kill the process if it hasn't exited yet (so any tasks blocked on read unblock).
+
+            if (!ProcessExited)
+                process.Kill();
+
+            if (ProcessExited && process != null)
+                ExitCode = process.ExitCode;
+
+            // Wait for all tasks to exit.
+
+            foreach (Task task in tasks)
+                task.Wait();
+
+            tasks.Clear();
 
         }
 
@@ -461,30 +434,6 @@ namespace Gsemac.IO {
                 }
 
             }));
-
-        }
-
-        private void CancelTasksAndWait(bool waitForReadsToFinish) {
-
-            // Cancel all tasks.
-
-            if (!waitForReadsToFinish && cancelTokenSource != null)
-                cancelTokenSource.Cancel();
-
-            // Kill the process if it hasn't exited yet (so any tasks blocked on read unblock).
-
-            if (!ProcessExited)
-                process.Kill();
-
-            if (ProcessExited && process != null)
-                ExitCode = process.ExitCode;
-
-            // Wait for all tasks to exit.
-
-            foreach (Task task in tasks)
-                task.Wait();
-
-            tasks.Clear();
 
         }
 

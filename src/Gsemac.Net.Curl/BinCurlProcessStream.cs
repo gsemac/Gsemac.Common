@@ -20,22 +20,22 @@ namespace Gsemac.Net.Curl {
 
         public override void Close() {
 
-            if (closed)
-                return;
+            if (!closed) {
 
-            closed = true;
+                closed = true;
 
-            // Abort the process and wait for all reads to finish.
-            Abort(true);
+                // Abort the process and wait for all reads to finish.
 
-            // Check if curl exited with an error, and throw an exception if so.
-            CurlException ex = GetException();
+                base.Close();
 
-            // Close the base stream before throwing to ensure it's properly cleaned up first.
-            base.Close();
+                // Check if curl exited with an error, and throw an exception if so.
 
-            if (ex != null)
-                throw ex;
+                CurlException ex = GetException();
+
+                if (ex is object)
+                    throw ex;
+
+            }
 
         }
 
@@ -69,7 +69,7 @@ namespace Gsemac.Net.Curl {
 
                     try {
 
-                        using (StreamReader sr = new StreamReader(StandardErrorStream))
+                        using (StreamReader sr = new StreamReader(StandardError))
                             stdErrOutput = sr.ReadToEnd();
 
                     }

@@ -142,6 +142,15 @@ namespace Gsemac.IO.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Stream does not support writing..
+        /// </summary>
+        internal static string StreamDoesNotSupportWriting {
+            get {
+                return ResourceManager.GetString("StreamDoesNotSupportWriting", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The file format is not supported..
         /// </summary>
         internal static string UnsupportedFileFormat {
