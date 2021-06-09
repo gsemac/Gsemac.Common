@@ -88,6 +88,15 @@ namespace Gsemac.IO.Compression.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The archive is write-only..
+        /// </summary>
+        internal static string ArchiveIsWriteOnly {
+            get {
+                return ResourceManager.GetString("ArchiveIsWriteOnly", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to This archive implementation can only be used with FileStream instances..
         /// </summary>
         internal static string ArchiveOnlySupportsFileStreams {

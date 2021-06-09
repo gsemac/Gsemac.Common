@@ -135,7 +135,7 @@ namespace Gsemac.IO.Compression.ZipStorer {
         public override void DeleteEntry(IArchiveEntry entry) {
 
             if (!CanWrite)
-                throw new UnauthorizedAccessException("The archive is read-only.");
+                throw new InvalidOperationException(Properties.ExceptionMessages.ArchiveIsReadOnly);
 
             if (entry is null)
                 throw new ArgumentNullException(nameof(entry));

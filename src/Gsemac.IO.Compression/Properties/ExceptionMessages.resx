@@ -126,6 +126,9 @@
   <data name="ArchiveIsReadOnly" xml:space="preserve">
     <value>The archive is read-only.</value>
   </data>
+  <data name="ArchiveIsWriteOnly" xml:space="preserve">
+    <value>The archive is write-only.</value>
+  </data>
   <data name="ArchiveOnlySupportsFileStreams" xml:space="preserve">
     <value>This archive implementation can only be used with FileStream instances.</value>
   </data>

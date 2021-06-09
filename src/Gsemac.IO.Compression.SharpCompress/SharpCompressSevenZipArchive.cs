@@ -41,7 +41,7 @@ namespace Gsemac.IO.Compression {
 
         public override IArchiveEntry AddEntry(Stream stream, string entryName, IArchiveEntryOptions options) {
 
-            throw new UnauthorizedAccessException("The archive is read-only.");
+            throw new InvalidOperationException(Properties.ExceptionMessages.ArchiveIsReadOnly);
 
         }
         public override IArchiveEntry GetEntry(string entryName) {
@@ -56,7 +56,7 @@ namespace Gsemac.IO.Compression {
         }
         public override void DeleteEntry(IArchiveEntry entry) {
 
-            throw new UnauthorizedAccessException("The archive is read-only.");
+            throw new InvalidOperationException(Properties.ExceptionMessages.ArchiveIsReadOnly);
 
         }
         public override void ExtractEntry(IArchiveEntry entry, Stream outputStream) {

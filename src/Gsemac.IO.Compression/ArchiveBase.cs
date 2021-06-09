@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -18,7 +19,12 @@ namespace Gsemac.IO.Compression {
         public abstract IArchiveEntry AddEntry(Stream stream, string entryName, IArchiveEntryOptions options = null);
         public virtual IArchiveEntry GetEntry(string entryName) {
 
-            return GetEntries().Where(entry => PathUtilities.AreEqual(entry.Name, SanitizeEntryName(entryName)))
+            if (!CanRead)
+                throw new InvalidOperationException(Properties.ExceptionMessages.ArchiveIsWriteOnly);
+
+            entryName = SanitizeEntryName(entryName);
+
+            return GetEntries().Where(entry => PathUtilities.AreEqual(SanitizeEntryName(entry.Name), entryName))
                 .FirstOrDefault();
 
         }
@@ -49,7 +55,11 @@ namespace Gsemac.IO.Compression {
 
         // Protected members
 
-        protected virtual void Dispose(bool disposing) { }
+        protected virtual void Dispose(bool disposing) {
+
+            Close();
+
+        }
 
         protected static string SanitizeEntryName(string entryName) {
 
