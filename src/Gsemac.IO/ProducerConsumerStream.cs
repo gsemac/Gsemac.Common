@@ -5,7 +5,7 @@ using System.Threading;
 namespace Gsemac.IO {
 
     public class ProducerConsumerStream :
-        ConcurrentStream {
+        ConcurrentMemoryStream {
 
         // Public members
 
