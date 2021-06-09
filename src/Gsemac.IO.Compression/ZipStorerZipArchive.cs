@@ -28,8 +28,65 @@ namespace Gsemac.IO.Compression {
         }
         public override CompressionLevel CompressionLevel { get; set; } = CompressionLevel.Maximum;
 
-        public ZipStorerZipArchive(Stream stream, FileAccess fileAccess = FileAccess.ReadWrite, bool leaveOpen = false, IArchiveOptions options = null) :
-            this(stream, leaveOpen, fileAccess, options) {
+        public ZipStorerZipArchive(Stream stream, IArchiveOptions options) {
+
+            if (options is null)
+                options = new ArchiveOptions();
+
+            this.Comment = options.Comment;
+            this.CompressionLevel = options.CompressionLevel;
+
+            this.fileAccess = options.FileAccess;
+            this.sourceStream = stream;
+            this.leaveStreamOpen = options.LeaveStreamOpen;
+
+            if (stream.Length > 0) {
+
+                // ZipStorer has a longstanding bug where calling ReadCentralDir and then adding to the archive causes the last entry to get corrupted.
+                // To get around this, we'll read the entries, and then reload the archive. Read-only access is IMPORTANT to keep it from corrupting the archive.
+
+                long streamPosition = stream.Position;
+
+                using (ZipStorer archive = ZipStorer.Open(stream, FileAccess.Read, _leaveOpen: true)) {
+
+                    try {
+
+                        entries = new List<ZipStorerZipArchiveEntry>(archive.ReadCentralDir().Where(entry => PathUtilities.IsFilePath(entry.FilenameInZip))
+                            .Select(entry => new ZipStorerZipArchiveEntry(entry)));
+
+                    }
+                    catch (InvalidOperationException) {
+
+                        // ReadCentralDir can throw for new archives (i.e. ones we didn't open).
+
+                        entries = new List<ZipStorerZipArchiveEntry>();
+
+                    }
+
+                }
+
+                stream.Position = streamPosition;
+
+            }
+
+            // Archive is created lazily to give the user a chance to edit the archive comment.
+
+            this.archive = new Lazy<ZipStorer>(() => {
+
+                ZipStorer archive;
+
+                if (stream.Length <= 0)
+                    archive = ZipStorer.Create(stream, archiveComment, _leaveOpen: true);
+                else
+                    archive = ZipStorer.Open(stream, fileAccess, _leaveOpen: true);
+
+                if (options.Encoding == Encoding.UTF8)
+                    archive.EncodeUTF8 = true;
+
+                return archive;
+
+            });
+
         }
 
         public override IArchiveEntry AddEntry(Stream stream, string entryName, IArchiveEntryOptions options = null) {
@@ -171,67 +228,6 @@ namespace Gsemac.IO.Compression {
         private bool disposedValue = false;
         private bool archiveIsClosed = false;
 
-        private ZipStorerZipArchive(Stream stream, bool leaveOpen, FileAccess fileAccess, IArchiveOptions options) {
-
-            if (options is null)
-                options = new ArchiveOptions();
-
-            this.Comment = options.Comment;
-            this.CompressionLevel = options.CompressionLevel;
-
-            this.fileAccess = fileAccess;
-            this.sourceStream = stream;
-            this.leaveStreamOpen = leaveOpen;
-
-            if (stream.Length > 0) {
-
-                // ZipStorer has a longstanding bug where calling ReadCentralDir and then adding to the archive causes the last entry to get corrupted.
-                // To get around this, we'll read the entries, and then reload the archive. Read-only access is IMPORTANT to keep it from corrupting the archive.
-
-                long streamPosition = stream.Position;
-
-                using (ZipStorer archive = ZipStorer.Open(stream, FileAccess.Read, _leaveOpen: true)) {
-
-                    try {
-
-                        entries = new List<ZipStorerZipArchiveEntry>(archive.ReadCentralDir().Where(entry => PathUtilities.IsFilePath(entry.FilenameInZip))
-                            .Select(entry => new ZipStorerZipArchiveEntry(entry)));
-
-                    }
-                    catch (InvalidOperationException) {
-
-                        // ReadCentralDir can throw for new archives (i.e. ones we didn't open).
-
-                        entries = new List<ZipStorerZipArchiveEntry>();
-
-                    }
-
-                }
-
-                stream.Position = streamPosition;
-
-            }
-
-            // Archive is created lazily to give the user a chance to edit the archive comment.
-
-            this.archive = new Lazy<ZipStorer>(() => {
-
-                ZipStorer archive;
-
-                if (stream.Length <= 0)
-                    archive = ZipStorer.Create(stream, archiveComment, _leaveOpen: true);
-                else
-                    archive = ZipStorer.Open(stream, fileAccess, _leaveOpen: true);
-
-                if (options.Encoding == Encoding.UTF8)
-                    archive.EncodeUTF8 = true;
-
-                return archive;
-
-            });
-
-        }
-
         private ZipStorer.Compression GetCompression(CompressionLevel compressionLevel) {
 
             switch (compressionLevel) {
@@ -278,7 +274,7 @@ namespace Gsemac.IO.Compression {
 
                     sourceStream.Seek(0, SeekOrigin.Begin);
 
-                    using (ZipStorerZipArchive tempArchive = new ZipStorerZipArchive(sourceStream, FileAccess.Read, leaveOpen: true))
+                    using (ZipStorerZipArchive tempArchive = new ZipStorerZipArchive(sourceStream, new ArchiveOptions { FileAccess = FileAccess.Read, LeaveStreamOpen = true }))
                         foreach (IArchiveEntry entry in tempArchive.GetEntries().Where(e => !deletedEntries.Any(deletedEntry => AreEqual(deletedEntry, e))))
                             tempArchive.ExtractEntry(entry, Path.Combine(tempDirectory, entry.Name));
 
@@ -286,7 +282,7 @@ namespace Gsemac.IO.Compression {
 
                     sourceStream.SetLength(0);
 
-                    using (ZipStorerZipArchive tempArchive = new ZipStorerZipArchive(sourceStream, FileAccess.Write, leaveOpen: true))
+                    using (ZipStorerZipArchive tempArchive = new ZipStorerZipArchive(sourceStream, new ArchiveOptions { FileAccess = FileAccess.Write, LeaveStreamOpen = true }))
                         tempArchive.AddAllFiles(tempDirectory);
 
                 }

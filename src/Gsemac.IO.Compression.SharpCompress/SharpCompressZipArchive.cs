@@ -19,10 +19,38 @@ namespace Gsemac.IO.Compression {
         } // SharpCompress offers no means to set the archive comment outside of ZipWriterOptions, which can't be passed to SaveTo
         public override CompressionLevel CompressionLevel { get; set; } = CompressionLevel.Maximum;
 
-        public SharpCompressZipArchive(Stream stream, FileAccess fileAccess = FileAccess.ReadWrite, bool leaveOpen = false, IArchiveOptions options = null) :
-            this(stream, leaveOpen, options) {
+        public SharpCompressZipArchive(Stream stream, IArchiveOptions options) {
 
-            this.fileAccess = fileAccess;
+            if (options is null)
+                options = new ArchiveOptions();
+
+            this.CompressionLevel = options.CompressionLevel;
+
+            sourceStream = stream;
+            this.options = options;
+
+            // It will complain if we try to open a ZIP archive that doesn't exist (can't read headers).
+            // Create an empty ZIP archive for it to open.
+
+            if (stream.Length <= 0) {
+
+                using (SharpCompress.Archives.Zip.ZipArchive tempArchive = SharpCompress.Archives.Zip.ZipArchive.Create())
+                    tempArchive.SaveTo(stream);
+
+                stream.Seek(0, SeekOrigin.Begin);
+
+                // We're creating a new archive, we can write directly to the stream without worrying about affecting existing entries.
+
+                canWriteDirectoryToSourceStream = true;
+
+            }
+
+            archive = SharpCompress.Archives.Zip.ZipArchive.Open(stream, new SharpCompress.Readers.ReaderOptions() {
+                LeaveStreamOpen = options.LeaveStreamOpen,
+                ArchiveEncoding = new SharpCompress.Common.ArchiveEncoding() {
+                    Default = options.Encoding ?? Encoding.UTF8,
+                }
+            });
 
         }
 
@@ -143,41 +171,6 @@ namespace Gsemac.IO.Compression {
         private bool archiveModified = false;
         private bool disposedValue = false;
         private bool archiveIsClosed = false;
-
-        private SharpCompressZipArchive(Stream stream, bool leaveOpen, IArchiveOptions options) {
-
-            if (options is null)
-                options = new ArchiveOptions();
-
-            this.CompressionLevel = options.CompressionLevel;
-
-            sourceStream = stream;
-            this.options = options;
-
-            // It will complain if we try to open a ZIP archive that doesn't exist (can't read headers).
-            // Create an empty ZIP archive for it to open.
-
-            if (stream.Length <= 0) {
-
-                using (SharpCompress.Archives.Zip.ZipArchive tempArchive = SharpCompress.Archives.Zip.ZipArchive.Create())
-                    tempArchive.SaveTo(stream);
-
-                stream.Seek(0, SeekOrigin.Begin);
-
-                // We're creating a new archive, we can write directly to the stream without worrying about affecting existing entries.
-
-                canWriteDirectoryToSourceStream = true;
-
-            }
-
-            archive = SharpCompress.Archives.Zip.ZipArchive.Open(stream, new SharpCompress.Readers.ReaderOptions() {
-                LeaveStreamOpen = leaveOpen,
-                ArchiveEncoding = new SharpCompress.Common.ArchiveEncoding() {
-                    Default = options.Encoding ?? Encoding.UTF8,
-                }
-            });
-
-        }
 
         private SharpCompress.Common.CompressionType GetCompressionType(CompressionLevel compressionLevel) {
 

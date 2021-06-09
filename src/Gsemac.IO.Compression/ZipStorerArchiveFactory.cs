@@ -34,7 +34,7 @@ namespace Gsemac.IO.Compression {
             if (!this.IsSupportedFileFormat(archiveFormat))
                 throw new FileFormatException(Properties.ExceptionMessages.UnsupportedFileFormat);
 
-            return new ZipStorerZipArchive(stream, archiveOptions.FileAccess, archiveOptions.LeaveStreamOpen, archiveOptions);
+            return new ZipStorerZipArchive(stream, archiveOptions);
 
         }
 

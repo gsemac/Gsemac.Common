@@ -21,8 +21,16 @@ namespace Gsemac.IO.Compression {
         }
         public override CompressionLevel CompressionLevel { get; set; } = CompressionLevel.Maximum;
 
-        public SystemIOCompressionArchive(Stream stream, FileAccess fileAccess = FileAccess.ReadWrite, bool leaveOpen = false, IArchiveOptions options = null) :
-            this(stream, leaveOpen, fileAccess, options) {
+        public SystemIOCompressionArchive(Stream stream, IArchiveOptions options = null) {
+
+            if (options is null)
+                options = new ArchiveOptions();
+
+            this.CompressionLevel = options.CompressionLevel;
+
+            //this.stream = stream;
+            this.archive = new System.IO.Compression.ZipArchive(stream, GetZipArchiveMode(options.FileAccess), options.LeaveStreamOpen, options.Encoding ?? Encoding.UTF8);
+
         }
 
         public override IArchiveEntry AddEntry(Stream stream, string entryName, IArchiveEntryOptions options = null) {
@@ -139,18 +147,6 @@ namespace Gsemac.IO.Compression {
         //private readonly Stream stream;
         private readonly System.IO.Compression.ZipArchive archive;
         private bool disposedValue = false;
-
-        private SystemIOCompressionArchive(Stream stream, bool leaveOpen, FileAccess fileAccess, IArchiveOptions options) {
-
-            if (options is null)
-                options = new ArchiveOptions();
-
-            this.CompressionLevel = options.CompressionLevel;
-
-            //this.stream = stream;
-            this.archive = new System.IO.Compression.ZipArchive(stream, GetZipArchiveMode(fileAccess), leaveOpen, options.Encoding ?? Encoding.UTF8);
-
-        }
 
         private System.IO.Compression.ZipArchiveMode GetZipArchiveMode(FileAccess fileAccess) {
 
