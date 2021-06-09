@@ -117,8 +117,17 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="ArchiveDoesNotSupportGettingCompressionLevel" xml:space="preserve">
+    <value>Archive does not support reading the compression level.</value>
+  </data>
   <data name="ArchiveDoesNotSupportReadingComments" xml:space="preserve">
     <value>Archive does not support reading archive-level comments.</value>
+  </data>
+  <data name="ArchiveDoesNotSupportSettingCompressionLevel" xml:space="preserve">
+    <value>Archive does not support setting the compression level.</value>
+  </data>
+  <data name="ArchiveDoesNotSupportWriting" xml:space="preserve">
+    <value>Write access is not supported for this archive.</value>
   </data>
   <data name="ArchiveDoesNotSupportWritingComments" xml:space="preserve">
     <value>Archive does not support writing archive-level comments.</value>

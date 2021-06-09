@@ -18,20 +18,20 @@ namespace Gsemac.IO.Compression {
             set => throw new NotSupportedException(Properties.ExceptionMessages.ArchiveDoesNotSupportWritingComments);
         }
         public override CompressionLevel CompressionLevel {
-            get => throw new NotSupportedException("Archive does not support reading the compression level.");
-            set => throw new NotSupportedException("Archive does not support setting the compression level.");
+            get => throw new NotSupportedException(Properties.ExceptionMessages.ArchiveDoesNotSupportGettingCompressionLevel);
+            set => throw new NotSupportedException(Properties.ExceptionMessages.ArchiveDoesNotSupportSettingCompressionLevel);
         }
 
-        public SharpCompressSevenZipArchive(Stream stream, FileAccess fileAccess = FileAccess.ReadWrite, bool leaveOpen = false, IArchiveOptions options = null) {
-
-            if (fileAccess.HasFlag(FileAccess.Write))
-                throw new NotSupportedException("The archive can only be opened in read-only mode.");
+        public SharpCompressSevenZipArchive(Stream stream, IArchiveOptions options = null) {
 
             if (options is null)
                 options = ArchiveOptions.Default;
 
+            if (options.FileAccess.HasFlag(FileAccess.Write))
+                throw new NotSupportedException(Properties.ExceptionMessages.ArchiveDoesNotSupportWriting);
+
             archive = SharpCompress.Archives.SevenZip.SevenZipArchive.Open(stream, new SharpCompress.Readers.ReaderOptions() {
-                LeaveStreamOpen = leaveOpen,
+                LeaveStreamOpen = options.LeaveStreamOpen,
                 ArchiveEncoding = new SharpCompress.Common.ArchiveEncoding() {
                     Default = options.Encoding ?? Encoding.UTF8,
                 }

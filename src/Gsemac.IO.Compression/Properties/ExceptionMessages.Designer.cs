@@ -61,11 +61,38 @@ namespace Gsemac.IO.Compression.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Archive does not support reading the compression level..
+        /// </summary>
+        internal static string ArchiveDoesNotSupportGettingCompressionLevel {
+            get {
+                return ResourceManager.GetString("ArchiveDoesNotSupportGettingCompressionLevel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Archive does not support reading archive-level comments..
         /// </summary>
         internal static string ArchiveDoesNotSupportReadingComments {
             get {
                 return ResourceManager.GetString("ArchiveDoesNotSupportReadingComments", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Archive does not support setting the compression level..
+        /// </summary>
+        internal static string ArchiveDoesNotSupportSettingCompressionLevel {
+            get {
+                return ResourceManager.GetString("ArchiveDoesNotSupportSettingCompressionLevel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Write access is not supported for this archive..
+        /// </summary>
+        internal static string ArchiveDoesNotSupportWriting {
+            get {
+                return ResourceManager.GetString("ArchiveDoesNotSupportWriting", resourceCulture);
             }
         }
         
