@@ -13,7 +13,7 @@ namespace Gsemac.IO.Compression {
         string Comment { get; set; }
         CompressionLevel CompressionLevel { get; set; }
 
-        IArchiveEntry AddEntry(Stream stream, string entryName, IArchiveEntryOptions options = null);
+        IArchiveEntry AddEntry(Stream stream, string entryName, IArchiveEntryOptions options);
         IArchiveEntry GetEntry(string entryName);
         void DeleteEntry(IArchiveEntry entry);
         void ExtractEntry(IArchiveEntry entry, Stream outputStream);

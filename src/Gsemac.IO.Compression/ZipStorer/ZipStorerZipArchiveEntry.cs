@@ -1,7 +1,6 @@
 ﻿using System;
-using System.IO.Compression;
 
-namespace Gsemac.IO.Compression {
+namespace Gsemac.IO.Compression.ZipStorer {
 
     internal class ZipStorerZipArchiveEntry :
          IArchiveEntry {
@@ -18,7 +17,7 @@ namespace Gsemac.IO.Compression {
 
         public ZipStorerZipArchiveEntry(ZipStorer.ZipFileEntry entry) {
 
-            this.BaseEntry = entry;
+            BaseEntry = entry;
 
         }
 

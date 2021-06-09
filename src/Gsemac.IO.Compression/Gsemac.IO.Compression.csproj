@@ -63,4 +63,10 @@
 	  <Folder Include="Properties\IO\" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <Compile Update="Properties\ExceptionMessages.Designer.cs">
+	    <DesignTime>True</DesignTime>
+	  </Compile>
+	</ItemGroup>
+
 </Project>

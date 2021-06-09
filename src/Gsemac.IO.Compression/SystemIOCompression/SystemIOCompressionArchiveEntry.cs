@@ -2,7 +2,7 @@
 
 using System;
 
-namespace Gsemac.IO.Compression {
+namespace Gsemac.IO.Compression.SystemIOCompression {
 
     internal class SystemIOCompressionArchiveEntry :
         IArchiveEntry {

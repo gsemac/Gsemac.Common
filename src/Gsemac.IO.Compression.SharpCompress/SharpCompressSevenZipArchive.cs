@@ -6,7 +6,7 @@ using System.Text;
 
 namespace Gsemac.IO.Compression {
 
-    internal class SharpCompress7ZipArchive :
+    internal class SharpCompressSevenZipArchive :
         ArchiveBase {
 
         // Public members
@@ -14,15 +14,15 @@ namespace Gsemac.IO.Compression {
         public override bool CanRead => true;
         public override bool CanWrite => false; // SharpCompress does not support writing to .7Z archives
         public override string Comment {
-            get => throw new NotSupportedException("Archive does not support reading archive-level comments.");
-            set => throw new NotSupportedException("Archive does not support writing archive-level comments.");
+            get => throw new NotSupportedException(Properties.ExceptionMessages.ArchiveDoesNotSupportReadingComments);
+            set => throw new NotSupportedException(Properties.ExceptionMessages.ArchiveDoesNotSupportWritingComments);
         }
         public override CompressionLevel CompressionLevel {
             get => throw new NotSupportedException("Archive does not support reading the compression level.");
             set => throw new NotSupportedException("Archive does not support setting the compression level.");
         }
 
-        public SharpCompress7ZipArchive(Stream stream, FileAccess fileAccess = FileAccess.ReadWrite, bool leaveOpen = false, IArchiveOptions options = null) {
+        public SharpCompressSevenZipArchive(Stream stream, FileAccess fileAccess = FileAccess.ReadWrite, bool leaveOpen = false, IArchiveOptions options = null) {
 
             if (fileAccess.HasFlag(FileAccess.Write))
                 throw new NotSupportedException("The archive can only be opened in read-only mode.");
@@ -39,7 +39,7 @@ namespace Gsemac.IO.Compression {
 
         }
 
-        public override IArchiveEntry AddEntry(Stream stream, string entryName, IArchiveEntryOptions options = null) {
+        public override IArchiveEntry AddEntry(Stream stream, string entryName, IArchiveEntryOptions options) {
 
             throw new UnauthorizedAccessException("The archive is read-only.");
 
@@ -67,7 +67,7 @@ namespace Gsemac.IO.Compression {
             if (outputStream is null)
                 throw new ArgumentNullException(nameof(outputStream));
 
-            if (entry is SharpCompress7ZipArchiveEntry sevenZipArchiveEntry && sevenZipArchiveEntry.BaseEntry.Archive == archive) {
+            if (entry is SharpCompressSevenZipArchiveEntry sevenZipArchiveEntry && sevenZipArchiveEntry.BaseEntry.Archive == archive) {
 
                 using (Stream entryStream = sevenZipArchiveEntry.BaseEntry.OpenEntryStream())
                     entryStream.CopyTo(outputStream);
@@ -80,7 +80,7 @@ namespace Gsemac.IO.Compression {
         public override IEnumerable<IArchiveEntry> GetEntries() {
 
             return archive.Entries.Where(entry => !entry.IsDirectory)
-                .Select(entry => new SharpCompress7ZipArchiveEntry(entry));
+                .Select(entry => new SharpCompressSevenZipArchiveEntry(entry));
 
         }
 

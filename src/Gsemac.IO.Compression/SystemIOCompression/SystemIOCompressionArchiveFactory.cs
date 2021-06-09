@@ -1,19 +1,17 @@
-﻿using Gsemac.IO.Extensions;
+﻿#if NET45_OR_NEWER
+
+using Gsemac.IO.Extensions;
 using Gsemac.Reflection.Plugins;
 using System.Collections.Generic;
 using System.IO;
 
-namespace Gsemac.IO.Compression {
+namespace Gsemac.IO.Compression.SystemIOCompression {
 
-    public sealed class ZipStorerArchiveFactory :
-        PluginBase,
-        IArchiveFactory {
+    public sealed class SystemIOCompressionArchiveFactory :
+           PluginBase,
+           IArchiveFactory {
 
         // Public members
-
-        public ZipStorerArchiveFactory() :
-            base(1) {
-        }
 
         public IEnumerable<IFileFormat> GetSupportedFileFormats() {
 
@@ -32,12 +30,14 @@ namespace Gsemac.IO.Compression {
                 archiveOptions = ArchiveOptions.Default;
 
             if (!this.IsSupportedFileFormat(archiveFormat))
-                throw new FileFormatException(Properties.ExceptionMessages.UnsupportedFileFormat);
+                throw new FileFormatException(IO.Properties.ExceptionMessages.UnsupportedFileFormat);
 
-            return new ZipStorerZipArchive(stream, archiveOptions);
+            return new SystemIOCompressionArchive(stream, archiveOptions);
 
         }
 
     }
 
 }
+
+#endif

@@ -2,11 +2,10 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.IO.Compression;
 using System.Linq;
 using System.Text;
 
-namespace Gsemac.IO.Compression {
+namespace Gsemac.IO.Compression.ZipStorer {
 
     internal class ZipStorerZipArchive :
       ArchiveBase {
@@ -33,12 +32,12 @@ namespace Gsemac.IO.Compression {
             if (options is null)
                 options = new ArchiveOptions();
 
-            this.Comment = options.Comment;
-            this.CompressionLevel = options.CompressionLevel;
+            Comment = options.Comment;
+            CompressionLevel = options.CompressionLevel;
 
-            this.fileAccess = options.FileAccess;
-            this.sourceStream = stream;
-            this.leaveStreamOpen = options.LeaveStreamOpen;
+            fileAccess = options.FileAccess;
+            sourceStream = stream;
+            leaveStreamOpen = options.LeaveStreamOpen;
 
             if (stream.Length > 0) {
 
@@ -71,7 +70,7 @@ namespace Gsemac.IO.Compression {
 
             // Archive is created lazily to give the user a chance to edit the archive comment.
 
-            this.archive = new Lazy<ZipStorer>(() => {
+            archive = new Lazy<ZipStorer>(() => {
 
                 ZipStorer archive;
 
@@ -89,10 +88,10 @@ namespace Gsemac.IO.Compression {
 
         }
 
-        public override IArchiveEntry AddEntry(Stream stream, string entryName, IArchiveEntryOptions options = null) {
+        public override IArchiveEntry AddEntry(Stream stream, string entryName, IArchiveEntryOptions options) {
 
             if (!CanWrite)
-                throw new UnauthorizedAccessException("The archive is read-only.");
+                throw new UnauthorizedAccessException(Properties.ExceptionMessages.ArchiveIsReadOnly);
 
             if (stream is null)
                 throw new ArgumentNullException(nameof(stream));
@@ -131,12 +130,6 @@ namespace Gsemac.IO.Compression {
             }
 
             return entries.Last();
-
-        }
-        public override IArchiveEntry GetEntry(string entryName) {
-
-            return GetEntries().Where(entry => PathUtilities.AreEqual(entry.Name, SanitizeEntryName(entryName)))
-                .FirstOrDefault();
 
         }
         public override void DeleteEntry(IArchiveEntry entry) {

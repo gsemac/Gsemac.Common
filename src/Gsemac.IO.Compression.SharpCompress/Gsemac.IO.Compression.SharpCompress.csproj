@@ -25,6 +25,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <Compile Include="..\Gsemac.IO.Compression\Properties\ExceptionMessages.Designer.cs" Link="Properties\Compression\ExceptionMessages.Designer.cs" />
 	  <Compile Include="..\Gsemac.IO\Properties\ExceptionMessages.Designer.cs" Link="Properties\IO\ExceptionMessages.Designer.cs" />
 	</ItemGroup>
 
@@ -39,6 +40,7 @@
 
 	<ItemGroup>
 	  <Folder Include="Properties\IO\" />
+	  <Folder Include="Properties\Compression\" />
 	</ItemGroup>
 
 </Project>

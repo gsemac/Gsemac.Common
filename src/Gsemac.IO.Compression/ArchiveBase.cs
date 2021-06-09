@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 namespace Gsemac.IO.Compression {
 
@@ -15,7 +16,12 @@ namespace Gsemac.IO.Compression {
         public abstract CompressionLevel CompressionLevel { get; set; }
 
         public abstract IArchiveEntry AddEntry(Stream stream, string entryName, IArchiveEntryOptions options = null);
-        public abstract IArchiveEntry GetEntry(string entryName);
+        public virtual IArchiveEntry GetEntry(string entryName) {
+
+            return GetEntries().Where(entry => PathUtilities.AreEqual(entry.Name, SanitizeEntryName(entryName)))
+                .FirstOrDefault();
+
+        }
         public abstract void DeleteEntry(IArchiveEntry entry);
         public abstract void ExtractEntry(IArchiveEntry entry, Stream outputStream);
         public abstract IEnumerable<IArchiveEntry> GetEntries();

@@ -1,8 +1,33 @@
-﻿using System.IO;
+﻿using Gsemac.IO.Extensions;
+using System.IO;
 
 namespace Gsemac.IO.Compression.Extensions {
 
     public static class ArchiveFactoryExtensions {
+
+        public static IArchive Open(this IArchiveFactory archiveFactory, Stream stream) {
+
+            return Open(archiveFactory, stream, ArchiveOptions.Default);
+
+        }
+        public static IArchive Open(this IArchiveFactory archiveFactory, Stream stream, IArchiveOptions archiveOptions) {
+
+            if (archiveOptions is null)
+                archiveOptions = ArchiveOptions.Default;
+
+            stream = FileFormatFactory.Default.FromStream(stream, out IFileFormat archiveFormat);
+
+            return archiveFactory.Open(stream, archiveFormat, archiveOptions: archiveOptions);
+
+        }
+        public static IArchive Open(this IArchiveFactory archiveFactory, Stream stream, IFileFormat archiveFormat) {
+
+            if (archiveFormat is null)
+                stream = FileFormatFactory.Default.FromStream(stream, out archiveFormat);
+
+            return archiveFactory.Open(stream, archiveFormat, ArchiveOptions.Default);
+
+        }
 
         public static IArchive Open(this IArchiveFactory archiveFactory, string filePath) {
 
@@ -42,11 +67,6 @@ namespace Gsemac.IO.Compression.Extensions {
                 throw;
 
             }
-
-        }
-        public static IArchive Open(this IArchiveFactory archiveFactory, Stream stream, IArchiveOptions archiveOptions) {
-
-            return archiveFactory.Open(stream, archiveFormat: null, archiveOptions: archiveOptions);
 
         }
 

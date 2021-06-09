@@ -6,7 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 
-namespace Gsemac.IO.Compression {
+namespace Gsemac.IO.Compression.SystemIOCompression {
 
     internal class SystemIOCompressionArchive :
         ArchiveBase {
@@ -33,7 +33,7 @@ namespace Gsemac.IO.Compression {
 
         }
 
-        public override IArchiveEntry AddEntry(Stream stream, string entryName, IArchiveEntryOptions options = null) {
+        public override IArchiveEntry AddEntry(Stream stream, string entryName, IArchiveEntryOptions options) {
 
             if (stream is null)
                 throw new ArgumentNullException(nameof(stream));

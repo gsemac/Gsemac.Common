@@ -22,7 +22,7 @@ namespace Gsemac.IO.Compression {
 
         }
 
-        public IArchive Open(Stream stream, IFileFormat archiveFormat = null, IArchiveOptions archiveOptions = null) {
+        public IArchive Open(Stream stream, IFileFormat archiveFormat, IArchiveOptions archiveOptions) {
 
             if (archiveFormat is null)
                 stream = FileFormatFactory.Default.FromStream(stream, out archiveFormat);
@@ -31,14 +31,14 @@ namespace Gsemac.IO.Compression {
                 archiveOptions = ArchiveOptions.Default;
 
             if (!this.IsSupportedFileFormat(archiveFormat))
-                throw new FileFormatException(Properties.ExceptionMessages.UnsupportedFileFormat);
+                throw new FileFormatException(IO.Properties.ExceptionMessages.UnsupportedFileFormat);
 
             if (archiveFormat.Equals(new ZipFileFormat()))
-                return new SharpCompress7ZipArchive(stream, archiveOptions.FileAccess, archiveOptions.LeaveStreamOpen, archiveOptions);
+                return new SharpCompressSevenZipArchive(stream, archiveOptions.FileAccess, archiveOptions.LeaveStreamOpen, archiveOptions);
             else if (archiveFormat.Equals(new SevenZipFileFormat()))
-                return new SharpCompress7ZipArchive(stream, archiveOptions.FileAccess, archiveOptions.LeaveStreamOpen, archiveOptions);
+                return new SharpCompressSevenZipArchive(stream, archiveOptions.FileAccess, archiveOptions.LeaveStreamOpen, archiveOptions);
             else
-                throw new FileFormatException(Properties.ExceptionMessages.UnsupportedFileFormat);
+                throw new FileFormatException(IO.Properties.ExceptionMessages.UnsupportedFileFormat);
 
         }
 

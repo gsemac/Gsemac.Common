@@ -2,7 +2,7 @@
 
 namespace Gsemac.IO.Compression {
 
-    internal class SharpCompress7ZipArchiveEntry :
+    internal class SharpCompressSevenZipArchiveEntry :
         IArchiveEntry {
 
         // Public members
@@ -15,7 +15,7 @@ namespace Gsemac.IO.Compression {
 
         public SharpCompress.Archives.SevenZip.SevenZipArchiveEntry BaseEntry { get; }
 
-        public SharpCompress7ZipArchiveEntry(SharpCompress.Archives.SevenZip.SevenZipArchiveEntry entry) {
+        public SharpCompressSevenZipArchiveEntry(SharpCompress.Archives.SevenZip.SevenZipArchiveEntry entry) {
 
             BaseEntry = entry;
 

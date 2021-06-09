@@ -5,6 +5,12 @@ namespace Gsemac.IO.Compression.Extensions {
 
     public static class ArchiveExtensions {
 
+        public static IArchiveEntry AddEntry(this IArchive archive, Stream stream, string entryName) {
+
+            return archive.AddEntry(stream, entryName, ArchiveEntryOptions.Default);
+
+        }
+
         public static void AddFile(this IArchive archive, string filePath) {
 
             archive.AddFile(filePath, filePath);

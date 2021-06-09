@@ -14,8 +14,8 @@ namespace Gsemac.IO.Compression {
         public override bool CanRead => fileAccess.HasFlag(FileAccess.Read);
         public override bool CanWrite => fileAccess.HasFlag(FileAccess.Write);
         public override string Comment {
-            get => throw new NotSupportedException("Archive does not support reading archive-level comments.");
-            set => throw new NotSupportedException("Archive does not support writing archive-level comments.");
+            get => throw new NotSupportedException(Properties.ExceptionMessages.ArchiveDoesNotSupportReadingComments);
+            set => throw new NotSupportedException(Properties.ExceptionMessages.ArchiveDoesNotSupportWritingComments);
         } // SharpCompress offers no means to set the archive comment outside of ZipWriterOptions, which can't be passed to SaveTo
         public override CompressionLevel CompressionLevel { get; set; } = CompressionLevel.Maximum;
 
@@ -54,7 +54,7 @@ namespace Gsemac.IO.Compression {
 
         }
 
-        public override IArchiveEntry AddEntry(Stream stream, string entryName, IArchiveEntryOptions options = null) {
+        public override IArchiveEntry AddEntry(Stream stream, string entryName, IArchiveEntryOptions options) {
 
             if (stream is null)
                 throw new ArgumentNullException(nameof(stream));
