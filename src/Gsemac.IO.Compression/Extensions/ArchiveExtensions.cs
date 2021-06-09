@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Linq;
 
 namespace Gsemac.IO.Compression.Extensions {
@@ -31,13 +32,19 @@ namespace Gsemac.IO.Compression.Extensions {
 
             IArchiveEntry entry = archive.GetEntry(entryName);
 
-            if (!(entryName is null))
+            if (entry is object)
                 archive.DeleteEntry(entry);
 
-            return !(entryName is null);
+            return entry is object;
 
         }
         public static void ExtractEntry(this IArchive archive, IArchiveEntry entry, string filePath) {
+
+            if (entry is null)
+                throw new ArgumentNullException(nameof(entry));
+
+            if (filePath is null)
+                throw new ArgumentNullException(nameof(filePath));
 
             // Some implementations do not create the file path's directory automatically.
 
@@ -66,6 +73,20 @@ namespace Gsemac.IO.Compression.Extensions {
                     Directory.Delete(directoryPath);
 
             }
+
+        }
+        public static void ExtractEntry(this IArchive archive, string entryName, string filePath) {
+
+            IArchiveEntry entry = archive.GetEntry(entryName);
+
+            ExtractEntry(archive, entry, filePath);
+
+        }
+        public static void ExtractEntry(this IArchive archive, string entryName, Stream outputStream) {
+
+            IArchiveEntry entry = archive.GetEntry(entryName);
+
+            archive.ExtractEntry(entry, outputStream);
 
         }
         public static void ExtractAllEntries(this IArchive archive, string directoryPath) {
