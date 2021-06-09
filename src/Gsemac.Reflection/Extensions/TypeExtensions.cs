@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Gsemac.Reflection.Extensions {
 
@@ -7,6 +9,16 @@ namespace Gsemac.Reflection.Extensions {
         public static bool IsDefaultConstructable(this Type type) {
 
             return type.GetConstructor(Type.EmptyTypes) != null;
+
+        }
+        public static bool IsConstructableFrom(this Type type, IEnumerable<Type> types) {
+
+            return type.GetConstructor(types.ToArray()) is object;
+
+        }
+        public static bool IsConstructableFrom(this Type type, IEnumerable<object> args) {
+
+            return IsConstructableFrom(type, args.Select(arg => arg.GetType()));
 
         }
 
