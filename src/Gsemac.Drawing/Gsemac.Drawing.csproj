@@ -23,17 +23,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Compile Include="..\Gsemac.IO\Properties\ExceptionMessages.Designer.cs" Link="Properties\IO\ExceptionMessages.Designer.cs" />
-	</ItemGroup>
-
-	<ItemGroup>
 		<ProjectReference Include="..\Gsemac.Core\Gsemac.Core.csproj" />
 		<ProjectReference Include="..\Gsemac.IO\Gsemac.IO.csproj" />
 		<ProjectReference Include="..\Gsemac.Reflection.Plugins\Gsemac.Reflection.Plugins.csproj" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <Folder Include="Properties\IO\" />
 	</ItemGroup>
 
 </Project>

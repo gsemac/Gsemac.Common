@@ -150,4 +150,7 @@
   <data name="UnsupportedFileFormat" xml:space="preserve">
     <value>The file format is not supported.</value>
   </data>
+  <data name="UnsupportedFileFormatWithFormat" xml:space="preserve">
+    <value>The file format '{0}' is not supported.</value>
+  </data>
 </root>

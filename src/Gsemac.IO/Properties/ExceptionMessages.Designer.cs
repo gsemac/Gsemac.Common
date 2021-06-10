@@ -158,5 +158,14 @@ namespace Gsemac.IO.Properties {
                 return ResourceManager.GetString("UnsupportedFileFormat", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The file format &apos;{0}&apos; is not supported..
+        /// </summary>
+        internal static string UnsupportedFileFormatWithFormat {
+            get {
+                return ResourceManager.GetString("UnsupportedFileFormatWithFormat", resourceCulture);
+            }
+        }
     }
 }
