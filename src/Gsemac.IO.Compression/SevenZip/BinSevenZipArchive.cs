@@ -31,6 +31,9 @@ namespace Gsemac.IO.Compression.SevenZip {
             if (archiveFormat is null)
                 throw new ArgumentNullException(nameof(archiveFormat));
 
+            if (string.IsNullOrWhiteSpace(sevenZipExecutablePath))
+                sevenZipExecutablePath = SevenZipUtilities.SevenZipExecutablePath;
+
             if (!File.Exists(sevenZipExecutablePath))
                 throw new ArgumentException("'7z.exe' could not be located at the given file path.");
 
