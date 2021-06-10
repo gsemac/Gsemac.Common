@@ -18,8 +18,13 @@ namespace Gsemac.IO.Compression.ZipStorer {
         public IEnumerable<IFileFormat> GetSupportedFileFormats() {
 
             return new IFileFormat[] {
-               new ZipFileFormat(),
+              ArchiveFormat.Zip,
            };
+
+        }
+        public IEnumerable<IFileFormat> GetWritableFileFormats() {
+
+            return GetSupportedFileFormats();
 
         }
 

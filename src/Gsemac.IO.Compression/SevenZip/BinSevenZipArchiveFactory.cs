@@ -5,6 +5,7 @@ using System.IO;
 
 namespace Gsemac.IO.Compression.SevenZip {
 
+    [RequiresSevenZip]
     public class BinSevenZipArchiveFactory :
         PluginBase,
         IArchiveFactory {
@@ -26,6 +27,11 @@ namespace Gsemac.IO.Compression.SevenZip {
                 new ZipFileFormat(),
                 new SevenZipFileFormat(),
             };
+
+        }
+        public IEnumerable<IFileFormat> GetWritableFileFormats() {
+
+            return GetSupportedFileFormats();
 
         }
 

@@ -25,22 +25,12 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Compile Include="..\Gsemac.IO.Compression\Properties\ExceptionMessages.Designer.cs" Link="Properties\Compression\ExceptionMessages.Designer.cs" />
-	  <Compile Include="..\Gsemac.IO\Properties\ExceptionMessages.Designer.cs" Link="Properties\IO\ExceptionMessages.Designer.cs" />
-	</ItemGroup>
-
-	<ItemGroup>
 		<PackageReference Include="SharpCompress" Version="0.24.0" />
 	</ItemGroup>
 
 	<ItemGroup>
 		<ProjectReference Include="..\Gsemac.IO.Compression\Gsemac.IO.Compression.csproj" />
 		<ProjectReference Include="..\Gsemac.Reflection\Gsemac.Reflection.csproj" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <Folder Include="Properties\IO\" />
-	  <Folder Include="Properties\Compression\" />
 	</ItemGroup>
 
 </Project>

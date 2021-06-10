@@ -1,5 +1,4 @@
 ﻿using Gsemac.IO.Extensions;
-using Gsemac.Reflection;
 using Gsemac.Reflection.Plugins;
 using System.Collections.Generic;
 using System.IO;
@@ -16,8 +15,15 @@ namespace Gsemac.IO.Compression {
         public IEnumerable<IFileFormat> GetSupportedFileFormats() {
 
             return new IFileFormat[] {
-                new ZipFileFormat(),
-                new SevenZipFileFormat(),
+                ArchiveFormat.Zip,
+                ArchiveFormat.SevenZip,
+            };
+
+        }
+        public IEnumerable<IFileFormat> GetWritableFileFormats() {
+
+            return new IFileFormat[] {
+                ArchiveFormat.Zip,
             };
 
         }

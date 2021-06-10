@@ -44,6 +44,11 @@ namespace Gsemac.IO.Compression {
             return GetSupportedArchiveFormats();
 
         }
+        public IEnumerable<IFileFormat> GetWritableFileFormats() {
+
+            return GetSupportedWritableArchiveFormats();
+
+        }
 
         public IArchive Open(Stream stream, IFileFormat archiveFormat, IArchiveOptions archiveOptions) {
 
@@ -56,33 +61,27 @@ namespace Gsemac.IO.Compression {
             if (archiveOptions is null)
                 archiveOptions = ArchiveOptions.Default;
 
+            if (archiveFormat is null)
+                throw new FileFormatException(IO.Properties.ExceptionMessages.UnsupportedFileFormat);
+
             List<Exception> exceptions = new List<Exception>();
 
-            foreach (IArchiveFactory archiveFactory in GetArchiveFactories().Where(decoder => decoder.IsSupportedFileFormat(archiveFormat))) {
+            IArchiveFactory archiveFactory = GetArchiveFactories()
+                .Where(decoder => (archiveOptions.FileAccess.HasFlag(FileAccess.Write) ? decoder.GetWritableFileFormats() : decoder.GetSupportedFileFormats()).Any(format => format.Equals(archiveFormat)))
+                .FirstOrDefault();
 
-                try {
+            if (archiveFactory is object) {
 
-                    return archiveFactory.Open(stream, archiveFormat, archiveOptions);
-
-                }
-                catch (NotSupportedException ex) {
-
-                    // We may get this exception if we try to open the archive with a factory that doesn't support the file access specified.
-                    // For example, some factories only support read access.
-                    // By catching the exception and trying again with the next factory, we can find a factory that supports the desired access.
-
-                    exceptions.Add(ex);
-
-                }
+                return archiveFactory.Open(stream, archiveFormat, archiveOptions);
 
             }
+            else {
 
-            // If we reach this point, we have no factories capable of reading this file format.
+                // If we reach this point, we have no factories capable of reading this file format.
 
-            if (exceptions.Any())
-                throw new AggregateException(exceptions);
+                throw new FileFormatException(archiveFormat is null ? IO.Properties.ExceptionMessages.UnsupportedFileFormat : string.Format(IO.Properties.ExceptionMessages.UnsupportedFileFormatWithFormat, archiveFormat));
 
-            throw new FileFormatException(IO.Properties.ExceptionMessages.UnsupportedFileFormat);
+            }
 
         }
 
@@ -99,6 +98,13 @@ namespace Gsemac.IO.Compression {
         private IEnumerable<IFileFormat> GetSupportedArchiveFormats() {
 
             return GetArchiveFactories().SelectMany(decoder => decoder.GetSupportedFileFormats())
+                .OrderBy(type => type)
+                .Distinct();
+
+        }
+        private IEnumerable<IFileFormat> GetSupportedWritableArchiveFormats() {
+
+            return GetArchiveFactories().SelectMany(decoder => decoder.GetWritableFileFormats())
                 .OrderBy(type => type)
                 .Distinct();
 
