@@ -1,0 +1,26 @@
+<Project Sdk="MSBuild.Sdk.Extras/2.0.54">
+
+  <PropertyGroup>
+    <TargetFrameworks>netstandard2.0;net40-client</TargetFrameworks>
+    <Company />
+    <Authors>gsemac</Authors>
+    <Version>0.1.0</Version>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+    <PackageProjectUrl>https://github.com/gsemac/Gsemac.Common</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/gsemac/Gsemac.Common</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <Copyright></Copyright>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)' == 'Release'">
+    <DebugType>none</DebugType>
+    <DebugSymbols>false</DebugSymbols>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Gsemac.Polyfills\Gsemac.Polyfills.csproj" />
+    <ProjectReference Include="..\Gsemac.Reflection\Gsemac.Reflection.csproj" />
+  </ItemGroup>
+
+</Project>

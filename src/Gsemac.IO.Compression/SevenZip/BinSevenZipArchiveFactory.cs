@@ -1,10 +1,12 @@
 ﻿using Gsemac.IO.Extensions;
+using Gsemac.Reflection.Plugins;
 using System.Collections.Generic;
 using System.IO;
 
 namespace Gsemac.IO.Compression.SevenZip {
 
     public class BinSevenZipArchiveFactory :
+        PluginBase,
         IArchiveFactory {
 
         // Public members

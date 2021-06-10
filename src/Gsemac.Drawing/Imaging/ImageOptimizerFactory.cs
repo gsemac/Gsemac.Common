@@ -1,5 +1,7 @@
 ﻿using Gsemac.IO;
 using Gsemac.IO.Extensions;
+using Gsemac.Reflection.Plugins;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -11,6 +13,18 @@ namespace Gsemac.Drawing.Imaging {
         // Public members
 
         public static ImageOptimizerFactory Default => new ImageOptimizerFactory();
+
+        public ImageOptimizerFactory() :
+           this(null) {
+        }
+        public ImageOptimizerFactory(IPluginLoader pluginLoader) {
+
+            if (pluginLoader is null)
+                this.pluginLoader = new Lazy<IPluginLoader>(CreateDefaultPluginLoader);
+            else
+                this.pluginLoader = new Lazy<IPluginLoader>(() => pluginLoader);
+
+        }
 
         public IEnumerable<IFileFormat> GetSupportedFileFormats() {
 
@@ -26,21 +40,28 @@ namespace Gsemac.Drawing.Imaging {
 
         // Private members
 
-        private static IEnumerable<IFileFormat> GetSupportedImageFormats() {
+        private readonly Lazy<IPluginLoader> pluginLoader;
+
+        private IPluginLoader CreateDefaultPluginLoader() {
+
+            return new PluginLoader<IImageCodec>();
+
+        }
+        private IEnumerable<IFileFormat> GetSupportedImageFormats() {
 
             return GetImageOptimizers().SelectMany(optimizer => optimizer.GetSupportedFileFormats())
                 .OrderBy(type => type)
                 .Distinct();
 
         }
-        private static IEnumerable<IImageOptimizer> GetImageOptimizers() {
+        private IEnumerable<IImageOptimizer> GetImageOptimizers() {
 
             return GetImageOptimizersInternal();
 
         }
-        private static IEnumerable<IImageOptimizer> GetImageOptimizersInternal() {
+        private IEnumerable<IImageOptimizer> GetImageOptimizersInternal() {
 
-            return ImagingPluginLoader.GetImageOptimizers();
+            return pluginLoader.Value.GetPlugins<IImageOptimizer>();
 
         }
 

@@ -1,5 +1,6 @@
 ﻿using Gsemac.IO;
 using Gsemac.IO.Extensions;
+using Gsemac.Reflection.Plugins;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,6 +13,18 @@ namespace Gsemac.Drawing.Imaging {
         // Public members
 
         public static ImageCodecFactory Default => new ImageCodecFactory();
+
+        public ImageCodecFactory() :
+            this(null) {
+        }
+        public ImageCodecFactory(IPluginLoader pluginLoader) {
+
+            if (pluginLoader is null)
+                this.pluginLoader = new Lazy<IPluginLoader>(CreateDefaultPluginLoader);
+            else
+                this.pluginLoader = new Lazy<IPluginLoader>(() => pluginLoader);
+
+        }
 
         public IEnumerable<IFileFormat> GetSupportedFileFormats() {
 
@@ -27,23 +40,30 @@ namespace Gsemac.Drawing.Imaging {
 
         // Private members
 
-        private static IEnumerable<IImageCodec> GetImageCodecs() {
+        private readonly Lazy<IPluginLoader> pluginLoader;
+
+        private IPluginLoader CreateDefaultPluginLoader() {
+
+            return new PluginLoader<IImageCodec>();
+
+        }
+        private IEnumerable<IImageCodec> GetImageCodecs() {
 
             return GetImageCodecs(null);
 
         }
-        private static IEnumerable<IFileFormat> GetSupportedImageFormats() {
+        private IEnumerable<IFileFormat> GetSupportedImageFormats() {
 
             return GetImageCodecs().SelectMany(codec => codec.GetSupportedFileFormats())
                 .Distinct()
                 .OrderBy(type => type);
 
         }
-        private static IEnumerable<IImageCodec> GetImageCodecs(IFileFormat imageFormat) {
+        private IEnumerable<IImageCodec> GetImageCodecs(IFileFormat imageFormat) {
 
             List<IImageCodec> imageCodecs = new List<IImageCodec>();
 
-            foreach (IImageCodec imageCodec in ImagingPluginLoader.GetImageCodecs()) {
+            foreach (IImageCodec imageCodec in pluginLoader.Value.GetPlugins<IImageCodec>()) {
 
                 IImageCodec nextImageCodec = imageCodec;
                 Type nextImageCodecType = imageCodec.GetType();

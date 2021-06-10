@@ -1,4 +1,6 @@
 ﻿using Gsemac.IO.Extensions;
+using Gsemac.Polyfills.Microsoft.Extensions.DependencyInjection;
+using Gsemac.Reflection.Plugins;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -17,7 +19,21 @@ namespace Gsemac.IO.Compression {
             this(ArchiveFactoryOptions.Default) {
 
         }
-        public ArchiveFactory(IArchiveFactoryOptions options) {
+        public ArchiveFactory(IPluginLoader pluginLoader) :
+            this(pluginLoader, ArchiveFactoryOptions.Default) {
+        }
+        public ArchiveFactory(IArchiveFactoryOptions options) :
+            this(null, options) {
+        }
+        public ArchiveFactory(IPluginLoader pluginLoader, IArchiveFactoryOptions options) {
+
+            if (options is null)
+                throw new ArgumentNullException(nameof(options));
+
+            if (pluginLoader is null)
+                this.pluginLoader = new Lazy<IPluginLoader>(CreateDefaultPluginLoader);
+            else
+                this.pluginLoader = new Lazy<IPluginLoader>(() => pluginLoader);
 
             this.options = options;
 
@@ -40,29 +56,63 @@ namespace Gsemac.IO.Compression {
             if (archiveOptions is null)
                 archiveOptions = ArchiveOptions.Default;
 
-            IArchiveFactory archiveFactory = GetArchiveFactoryForFormat(archiveFormat);
+            List<Exception> exceptions = new List<Exception>();
 
-            if (archiveFactory is null)
-                throw new FileFormatException(IO.Properties.ExceptionMessages.UnsupportedFileFormat);
+            foreach (IArchiveFactory archiveFactory in GetArchiveFactories().Where(decoder => decoder.IsSupportedFileFormat(archiveFormat))) {
 
-            return archiveFactory.Open(stream, archiveFormat, archiveOptions);
+                try {
+
+                    return archiveFactory.Open(stream, archiveFormat, archiveOptions);
+
+                }
+                catch (NotSupportedException ex) {
+
+                    // We may get this exception if we try to open the archive with a factory that doesn't support the file access specified.
+                    // For example, some factories only support read access.
+                    // By catching the exception and trying again with the next factory, we can find a factory that supports the desired access.
+
+                    exceptions.Add(ex);
+
+                }
+
+            }
+
+            // If we reach this point, we have no factories capable of reading this file format.
+
+            if (exceptions.Any())
+                throw new AggregateException(exceptions);
+
+            throw new FileFormatException(IO.Properties.ExceptionMessages.UnsupportedFileFormat);
 
         }
 
         // Private members
 
+        private readonly Lazy<IPluginLoader> pluginLoader;
         private readonly IArchiveFactoryOptions options;
 
-        private static IEnumerable<IFileFormat> GetSupportedArchiveFormats() {
+        private IEnumerable<IArchiveFactory> GetArchiveFactories() {
 
-            return CompressionPluginLoader.GetArchiveFactories().SelectMany(decoder => decoder.GetSupportedFileFormats())
+            return pluginLoader.Value.GetPlugins<IArchiveFactory>();
+
+        }
+        private IEnumerable<IFileFormat> GetSupportedArchiveFormats() {
+
+            return GetArchiveFactories().SelectMany(decoder => decoder.GetSupportedFileFormats())
                 .OrderBy(type => type)
                 .Distinct();
 
         }
-        private static IArchiveFactory GetArchiveFactoryForFormat(IFileFormat fileFormat) {
 
-            return CompressionPluginLoader.GetArchiveFactories().FirstOrDefault(decoder => decoder.IsSupportedFileFormat(fileFormat));
+        private IPluginLoader CreateDefaultPluginLoader() {
+
+            IServiceProvider serviceProvider = new ServiceCollection()
+                .AddSingleton(options)
+                .BuildServiceProvider();
+
+            return new PluginLoader<IArchiveFactory>(serviceProvider, new PluginLoaderOptions() {
+                PluginSearchPattern = "Gsemac.IO.Compression.*.dll",
+            });
 
         }
 
