@@ -1,8 +1,10 @@
-﻿namespace Gsemac.Reflection.Plugins {
+﻿using System;
+
+namespace Gsemac.Reflection.Plugins {
 
     public interface IRequirementAttribute {
 
-        bool IsSatisfied { get; }
+        bool TestRequirement(IServiceProvider serviceProvider);
 
     }
 

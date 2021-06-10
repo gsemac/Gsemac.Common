@@ -4,12 +4,9 @@ namespace Gsemac.Reflection.Plugins {
 
     [AttributeUsage(AttributeTargets.All, AllowMultiple = true)]
     public sealed class RequiresAssembliesAttribute :
-        Attribute,
-        IRequirementAttribute {
+        RequirementAttributeBase {
 
         // Public members
-
-        public bool IsSatisfied => CheckRequirement();
 
         public bool X86 { get; set; } = false;
         public bool X64 { get; set; } = false;
@@ -20,11 +17,7 @@ namespace Gsemac.Reflection.Plugins {
 
         }
 
-        // Private members
-
-        private readonly string[] requiredAssemblyNames;
-
-        private bool CheckRequirement() {
+        public override bool TestRequirement(IServiceProvider serviceProvider) {
 
             if ((X86 || X64) && !(X86 && X64)) {
 
@@ -49,6 +42,10 @@ namespace Gsemac.Reflection.Plugins {
             return true;
 
         }
+
+        // Private members
+
+        private readonly string[] requiredAssemblyNames;
 
     }
 

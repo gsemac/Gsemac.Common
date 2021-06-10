@@ -4,8 +4,7 @@ using System.Linq;
 namespace Gsemac.Reflection.Plugins {
 
     public sealed class RequiresTypesAttribute :
-        Attribute,
-        IRequirementAttribute {
+        RequirementAttributeBase {
 
         // Public members
 
@@ -14,7 +13,13 @@ namespace Gsemac.Reflection.Plugins {
         public RequiresTypesAttribute(params string[] requiredTypeNames) {
 
             this.requiredTypeNames = requiredTypeNames;
-            typeRequirementSatisfied = new Lazy<bool>(CheckTypeRequirement);
+            typeRequirementSatisfied = new Lazy<bool>(TestRequirementInternal);
+
+        }
+
+        public override bool TestRequirement(IServiceProvider serviceProvider) {
+
+            return typeRequirementSatisfied.Value;
 
         }
 
@@ -23,7 +28,7 @@ namespace Gsemac.Reflection.Plugins {
         private readonly string[] requiredTypeNames;
         private readonly Lazy<bool> typeRequirementSatisfied;
 
-        private bool CheckTypeRequirement() {
+        private bool TestRequirementInternal() {
 
             // This requirement will only ever be checked once in the event the containing assembly does not exist.
 

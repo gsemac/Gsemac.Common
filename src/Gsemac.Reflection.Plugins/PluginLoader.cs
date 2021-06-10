@@ -26,7 +26,7 @@ namespace Gsemac.Reflection.Plugins {
             if (options is null)
                 throw new ArgumentNullException(nameof(options));
 
-            this.serviceProvider = serviceProvider;
+            this.serviceProvider = serviceProvider ?? new ServiceCollection().BuildServiceProvider();
             this.options = options;
             this.plugins = new Lazy<IEnumerable<IPlugin>>(InitializePlugins);
 
@@ -34,7 +34,7 @@ namespace Gsemac.Reflection.Plugins {
 
         public override IEnumerable<IPlugin> GetPlugins() {
 
-            return plugins.Value.Where(plugin => PluginUtilities.TestRequirementAttributes(plugin.GetType()));
+            return plugins.Value.Where(plugin => PluginUtilities.TestRequirementAttributes(plugin.GetType(), serviceProvider));
 
         }
 
@@ -78,7 +78,7 @@ namespace Gsemac.Reflection.Plugins {
                     // Attempt to load all assemblies relevant to this plugin loader.
                     // Any assemblies that cannot be loaded successfully will be silently ignored.
 
-                    foreach (string assemblyPath in assemblyPaths.Where(assemblyPath => globalLoadedAssemblies.Contains(assemblyPath)).ToArray()) {
+                    foreach (string assemblyPath in assemblyPaths.Where(assemblyPath => !globalLoadedAssemblies.Contains(assemblyPath)).ToArray()) {
 
                         try {
 

@@ -4,17 +4,20 @@ namespace Gsemac.Reflection.Plugins {
 
     [AttributeUsage(AttributeTargets.All, AllowMultiple = true)]
     public sealed class RequiresAssemblyOrTypesAttribute :
-        Attribute,
-        IRequirementAttribute {
+        RequirementAttributeBase {
 
         // Public members
-
-        public bool IsSatisfied => assemblyRequirement.IsSatisfied || typeRequirement.IsSatisfied;
 
         public RequiresAssemblyOrTypesAttribute(string containingAssemblyName, params string[] requiredTypeNames) {
 
             assemblyRequirement = new RequiresAssembliesAttribute(containingAssemblyName);
             typeRequirement = new RequiresTypesAttribute(requiredTypeNames);
+
+        }
+
+        public override bool TestRequirement(IServiceProvider serviceProvider) {
+
+            return assemblyRequirement.TestRequirement(serviceProvider) || typeRequirement.TestRequirement(serviceProvider);
 
         }
 
