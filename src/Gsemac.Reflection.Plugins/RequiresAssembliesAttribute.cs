@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Gsemac.Reflection {
+namespace Gsemac.Reflection.Plugins {
 
     [AttributeUsage(AttributeTargets.All, AllowMultiple = true)]
     public sealed class RequiresAssembliesAttribute :

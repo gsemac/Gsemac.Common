@@ -67,16 +67,7 @@ namespace Gsemac.Reflection {
             return TryLoadReferencedAssemblies(assembly, ignoreExceptions: true, out failedAssemblies);
 
         }
-
-        public static bool TestRequirementAttributes(Type type) {
-
-            IEnumerable<IRequirementAttribute> requirements =
-                Attribute.GetCustomAttributes(type).OfType<IRequirementAttribute>();
-
-            return requirements.All(requirement => requirement.IsSatisfied);
-
-        }
-
+             
         public static bool TryCast<T>(object obj, out T result) {
 
             if (TryCast(obj, typeof(T), out object resultObject)) {

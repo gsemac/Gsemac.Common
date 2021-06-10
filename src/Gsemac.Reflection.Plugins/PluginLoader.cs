@@ -34,7 +34,7 @@ namespace Gsemac.Reflection.Plugins {
 
         public override IEnumerable<IPlugin> GetPlugins() {
 
-            return plugins.Value.Where(plugin => TypeUtilities.TestRequirementAttributes(plugin.GetType()));
+            return plugins.Value.Where(plugin => PluginUtilities.TestRequirementAttributes(plugin.GetType()));
 
         }
 

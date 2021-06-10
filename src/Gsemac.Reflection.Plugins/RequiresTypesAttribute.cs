@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 
-namespace Gsemac.Reflection {
+namespace Gsemac.Reflection.Plugins {
 
     public sealed class RequiresTypesAttribute :
         Attribute,
@@ -14,7 +14,7 @@ namespace Gsemac.Reflection {
         public RequiresTypesAttribute(params string[] requiredTypeNames) {
 
             this.requiredTypeNames = requiredTypeNames;
-            this.typeRequirementSatisfied = new Lazy<bool>(CheckTypeRequirement);
+            typeRequirementSatisfied = new Lazy<bool>(CheckTypeRequirement);
 
         }
 

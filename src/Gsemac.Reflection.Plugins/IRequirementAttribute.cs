@@ -1,4 +1,4 @@
-﻿namespace Gsemac.Reflection {
+﻿namespace Gsemac.Reflection.Plugins {
 
     public interface IRequirementAttribute {
 
