@@ -25,6 +25,7 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\Gsemac.Drawing\Gsemac.Drawing.csproj" />
+		<ProjectReference Include="..\Gsemac.Reflection.Plugins\Gsemac.Reflection.Plugins.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>

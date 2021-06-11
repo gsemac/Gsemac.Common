@@ -30,7 +30,7 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\Gsemac.IO.Compression\Gsemac.IO.Compression.csproj" />
-		<ProjectReference Include="..\Gsemac.Reflection\Gsemac.Reflection.csproj" />
+		<ProjectReference Include="..\Gsemac.Reflection.Plugins\Gsemac.Reflection.Plugins.csproj" />
 	</ItemGroup>
 
 </Project>
