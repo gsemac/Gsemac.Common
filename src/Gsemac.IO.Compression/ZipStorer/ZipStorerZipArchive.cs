@@ -91,7 +91,7 @@ namespace Gsemac.IO.Compression.ZipStorer {
         public override IArchiveEntry AddEntry(Stream stream, string entryName, IArchiveEntryOptions options) {
 
             if (!CanWrite)
-                throw new UnauthorizedAccessException(Properties.ExceptionMessages.ArchiveIsReadOnly);
+                throw new InvalidOperationException(Properties.ExceptionMessages.ArchiveIsReadOnly);
 
             if (stream is null)
                 throw new ArgumentNullException(nameof(stream));

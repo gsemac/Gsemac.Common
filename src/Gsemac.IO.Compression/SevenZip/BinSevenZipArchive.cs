@@ -162,7 +162,7 @@ namespace Gsemac.IO.Compression.SevenZip {
         public override IEnumerable<IArchiveEntry> GetEntries() {
 
             if (!CanRead)
-                throw new UnauthorizedAccessException(Properties.ExceptionMessages.ArchiveIsWriteOnly);
+                throw new InvalidOperationException(Properties.ExceptionMessages.ArchiveIsWriteOnly);
 
             return existingEntries.Value
                 .Concat(newEntries)
