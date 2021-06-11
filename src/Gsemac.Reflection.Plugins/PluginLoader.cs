@@ -113,6 +113,8 @@ namespace Gsemac.Reflection.Plugins {
 #endif
             }
 
+            return null;
+
         }
 
     }
