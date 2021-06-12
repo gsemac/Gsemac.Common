@@ -84,9 +84,23 @@ namespace Gsemac.Net {
 
         // Protected members
 
-        protected HttpWebResponseBase(Uri responseUri, Stream responseStream) {
+        protected HttpWebResponseBase(Uri responseUri) {
+
+            // This purpose of this constructor is to allow the derived class to provide their own stream behavior beyond the default.
+
+            if (responseUri is null)
+                throw new ArgumentNullException(nameof(responseUri));
 
             this.responseUri = responseUri;
+            this.responseStream = null;
+
+        }
+        protected HttpWebResponseBase(Uri responseUri, Stream responseStream) :
+            this(responseUri) {
+
+            if (responseStream is null)
+                throw new ArgumentNullException(nameof(responseStream));
+
             this.responseStream = responseStream;
 
         }
