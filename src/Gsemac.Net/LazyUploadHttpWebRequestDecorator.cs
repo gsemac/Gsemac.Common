@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Gsemac.IO.Extensions;
+using System;
 using System.IO;
 using System.Net;
 
@@ -14,7 +15,16 @@ namespace Gsemac.Net {
         // Public members
 
         public LazyUploadHttpWebRequestDecorator(IHttpWebRequest innerHttpWebRequest) :
-            base(innerHttpWebRequest) {
+            this(innerHttpWebRequest, () => new MemoryStream()) {
+        }
+        public LazyUploadHttpWebRequestDecorator(IHttpWebRequest innerHttpWebRequest, Func<Stream> steamFactory) :
+          base(innerHttpWebRequest) {
+
+            if (steamFactory is null)
+                throw new ArgumentNullException(nameof(steamFactory));
+
+            this.requestStream = new Lazy<Stream>(() => steamFactory());
+
         }
 
         public override Stream GetRequestStream() {
@@ -41,7 +51,7 @@ namespace Gsemac.Net {
 
         // Private members
 
-        private readonly Lazy<MemoryStream> requestStream = new Lazy<MemoryStream>(() => new MemoryStream());
+        private readonly Lazy<Stream> requestStream;
 
     }
 
