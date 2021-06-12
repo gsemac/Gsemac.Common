@@ -44,7 +44,9 @@ namespace Gsemac.Drawing.Imaging {
 
         private IPluginLoader CreateDefaultPluginLoader() {
 
-            return new PluginLoader<IImageCodec>();
+            return new PluginLoader<IImageCodec>(new PluginLoaderOptions() {
+                PluginSearchPattern = "Gsemac.Drawing.Imaging.*.dll",
+            });
 
         }
         private IEnumerable<IImageCodec> GetImageCodecs() {
