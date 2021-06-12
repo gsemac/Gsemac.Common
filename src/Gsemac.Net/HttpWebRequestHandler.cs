@@ -27,7 +27,7 @@ namespace Gsemac.Net {
 
         }
 
-        protected internal override WebResponse Send(WebRequest request, CancellationToken cancellationToken) {
+        protected sealed internal override WebResponse Send(WebRequest request, CancellationToken cancellationToken) {
 
             IHttpWebResponse httpWebResponse;
 
@@ -49,7 +49,7 @@ namespace Gsemac.Net {
             return (WebResponse)httpWebResponse;
 
         }
-        protected internal override Task<WebResponse> SendAsync(WebRequest request, CancellationToken cancellationToken) {
+        protected sealed internal override Task<WebResponse> SendAsync(WebRequest request, CancellationToken cancellationToken) {
 
             Task<IHttpWebResponse> httpWebResponse;
 
