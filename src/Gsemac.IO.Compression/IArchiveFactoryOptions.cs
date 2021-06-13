@@ -2,8 +2,8 @@
 
     public interface IArchiveFactoryOptions {
 
-        string SevenZipExecutablePath { get; }
-        string WinRarExecutablePath { get; }
+        string SevenZipDirectoryPath { get; }
+        string WinrarDirectoryPath { get; }
 
     }
 

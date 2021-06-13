@@ -10,12 +10,24 @@ namespace Gsemac.IO.Compression.SevenZip {
 
         // Public members
 
+        public static string SevenZipDirectoryPath => GetSevenZipDirectoryPath();
         public static string SevenZipExecutablePath => sevenZipExecutablePath.Value;
+        public static string SevenZipExecutableFilename => "7z.exe";
 
         // Private members
 
         private static readonly Lazy<string> sevenZipExecutablePath = new Lazy<string>(GetSevenZipExecutablePath);
 
+        private static string GetSevenZipDirectoryPath() {
+
+            string filePath = sevenZipExecutablePath.Value;
+
+            if (!string.IsNullOrWhiteSpace(filePath))
+                filePath = Path.GetDirectoryName(filePath);
+
+            return filePath;
+
+        }
         private static string GetSevenZipExecutablePath() {
 
             IFileSystemAssemblyResolver resolver = new FileSystemAssemblyResolver() {
@@ -30,7 +42,7 @@ namespace Gsemac.IO.Compression.SevenZip {
             foreach (string probingPath in probingPaths.Distinct())
                 resolver.ProbingPaths.Add(probingPath);
 
-            return resolver.GetAssemblyPath("7z.exe");
+            return resolver.GetAssemblyPath(SevenZipExecutableFilename);
 
         }
 

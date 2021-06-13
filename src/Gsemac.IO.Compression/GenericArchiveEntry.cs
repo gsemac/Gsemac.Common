@@ -1,8 +1,8 @@
 ﻿using System;
 
-namespace Gsemac.IO.Compression.SevenZip {
+namespace Gsemac.IO.Compression {
 
-    internal class BinSevenZipArchiveEntry :
+    internal class GenericArchiveEntry :
         IArchiveEntry {
 
         public string Comment { get; set; }

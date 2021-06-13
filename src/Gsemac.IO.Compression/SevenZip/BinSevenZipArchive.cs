@@ -21,9 +21,12 @@ namespace Gsemac.IO.Compression.SevenZip {
             get => throw new NotSupportedException(Properties.ExceptionMessages.ArchiveDoesNotSupportReadingComments);
             set => throw new NotSupportedException(Properties.ExceptionMessages.ArchiveDoesNotSupportWritingComments);
         }
-        public override CompressionLevel CompressionLevel { get; set; } = CompressionLevel.Maximum;
+        public override CompressionLevel CompressionLevel {
+            get => throw new NotSupportedException(Properties.ExceptionMessages.ArchiveDoesNotSupportGettingCompressionLevel);
+            set => compressionLevel = value;
+        }
 
-        public BinSevenZipArchive(Stream stream, string sevenZipExecutablePath, IFileFormat archiveFormat, IArchiveOptions options) {
+        public BinSevenZipArchive(Stream stream, string sevenZipDirectoryPath, IFileFormat archiveFormat, IArchiveOptions options) {
 
             if (stream is null)
                 throw new ArgumentNullException(nameof(stream));
@@ -31,11 +34,13 @@ namespace Gsemac.IO.Compression.SevenZip {
             if (archiveFormat is null)
                 throw new ArgumentNullException(nameof(archiveFormat));
 
-            if (string.IsNullOrWhiteSpace(sevenZipExecutablePath))
-                sevenZipExecutablePath = SevenZipUtilities.SevenZipExecutablePath;
+            if (string.IsNullOrWhiteSpace(sevenZipDirectoryPath))
+                sevenZipDirectoryPath = SevenZipUtilities.SevenZipDirectoryPath;
 
-            if (!File.Exists(sevenZipExecutablePath))
-                throw new ArgumentException("'7z.exe' could not be located at the given file path.");
+            this.sevenZipDirectoryPath = sevenZipDirectoryPath;
+
+            if (!File.Exists(GetSevenZipExecutablePath()))
+                throw new FileNotFoundException(Properties.ExceptionMessages.SevenZipExecutableNotFound, sevenZipDirectoryPath);
 
             if (stream is FileStream fileStream) {
 
@@ -58,12 +63,11 @@ namespace Gsemac.IO.Compression.SevenZip {
 
                 }
 
-                filePath = Path.GetFullPath(fileStream.Name);
-                this.sevenZipExecutablePath = sevenZipExecutablePath;
+                this.filePath = Path.GetFullPath(fileStream.Name);
                 this.archiveFormat = archiveFormat;
                 this.options = options;
                 this.existingEntries = new Lazy<List<IArchiveEntry>>(ReadArchiveEntries);
-                CompressionLevel = options.CompressionLevel;
+                this.compressionLevel = options.CompressionLevel;
 
                 // We must close the file stream to ensure that 7-Zip can access the archive.
 
@@ -96,7 +100,7 @@ namespace Gsemac.IO.Compression.SevenZip {
                 if (existingEntry is object && !options.Overwrite)
                     throw new ArchiveEntryExistsException();
 
-                newEntries.Add(new NewEntry() {
+                newEntries.Add(new NewArchiveEntry() {
                     Name = SanitizeEntryName(entryName),
                     LastModified = DateTimeOffset.Now,
                     Comment = options.Comment,
@@ -180,34 +184,37 @@ namespace Gsemac.IO.Compression.SevenZip {
 
         // Private members
 
-        private class NewEntry :
-            BinSevenZipArchiveEntry {
+        private class NewArchiveEntry :
+            GenericArchiveEntry {
 
             public string FilePath { get; set; }
 
         }
 
         private readonly string filePath;
-        private readonly string sevenZipExecutablePath;
+        private readonly string sevenZipDirectoryPath;
         private readonly IFileFormat archiveFormat;
         private readonly IArchiveOptions options;
         private readonly Lazy<List<IArchiveEntry>> existingEntries;
-        private readonly List<NewEntry> newEntries = new List<NewEntry>();
+        private readonly List<NewArchiveEntry> newEntries = new List<NewArchiveEntry>();
         private readonly List<IArchiveEntry> deletedEntries = new List<IArchiveEntry>();
+        private CompressionLevel compressionLevel = CompressionLevel.Maximum;
         private bool archiveIsClosed = false;
 
         private List<IArchiveEntry> ReadArchiveEntries() {
 
             List<IArchiveEntry> items = new List<IArchiveEntry>();
 
-            if (File.Exists(filePath)) {
+            if (File.Exists(filePath) && FileUtilities.GetFileSize(filePath) > 0) {
 
-                string arguments = new CmdArgumentsBuilder()
+                ProcessStartInfo processStartInfo = CreateProcessStartInfo();
+
+                processStartInfo.Arguments = new CmdArgumentsBuilder()
                     .WithArgument("l")
                     .WithArgument(filePath)
                     .ToString();
 
-                using (Stream processStream = new ProcessStream(sevenZipExecutablePath, arguments, ProcessStreamOptions.RedirectStandardOutput))
+                using (Stream processStream = new ProcessStream(processStartInfo, ProcessStreamOptions.RedirectStandardOutput))
                 using (StreamReader streamReader = new StreamReader(processStream)) {
 
                     string output = streamReader.ReadToEnd();
@@ -217,7 +224,7 @@ namespace Gsemac.IO.Compression.SevenZip {
                         if (match.Groups["attr"].Value.Contains("D"))
                             continue;
 
-                        BinSevenZipArchiveEntry entry = new BinSevenZipArchiveEntry() {
+                        GenericArchiveEntry entry = new GenericArchiveEntry() {
                             Name = SanitizeEntryName(match.Groups["name"].Value.Trim()),
                         };
 
@@ -244,12 +251,22 @@ namespace Gsemac.IO.Compression.SevenZip {
         private ProcessStartInfo CreateProcessStartInfo() {
 
             ProcessStartInfo processStartInfo = new ProcessStartInfo() {
-                FileName = sevenZipExecutablePath,
+                FileName = GetSevenZipExecutablePath(),
                 UseShellExecute = false,
-                CreateNoWindow = true,
+                CreateNoWindow = false,
             };
 
             return processStartInfo;
+
+        }
+        private string GetSevenZipExecutablePath() {
+
+            string executablePath = Path.Combine(sevenZipDirectoryPath, "7z.exe");
+
+            if (!File.Exists(executablePath))
+                throw new FileNotFoundException(Properties.ExceptionMessages.SevenZipExecutableNotFound, executablePath);
+
+            return executablePath;
 
         }
         private void CommitChanges() {
@@ -278,7 +295,7 @@ namespace Gsemac.IO.Compression.SevenZip {
 
             if (newEntries.Any()) {
 
-                foreach (NewEntry entry in newEntries) {
+                foreach (NewArchiveEntry entry in newEntries) {
 
                     // Add the entry to the archive.
 
@@ -339,7 +356,7 @@ namespace Gsemac.IO.Compression.SevenZip {
         }
         private void AddCompressionLevelArguments(ICmdArgumentsBuilder argumentsBuilder) {
 
-            switch (CompressionLevel) {
+            switch (compressionLevel) {
 
                 case CompressionLevel.Store:
 

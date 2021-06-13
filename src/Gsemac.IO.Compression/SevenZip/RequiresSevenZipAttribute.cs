@@ -17,7 +17,8 @@ namespace Gsemac.IO.Compression.SevenZip {
             if (archiveFactoryOptions is null)
                 return false;
 
-            return File.Exists(archiveFactoryOptions.SevenZipExecutablePath) || File.Exists(SevenZipUtilities.SevenZipExecutablePath);
+            return File.Exists(Path.Combine(archiveFactoryOptions.SevenZipDirectoryPath, SevenZipUtilities.SevenZipExecutableFilename)) || 
+                File.Exists(SevenZipUtilities.SevenZipExecutablePath);
 
         }
 
