@@ -220,51 +220,6 @@ namespace Gsemac.Net.Extensions {
 
         }
 
-        public static void CopyTo(this IHttpWebRequest httpWebRequest, IHttpWebRequest other) {
-
-            other.Method = httpWebRequest.Method;
-            other.AuthenticationLevel = httpWebRequest.AuthenticationLevel;
-            other.Timeout = httpWebRequest.Timeout;
-            other.PreAuthenticate = httpWebRequest.PreAuthenticate;
-            other.Proxy = httpWebRequest.Proxy;
-            other.UseDefaultCredentials = httpWebRequest.UseDefaultCredentials;
-            other.Credentials = httpWebRequest.Credentials;
-            other.ContentType = httpWebRequest.ContentType;
-
-            if (httpWebRequest.ContentLength >= 0) // HttpWebRequest will throw an exception if copying unitialized ContentLength
-                other.ContentLength = httpWebRequest.ContentLength;
-
-            other.Headers = httpWebRequest.Headers;
-            other.ConnectionGroupName = httpWebRequest.ConnectionGroupName;
-            other.ImpersonationLevel = httpWebRequest.ImpersonationLevel;
-            other.CachePolicy = httpWebRequest.CachePolicy;
-
-            other.Accept = httpWebRequest.Accept;
-            other.Expect = httpWebRequest.Expect;
-            other.ClientCertificates = httpWebRequest.ClientCertificates;
-            other.CookieContainer = httpWebRequest.CookieContainer;
-            other.ReadWriteTimeout = httpWebRequest.ReadWriteTimeout;
-            other.ContinueDelegate = httpWebRequest.ContinueDelegate;
-            other.Host = httpWebRequest.Host;
-            other.Referer = httpWebRequest.Referer;
-            other.MaximumAutomaticRedirections = httpWebRequest.MaximumAutomaticRedirections;
-            other.MaximumResponseHeadersLength = httpWebRequest.MaximumResponseHeadersLength;
-            other.ProtocolVersion = httpWebRequest.ProtocolVersion;
-            other.UserAgent = httpWebRequest.UserAgent;
-            other.MediaType = httpWebRequest.MediaType;
-            other.Connection = httpWebRequest.Connection;
-            other.Date = httpWebRequest.Date;
-            other.AutomaticDecompression = httpWebRequest.AutomaticDecompression;
-            other.SendChunked = httpWebRequest.SendChunked;
-            other.UnsafeAuthenticatedConnectionSharing = httpWebRequest.UnsafeAuthenticatedConnectionSharing;
-            other.Pipelined = httpWebRequest.Pipelined;
-            other.KeepAlive = httpWebRequest.KeepAlive;
-            other.AllowWriteStreamBuffering = httpWebRequest.AllowWriteStreamBuffering;
-            other.AllowAutoRedirect = httpWebRequest.AllowAutoRedirect;
-            other.IfModifiedSince = httpWebRequest.IfModifiedSince;
-
-        }
-
         // Private members
 
         private static void SetConnectionHeader(IHttpWebRequest httpWebRequest, string value) {
