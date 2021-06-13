@@ -131,5 +131,32 @@ namespace Gsemac.IO.Compression.Properties {
                 return ResourceManager.GetString("ArchiveOnlySupportsFileStreams", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &apos;7z.exe&apos; was not found..
+        /// </summary>
+        internal static string SevenZipExecutableNotFound {
+            get {
+                return ResourceManager.GetString("SevenZipExecutableNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &apos;UnRAR.exe&apos; was not found..
+        /// </summary>
+        internal static string UnrarExecutableNotFound {
+            get {
+                return ResourceManager.GetString("UnrarExecutableNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &apos;Rar.exe&apos; was not found..
+        /// </summary>
+        internal static string WinrarExecutableNotFound {
+            get {
+                return ResourceManager.GetString("WinrarExecutableNotFound", resourceCulture);
+            }
+        }
     }
 }

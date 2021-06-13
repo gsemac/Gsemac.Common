@@ -141,4 +141,13 @@
   <data name="ArchiveOnlySupportsFileStreams" xml:space="preserve">
     <value>This archive implementation can only be used with FileStream instances.</value>
   </data>
+  <data name="SevenZipExecutableNotFound" xml:space="preserve">
+    <value>'7z.exe' was not found.</value>
+  </data>
+  <data name="UnrarExecutableNotFound" xml:space="preserve">
+    <value>'UnRAR.exe' was not found.</value>
+  </data>
+  <data name="WinrarExecutableNotFound" xml:space="preserve">
+    <value>'Rar.exe' was not found.</value>
+  </data>
 </root>
