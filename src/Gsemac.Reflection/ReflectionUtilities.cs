@@ -41,11 +41,17 @@ namespace Gsemac.Reflection {
                 if (destinationProperty is null || !destinationProperty.CanWrite)
                     continue;
 
-                if (destinationProperty.GetSetMethod(true) != null && destinationProperty.GetSetMethod(true).IsPrivate && !options.CopyNonPublicProperties)
-                    continue;
+                MethodInfo destinationPropertySetMethod = destinationProperty.GetSetMethod(nonPublic: true);
 
-                if ((destinationProperty.GetSetMethod().Attributes & MethodAttributes.Static) != 0)
-                    continue;
+                if (destinationPropertySetMethod is object) {
+
+                    if (destinationPropertySetMethod.IsPrivate)
+                        continue;
+
+                    if (destinationPropertySetMethod.Attributes.HasFlag(MethodAttributes.Static))
+                        continue;
+
+                }
 
                 if (!destinationProperty.PropertyType.IsAssignableFrom(sourceProperty.PropertyType))
                     continue;
