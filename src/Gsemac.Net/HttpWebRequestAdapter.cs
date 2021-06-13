@@ -24,7 +24,7 @@ namespace Gsemac.Net {
             if (webRequest is HttpWebRequest httpWebRequest)
                 this.httpWebRequest = httpWebRequest;
             else
-                throw new ArgumentException("WebRequest was not an instance of class HttpWebRequest.", nameof(webRequest));
+                throw new ArgumentException($"'{nameof(webRequest)}' was not an instance of class '{nameof(HttpWebRequest)}'.", nameof(webRequest));
 
         }
         public HttpWebRequestAdapter(HttpWebRequest httpWebRequest) {
