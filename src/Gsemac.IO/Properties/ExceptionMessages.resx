@@ -138,6 +138,9 @@
   <data name="OperationTimedOut" xml:space="preserve">
     <value>The operation timed out.</value>
   </data>
+  <data name="ReadOperationTimedOut" xml:space="preserve">
+    <value>The read operation timed out.</value>
+  </data>
   <data name="StreamDoesNotSupportSeeking" xml:space="preserve">
     <value>Stream does not support seeking.</value>
   </data>

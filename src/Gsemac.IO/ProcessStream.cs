@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -32,13 +33,9 @@ namespace Gsemac.IO {
         /// </summary>
         public bool Blocking { get; set; } = true;
         /// <summary>
-        /// Returns true if the process has been started.
-        /// </summary>
-        public bool ProcessStarted { get; private set; } = false;
-        /// <summary>
         /// Returns true if the process has exited.
         /// </summary>
-        public bool ProcessExited => process is null || process.HasExited;
+        public bool ProcessExited => HasProcessExited();
         /// <summary>
         /// Returns the exit code of the process.
         /// </summary>
@@ -113,7 +110,7 @@ namespace Gsemac.IO {
         /// </summary>
         public override void Flush() {
 
-            if (ProcessStarted && !ProcessExited && stdinStream != null) {
+            if (HasProcessStarted() && !HasProcessExited() && stdinStream != null) {
 
                 void performWrite() {
 
@@ -135,31 +132,31 @@ namespace Gsemac.IO {
         public override int Read(byte[] buffer, int offset, int count) {
 
             Stream stream = stdoutStream;
+            int bytesRead = 0;
 
-            if (stream != null) {
+            if (stream is object) {
 
                 // Flush before reading in case the user wrote anything for the process to respond to.
+
                 Flush();
 
-                int bytesRead = stream.Read(buffer, offset, count);
+                bytesRead = stream.Read(buffer, offset, count);
 
                 // If we didn't read any data, it's possible that the process just hasn't written any yet.
                 // We'll block until we get data or the timeout is reached.
 
-                while (bytesRead <= 0 && Blocking && Thread.VolatileRead(ref tasksUsingStdOutStream) > 0) {
+                while (bytesRead <= 0 && Blocking && readerTasksWritingToStdOut > 0) {
 
-                    if (!readerLock.WaitOne(ReadTimeout))
-                        throw new IOException("Read operation timed out.");
+                    if (!readerTaskMutex.WaitOne(ReadTimeout))
+                        throw new TimeoutException(Properties.ExceptionMessages.ReadOperationTimedOut);
 
                     bytesRead = stream.Read(buffer, offset, count);
 
                 }
 
-                return bytesRead;
-
             }
-            else
-                return 0;
+
+            return bytesRead;
 
         }
         public override long Seek(long offset, SeekOrigin origin) => throw new NotSupportedException(Properties.ExceptionMessages.StreamDoesNotSupportSeeking);
@@ -203,18 +200,18 @@ namespace Gsemac.IO {
             if (stdinStream != null)
                 stdinStream.Dispose();
 
-            if (cancelTokenSource != null)
-                cancelTokenSource.Dispose();
+            if (cancellationTokenSource != null)
+                cancellationTokenSource.Dispose();
 
-            if (readerLock != null)
-                readerLock.Dispose();
+            if (readerTaskMutex != null)
+                readerTaskMutex.Dispose();
 
             process = null;
             stdoutStream = null;
             stderrStream = null;
             stdinStream = null;
-            cancelTokenSource = null;
-            readerLock = null;
+            cancellationTokenSource = null;
+            readerTaskMutex = null;
 
         }
 
@@ -225,6 +222,7 @@ namespace Gsemac.IO {
             if (disposing) {
 
                 // Abort before calling Close() so we don't wait for reader tasks to finish.
+
                 AbortProcess(false);
 
                 Close();
@@ -240,16 +238,17 @@ namespace Gsemac.IO {
         private const int bufferSize = 4096;
 
         private Process process;
+        private bool processHasStarted = false;
         private int exitCode = 0;
         private readonly ProcessStreamOptions options = ProcessStreamOptions.Default;
         private ConcurrentMemoryStream stdoutStream;
         private ConcurrentMemoryStream stderrStream;
         private ConcurrentMemoryStream stdinStream;
 
-        private CancellationTokenSource cancelTokenSource = new CancellationTokenSource();
-        private AutoResetEvent readerLock = new AutoResetEvent(false);
-        private readonly List<Task> tasks = new List<Task>();
-        private int tasksUsingStdOutStream = 0;
+        private CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
+        private AutoResetEvent readerTaskMutex = new AutoResetEvent(false);
+        private readonly List<Task> readerTasks = new List<Task>();
+        private volatile int readerTasksWritingToStdOut = 0;
 
         private bool GetCanRead() {
 
@@ -291,9 +290,9 @@ namespace Gsemac.IO {
         }
         private void StartProcess(ProcessStartInfo startInfo) {
 
-            if (!ProcessStarted) {
+            if (!HasProcessStarted()) {
 
-                ProcessStarted = true;
+                processHasStarted = true;
 
                 CreateProcess(startInfo ?? new ProcessStartInfo());
 
@@ -307,6 +306,19 @@ namespace Gsemac.IO {
                 if (options.HasFlag(ProcessStreamOptions.RedirectStandardError))
                     StartStandardErrorReaderTask();
 
+                if (options.HasFlag(ProcessStreamOptions.RedirectStandardOutput) || options.HasFlag(ProcessStreamOptions.RedirectStandardError)) {
+
+                    // Wait for at least one of the reader tasks to begin reading.
+                    // We need to do this before any calls to Read, or else tasksUsingStdOutStream <= 0 and the read will unblock and think there's nothing left.
+
+                    DateTimeOffset startTime = DateTimeOffset.Now;
+                    TimeSpan timeout = TimeSpan.FromSeconds(5);
+
+                    while (readerTasksWritingToStdOut <= 0 && !readerTasks.All(task => task.IsCompleted) && (DateTimeOffset.Now - startTime) < timeout)
+                        Thread.Sleep(TimeSpan.FromMilliseconds(100));
+
+                }
+
             }
 
         }
@@ -315,12 +327,123 @@ namespace Gsemac.IO {
             CancelReaderThreadsAndWait(waitForReaderThreadsToExit);
 
         }
+
+        private bool HasProcessStarted() {
+
+            return processHasStarted;
+
+        }
+        private bool HasProcessExited() {
+
+            return process?.HasExited ?? true;
+
+        }
+
+        private Task StartStandardOutputReaderTask() {
+
+            CancellationToken cancellationToken = cancellationTokenSource.Token;
+            Stream inputStream = process.StandardOutput.BaseStream;
+            Stream outputStream = stdoutStream;
+
+            Task task = Task.Factory.StartNew(() => {
+
+                Interlocked.Increment(ref readerTasksWritingToStdOut);
+
+                int bytesRead = 0;
+                byte[] buffer = new byte[bufferSize];
+
+                do {
+
+                    bytesRead = inputStream.Read(buffer, 0, buffer.Length);
+
+                    if (bytesRead > 0) {
+
+                        outputStream.Write(buffer, 0, bytesRead);
+
+                        readerTaskMutex.Set();
+
+                    }
+
+                } while (bytesRead > 0 && !cancellationToken.IsCancellationRequested && process is object);
+
+                // Unblock read if we were the only one still using the stdout stream.
+
+                Interlocked.Decrement(ref readerTasksWritingToStdOut);
+
+                if (readerTasksWritingToStdOut <= 0)
+                    readerTaskMutex.Set();
+
+            }, cancellationToken);
+
+            readerTasks.Add(task);
+
+            return task;
+
+        }
+        private Task StartStandardErrorReaderTask() {
+
+            CancellationToken cancellationToken = cancellationTokenSource.Token;
+
+            bool redirectingStdErrToStdOut = options.HasFlag(ProcessStreamOptions.RedirectStandardErrorToStandardOutput);
+            bool redirectingStdErrOnly = !options.HasFlag(ProcessStreamOptions.RedirectStandardOutput) && options.HasFlag(ProcessStreamOptions.RedirectStandardError);
+            bool writingToStdOut = redirectingStdErrToStdOut | redirectingStdErrOnly;
+
+            Stream inputStream = process.StandardError.BaseStream;
+            Stream outputStream = stderrStream;
+
+            Task task = Task.Factory.StartNew(() => {
+
+                if (writingToStdOut) {
+
+                    Interlocked.Increment(ref readerTasksWritingToStdOut);
+
+                    outputStream = stdoutStream;
+
+                }
+
+                // Continously read from the stream until the task is cancelled or there's nothing left to read.
+
+                int bytesRead = 0;
+                byte[] buffer = new byte[bufferSize];
+
+                do {
+
+                    bytesRead = inputStream.Read(buffer, 0, buffer.Length);
+
+                    if (bytesRead > 0) {
+
+                        outputStream.Write(buffer, 0, bytesRead);
+
+                        if (writingToStdOut)
+                            readerTaskMutex.Set();
+
+                    }
+
+                } while (bytesRead > 0 && !cancellationToken.IsCancellationRequested && process is object);
+
+                if (writingToStdOut) {
+
+                    // If we were writing to the stdout stream and were the only one still doing so, we need to unblock read.
+
+                    Interlocked.Decrement(ref readerTasksWritingToStdOut);
+
+                    if (readerTasksWritingToStdOut <= 0)
+                        readerTaskMutex.Set();
+
+                }
+
+            }, cancellationToken);
+
+            return task;
+
+        }
+
         private void CancelReaderThreadsAndWait(bool waitForReaderThreadsToExit) {
 
             // Cancel all tasks.
 
-            if (!waitForReaderThreadsToExit && cancelTokenSource != null)
-                cancelTokenSource.Cancel();
+            if (!waitForReaderThreadsToExit && cancellationTokenSource != null)
+                cancellationTokenSource.Cancel();
 
             // Kill the process if it hasn't exited yet (so any tasks blocked on read unblock).
 
@@ -332,108 +455,10 @@ namespace Gsemac.IO {
 
             // Wait for all tasks to exit.
 
-            foreach (Task task in tasks)
+            foreach (Task task in readerTasks)
                 task.Wait();
 
-            tasks.Clear();
-
-        }
-
-        private void StartStandardOutputReaderTask() {
-
-            CancellationToken token = cancelTokenSource.Token;
-
-            tasks.Add(Task.Factory.StartNew(() => {
-
-                Stream inStream = process.StandardOutput.BaseStream;
-                Stream outStream = stdoutStream;
-
-                Interlocked.Increment(ref this.tasksUsingStdOutStream);
-
-                int bytesRead = 0;
-                byte[] buffer = new byte[bufferSize];
-
-                do {
-
-                    bytesRead = inStream.Read(buffer, 0, buffer.Length);
-
-                    if (bytesRead > 0) {
-
-                        outStream.Write(buffer, 0, bytesRead);
-
-                        readerLock.Set();
-
-                    }
-
-                } while (bytesRead > 0 && !token.IsCancellationRequested && process != null);
-
-                // Unblock read if we were the only one still using the stdout stream.
-
-                Interlocked.Decrement(ref this.tasksUsingStdOutStream);
-
-                int tasksUsingStdOutStream = Thread.VolatileRead(ref this.tasksUsingStdOutStream);
-
-                if (tasksUsingStdOutStream <= 0)
-                    readerLock.Set();
-
-            }));
-
-        }
-        private void StartStandardErrorReaderTask() {
-
-            CancellationToken token = cancelTokenSource.Token;
-
-            tasks.Add(Task.Factory.StartNew(() => {
-
-                bool redirectingToStdOutStream = options.HasFlag(ProcessStreamOptions.RedirectStandardErrorToStandardOutput);
-                bool readingStdErrOnly = !options.HasFlag(ProcessStreamOptions.RedirectStandardOutput) && options.HasFlag(ProcessStreamOptions.RedirectStandardError);
-                bool usingStdOutStream = redirectingToStdOutStream | readingStdErrOnly;
-
-                Stream inStream = process.StandardError.BaseStream;
-                Stream outStream = stderrStream;
-
-                if (usingStdOutStream) {
-
-                    Interlocked.Increment(ref tasksUsingStdOutStream);
-
-                    outStream = stdoutStream;
-
-                }
-
-                // Continously read from the stream until the task is cancelled or there's nothing left to read.
-
-                int bytesRead = 0;
-                byte[] buffer = new byte[bufferSize];
-
-                do {
-
-                    bytesRead = inStream.Read(buffer, 0, buffer.Length);
-
-                    if (bytesRead > 0) {
-
-                        outStream.Write(buffer, 0, bytesRead);
-
-                        if (usingStdOutStream)
-                            readerLock.Set();
-
-                    }
-
-                } while (bytesRead > 0 && !token.IsCancellationRequested && process != null);
-
-                if (usingStdOutStream) {
-
-                    // If we were writing to the stdout stream and were the only one still doing so, we need to unblock read.
-
-                    Interlocked.Decrement(ref this.tasksUsingStdOutStream);
-
-                    int tasksUsingStdOutStream = Thread.VolatileRead(ref this.tasksUsingStdOutStream);
-
-                    if (tasksUsingStdOutStream <= 0)
-                        readerLock.Set();
-
-                }
-
-            }));
+            readerTasks.Clear();
 
         }
 

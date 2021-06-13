@@ -124,6 +124,15 @@ namespace Gsemac.IO.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The read operation timed out..
+        /// </summary>
+        internal static string ReadOperationTimedOut {
+            get {
+                return ResourceManager.GetString("ReadOperationTimedOut", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Stream does not support seeking..
         /// </summary>
         internal static string StreamDoesNotSupportSeeking {
