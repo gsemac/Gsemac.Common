@@ -58,7 +58,10 @@ namespace Gsemac.Reflection {
 
                 try {
 
-                    destinationProperty.SetValue(toObject, sourceProperty.GetValue(fromObject, null), null);
+                    object sourceValue = sourceProperty.GetValue(fromObject, null);
+
+                    if (sourceValue is object || options.CopyNullProperties)
+                        destinationProperty.SetValue(toObject, sourceValue, null);
 
                 }
                 catch (Exception) {
