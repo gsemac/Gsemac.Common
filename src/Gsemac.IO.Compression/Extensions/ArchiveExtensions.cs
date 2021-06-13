@@ -14,7 +14,7 @@ namespace Gsemac.IO.Compression.Extensions {
 
         public static void AddFile(this IArchive archive, string filePath) {
 
-            archive.AddFile(filePath, filePath);
+            archive.AddFile(filePath, PathUtilities.GetFilename(filePath));
 
         }
         public static void AddFile(this IArchive archive, string filePath, string entryName) {
