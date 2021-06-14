@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using Gsemac.Net.Extensions;
+using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -29,46 +30,34 @@ namespace Gsemac.Net {
 
         protected sealed internal override WebResponse Send(WebRequest request, CancellationToken cancellationToken) {
 
-            IHttpWebResponse httpWebResponse;
+            IHttpWebRequest httpWebRequest = request.AsHttpWebRequest();
 
-            switch (request) {
+            if (httpWebRequest is null) {
 
-                case HttpWebRequest httpWebRequest:
-                    httpWebResponse = Send(new HttpWebRequestAdapter(httpWebRequest), cancellationToken);
-                    break;
-
-                case IHttpWebRequest iHttpWebRequest:
-                    httpWebResponse = Send(iHttpWebRequest, cancellationToken);
-                    break;
-
-                default:
-                    return base.Send(request, cancellationToken);
+                return base.Send(request, cancellationToken);
 
             }
+            else {
 
-            return (WebResponse)httpWebResponse;
+                return (WebResponse)Send(httpWebRequest, cancellationToken);
+
+            }
 
         }
         protected sealed internal override Task<WebResponse> SendAsync(WebRequest request, CancellationToken cancellationToken) {
 
-            Task<IHttpWebResponse> httpWebResponse;
+            IHttpWebRequest httpWebRequest = request.AsHttpWebRequest();
 
-            switch (request) {
+            if (httpWebRequest is null) {
 
-                case HttpWebRequest httpWebRequest:
-                    httpWebResponse = SendAsync(new HttpWebRequestAdapter(httpWebRequest), cancellationToken);
-                    break;
-
-                case IHttpWebRequest iHttpWebRequest:
-                    httpWebResponse = SendAsync(iHttpWebRequest, cancellationToken);
-                    break;
-
-                default:
-                    return base.SendAsync(request, cancellationToken);
+                return base.SendAsync(request, cancellationToken);
 
             }
+            else {
 
-            return httpWebResponse.ContinueWith(t => (WebResponse)t.Result);
+                return SendAsync(httpWebRequest, cancellationToken).ContinueWith(t => (WebResponse)t.Result);
+
+            }
 
         }
 
