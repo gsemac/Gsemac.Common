@@ -20,7 +20,10 @@ namespace Gsemac.Polyfills.Microsoft.Extensions.DependencyInjection {
             if (disposedValue)
                 throw new ObjectDisposedException(nameof(ScopedServiceProvider));
 
-            lock (scopedServicesDictMutex) {
+            if (serviceType == typeof(IServiceProvider))
+                return this;
+
+            lock (scopedServicesDict) {
 
                 if (scopedServicesDict.TryGetValue(serviceType, out object scopedServiceObject))
                     return scopedServiceObject;
@@ -49,7 +52,6 @@ namespace Gsemac.Polyfills.Microsoft.Extensions.DependencyInjection {
 
         private bool disposedValue;
         private readonly ServiceProvider serviceProvider;
-        private readonly object scopedServicesDictMutex = new object();
         private readonly IDictionary<Type, object> scopedServicesDict = new Dictionary<Type, object>();
 
         private void Dispose(bool disposing) {

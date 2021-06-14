@@ -1,5 +1,7 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Gsemac.Polyfills.Microsoft.Extensions.DependencyInjection.Tests {
 
@@ -224,6 +226,54 @@ namespace Gsemac.Polyfills.Microsoft.Extensions.DependencyInjection.Tests {
                 .BuildServiceProvider(new ServiceProviderOptions() { ValidateScopes = true });
 
             Assert.ThrowsException<InvalidOperationException>(() => serviceProvider.GetService<IMyService>());
+
+        }
+
+        [TestMethod]
+        public void TestGetServiceWithServiceProvider() {
+
+            IServiceProvider serviceProvider = new ServiceCollection()
+                .BuildServiceProvider();
+
+            Assert.IsTrue(serviceProvider.GetService<IServiceProvider>().Equals(serviceProvider));
+
+        }
+        [TestMethod]
+        public void TestGetServiceWithSecondServiceProvider() {
+
+            // Attempting to resolve IServiceProvider should always return the IServiceProvider instance itself instead of the one that has been registered.
+
+            IServiceProvider serviceProvider1 = new ServiceCollection()
+                .AddSingleton(new MyNamedService("hello"))
+                .BuildServiceProvider();
+
+            IServiceProvider serviceProvider2 = new ServiceCollection()
+                .AddSingleton(serviceProvider1)
+                .AddSingleton(new MyNamedService("world"))
+                .BuildServiceProvider();
+
+            Assert.IsTrue(serviceProvider2.GetRequiredService<IServiceProvider>().GetRequiredService<MyNamedService>().Name.Equals("world"));
+
+        }
+
+        // GetServices
+
+        [TestMethod]
+        public void TestGetServicesWithSecondServiceProvider() {
+
+            // Even though we have the IServiceProvider instance itself and the second one we registered, GetServices should only return the second one.
+
+            IServiceProvider serviceProvider1 = new ServiceCollection()
+                .BuildServiceProvider();
+
+            IServiceProvider serviceProvider2 = new ServiceCollection()
+                .AddSingleton(serviceProvider1)
+                .BuildServiceProvider();
+
+            IEnumerable<IServiceProvider> instances = serviceProvider2.GetServices<IServiceProvider>();
+
+            Assert.IsTrue(instances.Count() == 1);
+            Assert.IsTrue(ReferenceEquals(instances.First(), serviceProvider1));
 
         }
 

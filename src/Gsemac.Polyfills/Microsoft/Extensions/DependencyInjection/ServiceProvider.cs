@@ -56,6 +56,9 @@ namespace Gsemac.Polyfills.Microsoft.Extensions.DependencyInjection {
             if (disposedValue)
                 throw new ObjectDisposedException(nameof(ServiceProvider));
 
+            if (serviceType == typeof(IServiceProvider))
+                return this;
+
             ServiceDescriptor serviceDescriptor = GetServiceDescriptor(serviceType);
 
             if (serviceDescriptor is object && serviceDescriptor.Lifetime == ServiceLifetime.Scoped) {

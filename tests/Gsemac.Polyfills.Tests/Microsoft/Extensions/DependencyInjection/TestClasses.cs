@@ -74,4 +74,16 @@ namespace Gsemac.Polyfills.Microsoft.Extensions.DependencyInjection.Tests {
 
     }
 
+    internal class MyNamedService {
+
+        public string Name { get; }
+
+        public MyNamedService(string name) {
+
+            Name = name;
+
+        }
+
+    }
+
 }
