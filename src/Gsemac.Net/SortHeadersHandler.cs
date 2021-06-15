@@ -93,10 +93,12 @@ namespace Gsemac.Net {
 
         private void SetWebHeaderCollection(WebRequest webRequest) {
 
-            if (webRequest is HttpWebRequestAdapter webRequestWrapper)
-                webRequest = webRequestWrapper.GetUnderlyingWebRequest();
+            webRequest = webRequest.GetInnermostWebRequest();
 
             if (webRequest is HttpWebRequest httpWebRequest) {
+
+                // Even though the Headers property is assignable, HttpWebRequest simply copies the headers out of it instead of replacing its own collection.
+                // As a result, the only way of replacing the WebHeaderCollection is by replacing the field through reflection.
 
                 FieldInfo fieldInfo = typeof(HttpWebRequest).GetField("_HttpRequestHeaders", BindingFlags.Instance | BindingFlags.NonPublic);
 

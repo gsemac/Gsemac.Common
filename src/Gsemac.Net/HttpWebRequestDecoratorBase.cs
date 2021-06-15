@@ -13,6 +13,10 @@ namespace Gsemac.Net {
         WebRequest,
         IHttpWebRequest {
 
+        // Internal members
+
+        internal WebRequest InnerWebRequest => (WebRequest)innerHttpWebRequest;
+
         // Protected members
 
         protected HttpWebRequestDecoratorBase(IHttpWebRequest innerHttpWebRequest) {

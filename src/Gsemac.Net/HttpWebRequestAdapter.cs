@@ -45,11 +45,9 @@ namespace Gsemac.Net {
             this(new Uri(requestUri)) {
         }
 
-        internal WebRequest GetUnderlyingWebRequest() {
+        // Internal members
 
-            return httpWebRequest;
-
-        }
+        internal WebRequest InnerWebRequest => httpWebRequest;
 
         // Protected members
 
