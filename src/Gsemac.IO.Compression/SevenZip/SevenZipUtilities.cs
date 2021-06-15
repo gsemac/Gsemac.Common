@@ -37,7 +37,8 @@ namespace Gsemac.IO.Compression.SevenZip {
             IEnumerable<string> probingPaths = new[] {
                 Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles),
                 Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86),
-            }.Select(path => Path.Combine(path, "7-Zip"));
+            }.Where(path => !string.IsNullOrWhiteSpace(path))
+            .Select(path => Path.Combine(path, "7-Zip"));
 
             foreach (string probingPath in probingPaths.Distinct())
                 resolver.ProbingPaths.Add(probingPath);

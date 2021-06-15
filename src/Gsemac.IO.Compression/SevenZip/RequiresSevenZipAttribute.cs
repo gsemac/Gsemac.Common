@@ -1,7 +1,9 @@
 ﻿using Gsemac.Polyfills.Microsoft.Extensions.DependencyInjection;
 using Gsemac.Reflection.Plugins;
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 namespace Gsemac.IO.Compression.SevenZip {
 
@@ -12,13 +14,16 @@ namespace Gsemac.IO.Compression.SevenZip {
 
         public override bool TestRequirement(IServiceProvider serviceProvider) {
 
+            List<string> candidatePaths = new List<string>();
+
             IArchiveFactoryOptions archiveFactoryOptions = serviceProvider?.GetService<IArchiveFactoryOptions>();
 
-            if (archiveFactoryOptions is null)
-                return false;
+            if (archiveFactoryOptions is object && !string.IsNullOrWhiteSpace(archiveFactoryOptions.WinrarDirectoryPath))
+                candidatePaths.Add(Path.Combine(archiveFactoryOptions.WinrarDirectoryPath, SevenZipUtilities.SevenZipExecutableFilename));
 
-            return File.Exists(Path.Combine(archiveFactoryOptions.SevenZipDirectoryPath, SevenZipUtilities.SevenZipExecutableFilename)) || 
-                File.Exists(SevenZipUtilities.SevenZipExecutablePath);
+            candidatePaths.Add(SevenZipUtilities.SevenZipExecutablePath);
+
+            return candidatePaths.Any(path => File.Exists(path));
 
         }
 

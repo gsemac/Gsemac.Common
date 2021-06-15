@@ -37,7 +37,8 @@ namespace Gsemac.IO.Compression.Winrar {
             IEnumerable<string> probingPaths = new[] {
                 Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles),
                 Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86),
-            }.Select(path => Path.Combine(path, "WinRAR"));
+            }.Where(path => !string.IsNullOrWhiteSpace(path))
+            .Select(path => Path.Combine(path, "WinRAR"));
 
             foreach (string probingPath in probingPaths.Distinct())
                 resolver.ProbingPaths.Add(probingPath);
