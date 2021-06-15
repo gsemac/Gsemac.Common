@@ -46,7 +46,7 @@ namespace Gsemac.Net {
 
             // Public members
 
-            public ReorderedWebHeaderCollection(HttpWebRequest webRequest) {
+            public ReorderedWebHeaderCollection(WebRequest webRequest) {
 
                 // Store the web request so we can use its properties to generate headers even if they're changed after this object was instantiated.
 
@@ -64,7 +64,7 @@ namespace Gsemac.Net {
 
                 // Add required headers that are normally added automatically (they won't be added by HttpWebRequest).
 
-                AddRequiredHeaders(headers, new HttpWebRequestAdapter(webRequest));
+                AddRequiredHeaders(headers, webRequest.AsHttpWebRequest());
 
                 StringBuilder sb = new StringBuilder();
 
@@ -85,9 +85,39 @@ namespace Gsemac.Net {
 
             // Private members
 
-            private readonly HttpWebRequest webRequest;
+            private readonly WebRequest webRequest;
 
+            private static void AddRequiredHeaders(IList<IHttpHeader> headers, IHttpWebRequest webRequest) {
 
+                if (headers is null)
+                    throw new ArgumentNullException(nameof(headers));
+
+                if (webRequest is null)
+                    throw new ArgumentNullException(nameof(webRequest));
+
+                if (!headers.Any(h => h.Name.Equals("Host", StringComparison.OrdinalIgnoreCase)))
+                    headers.Add(new HttpHeader("Host", Url.GetHostname(webRequest.RequestUri.AbsoluteUri)));
+
+                if (webRequest.KeepAlive && !headers.Any(h => h.Name.Equals("Connection", StringComparison.OrdinalIgnoreCase)))
+                    headers.Add(new HttpHeader("Connection", "keep-alive"));
+
+            }
+            private static int GetHeaderOrder(IHttpHeader header) {
+
+                string[] headerOrder = new[] {
+                    "host",
+                    "connection",
+                    "accept",
+                    "user-agent",
+                };
+
+                int order = headerOrder.IndexOf(header.Name.ToLowerInvariant());
+
+                return order < 0 ?
+                    headerOrder.Length :
+                    order;
+
+            }
 
         }
 
@@ -108,46 +138,16 @@ namespace Gsemac.Net {
             }
             else {
 
-                // For a generic request, just reorder and reinsert each of the headers.
+                // For a generic request, just assign a new WebHeaderCollection.
 
-                IList<IHttpHeader> headers = new List<IHttpHeader>(webRequest.Headers.GetHeaders());
-
-                if (webRequest is IHttpWebRequest iHttpWebRequest)
-                    AddRequiredHeaders(headers, iHttpWebRequest);
-
-                webRequest.Headers.Clear();
-
-                webRequest.Headers.TrySetHeaders(headers.OrderBy(header => GetHeaderOrder(header)));
+                webRequest.Headers = new ReorderedWebHeaderCollection(webRequest);
 
             }
 
         }
 
-        private static int GetHeaderOrder(IHttpHeader header) {
 
-            string[] headerOrder = new[] {
-                    "host",
-                    "connection",
-                    "accept",
-                    "user-agent",
-                };
 
-            int order = headerOrder.IndexOf(header.Name.ToLowerInvariant());
-
-            return order < 0 ?
-                headerOrder.Length :
-                order;
-
-        }
-        private static void AddRequiredHeaders(IList<IHttpHeader> headers, IHttpWebRequest webRequest) {
-
-            if (!headers.Any(h => h.Name.Equals("Host", StringComparison.OrdinalIgnoreCase)))
-                headers.Add(new HttpHeader("Host", Url.GetHostname(webRequest.RequestUri.AbsoluteUri)));
-
-            if (webRequest.KeepAlive && !headers.Any(h => h.Name.Equals("Connection", StringComparison.OrdinalIgnoreCase)))
-                headers.Add(new HttpHeader("Connection", "keep-alive"));
-
-        }
 
     }
 
