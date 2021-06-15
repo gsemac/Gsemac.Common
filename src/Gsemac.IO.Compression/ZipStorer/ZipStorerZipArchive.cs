@@ -107,7 +107,7 @@ namespace Gsemac.IO.Compression.ZipStorer {
 
             IArchiveEntry existingEntry = GetEntry(entryName);
 
-            if (!(existingEntry is null)) {
+            if (existingEntry is object) {
 
                 if (options.Overwrite)
                     DeleteEntry(existingEntry);
@@ -272,10 +272,11 @@ namespace Gsemac.IO.Compression.ZipStorer {
                             tempArchive.ExtractEntry(entry, Path.Combine(tempDirectory, entry.Name));
 
                     // Recreate the archive with only the non-deleted files.
+                    // We need read-write access in order to add files to the archive (for when it checks if the entry already exists).
 
                     sourceStream.SetLength(0);
 
-                    using (ZipStorerZipArchive tempArchive = new ZipStorerZipArchive(sourceStream, new ArchiveOptions { FileAccess = FileAccess.Write, LeaveStreamOpen = true }))
+                    using (ZipStorerZipArchive tempArchive = new ZipStorerZipArchive(sourceStream, new ArchiveOptions { FileAccess = FileAccess.ReadWrite, LeaveStreamOpen = true }))
                         tempArchive.AddAllFiles(tempDirectory);
 
                 }
