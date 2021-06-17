@@ -8,10 +8,19 @@ namespace Gsemac.Polyfills.Microsoft.Extensions.DependencyInjection {
 
         public static IServiceScope CreateScope(this IServiceProvider provider) {
 
+            if (provider is null)
+                throw new ArgumentNullException(nameof(provider));
+
             return provider.GetRequiredService<IServiceScopeFactory>().CreateScope();
 
         }
         public static object GetRequiredService(this IServiceProvider provider, Type serviceType) {
+
+            if (provider is null)
+                throw new ArgumentNullException(nameof(provider));
+
+            if (serviceType is null)
+                throw new ArgumentNullException(nameof(serviceType));
 
             object serviceObject = provider.GetService(serviceType);
 
@@ -33,6 +42,12 @@ namespace Gsemac.Polyfills.Microsoft.Extensions.DependencyInjection {
         }
         public static IEnumerable<object> GetServices(this IServiceProvider provider, Type serviceType) {
 
+            if (provider is null)
+                throw new ArgumentNullException(nameof(provider));
+
+            if (serviceType is null)
+                throw new ArgumentNullException(nameof(serviceType));
+
             List<object> services = new List<object>();
 
             object serviceObject = provider.GetService(serviceType);
@@ -44,6 +59,9 @@ namespace Gsemac.Polyfills.Microsoft.Extensions.DependencyInjection {
 
         }
         public static IEnumerable<T> GetServices<T>(this IServiceProvider provider) {
+
+            if (provider is null)
+                throw new ArgumentNullException(nameof(provider));
 
             return provider.GetServices(typeof(T)).OfType<T>();
 
