@@ -18,8 +18,8 @@ namespace Gsemac.IO.Compression.SevenZip {
 
             IArchiveFactoryOptions archiveFactoryOptions = serviceProvider?.GetService<IArchiveFactoryOptions>();
 
-            if (archiveFactoryOptions is object && !string.IsNullOrWhiteSpace(archiveFactoryOptions.WinrarDirectoryPath))
-                candidatePaths.Add(Path.Combine(archiveFactoryOptions.WinrarDirectoryPath, SevenZipUtilities.SevenZipExecutableFilename));
+            if (archiveFactoryOptions is object && !string.IsNullOrWhiteSpace(archiveFactoryOptions.SevenZipDirectoryPath))
+                candidatePaths.Add(Path.Combine(archiveFactoryOptions.SevenZipDirectoryPath, SevenZipUtilities.SevenZipExecutableFilename));
 
             candidatePaths.Add(SevenZipUtilities.SevenZipExecutablePath);
 
