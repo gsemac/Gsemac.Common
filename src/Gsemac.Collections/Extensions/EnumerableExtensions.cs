@@ -60,6 +60,11 @@ namespace Gsemac.Collections.Extensions {
             return source.GroupBy(selector).Select(item => item.First());
 
         }
+        public static IEnumerable<T> DistinctBy<T, TKey>(this IEnumerable<T> source, Func<T, TKey> selector, IEqualityComparer<TKey> comparer) {
+
+            return source.GroupBy(selector, comparer).Select(item => item.First());
+
+        }
 
         public static IEnumerable<T> Shuffle<T>(this IEnumerable<T> source) {
 
