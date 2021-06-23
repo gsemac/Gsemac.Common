@@ -6,12 +6,6 @@ namespace Gsemac.IO.Compression.Extensions {
 
     public static class ArchiveExtensions {
 
-        public static IArchiveEntry AddEntry(this IArchive archive, Stream stream, string entryName) {
-
-            return archive.AddEntry(stream, entryName, ArchiveEntryOptions.Default);
-
-        }
-
         public static void AddFile(this IArchive archive, string filePath) {
 
             archive.AddFile(filePath, PathUtilities.GetFilename(filePath));
@@ -26,6 +20,22 @@ namespace Gsemac.IO.Compression.Extensions {
 
             foreach (string filePath in Directory.EnumerateFiles(directoryPath, "*", SearchOption.AllDirectories))
                 archive.AddFile(filePath, PathUtilities.GetRelativePath(filePath, directoryPath));
+
+        }
+
+        public static IArchiveEntry AddEntry(this IArchive archive, Stream stream, string entryName) {
+
+            return archive.AddEntry(stream, entryName, ArchiveEntryOptions.Default);
+
+        }
+        public static bool ContainsEntry(this IArchive archive, string entryName) {
+
+            return archive.GetEntry(entryName) is object;
+
+        }
+        public static bool ContainsEntry(this IArchive archive, IArchiveEntry entry) {
+
+            return archive.GetEntries().Any(e => e.Equals(entry));
 
         }
         public static bool DeleteEntry(this IArchive archive, string entryName) {
