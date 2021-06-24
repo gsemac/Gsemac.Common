@@ -2,7 +2,7 @@
 
 namespace Gsemac.IO.Compression.ZipStorer {
 
-    internal class ZipStorerZipArchiveEntry :
+    internal class ZipStorerArchiveEntry :
          IArchiveEntry {
 
         // Public members
@@ -15,7 +15,7 @@ namespace Gsemac.IO.Compression.ZipStorer {
 
         public ZipStorer.ZipFileEntry BaseEntry { get; }
 
-        public ZipStorerZipArchiveEntry(ZipStorer.ZipFileEntry entry) {
+        public ZipStorerArchiveEntry(ZipStorer.ZipFileEntry entry) {
 
             BaseEntry = entry;
 
