@@ -4,7 +4,7 @@
 
         public static bool IsNewLine(this char c) {
 
-            return c == '\r' || c == '\n';
+            return CharUtilities.IsNewLine(c);
 
         }
 
