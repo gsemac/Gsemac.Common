@@ -6,32 +6,32 @@ namespace Gsemac.Drawing.Imaging.Extensions {
 
     public static class ImageCodecExtensions {
 
-        public static void Encode(this IImageCodec imageCodec, IImage image, Stream stream) {
+        public static void Encode(this IImageEncoder encoder, IImage image, Stream stream) {
 
-            imageCodec.Encode(image, stream, ImageEncoderOptions.Default);
-
-        }
-        public static void Encode(this IImageCodec imageCodec, IImage image, string filePath) {
-
-            imageCodec.Encode(image, filePath, ImageEncoderOptions.Default);
+            encoder.Encode(image, stream, ImageEncoderOptions.Default);
 
         }
-        public static void Encode(this IImageCodec imageCodec, IImage image, string filePath, IImageEncoderOptions options) {
+        public static void Encode(this IImageEncoder encoder, IImage image, string filePath) {
 
-            if (!imageCodec.IsSupportedFileFormat(filePath))
+            encoder.Encode(image, filePath, ImageEncoderOptions.Default);
+
+        }
+        public static void Encode(this IImageEncoder encoder, IImage image, string filePath, IImageEncoderOptions options) {
+
+            if (!encoder.IsSupportedFileFormat(filePath))
                 throw new FileFormatException(IO.Properties.ExceptionMessages.UnsupportedFileFormat);
 
             using (FileStream fs = File.Open(filePath, FileMode.OpenOrCreate))
-                imageCodec.Encode(image, fs, options);
+                encoder.Encode(image, fs, options);
 
         }
-        public static IImage Decode(this IImageCodec imageCodec, string filePath) {
+        public static IImage Decode(this IImageDecoder decoder, string filePath) {
 
-            if (!imageCodec.IsSupportedFileFormat(filePath))
+            if (!decoder.IsSupportedFileFormat(filePath))
                 throw new FileFormatException(IO.Properties.ExceptionMessages.UnsupportedFileFormat);
 
             using (FileStream fs = File.OpenRead(filePath))
-                return imageCodec.Decode(fs);
+                return decoder.Decode(fs);
 
         }
 
