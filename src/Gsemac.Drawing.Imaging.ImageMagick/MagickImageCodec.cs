@@ -80,6 +80,7 @@ namespace Gsemac.Drawing.Imaging {
                 ".avif",
                 ".bmp",
                 ".gif",
+                ".ico",
                 ".jpeg",
                 ".jpg",
                 ".jxl",

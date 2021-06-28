@@ -22,6 +22,9 @@ namespace Gsemac.Drawing.Imaging {
         }
         public GdiImageCodec(IFileFormat imageFormat) {
 
+            if (imageFormat is null)
+                throw new ArgumentNullException(nameof(imageFormat));
+
             if (!this.IsSupportedFileFormat(imageFormat))
                 throw new FileFormatException(IO.Properties.ExceptionMessages.UnsupportedFileFormat);
 
@@ -30,6 +33,15 @@ namespace Gsemac.Drawing.Imaging {
         }
 
         public void Encode(IImage image, Stream stream, IImageEncoderOptions encoderOptions) {
+
+            if (image is null)
+                throw new ArgumentNullException(nameof(image));
+
+            if (stream is null)
+                throw new ArgumentNullException(nameof(stream));
+
+            if (encoderOptions is null)
+                throw new ArgumentNullException(nameof(encoderOptions));
 
             if (image is GdiImage gdiImage) {
 
@@ -50,6 +62,9 @@ namespace Gsemac.Drawing.Imaging {
 
         }
         public IImage Decode(Stream stream) {
+
+            if (stream is null)
+                throw new ArgumentNullException(nameof(stream));
 
             // When we create a new Bitmap from the Image, we lose information about its original format (it just becomes a memory Bitmap).
             // This GdiImage constructor allows us to preserve the original format information.
@@ -82,6 +97,15 @@ namespace Gsemac.Drawing.Imaging {
 
         private void EncodeBitmap(Image image, Stream stream, IImageEncoderOptions encoderOptions) {
 
+            if (image is null)
+                throw new ArgumentNullException(nameof(image));
+
+            if (stream is null)
+                throw new ArgumentNullException(nameof(stream));
+
+            if (encoderOptions is null)
+                throw new ArgumentNullException(nameof(encoderOptions));
+
             using (EncoderParameters encoderParameters = new EncoderParameters(1))
             using (EncoderParameter qualityParameter = new EncoderParameter(Encoder.Quality, encoderOptions.Quality)) {
 
@@ -103,19 +127,24 @@ namespace Gsemac.Drawing.Imaging {
 
             return new List<string>(new[]{
                 ".bmp",
-                ".gif",
                 ".exif",
-                ".jpg",
+                ".gif",
+                ".ico",
                 ".jpeg",
+                ".jpg",
                 ".png",
                 ".tif",
-                ".tiff"
+                ".tiff",
+                ".wmf",
             }).OrderBy(type => type)
             .Select(ext => FileFormatFactory.Default.FromFileExtension(ext))
             .Distinct();
 
         }
         private static System.Drawing.Imaging.ImageFormat GetImageFormatFromFileExtension(string fileExtension) {
+
+            if (fileExtension is null)
+                throw new ArgumentNullException(nameof(fileExtension));
 
             switch (fileExtension.ToLowerInvariant()) {
 
@@ -128,6 +157,9 @@ namespace Gsemac.Drawing.Imaging {
                 case ".exif":
                     return System.Drawing.Imaging.ImageFormat.Exif;
 
+                case ".ico":
+                    return System.Drawing.Imaging.ImageFormat.Icon;
+
                 case ".jpg":
                 case ".jpeg":
                     return System.Drawing.Imaging.ImageFormat.Jpeg;
@@ -139,6 +171,9 @@ namespace Gsemac.Drawing.Imaging {
                 case ".tiff":
                     return System.Drawing.Imaging.ImageFormat.Tiff;
 
+                case ".wmf":
+                    return System.Drawing.Imaging.ImageFormat.Wmf;
+
                 default:
                     throw new ArgumentException("The file extension was not recognized.");
 
@@ -146,6 +181,9 @@ namespace Gsemac.Drawing.Imaging {
 
         }
         private ImageCodecInfo GetEncoderFromImageFormat(System.Drawing.Imaging.ImageFormat imageFormat) {
+
+            if (imageFormat is null)
+                throw new ArgumentNullException(nameof(imageFormat));
 
             ImageCodecInfo encoder = ImageCodecInfo.GetImageDecoders()
                 .Where(codec => codec.FormatID == imageFormat.Guid)

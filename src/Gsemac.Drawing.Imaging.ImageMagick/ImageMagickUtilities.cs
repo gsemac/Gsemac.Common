@@ -48,6 +48,7 @@ namespace Gsemac.Drawing.Imaging {
                 { MagickFormat.Avif, ".avif" },
                 { MagickFormat.Bmp, ".bmp" },
                 { MagickFormat.Gif, ".gif" },
+                { MagickFormat.Ico, ".ico" },
                 { MagickFormat.Jpeg, ".jpeg" },
                 { MagickFormat.Jpg, ".jpg" },
                 { MagickFormat.Jxl, ".jxl" },
@@ -55,6 +56,7 @@ namespace Gsemac.Drawing.Imaging {
                 { MagickFormat.Tif, ".tif" },
                 { MagickFormat.Tiff, ".tiff" },
                 { MagickFormat.WebP, ".webp" },
+                { MagickFormat.Wmf, ".wmf" },
             };
 
         }
