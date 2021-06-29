@@ -22,7 +22,7 @@ function hideOtherElements(xPath) {
 
         selectedNode = parentNode;
 
-    } while (selectedNode.tagName.toLowerCase() != 'body');
+    } while (selectedNode.parentNode != null);
 
     // Hide the collected nodes.
 
