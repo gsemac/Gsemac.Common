@@ -66,6 +66,7 @@ namespace Gsemac.Net {
 
                                     request = httpWebRequestFactory.Create(locationUri);
 
+                                    request.AllowAutoRedirect = false;
                                     request.CookieContainer = originatingRequest.CookieContainer;
 
                                     // Set the verb for the new request.
