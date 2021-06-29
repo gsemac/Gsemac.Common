@@ -59,19 +59,39 @@ namespace Gsemac.Net {
                                     Uri originalUri = request.RequestUri;
                                     string originalMethod = request.Method;
 
-                                    request = httpWebRequestFactory.Create(locationUri)
-                                        .WithOptions(HttpWebRequestOptions.FromHttpWebRequest(request));
+                                    // Create a new web request.
 
-                                    if (response.StatusCode == HttpStatusCode.RedirectKeepVerb)
+                                    // No properties are kept from the original request, including headers.
+                                    // Note that if we did copy the headers, we'd also be copying the "Host" header, because it gets set when GetResponse is called in the original request.
+                                    // The previous Host value might not be valid for the new endpoint we're redirecting to, which can cause a 404 error.
+
+                                    request = httpWebRequestFactory.Create(locationUri);
+
+                                    // Set the verb for the new request.
+
+                                    // While the standard specifies that the verb is maintained for 302 redirects, browsers have made it a de facto standard that a GET request is used.
+                                    // The 307 and 308 status codes were introduced to explicitly instruct the client to use the same verb as the original request.
+                                    // https://stackoverflow.com/a/2068504/5383169 (Christopher Orr)
+
+                                    if (response.StatusCode == HttpStatusCode.RedirectKeepVerb || response.StatusCode == (HttpStatusCode)308)
                                         request.Method = originalMethod;
-
-                                    // If the host is the same, use the full path as the referer.
-                                    // However, if the hosts are different, we'll just use the root path as the referer (this is how Chrome handles it).
-
-                                    if (Uri.Compare(originalUri, locationUri, UriComponents.Host, UriFormat.Unescaped, StringComparison.OrdinalIgnoreCase) == 0)
-                                        request.Referer = originalUri.AbsoluteUri;
                                     else
-                                        request.Referer = originalUri.GetLeftPart(UriPartial.Authority) + "/";
+                                        request.Method = "GET";
+
+                                    // Set the referer for new request.
+                                    // The referer is omitted when redirecting to a different scheme (e.g. HTTP to HTTPS).
+
+                                    if (locationUri.Scheme == originalUri.Scheme) {
+
+                                        // If the hosts are the same, use the full path as the referer.
+                                        // However, if the hosts are different, we'll just use the root path as the referer (this is how Chrome handles it).
+
+                                        if (Uri.Compare(originalUri, locationUri, UriComponents.Host, UriFormat.Unescaped, StringComparison.OrdinalIgnoreCase) == 0)
+                                            request.Referer = originalUri.AbsoluteUri;
+                                        else
+                                            request.Referer = originalUri.GetLeftPart(UriPartial.Authority) + "/";
+
+                                    }
 
                                 }
                                 else {
