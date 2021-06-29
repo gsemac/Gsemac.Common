@@ -140,14 +140,22 @@ namespace Gsemac.Net {
 
                 // For a generic request, just assign a new WebHeaderCollection.
 
-                webRequest.Headers = new ReorderedWebHeaderCollection(webRequest);
+                try {
+
+                    webRequest.Headers = new ReorderedWebHeaderCollection(webRequest);
+
+                }
+                catch (NotImplementedException) {
+
+                    // Not all WebRequest implementations will implement the Headers property. This is fine, and can be ignored.
+                    // https://docs.microsoft.com/en-us/dotnet/api/system.net.webrequest.headers
+                    // For example, if we're attempting to download a local file (with FileWebRequest), the Headers property will throw.
+
+                }
 
             }
 
         }
-
-
-
 
     }
 
