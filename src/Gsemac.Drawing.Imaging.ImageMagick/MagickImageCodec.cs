@@ -1,7 +1,6 @@
 ﻿using Gsemac.Drawing.Imaging.Extensions;
 using Gsemac.IO;
 using Gsemac.IO.Extensions;
-using Gsemac.Reflection;
 using Gsemac.Reflection.Plugins;
 using ImageMagick;
 using System.Collections.Generic;
@@ -39,7 +38,25 @@ namespace Gsemac.Drawing.Imaging {
 
         public IImage Decode(Stream stream) {
 
-            return new MagickImage(new ImageMagick.MagickImage(stream), this);
+            MagickFormat? magickFormat = null;
+            string fileExtension = imageFormat?.Extensions?.FirstOrDefault();
+
+            if (!string.IsNullOrWhiteSpace(fileExtension))
+                magickFormat = ImageMagickUtilities.GetMagickFormatFromFileExtension(fileExtension);
+
+            // If we were able to determine the desired file format, decode the image using that format explicitly.
+            // Otherwise, allow ImageMagick to determine the file format on its own.
+
+            // This is important because ImageMagick isn't able to automatically determine the file format for all formats due to signature conflicts (e.g. ICO).
+            // https://github.com/dlemstra/Magick.NET/issues/368
+
+            ImageMagick.MagickImage magickImage = magickFormat.HasValue ?
+                new ImageMagick.MagickImage(stream, magickFormat.Value) :
+                new ImageMagick.MagickImage(stream);
+
+            return imageFormat is null ?
+                new MagickImage(magickImage, this) :
+                new MagickImage(magickImage, imageFormat, this);
 
         }
         public void Encode(IImage image, Stream stream, IImageEncoderOptions encoderOptions) {

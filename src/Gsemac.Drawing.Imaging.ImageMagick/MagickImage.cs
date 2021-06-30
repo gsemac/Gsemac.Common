@@ -17,14 +17,23 @@ namespace Gsemac.Drawing.Imaging {
         public IImageCodec Codec { get; }
         internal ImageMagick.MagickImage BaseImage => image;
 
-        public MagickImage(ImageMagick.MagickImage image, IImageCodec codec) {
+        public MagickImage(ImageMagick.MagickImage image, IImageCodec codec) :
+            this(image, GetImageFormatFromMagickFormat(image.Format), codec) {
+        }
+        public MagickImage(ImageMagick.MagickImage image, IFileFormat imageFormat, IImageCodec codec) {
 
             if (image is null)
                 throw new ArgumentNullException(nameof(image));
 
+            if (imageFormat is null)
+                throw new ArgumentNullException(nameof(imageFormat));
+
+            if (codec is null)
+                throw new ArgumentNullException(nameof(codec));
+
             this.image = image;
-            Format = GetImageFormatFromMagickFormat(image.Format);
-            Codec = codec;
+            this.Format = imageFormat;
+            this.Codec = codec;
 
         }
 
