@@ -2,8 +2,9 @@
 
     public static class ArchiveFormat {
 
-        public static IFileFormat Zip => new ZipFileFormat();
+        public static IFileFormat Rar => new RarFileFormat();
         public static IFileFormat SevenZip => new SevenZipFileFormat();
+        public static IFileFormat Zip => new ZipFileFormat();
 
     }
 
