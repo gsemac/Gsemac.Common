@@ -204,6 +204,148 @@ namespace Gsemac.IO.Compression.Winrar {
         private string newComment;
         private bool archiveIsClosed = false;
 
+        private string ReadArchiveComment() {
+
+            if (!File.Exists(filePath) || FileUtilities.GetFileSize(filePath) <= 0)
+                return string.Empty;
+
+            ProcessStartInfo processStartInfo = CreateProcessStartInfo();
+
+            processStartInfo.Arguments = new CmdArgumentsBuilder()
+                .WithArgument("cw")
+                .WithArgument(filePath)
+                .ToString();
+
+            using (Stream processStream = new ProcessStream(processStartInfo, ProcessStreamOptions.RedirectStandardOutput))
+            using (StreamReader streamReader = new StreamReader(processStream)) {
+
+                string output = streamReader.ReadToEnd().Trim();
+
+                // Skip the first two lines that are displayed before the comment content.
+
+                output = string.Join(Environment.NewLine, output.Split(new[] { Environment.NewLine }, StringSplitOptions.None).Skip(2));
+
+                return output;
+
+            }
+
+        }
+        private List<IArchiveEntry> ReadArchiveEntries() {
+
+            List<IArchiveEntry> items = new List<IArchiveEntry>();
+
+            if (File.Exists(filePath) && FileUtilities.GetFileSize(filePath) > 0) {
+
+                ProcessStartInfo processStartInfo = CreateProcessStartInfo(unrar: true);
+
+                processStartInfo.Arguments = new CmdArgumentsBuilder()
+                    .WithArgument("l")
+                    .WithArgument(filePath)
+                    .WithArgument("-scf") // output filenames in UTF-8 instead of Windows' default charset
+                    .ToString();
+
+                using (Stream processStream = new ProcessStream(processStartInfo, ProcessStreamOptions.RedirectStandardOutput))
+                using (StreamReader streamReader = new StreamReader(processStream)) {
+
+                    string output = streamReader.ReadToEnd();
+
+                    foreach (Match match in Regex.Matches(output, @"(?<attr>[\w\.]{7})\s+(?<compressed>\d+)\s+(?<date>\d{4}-\d{2}-\d{2}\s+\d{2}:\d{2})\s+(?<name>.+?)$", RegexOptions.Multiline)) {
+
+                        if (match.Groups["attr"].Value.Contains("D"))
+                            continue;
+
+                        GenericArchiveEntry entry = new GenericArchiveEntry() {
+                            Name = SanitizeEntryName(match.Groups["name"].Value.Trim()),
+                        };
+
+                        if (DateTimeOffset.TryParseExact(match.Groups["date"].Value, "yyyy-MM-dd HH:mm", CultureInfo.InvariantCulture, DateTimeStyles.AssumeLocal, out DateTimeOffset date))
+                            entry.LastModified = date;
+
+                        if (int.TryParse(match.Groups["compressed"].Value, out int compressed))
+                            entry.CompressedSize = compressed;
+
+                        // We have no means of getting the original file size.
+
+                        entry.Size = entry.CompressedSize;
+
+                        items.Add(entry);
+
+                    }
+
+                }
+
+            }
+
+            return items;
+
+        }
+
+        private ProcessStartInfo CreateProcessStartInfo(bool unrar = false) {
+
+            ProcessStartInfo processStartInfo = new ProcessStartInfo() {
+                FileName = unrar ? GetUnrarExecutablePath() : GetWinrarExecutablePath(),
+                UseShellExecute = false,
+                CreateNoWindow = true,
+            };
+
+            return processStartInfo;
+
+        }
+        private string GetWinrarExecutablePath() {
+
+            string executablePath = Path.Combine(winrarDirectoryPath, WinrarUtilities.WinrarExecutableFilename);
+
+            if (!File.Exists(executablePath))
+                throw new FileNotFoundException(Properties.ExceptionMessages.WinrarExecutableNotFound, executablePath);
+
+            return executablePath;
+
+        }
+        private string GetUnrarExecutablePath() {
+
+            string executablePath = Path.Combine(winrarDirectoryPath, "UnRAR.exe");
+
+            if (!File.Exists(executablePath))
+                throw new FileNotFoundException(Properties.ExceptionMessages.UnrarExecutableNotFound, executablePath);
+
+            return executablePath;
+
+        }
+
+        private void AddTypeArgument(ICmdArgumentsBuilder argumentsBuilder) {
+
+            if (archiveFormat.Equals(ArchiveFormat.Zip)) {
+
+                argumentsBuilder.WithArgument("-tzip");
+
+            }
+            else if (archiveFormat.Equals(ArchiveFormat.SevenZip)) {
+
+                argumentsBuilder.WithArgument("-t7z");
+
+            }
+
+        }
+        private void AddCompressionLevelArguments(ICmdArgumentsBuilder argumentsBuilder) {
+
+            switch (compressionLevel) {
+
+                case CompressionLevel.Store:
+
+                    argumentsBuilder.WithArgument("-m0");
+
+                    break;
+
+                case CompressionLevel.Maximum:
+
+                    argumentsBuilder.WithArgument("-m5");
+
+                    break;
+
+            }
+
+        }
+
         private void CommitChanges() {
 
             ProcessStartInfo processStartInfo = CreateProcessStartInfo();
@@ -304,146 +446,6 @@ namespace Gsemac.IO.Compression.Winrar {
                 }
 
             }
-
-        }
-
-        private ProcessStartInfo CreateProcessStartInfo(bool unrar = false) {
-
-            ProcessStartInfo processStartInfo = new ProcessStartInfo() {
-                FileName = unrar ? GetUnrarExecutablePath() : GetWinrarExecutablePath(),
-                UseShellExecute = false,
-                CreateNoWindow = true,
-            };
-
-            return processStartInfo;
-
-        }
-        private string GetWinrarExecutablePath() {
-
-            string executablePath = Path.Combine(winrarDirectoryPath, WinrarUtilities.WinrarExecutableFilename);
-
-            if (!File.Exists(executablePath))
-                throw new FileNotFoundException(Properties.ExceptionMessages.WinrarExecutableNotFound, executablePath);
-
-            return executablePath;
-
-        }
-        private string GetUnrarExecutablePath() {
-
-            string executablePath = Path.Combine(winrarDirectoryPath, "UnRAR.exe");
-
-            if (!File.Exists(executablePath))
-                throw new FileNotFoundException(Properties.ExceptionMessages.UnrarExecutableNotFound, executablePath);
-
-            return executablePath;
-
-        }
-        private void AddTypeArgument(ICmdArgumentsBuilder argumentsBuilder) {
-
-            if (archiveFormat.Equals(ArchiveFormat.Zip)) {
-
-                argumentsBuilder.WithArgument("-tzip");
-
-            }
-            else if (archiveFormat.Equals(ArchiveFormat.SevenZip)) {
-
-                argumentsBuilder.WithArgument("-t7z");
-
-            }
-
-        }
-        private void AddCompressionLevelArguments(ICmdArgumentsBuilder argumentsBuilder) {
-
-            switch (compressionLevel) {
-
-                case CompressionLevel.Store:
-
-                    argumentsBuilder.WithArgument("-m0");
-
-                    break;
-
-                case CompressionLevel.Maximum:
-
-                    argumentsBuilder.WithArgument("-m5");
-
-                    break;
-
-            }
-
-        }
-
-        private string ReadArchiveComment() {
-
-            if (!File.Exists(filePath) || FileUtilities.GetFileSize(filePath) <= 0)
-                return string.Empty;
-
-            ProcessStartInfo processStartInfo = CreateProcessStartInfo();
-
-            processStartInfo.Arguments = new CmdArgumentsBuilder()
-                .WithArgument("cw")
-                .WithArgument(filePath)
-                .ToString();
-
-            using (Stream processStream = new ProcessStream(processStartInfo, ProcessStreamOptions.RedirectStandardOutput))
-            using (StreamReader streamReader = new StreamReader(processStream)) {
-
-                string output = streamReader.ReadToEnd().Trim();
-
-                // Skip the first two lines that are displayed before the comment content.
-
-                output = string.Join(Environment.NewLine, output.Split(new[] { Environment.NewLine }, StringSplitOptions.None).Skip(2));
-
-                return output;
-
-            }
-
-        }
-        private List<IArchiveEntry> ReadArchiveEntries() {
-
-            List<IArchiveEntry> items = new List<IArchiveEntry>();
-
-            if (File.Exists(filePath) && FileUtilities.GetFileSize(filePath) > 0) {
-
-                ProcessStartInfo processStartInfo = CreateProcessStartInfo(unrar: true);
-
-                processStartInfo.Arguments = new CmdArgumentsBuilder()
-                    .WithArgument("l")
-                    .WithArgument(filePath)
-                    .ToString();
-
-                using (Stream processStream = new ProcessStream(processStartInfo, ProcessStreamOptions.RedirectStandardOutput))
-                using (StreamReader streamReader = new StreamReader(processStream)) {
-
-                    string output = streamReader.ReadToEnd();
-
-                    foreach (Match match in Regex.Matches(output, @"(?<attr>[\w\.]{7})\s+(?<compressed>\d+)\s+(?<date>\d{4}-\d{2}-\d{2}\s+\d{2}:\d{2})\s+(?<name>.+?)$", RegexOptions.Multiline)) {
-
-                        if (match.Groups["attr"].Value.Contains("D"))
-                            continue;
-
-                        GenericArchiveEntry entry = new GenericArchiveEntry() {
-                            Name = SanitizeEntryName(match.Groups["name"].Value.Trim()),
-                        };
-
-                        if (DateTimeOffset.TryParseExact(match.Groups["date"].Value, "yyyy-MM-dd HH:mm", CultureInfo.InvariantCulture, DateTimeStyles.AssumeLocal, out DateTimeOffset date))
-                            entry.LastModified = date;
-
-                        if (int.TryParse(match.Groups["compressed"].Value, out int compressed))
-                            entry.CompressedSize = compressed;
-
-                        // We have no means of getting the original file size.
-
-                        entry.Size = entry.CompressedSize;
-
-                        items.Add(entry);
-
-                    }
-
-                }
-
-            }
-
-            return items;
 
         }
 
