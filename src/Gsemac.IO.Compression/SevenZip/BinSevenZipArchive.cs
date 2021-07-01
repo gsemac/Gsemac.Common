@@ -253,7 +253,8 @@ namespace Gsemac.IO.Compression.SevenZip {
             ProcessStartInfo processStartInfo = new ProcessStartInfo() {
                 FileName = GetSevenZipExecutablePath(),
                 UseShellExecute = false,
-                CreateNoWindow = false,
+                CreateNoWindow = true,
+                WindowStyle = ProcessWindowStyle.Hidden,
             };
 
             return processStartInfo;
@@ -269,77 +270,7 @@ namespace Gsemac.IO.Compression.SevenZip {
             return executablePath;
 
         }
-        private void CommitChanges() {
 
-            ProcessStartInfo processStartInfo = CreateProcessStartInfo();
-
-            if (File.Exists(filePath) && FileUtilities.GetFileSize(filePath) <= 0)
-                File.Delete(filePath);
-
-            // Remove deleted entries from the archive.
-
-            if (deletedEntries.Any()) {
-
-                processStartInfo.Arguments = new CmdArgumentsBuilder()
-                    .WithArgument("d")
-                    .WithArgument(filePath)
-                    .WithArguments(deletedEntries.Select(entry => entry.Name).ToArray())
-                    .ToString();
-
-                using (Process process = Process.Start(processStartInfo))
-                    process.WaitForExit();
-
-            }
-
-            // Add new entries to the archive.
-
-            if (newEntries.Any()) {
-
-                foreach (NewArchiveEntry entry in newEntries) {
-
-                    // Add the entry to the archive.
-
-                    ICmdArgumentsBuilder argumentsBuilder = new CmdArgumentsBuilder()
-                        .WithArgument(File.Exists(filePath) ? "u" : "a");
-
-                    AddTypeArgument(argumentsBuilder);
-                    AddCompressionLevelArguments(argumentsBuilder);
-
-                    argumentsBuilder.WithArgument(filePath)
-                        .WithArgument(entry.FilePath);
-
-                    processStartInfo.Arguments = argumentsBuilder.ToString();
-
-                    using (Process process = Process.Start(processStartInfo))
-                        process.WaitForExit();
-
-                    // 7Zip will add each entry with only its original filename.
-                    // Rename the entry if needed.
-
-                    if (!PathUtilities.GetFilename(entry.FilePath).Equals(entry.Name)) {
-
-                        argumentsBuilder.Clear();
-
-                        argumentsBuilder.WithArgument("rn");
-
-                        AddTypeArgument(argumentsBuilder);
-
-                        argumentsBuilder.WithArgument(filePath)
-                            .WithArgument(PathUtilities.GetFilename(entry.FilePath))
-                            .WithArgument(entry.Name);
-
-                        processStartInfo.Arguments = argumentsBuilder.ToString();
-
-                        using (Process process = Process.Start(processStartInfo))
-                            process.WaitForExit();
-
-                    }
-
-                }
-
-            }
-
-        }
         private void AddTypeArgument(ICmdArgumentsBuilder argumentsBuilder) {
 
             if (archiveFormat.Equals(ArchiveFormat.Zip)) {
@@ -394,6 +325,108 @@ namespace Gsemac.IO.Compression.SevenZip {
                     break;
 
             }
+
+        }
+
+        private void CommitDeletedEntries(ProcessStartInfo processStartInfo) {
+
+            if (deletedEntries.Any()) {
+
+                string tempFilePath = null;
+
+                try {
+
+                    // Save the names of the deleted entries to a text file.
+
+                    tempFilePath = PathUtilities.GetUniqueTemporaryFilePath();
+
+                    File.WriteAllText(tempFilePath, string.Join(Environment.NewLine, deletedEntries.Select(entry => entry.Name)));
+
+                    processStartInfo.Arguments = new CmdArgumentsBuilder()
+                        .WithArgument("d")
+                        .WithArgument(filePath)
+                        .WithArguments($"@{tempFilePath}")
+                        .ToString();
+
+                    using (Process process = Process.Start(processStartInfo))
+                        process.WaitForExit();
+
+                }
+                finally {
+
+                    // Delete the temporary file that we created.
+
+                    if (File.Exists(tempFilePath))
+                        File.Delete(tempFilePath);
+
+                }
+
+            }
+
+        }
+        private void CommitNewEntries(ProcessStartInfo processStartInfo) {
+
+            if (newEntries.Any()) {
+
+                foreach (NewArchiveEntry entry in newEntries) {
+
+                    // Add the entry to the archive.
+
+                    ICmdArgumentsBuilder argumentsBuilder = new CmdArgumentsBuilder()
+                        .WithArgument(File.Exists(filePath) ? "u" : "a");
+
+                    AddTypeArgument(argumentsBuilder);
+                    AddCompressionLevelArguments(argumentsBuilder);
+
+                    argumentsBuilder.WithArgument(filePath)
+                        .WithArgument(entry.FilePath);
+
+                    processStartInfo.Arguments = argumentsBuilder.ToString();
+
+                    using (Process process = Process.Start(processStartInfo))
+                        process.WaitForExit();
+
+                    // 7Zip will add each entry with only its original filename.
+                    // Rename the entry if needed.
+
+                    if (!PathUtilities.GetFilename(entry.FilePath).Equals(entry.Name)) {
+
+                        argumentsBuilder.Clear();
+
+                        argumentsBuilder.WithArgument("rn");
+
+                        AddTypeArgument(argumentsBuilder);
+
+                        argumentsBuilder.WithArgument(filePath)
+                            .WithArgument(PathUtilities.GetFilename(entry.FilePath))
+                            .WithArgument(entry.Name);
+
+                        processStartInfo.Arguments = argumentsBuilder.ToString();
+
+                        using (Process process = Process.Start(processStartInfo))
+                            process.WaitForExit();
+
+                    }
+
+                }
+
+            }
+
+        }
+        private void CommitChanges() {
+
+            ProcessStartInfo processStartInfo = CreateProcessStartInfo();
+
+            if (File.Exists(filePath) && FileUtilities.GetFileSize(filePath) <= 0)
+                File.Delete(filePath);
+
+            // Remove deleted entries from the archive.
+
+            CommitDeletedEntries(processStartInfo);
+
+            // Add new entries to the archive.
+
+            CommitNewEntries(processStartInfo);
 
         }
 
