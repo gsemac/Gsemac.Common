@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Text.RegularExpressions;
 
 namespace Gsemac.IO.Compression.Winrar {
@@ -214,10 +215,11 @@ namespace Gsemac.IO.Compression.Winrar {
             processStartInfo.Arguments = new CmdArgumentsBuilder()
                 .WithArgument("cw")
                 .WithArgument(filePath)
+                .WithArgument(GetEncodingArgument())
                 .ToString();
 
             using (Stream processStream = new ProcessStream(processStartInfo, ProcessStreamOptions.RedirectStandardOutput))
-            using (StreamReader streamReader = new StreamReader(processStream)) {
+            using (StreamReader streamReader = new StreamReader(processStream, options.Encoding)) {
 
                 string output = streamReader.ReadToEnd().Trim();
 
@@ -286,6 +288,7 @@ namespace Gsemac.IO.Compression.Winrar {
                 FileName = unrar ? GetUnrarExecutablePath() : GetWinrarExecutablePath(),
                 UseShellExecute = false,
                 CreateNoWindow = true,
+                WindowStyle = ProcessWindowStyle.Hidden,
             };
 
             return processStartInfo;
@@ -312,20 +315,6 @@ namespace Gsemac.IO.Compression.Winrar {
 
         }
 
-        private void AddTypeArgument(ICmdArgumentsBuilder argumentsBuilder) {
-
-            if (archiveFormat.Equals(ArchiveFormat.Zip)) {
-
-                argumentsBuilder.WithArgument("-tzip");
-
-            }
-            else if (archiveFormat.Equals(ArchiveFormat.SevenZip)) {
-
-                argumentsBuilder.WithArgument("-t7z");
-
-            }
-
-        }
         private void AddCompressionLevelArguments(ICmdArgumentsBuilder argumentsBuilder) {
 
             switch (compressionLevel) {
@@ -345,7 +334,75 @@ namespace Gsemac.IO.Compression.Winrar {
             }
 
         }
+        private void AddTypeArgument(ICmdArgumentsBuilder argumentsBuilder) {
 
+            if (archiveFormat.Equals(ArchiveFormat.Zip)) {
+
+                argumentsBuilder.WithArgument("-tzip");
+
+            }
+            else if (archiveFormat.Equals(ArchiveFormat.SevenZip)) {
+
+                argumentsBuilder.WithArgument("-t7z");
+
+            }
+
+        }
+        private string GetEncodingArgument() {
+
+            if (options.Encoding.Equals(Encoding.Unicode)) {
+
+                return "-scu";
+
+            }
+            else if (options.Encoding.Equals(Encoding.ASCII)) {
+
+                return "-sca";
+
+            }
+            else {
+
+                // Default to UTF-8.
+
+                return "-scf";
+
+            }
+
+        }
+
+        private void CommitComment(ProcessStartInfo processStartInfo) {
+
+            if (newComment is object) {
+
+                // WinRAR will read the new comment from stdin, but I need to get that working properly with ProcessStream first.
+                // For now, save the comment to a temporary file and add the comment from there.
+
+                string tempFilePath = PathUtilities.GetUniqueTemporaryFilePath();
+
+                try {
+
+                    File.WriteAllText(tempFilePath, newComment, options.Encoding);
+
+                    processStartInfo.Arguments = new CmdArgumentsBuilder()
+                         .WithArgument("c")
+                         .WithArgument(GetEncodingArgument())
+                         .WithArgument($"-z{tempFilePath}")
+                         .WithArgument(filePath)
+                         .ToString();
+
+                    using (Process process = Process.Start(processStartInfo))
+                        process.WaitForExit();
+
+                }
+                finally {
+
+                    File.Delete(tempFilePath);
+
+                }
+
+            }
+
+        }
         private void CommitChanges() {
 
             ProcessStartInfo processStartInfo = CreateProcessStartInfo();
@@ -419,33 +476,7 @@ namespace Gsemac.IO.Compression.Winrar {
 
             // Update archive comment.
 
-            if (newComment is object) {
-
-                // WinRAR will read the new comment from stdin, but I need to get that working properly with ProcessStream first.
-                // For now, save the comment to a temporary file and add the comment from there.
-
-                string tempFilePath = PathUtilities.GetUniqueTemporaryFilePath();
-
-                try {
-
-                    File.WriteAllText(tempFilePath, newComment);
-
-                    processStartInfo.Arguments = new CmdArgumentsBuilder()
-                      .WithArgument("c")
-                      .WithArgument($"-z{tempFilePath}")
-                      .ToString();
-
-                    using (Process process = Process.Start(processStartInfo))
-                        process.WaitForExit();
-
-                }
-                finally {
-
-                    File.Delete(tempFilePath);
-
-                }
-
-            }
+            CommitComment(processStartInfo);
 
         }
 
