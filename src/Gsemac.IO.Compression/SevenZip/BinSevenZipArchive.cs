@@ -188,6 +188,7 @@ namespace Gsemac.IO.Compression.SevenZip {
             GenericArchiveEntry {
 
             public string FilePath { get; set; }
+            public bool RenameRequired => !Name.Equals(PathUtilities.GetFilename(FilePath));
 
         }
 
@@ -368,9 +369,20 @@ namespace Gsemac.IO.Compression.SevenZip {
 
             if (newEntries.Any()) {
 
-                foreach (NewArchiveEntry entry in newEntries) {
+                string tempFilePath = null;
 
-                    // Add the entry to the archive.
+                try {
+
+                    // Save the names of the new entries to a text file.
+
+                    tempFilePath = PathUtilities.GetUniqueTemporaryFilePath();
+
+                    // Add the entries to the archive.
+                    // 7-Zip does not allow us to add a file to the archive and rename it in one action.
+
+                    // Start by adding the files that don't need to be renamed.
+
+                    File.WriteAllText(tempFilePath, string.Join(Environment.NewLine, newEntries.Where(entry => !entry.RenameRequired).Select(entry => entry.FilePath)));
 
                     ICmdArgumentsBuilder argumentsBuilder = new CmdArgumentsBuilder()
                         .WithArgument(File.Exists(filePath) ? "u" : "a");
@@ -379,34 +391,59 @@ namespace Gsemac.IO.Compression.SevenZip {
                     AddCompressionLevelArguments(argumentsBuilder);
 
                     argumentsBuilder.WithArgument(filePath)
-                        .WithArgument(entry.FilePath);
+                        .WithArgument($"@{tempFilePath}");
 
                     processStartInfo.Arguments = argumentsBuilder.ToString();
 
                     using (Process process = Process.Start(processStartInfo))
                         process.WaitForExit();
 
-                    // 7Zip will add each entry with only its original filename.
-                    // Rename the entry if needed.
+                    // Next, add the files that do need to be renamed using their fully-qualified paths.
+                    // After the files have been added, they will be renamed.
 
-                    if (!PathUtilities.GetFilename(entry.FilePath).Equals(entry.Name)) {
+                    File.WriteAllText(tempFilePath, string.Join(Environment.NewLine, newEntries.Where(entry => entry.RenameRequired).Select(entry => entry.FilePath)));
 
-                        argumentsBuilder.Clear();
+                    argumentsBuilder = new CmdArgumentsBuilder()
+                        .WithArgument(File.Exists(filePath) ? "u" : "a");
 
-                        argumentsBuilder.WithArgument("rn");
+                    AddTypeArgument(argumentsBuilder);
+                    AddCompressionLevelArguments(argumentsBuilder);
 
-                        AddTypeArgument(argumentsBuilder);
+                    argumentsBuilder.WithArgument(filePath)
+                        .WithArgument("-spf") // use fully-qualified path
+                        .WithArgument($"@{tempFilePath}");
 
-                        argumentsBuilder.WithArgument(filePath)
-                            .WithArgument(PathUtilities.GetFilename(entry.FilePath))
-                            .WithArgument(entry.Name);
+                    processStartInfo.Arguments = argumentsBuilder.ToString();
 
-                        processStartInfo.Arguments = argumentsBuilder.ToString();
+                    using (Process process = Process.Start(processStartInfo))
+                        process.WaitForExit();
 
-                        using (Process process = Process.Start(processStartInfo))
-                            process.WaitForExit();
+                    // Finally, rename the files that need to be renamed.
+                    // The listfile format has the old name followed by the new name on the following line for each file to be renamed.
+                    // https://sourceforge.net/p/sevenzip/discussion/45798/thread/3a1961c0/#453b
 
-                    }
+                    File.WriteAllText(tempFilePath, string.Join(Environment.NewLine, newEntries.Where(entry => entry.RenameRequired).Select(entry => entry.FilePath + Environment.NewLine + entry.Name)));
+
+                    argumentsBuilder = new CmdArgumentsBuilder()
+                       .WithArgument("rn");
+
+                    AddTypeArgument(argumentsBuilder);
+
+                    argumentsBuilder.WithArgument(filePath)
+                        .WithArgument($"@{tempFilePath}");
+
+                    processStartInfo.Arguments = argumentsBuilder.ToString();
+
+                    using (Process process = Process.Start(processStartInfo))
+                        process.WaitForExit();
+
+                }
+                finally {
+
+                    // Delete the temporary file that we created.
+
+                    if (File.Exists(tempFilePath))
+                        File.Delete(tempFilePath);
 
                 }
 
