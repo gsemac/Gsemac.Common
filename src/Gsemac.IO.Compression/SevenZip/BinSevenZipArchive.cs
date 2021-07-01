@@ -234,6 +234,7 @@ namespace Gsemac.IO.Compression.SevenZip {
                 processStartInfo.Arguments = new CmdArgumentsBuilder()
                     .WithArgument("l")
                     .WithArgument(filePath)
+                    .WithArgument("-sccUTF-8") // output filenames in UTF-8 instead of Windows' default charset
                     .ToString();
 
                 using (Stream processStream = new ProcessStream(processStartInfo, ProcessStreamOptions.RedirectStandardOutput))
