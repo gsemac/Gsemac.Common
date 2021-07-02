@@ -60,7 +60,6 @@ namespace Gsemac.IO.Compression.SevenZip {
 
                 this.filePath = Path.GetFullPath(fileStream.Name);
                 this.archiveFormat = archiveFormat;
-                this.options = options;
                 this.existingEntries = new Lazy<List<IArchiveEntry>>(ReadArchiveEntries);
                 this.compressionLevel = options.CompressionLevel;
 
@@ -226,7 +225,6 @@ namespace Gsemac.IO.Compression.SevenZip {
         private readonly string filePath;
         private readonly string sevenZipDirectoryPath;
         private readonly IFileFormat archiveFormat;
-        private readonly IArchiveOptions options;
         private readonly Lazy<List<IArchiveEntry>> existingEntries;
         private readonly List<NewArchiveEntry> newEntries = new List<NewArchiveEntry>();
         private readonly List<IArchiveEntry> deletedEntries = new List<IArchiveEntry>();
