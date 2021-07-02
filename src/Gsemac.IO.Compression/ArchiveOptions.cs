@@ -7,6 +7,8 @@ namespace Gsemac.IO.Compression {
         IArchiveOptions {
 
         public string Comment { get; set; }
+        public string Password { get; set; }
+        public bool EncryptHeaders { get; set; } = false;
         public CompressionLevel CompressionLevel { get; set; } = CompressionLevel.Maximum;
         public Encoding Encoding { get; set; } = Encoding.UTF8;
         public bool LeaveStreamOpen { get; set; } = false;

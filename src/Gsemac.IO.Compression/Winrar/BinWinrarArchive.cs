@@ -103,6 +103,7 @@ namespace Gsemac.IO.Compression.Winrar {
                 .WithArgument("p")
                 .WithArgument("-inul") // disable header and progress bar
                 .WithArgument(filePath)
+                .WithArgument(GetPasswordArgument())
                 .WithArgument(SanitizeEntryName(entry.Name))
                 .ToString();
 
@@ -125,6 +126,7 @@ namespace Gsemac.IO.Compression.Winrar {
                     .WithArgument("l")
                     .WithArgument(filePath)
                     .WithArgument("-scf") // output filenames in UTF-8 instead of Windows' default charset
+                    .WithArgument(GetPasswordArgument())
                     .ToString();
 
                 using (Stream processStream = new ProcessStream(processStartInfo, ProcessStreamOptions.RedirectStandardOutput))
@@ -316,6 +318,16 @@ namespace Gsemac.IO.Compression.Winrar {
             }
 
         }
+        private string GetPasswordArgument() {
+
+            if (string.IsNullOrEmpty(options.Password))
+                return "";
+
+            string switchStr = options.EncryptHeaders ? "hp" : "p";
+
+            return $"-{switchStr}{options.Password}";
+
+        }
 
         private void CommitComment(ProcessStartInfo processStartInfo) {
 
@@ -332,6 +344,7 @@ namespace Gsemac.IO.Compression.Winrar {
 
                     processStartInfo.Arguments = new CmdArgumentsBuilder()
                          .WithArgument("c")
+                         .WithArgument(GetPasswordArgument())
                          .WithArgument(GetEncodingArgument())
                          .WithArgument($"-z{tempFilePath}")
                          .WithArgument(filePath)
@@ -367,6 +380,7 @@ namespace Gsemac.IO.Compression.Winrar {
                     processStartInfo.Arguments = new CmdArgumentsBuilder()
                         .WithArgument("d")
                         .WithArgument(filePath)
+                        .WithArgument(GetPasswordArgument())
                         .WithArgument(GetEncodingArgument()) // We must specify the encoding for the list file
                         .WithArgument($"@{tempFilePath}")
                         .ToString();
@@ -417,6 +431,7 @@ namespace Gsemac.IO.Compression.Winrar {
 
                         argumentsBuilder.WithArgument(filePath)
                             .WithArgument("-ep") // Add files to root of archive
+                            .WithArgument(GetPasswordArgument())
                             .WithArgument(GetEncodingArgument()) // We must specify the encoding for the list file
                             .WithArgument($"@{tempFilePath}");
 
@@ -444,6 +459,7 @@ namespace Gsemac.IO.Compression.Winrar {
 
                         argumentsBuilder.WithArgument(filePath)
                             .WithArgument("-ep3") // use fully-qualified path
+                            .WithArgument(GetPasswordArgument())
                             .WithArgument(GetEncodingArgument())
                             .WithArgument($"@{tempFilePath}");
 
@@ -462,6 +478,7 @@ namespace Gsemac.IO.Compression.Winrar {
                         AddTypeArgument(argumentsBuilder);
 
                         argumentsBuilder.WithArgument(filePath)
+                            .WithArgument(GetPasswordArgument())
                             .WithArgument(GetEncodingArgument())
                             .WithArgument($"@{tempFilePath}");
 
