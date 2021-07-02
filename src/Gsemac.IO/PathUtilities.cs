@@ -102,7 +102,7 @@ namespace Gsemac.IO {
 
                 if (StartsWithDirectorySeparatorChar(path) && !EndsWithDirectorySeparatorChar(pathRoot)) {
 
-                    pathRoot = pathRoot + path.First();
+                    pathRoot += path.First();
                     path = path.Substring(1);
 
                 }
