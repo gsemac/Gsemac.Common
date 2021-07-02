@@ -146,10 +146,25 @@ namespace Gsemac.IO.Compression.SevenZip {
             if (entry is null)
                 throw new ArgumentNullException(nameof(entry));
 
-            if (!existingEntries.Value.Contains(entry))
-                throw new ArchiveEntryDoesNotExistException();
+            bool entryRemoved = false;
 
-            deletedEntries.Add(entry);
+            // If this is an entry that we added previously, remove it.
+
+            if (entry is NewArchiveEntry newArchiveEntry)
+                entryRemoved = newEntries.Remove(newArchiveEntry);
+
+            // If this is an existing entry, remove it.
+
+            if (existingEntries.Value.Contains(entry)) {
+
+                deletedEntries.Add(entry);
+
+                entryRemoved = true;
+
+            }
+
+            if (!entryRemoved)
+                throw new ArchiveEntryDoesNotExistException();
 
         }
         public override void ExtractEntry(IArchiveEntry entry, Stream outputStream) {
