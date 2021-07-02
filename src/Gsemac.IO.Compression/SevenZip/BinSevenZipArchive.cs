@@ -15,18 +15,13 @@ namespace Gsemac.IO.Compression.SevenZip {
 
         // Public members
 
-        public override bool CanRead => options.FileAccess.HasFlag(FileAccess.Read);
-        public override bool CanWrite => options.FileAccess.HasFlag(FileAccess.Write);
-        public override string Comment {
-            get => throw new NotSupportedException(Properties.ExceptionMessages.ArchiveDoesNotSupportReadingComments);
-            set => throw new NotSupportedException(Properties.ExceptionMessages.ArchiveDoesNotSupportWritingComments);
-        }
         public override CompressionLevel CompressionLevel {
             get => throw new NotSupportedException(Properties.ExceptionMessages.ArchiveDoesNotSupportGettingCompressionLevel);
             set => compressionLevel = value;
         }
 
-        public BinSevenZipArchive(Stream stream, string sevenZipDirectoryPath, IFileFormat archiveFormat, IArchiveOptions options) {
+        public BinSevenZipArchive(Stream stream, string sevenZipDirectoryPath, IFileFormat archiveFormat, IArchiveOptions options) :
+            base(options) {
 
             if (stream is null)
                 throw new ArgumentNullException(nameof(stream));

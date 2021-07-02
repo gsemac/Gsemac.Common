@@ -1,5 +1,4 @@
 ﻿using Gsemac.Core;
-using Gsemac.Core.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -16,8 +15,6 @@ namespace Gsemac.IO.Compression.Winrar {
 
         // Public members
 
-        public override bool CanRead => options.FileAccess.HasFlag(FileAccess.Read);
-        public override bool CanWrite => options.FileAccess.HasFlag(FileAccess.Write);
         public override string Comment {
             get => newComment is null ? existingComment.Value : newComment;
             set => newComment = value;
@@ -27,7 +24,8 @@ namespace Gsemac.IO.Compression.Winrar {
             set => compressionLevel = value;
         }
 
-        public BinWinrarArchive(Stream stream, string winrarDirectoryPath, IFileFormat archiveFormat, IArchiveOptions options) {
+        public BinWinrarArchive(Stream stream, string winrarDirectoryPath, IFileFormat archiveFormat, IArchiveOptions options) :
+            base(options) {
 
             if (stream is null)
                 throw new ArgumentNullException(nameof(stream));

@@ -11,10 +11,16 @@ namespace Gsemac.IO.Compression {
 
         // Public members
 
-        public abstract bool CanRead { get; }
-        public abstract bool CanWrite { get; }
-        public abstract string Comment { get; set; }
-        public abstract CompressionLevel CompressionLevel { get; set; }
+        public virtual bool CanRead => archiveOptions.FileAccess.HasFlag(FileAccess.Read);
+        public virtual bool CanWrite => archiveOptions.FileAccess.HasFlag(FileAccess.Write);
+        public virtual string Comment {
+            get => throw new NotSupportedException(Properties.ExceptionMessages.ArchiveDoesNotSupportReadingComments);
+            set => throw new NotSupportedException(Properties.ExceptionMessages.ArchiveDoesNotSupportWritingComments);
+        }
+        public virtual CompressionLevel CompressionLevel {
+            get => throw new NotSupportedException(Properties.ExceptionMessages.ArchiveDoesNotSupportGettingCompressionLevel);
+            set => throw new NotSupportedException(Properties.ExceptionMessages.ArchiveDoesNotSupportSettingCompressionLevel);
+        }
 
         public abstract IArchiveEntry AddEntry(Stream stream, string entryName, IArchiveEntryOptions options = null);
         public virtual IArchiveEntry GetEntry(string entryName) {
@@ -55,6 +61,15 @@ namespace Gsemac.IO.Compression {
 
         // Protected members
 
+        protected ArchiveBase() :
+            this(ArchiveOptions.Default) {
+        }
+        protected ArchiveBase(IArchiveOptions archiveOptions) {
+
+            this.archiveOptions = archiveOptions;
+
+        }
+
         protected virtual void Dispose(bool disposing) {
 
             Close();
@@ -75,6 +90,10 @@ namespace Gsemac.IO.Compression {
             return entryName;
 
         }
+
+        // Private members
+
+        private readonly IArchiveOptions archiveOptions;
 
     }
 
