@@ -187,7 +187,8 @@ namespace Gsemac.IO.Compression.Winrar {
 
             return existingEntries.Value
                 .Concat(newEntries)
-                .Except(deletedEntries);
+                .Except(deletedEntries)
+                .Except(existingEntries.Value.Where(entry => newEntries.Any(newEntry => newEntry.Name.Equals(entry.Name))));
 
         }
         public override void Close() {
@@ -418,6 +419,43 @@ namespace Gsemac.IO.Compression.Winrar {
             }
 
         }
+        private void CommitDeletedEntries(ProcessStartInfo processStartInfo) {
+
+            if (deletedEntries.Any()) {
+
+                string tempFilePath = null;
+
+                try {
+
+                    // Save the names of the deleted entries to a text file.
+
+                    tempFilePath = PathUtilities.GetUniqueTemporaryFilePath();
+
+                    File.WriteAllText(tempFilePath, string.Join(Environment.NewLine, deletedEntries.Select(entry => entry.Name)));
+
+                    processStartInfo.Arguments = new CmdArgumentsBuilder()
+                        .WithArgument("d")
+                        .WithArgument(filePath)
+                        .WithArgument(GetEncodingArgument()) // We must specify the encoding for the list file
+                        .WithArgument($"@{tempFilePath}")
+                        .ToString();
+
+                    using (Process process = Process.Start(processStartInfo))
+                        process.WaitForExit();
+
+                }
+                finally {
+
+                    // Delete the temporary file that we created.
+
+                    if (File.Exists(tempFilePath))
+                        File.Delete(tempFilePath);
+
+                }
+
+            }
+
+        }
         private void CommitChanges() {
 
             ProcessStartInfo processStartInfo = CreateProcessStartInfo();
@@ -427,18 +465,7 @@ namespace Gsemac.IO.Compression.Winrar {
 
             // Remove deleted entries from the archive.
 
-            if (deletedEntries.Any()) {
-
-                processStartInfo.Arguments = new CmdArgumentsBuilder()
-                    .WithArgument("d")
-                    .WithArgument(filePath)
-                    .WithArguments(deletedEntries.Select(entry => entry.Name).ToArray())
-                    .ToString();
-
-                using (Process process = Process.Start(processStartInfo))
-                    process.WaitForExit();
-
-            }
+            CommitDeletedEntries(processStartInfo);
 
             // Add new entries to the archive.
 

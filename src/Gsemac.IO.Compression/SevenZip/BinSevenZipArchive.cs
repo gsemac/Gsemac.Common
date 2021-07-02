@@ -383,7 +383,7 @@ namespace Gsemac.IO.Compression.SevenZip {
                     processStartInfo.Arguments = new CmdArgumentsBuilder()
                         .WithArgument("d")
                         .WithArgument(filePath)
-                        .WithArguments($"@{tempFilePath}")
+                        .WithArgument($"@{tempFilePath}")
                         .ToString();
 
                     using (Process process = Process.Start(processStartInfo))
