@@ -1,9 +1,18 @@
 ﻿namespace Gsemac.Core {
 
+    public interface ICmdArgumentsBuilder<BuilderT> :
+        ICmdArgumentsBuilder
+        where BuilderT : class {
+
+        new BuilderT WithArgument(string value);
+        new BuilderT WithArgument(string name, string value);
+
+    }
+
     public interface ICmdArgumentsBuilder {
 
-        void AddArgument(string value);
-        void AddArgument(string name, string value);
+        ICmdArgumentsBuilder WithArgument(string value);
+        ICmdArgumentsBuilder WithArgument(string name, string value);
 
         void Clear();
 

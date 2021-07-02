@@ -1,27 +1,19 @@
-﻿namespace Gsemac.Core.Extensions {
+﻿using System;
+
+namespace Gsemac.Core.Extensions {
 
     public static class CmdArgumentsBuilderExtensions {
 
-        public static ICmdArgumentsBuilder WithArgument(this ICmdArgumentsBuilder argumentsBuilder, string argument) {
-
-            argumentsBuilder.AddArgument(argument);
-
-            return argumentsBuilder;
-
-        }
-        public static ICmdArgumentsBuilder WithArgument(this ICmdArgumentsBuilder argumentsBuilder, string name, string value) {
-
-            argumentsBuilder.AddArgument(name, value);
-
-            return argumentsBuilder;
-
-        }
-        public static ICmdArgumentsBuilder WithArguments(this ICmdArgumentsBuilder argumentsBuilder, params string[] arguments) {
+        public static TBuilder WithArguments<TBuilder>(this ICmdArgumentsBuilder<TBuilder> argumentsBuilder, params string[] arguments)
+            where TBuilder : class {
 
             foreach (string argument in arguments)
-                argumentsBuilder.AddArgument(argument);
+                argumentsBuilder.WithArgument(argument);
 
-            return argumentsBuilder;
+            if (argumentsBuilder as TBuilder is null)
+                throw new InvalidCastException(string.Format(Properties.ExceptionMessages.CannotCastTypeToTypeWithTypeAndType, argumentsBuilder.GetType(), typeof(TBuilder)));
+
+            return argumentsBuilder as TBuilder;
 
         }
 

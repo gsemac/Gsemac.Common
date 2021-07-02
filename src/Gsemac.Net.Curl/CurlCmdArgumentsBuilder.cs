@@ -9,29 +9,15 @@ using System.Threading;
 namespace Gsemac.Net.Curl {
 
     public class CurlCmdArgumentsBuilder :
-        CmdArgumentsBuilder {
+        CmdArgumentsBuilderBase<CurlCmdArgumentsBuilder> {
 
         // Public members
 
-        public new CurlCmdArgumentsBuilder WithArgument(string value) {
-
-            AddArgument(value);
-
-            return this;
-
-        }
-        public new CurlCmdArgumentsBuilder WithArgument(string name, string value) {
-
-            AddArgument(name, value);
-
-            return this;
-
-        }
         public CurlCmdArgumentsBuilder WithAutomaticDecompression(DecompressionMethods decompressionMethods) {
 
             if (decompressionMethods != DecompressionMethods.None) {
 
-                AddArgument("--compressed");
+                WithArgument("--compressed");
 
                 List<string> headerValues = new List<string>();
 
@@ -44,7 +30,7 @@ namespace Gsemac.Net.Curl {
                 string headerValue = string.Join(",", headerValues);
 
                 if (!string.IsNullOrEmpty(headerValue))
-                    AddArgument("--header", $"Accept-Encoding: {headerValue}");
+                    WithArgument("--header", $"Accept-Encoding: {headerValue}");
 
             }
 
@@ -55,8 +41,8 @@ namespace Gsemac.Net.Curl {
 
             if (maxRedirections > 0) {
 
-                AddArgument("--location");
-                AddArgument("--max-redirs", maxRedirections.ToString(CultureInfo.InvariantCulture));
+                WithArgument("--location");
+                WithArgument("--max-redirs", maxRedirections.ToString(CultureInfo.InvariantCulture));
 
             }
 
@@ -66,7 +52,7 @@ namespace Gsemac.Net.Curl {
         public CurlCmdArgumentsBuilder WithCertificateValidation(bool certificateValidationEnabled) {
 
             if (!certificateValidationEnabled)
-                AddArgument("--insecure");
+                WithArgument("--insecure");
 
             return this;
 
@@ -84,7 +70,7 @@ namespace Gsemac.Net.Curl {
                     cookieStrings.Add(cookie.ToString());
 
                 if (cookieStrings.Count > 0)
-                    AddArgument("--cookie", string.Join(";", cookieStrings));
+                    WithArgument("--cookie", string.Join(";", cookieStrings));
 
             }
 
@@ -94,7 +80,7 @@ namespace Gsemac.Net.Curl {
         public CurlCmdArgumentsBuilder WithConnectTimeout(int timeoutSeconds) {
 
             if (timeoutSeconds != Timeout.Infinite)
-                AddArgument("--connect-timeout", (timeoutSeconds / 1000.0).ToString(CultureInfo.InvariantCulture));
+                WithArgument("--connect-timeout", (timeoutSeconds / 1000.0).ToString(CultureInfo.InvariantCulture));
 
             return this;
 
@@ -109,7 +95,7 @@ namespace Gsemac.Net.Curl {
                 requestUri = uri;
 
             if (!(credentials is null))
-                AddArgument("-u", credentials.ToCredentialsString(requestUri));
+                WithArgument("-u", credentials.ToCredentialsString(requestUri));
 
             return this;
 
@@ -122,7 +108,7 @@ namespace Gsemac.Net.Curl {
                 string header = headers.GetKey(i);
 
                 foreach (string value in headers.GetValues(i))
-                    AddArgument("--header", $"{header}: {headers[header]}");
+                    WithArgument("--header", $"{header}: {headers[header]}");
 
             }
 
@@ -134,9 +120,9 @@ namespace Gsemac.Net.Curl {
             if (version != null) {
 
                 if (version.Major > 1)
-                    AddArgument(string.Format("--http{0}", version.Major));
+                    WithArgument(string.Format("--http{0}", version.Major));
                 else
-                    AddArgument(string.Format("--http{0}.{1}", version.Major, version.Minor));
+                    WithArgument(string.Format("--http{0}.{1}", version.Major, version.Minor));
 
             }
 
@@ -146,7 +132,7 @@ namespace Gsemac.Net.Curl {
         public CurlCmdArgumentsBuilder WithKeepAlive(bool keepAlive) {
 
             if (!keepAlive)
-                AddArgument("--no-keepalive");
+                WithArgument("--no-keepalive");
 
             return this;
 
@@ -163,21 +149,21 @@ namespace Gsemac.Net.Curl {
 
                 case "head": // make HEAD request + redirect stderr to stdout so we can read it via the ProcessStream
 
-                    AddArgument("--head");
-                    AddArgument("--stderr", "-");
+                    WithArgument("--head");
+                    WithArgument("--stderr", "-");
 
                     break;
 
                 case "post":
-                    AddArgument("-X", "POST");
+                    WithArgument("-X", "POST");
                     break;
 
                 case "put":
-                    AddArgument("-X", "PUT");
+                    WithArgument("-X", "PUT");
                     break;
 
                 default:
-                    AddArgument("-X", method);
+                    WithArgument("-X", method);
                     break;
 
             }
@@ -188,7 +174,7 @@ namespace Gsemac.Net.Curl {
         public CurlCmdArgumentsBuilder WithPostData(string postData) {
 
             if (!string.IsNullOrWhiteSpace(postData))
-                AddArgument("--data", postData);
+                WithArgument("--data", postData);
 
             return this;
 
@@ -202,7 +188,7 @@ namespace Gsemac.Net.Curl {
                 requestUri = uri;
 
             if (!(proxy is null) && !proxy.IsBypassed(requestUri))
-                AddArgument("--proxy", proxy.ToProxyString(requestUri));
+                WithArgument("--proxy", proxy.ToProxyString(requestUri));
 
             return this;
 
@@ -211,7 +197,7 @@ namespace Gsemac.Net.Curl {
 
             this.uri = uri;
 
-            AddArgument(uri.AbsoluteUri);
+            WithArgument(uri.AbsoluteUri);
 
             return this;
 

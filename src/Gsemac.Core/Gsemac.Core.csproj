@@ -18,4 +18,10 @@
 		<DebugSymbols>false</DebugSymbols>
 	</PropertyGroup>
 
+	<ItemGroup>
+	  <Compile Update="Properties\ExceptionMessages.Designer.cs">
+	    <DesignTime>True</DesignTime>
+	  </Compile>
+	</ItemGroup>
+
 </Project>
