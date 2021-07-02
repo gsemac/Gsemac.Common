@@ -59,6 +59,7 @@ namespace Gsemac.IO.Compression.SevenZip {
 
                 this.filePath = Path.GetFullPath(fileStream.Name);
                 this.archiveFormat = archiveFormat;
+                this.options = options;
                 this.compressionLevel = options.CompressionLevel;
 
                 // We must close the file stream to ensure that 7-Zip can access the archive.
@@ -92,12 +93,15 @@ namespace Gsemac.IO.Compression.SevenZip {
 
             ProcessStartInfo processStartInfo = CreateProcessStartInfo();
 
-            processStartInfo.Arguments = new CmdArgumentsBuilder()
+            ICmdArgumentsBuilder argumentsBuilder = new CmdArgumentsBuilder()
                 .WithArgument("e")
                 .WithArgument(filePath)
                 .WithArgument("-so")
-                .WithArgument(SanitizeEntryName(entry.Name))
-                .ToString();
+                .WithArgument(SanitizeEntryName(entry.Name));
+
+            AddPasswordArguments(argumentsBuilder);
+
+            processStartInfo.Arguments = argumentsBuilder.ToString();
 
             using (Stream processStream = new ProcessStream(processStartInfo, ProcessStreamOptions.RedirectStandardOutput))
                 processStream.CopyTo(outputStream);
@@ -114,11 +118,14 @@ namespace Gsemac.IO.Compression.SevenZip {
 
                 ProcessStartInfo processStartInfo = CreateProcessStartInfo();
 
-                processStartInfo.Arguments = new CmdArgumentsBuilder()
+                ICmdArgumentsBuilder argumentsBuilder = new CmdArgumentsBuilder()
                     .WithArgument("l")
                     .WithArgument(filePath)
-                    .WithArgument("-sccUTF-8") // output filenames in UTF-8 instead of Windows' default charset
-                    .ToString();
+                    .WithArgument("-sccUTF-8"); // output filenames in UTF-8 instead of Windows' default charset
+
+                AddPasswordArguments(argumentsBuilder);
+
+                processStartInfo.Arguments = argumentsBuilder.ToString();
 
                 using (Stream processStream = new ProcessStream(processStartInfo, ProcessStreamOptions.RedirectStandardOutput))
                 using (StreamReader streamReader = new StreamReader(processStream)) {
@@ -177,6 +184,7 @@ namespace Gsemac.IO.Compression.SevenZip {
         private readonly string filePath;
         private readonly string sevenZipDirectoryPath;
         private readonly IFileFormat archiveFormat;
+        private readonly IArchiveOptions options;
         private CompressionLevel compressionLevel = CompressionLevel.Maximum;
 
         private ProcessStartInfo CreateProcessStartInfo() {
@@ -258,6 +266,18 @@ namespace Gsemac.IO.Compression.SevenZip {
             }
 
         }
+        private void AddPasswordArguments(ICmdArgumentsBuilder argumentsBuilder) {
+
+            if (!string.IsNullOrEmpty(options.Password)) {
+
+                argumentsBuilder.WithArgument($"-p{options.Password}");
+
+                if (options.EncryptHeaders)
+                    argumentsBuilder.WithArgument("-mhe");
+
+            }
+
+        }
 
         private void CommitDeletedEntries(ProcessStartInfo processStartInfo, IEnumerable<IArchiveEntry> deletedEntries) {
 
@@ -273,11 +293,14 @@ namespace Gsemac.IO.Compression.SevenZip {
 
                     File.WriteAllText(tempFilePath, string.Join(Environment.NewLine, deletedEntries.Select(entry => entry.Name)));
 
-                    processStartInfo.Arguments = new CmdArgumentsBuilder()
+                    ICmdArgumentsBuilder argumentsBuilder = new CmdArgumentsBuilder()
                         .WithArgument("d")
                         .WithArgument(filePath)
-                        .WithArgument($"@{tempFilePath}")
-                        .ToString();
+                        .WithArgument($"@{tempFilePath}");
+
+                    AddPasswordArguments(argumentsBuilder);
+
+                    processStartInfo.Arguments = argumentsBuilder.ToString();
 
                     using (Process process = Process.Start(processStartInfo))
                         process.WaitForExit();
@@ -322,6 +345,7 @@ namespace Gsemac.IO.Compression.SevenZip {
 
                         AddTypeArgument(argumentsBuilder);
                         AddCompressionLevelArguments(argumentsBuilder);
+                        AddPasswordArguments(argumentsBuilder);
 
                         argumentsBuilder.WithArgument(filePath)
                             .WithArgument($"@{tempFilePath}");
@@ -347,6 +371,7 @@ namespace Gsemac.IO.Compression.SevenZip {
 
                         AddTypeArgument(argumentsBuilder);
                         AddCompressionLevelArguments(argumentsBuilder);
+                        AddPasswordArguments(argumentsBuilder);
 
                         argumentsBuilder.WithArgument(filePath)
                             .WithArgument("-spf") // use fully-qualified path
@@ -367,6 +392,7 @@ namespace Gsemac.IO.Compression.SevenZip {
                            .WithArgument("rn");
 
                         AddTypeArgument(argumentsBuilder);
+                        AddPasswordArguments(argumentsBuilder);
 
                         argumentsBuilder.WithArgument(filePath)
                             .WithArgument($"@{tempFilePath}");
