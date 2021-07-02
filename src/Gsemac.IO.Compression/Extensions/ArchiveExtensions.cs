@@ -15,7 +15,7 @@ namespace Gsemac.IO.Compression.Extensions {
         }
         public static bool AddFile(this IArchive archive, string filePath, string entryName, bool overwrite = true) {
 
-            if (overwrite || archive.ContainsEntry(filePath))
+            if (!overwrite && archive.ContainsEntry(entryName))
                 return false;
 
             archive.AddEntry(File.OpenRead(filePath), entryName);
