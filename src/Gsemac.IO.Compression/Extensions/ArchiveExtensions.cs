@@ -6,20 +6,28 @@ namespace Gsemac.IO.Compression.Extensions {
 
     public static class ArchiveExtensions {
 
-        public static void AddFile(this IArchive archive, string filePath) {
+        public static bool AddFile(this IArchive archive, string filePath, bool overwrite = true) {
 
-            archive.AddFile(filePath, PathUtilities.GetFilename(filePath));
+            string entryName = PathUtilities.GetFilename(filePath);
+
+            return archive.AddFile(filePath, entryName, overwrite);
 
         }
-        public static void AddFile(this IArchive archive, string filePath, string entryName) {
+        public static bool AddFile(this IArchive archive, string filePath, string entryName, bool overwrite = true) {
+
+            if (overwrite || archive.ContainsEntry(filePath))
+                return false;
 
             archive.AddEntry(File.OpenRead(filePath), entryName);
 
+            return true;
+
         }
-        public static void AddAllFiles(this IArchive archive, string directoryPath) {
+
+        public static void AddAllFiles(this IArchive archive, string directoryPath, bool overwrite = true) {
 
             foreach (string filePath in Directory.EnumerateFiles(directoryPath, "*", SearchOption.AllDirectories))
-                archive.AddFile(filePath, PathUtilities.GetRelativePath(filePath, directoryPath));
+                archive.AddFile(filePath, PathUtilities.GetRelativePath(filePath, directoryPath), overwrite);
 
         }
 
@@ -28,6 +36,7 @@ namespace Gsemac.IO.Compression.Extensions {
             return archive.AddEntry(stream, entryName, ArchiveEntryOptions.Default);
 
         }
+
         public static bool ContainsEntry(this IArchive archive, string entryName) {
 
             return archive.GetEntry(entryName) is object;
@@ -38,6 +47,7 @@ namespace Gsemac.IO.Compression.Extensions {
             return archive.GetEntries().Any(e => e.Equals(entry));
 
         }
+
         public static bool DeleteEntry(this IArchive archive, string entryName) {
 
             IArchiveEntry entry = archive.GetEntry(entryName);
@@ -48,6 +58,7 @@ namespace Gsemac.IO.Compression.Extensions {
             return entry is object;
 
         }
+
         public static void ExtractEntry(this IArchive archive, IArchiveEntry entry, string filePath) {
 
             if (entry is null)
@@ -99,6 +110,7 @@ namespace Gsemac.IO.Compression.Extensions {
             archive.ExtractEntry(entry, outputStream);
 
         }
+
         public static void ExtractAllEntries(this IArchive archive, string directoryPath) {
 
             bool createdDirectory = false;
@@ -125,6 +137,11 @@ namespace Gsemac.IO.Compression.Extensions {
                     Directory.Delete(directoryPath);
 
             }
+
+        }
+        public static void ExtractAllEntries(this IArchive archive) {
+
+            ExtractAllEntries(archive, Directory.GetCurrentDirectory());
 
         }
 
