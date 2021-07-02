@@ -12,10 +12,11 @@ namespace Gsemac.Core {
 
         public CmdArgumentsBuilder WithArgument(string value) {
 
-            if (string.IsNullOrWhiteSpace(value))
+            if (value is null)
                 throw new ArgumentNullException(nameof(value));
 
-            arguments.Add(EscapeArgumentValue(value));
+            if (!string.IsNullOrWhiteSpace(value))
+                arguments.Add(EscapeArgumentValue(value));
 
             return this;
 
