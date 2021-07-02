@@ -10,8 +10,8 @@ using System.Text.RegularExpressions;
 
 namespace Gsemac.IO.Compression.Winrar {
 
-    internal class BinWinrarArchive :
-        ArchiveBase {
+    internal sealed class BinWinrarArchive :
+        DeferredCreationArchiveBase {
 
         // Public members
 
@@ -62,7 +62,6 @@ namespace Gsemac.IO.Compression.Winrar {
                 this.filePath = Path.GetFullPath(fileStream.Name);
                 this.archiveFormat = archiveFormat;
                 this.options = options;
-                this.existingEntries = new Lazy<List<IArchiveEntry>>(ReadArchiveEntries);
                 this.existingComment = new Lazy<string>(ReadArchiveComment);
                 this.compressionLevel = options.CompressionLevel;
 
@@ -82,73 +81,6 @@ namespace Gsemac.IO.Compression.Winrar {
 
         }
 
-        public override IArchiveEntry AddEntry(Stream stream, string entryName, IArchiveEntryOptions options) {
-
-            if (!CanWrite)
-                throw new InvalidOperationException(Properties.ExceptionMessages.ArchiveIsReadOnly);
-
-            if (stream is null)
-                throw new ArgumentNullException(nameof(stream));
-
-            if (stream is FileStream fileStream) {
-
-                if (options is null)
-                    options = ArchiveEntryOptions.Default;
-
-                IArchiveEntry existingEntry = GetEntry(entryName);
-
-                if (existingEntry is object && !options.Overwrite)
-                    throw new ArchiveEntryExistsException();
-
-                newEntries.Add(new NewArchiveEntry() {
-                    Name = SanitizeEntryName(entryName),
-                    LastModified = DateTimeOffset.Now,
-                    Comment = options.Comment,
-                    FilePath = Path.GetFullPath(fileStream.Name),
-                });
-
-                if (!options.LeaveStreamOpen)
-                    stream.Close();
-
-                return newEntries.Last();
-
-            }
-            else {
-
-                throw new ArgumentException(Properties.ExceptionMessages.ArchiveOnlySupportsFileStreams);
-
-            }
-
-        }
-        public override void DeleteEntry(IArchiveEntry entry) {
-
-            if (!CanWrite)
-                throw new InvalidOperationException(Properties.ExceptionMessages.ArchiveIsReadOnly);
-
-            if (entry is null)
-                throw new ArgumentNullException(nameof(entry));
-
-            bool entryRemoved = false;
-
-            // If this is an entry that we added previously, remove it.
-
-            if (entry is NewArchiveEntry newArchiveEntry)
-                entryRemoved = newEntries.Remove(newArchiveEntry);
-
-            // If this is an existing entry, remove it.
-
-            if (existingEntries.Value.Contains(entry)) {
-
-                deletedEntries.Add(entry);
-
-                entryRemoved = true;
-
-            }
-
-            if (!entryRemoved)
-                throw new ArchiveEntryDoesNotExistException();
-
-        }
         public override void ExtractEntry(IArchiveEntry entry, Stream outputStream) {
 
             if (!CanRead)
@@ -160,7 +92,7 @@ namespace Gsemac.IO.Compression.Winrar {
             if (outputStream is null)
                 throw new ArgumentNullException(nameof(outputStream));
 
-            if (!existingEntries.Value.Contains(entry))
+            if (!GetEntries().Where(e => !(e is NewArchiveEntry)).Contains(entry))
                 throw new ArchiveEntryDoesNotExistException();
 
             // Extract the given entry.
@@ -178,75 +110,10 @@ namespace Gsemac.IO.Compression.Winrar {
                 processStream.CopyTo(outputStream);
 
         }
-        public override IEnumerable<IArchiveEntry> GetEntries() {
 
-            if (!CanRead)
-                throw new InvalidOperationException(Properties.ExceptionMessages.ArchiveIsWriteOnly);
+        // Protected members
 
-            return existingEntries.Value
-                .Concat(newEntries)
-                .Except(deletedEntries)
-                .Except(existingEntries.Value.Where(entry => newEntries.Any(newEntry => newEntry.Name.Equals(entry.Name))));
-
-        }
-        public override void Close() {
-
-            if (!archiveIsClosed)
-                CommitChanges();
-
-            archiveIsClosed = true;
-
-        }
-
-        // Private members
-
-        private class NewArchiveEntry :
-            GenericArchiveEntry {
-
-            public string FilePath { get; set; }
-
-        }
-
-        private readonly string filePath;
-        private readonly string winrarDirectoryPath;
-        private readonly IFileFormat archiveFormat;
-        private readonly IArchiveOptions options;
-        private readonly Lazy<List<IArchiveEntry>> existingEntries;
-        private readonly Lazy<string> existingComment;
-        private readonly List<NewArchiveEntry> newEntries = new List<NewArchiveEntry>();
-        private readonly List<IArchiveEntry> deletedEntries = new List<IArchiveEntry>();
-        private CompressionLevel compressionLevel = CompressionLevel.Maximum;
-        private string newComment;
-        private bool archiveIsClosed = false;
-
-        private string ReadArchiveComment() {
-
-            if (!File.Exists(filePath) || FileUtilities.GetFileSize(filePath) <= 0)
-                return string.Empty;
-
-            ProcessStartInfo processStartInfo = CreateProcessStartInfo();
-
-            processStartInfo.Arguments = new CmdArgumentsBuilder()
-                .WithArgument("cw")
-                .WithArgument(filePath)
-                .WithArgument(GetEncodingArgument())
-                .ToString();
-
-            using (Stream processStream = new ProcessStream(processStartInfo, ProcessStreamOptions.RedirectStandardOutput))
-            using (StreamReader streamReader = new StreamReader(processStream, options.Encoding)) {
-
-                string output = streamReader.ReadToEnd().Trim();
-
-                // Skip the first two lines that are displayed before the comment content.
-
-                output = string.Join(Environment.NewLine, output.Split(new[] { Environment.NewLine }, StringSplitOptions.None).Skip(2));
-
-                return output;
-
-            }
-
-        }
-        private List<IArchiveEntry> ReadArchiveEntries() {
+        protected override List<IArchiveEntry> ReadArchiveEntries() {
 
             List<IArchiveEntry> items = new List<IArchiveEntry>();
 
@@ -293,6 +160,72 @@ namespace Gsemac.IO.Compression.Winrar {
             }
 
             return items;
+
+        }
+
+        protected override void CommitChanges(IEnumerable<NewArchiveEntry> newEntries, IEnumerable<IArchiveEntry> deletedEntries) {
+
+            ProcessStartInfo processStartInfo = CreateProcessStartInfo();
+
+            if (File.Exists(filePath) && FileUtilities.GetFileSize(filePath) <= 0)
+                File.Delete(filePath);
+
+            // Remove deleted entries from the archive.
+
+            CommitDeletedEntries(processStartInfo, deletedEntries);
+
+            // Add new entries to the archive.
+
+            CommitNewEntries(processStartInfo, newEntries);
+
+            // Update archive comment.
+
+            CommitComment(processStartInfo);
+
+        }
+
+        // Private members
+
+        private readonly string filePath;
+        private readonly string winrarDirectoryPath;
+        private readonly IFileFormat archiveFormat;
+        private readonly IArchiveOptions options;
+        private readonly Lazy<string> existingComment;
+        private CompressionLevel compressionLevel = CompressionLevel.Maximum;
+        private string newComment;
+
+        private static string ConvertToEp3Path(string filePath) {
+
+            return Regex.Replace(filePath, @"^\/+|:", m => "".PadLeft(m.Length, '_'));
+
+
+        }
+
+        private string ReadArchiveComment() {
+
+            if (!File.Exists(filePath) || FileUtilities.GetFileSize(filePath) <= 0)
+                return string.Empty;
+
+            ProcessStartInfo processStartInfo = CreateProcessStartInfo();
+
+            processStartInfo.Arguments = new CmdArgumentsBuilder()
+                .WithArgument("cw")
+                .WithArgument(filePath)
+                .WithArgument(GetEncodingArgument())
+                .ToString();
+
+            using (Stream processStream = new ProcessStream(processStartInfo, ProcessStreamOptions.RedirectStandardOutput))
+            using (StreamReader streamReader = new StreamReader(processStream, options.Encoding)) {
+
+                string output = streamReader.ReadToEnd().Trim();
+
+                // Skip the first two lines that are displayed before the comment content.
+
+                output = string.Join(Environment.NewLine, output.Split(new[] { Environment.NewLine }, StringSplitOptions.None).Skip(2));
+
+                return output;
+
+            }
 
         }
 
@@ -417,7 +350,7 @@ namespace Gsemac.IO.Compression.Winrar {
             }
 
         }
-        private void CommitDeletedEntries(ProcessStartInfo processStartInfo) {
+        private void CommitDeletedEntries(ProcessStartInfo processStartInfo, IEnumerable<IArchiveEntry> deletedEntries) {
 
             if (deletedEntries.Any()) {
 
@@ -454,54 +387,83 @@ namespace Gsemac.IO.Compression.Winrar {
             }
 
         }
-        private void CommitChanges() {
-
-            ProcessStartInfo processStartInfo = CreateProcessStartInfo();
-
-            if (File.Exists(filePath) && FileUtilities.GetFileSize(filePath) <= 0)
-                File.Delete(filePath);
-
-            // Remove deleted entries from the archive.
-
-            CommitDeletedEntries(processStartInfo);
-
-            // Add new entries to the archive.
+        private void CommitNewEntries(ProcessStartInfo processStartInfo, IEnumerable<NewArchiveEntry> newEntries) {
 
             if (newEntries.Any()) {
 
-                foreach (NewArchiveEntry entry in newEntries) {
+                string tempFilePath = null;
+                ICmdArgumentsBuilder argumentsBuilder;
 
-                    // Add the entry to the archive.
+                try {
 
-                    ICmdArgumentsBuilder argumentsBuilder = new CmdArgumentsBuilder()
-                        .WithArgument(File.Exists(filePath) ? "u" : "a")
-                        .WithArgument("-ep");
+                    tempFilePath = PathUtilities.GetUniqueTemporaryFilePath();
 
-                    AddTypeArgument(argumentsBuilder);
-                    AddCompressionLevelArguments(argumentsBuilder);
+                    // Add the entries to the archive.
+                    // WinRAR does not allow us to add a file to the archive and rename it in one action.
 
-                    argumentsBuilder.WithArgument(filePath)
-                        .WithArgument(entry.FilePath);
+                    // Start by adding the files that don't need to be renamed.
 
-                    processStartInfo.Arguments = argumentsBuilder.ToString();
+                    IEnumerable<string> filesToAdd = newEntries.Where(entry => !entry.RenameRequired).Select(entry => entry.FilePath);
 
-                    using (Process process = Process.Start(processStartInfo))
-                        process.WaitForExit();
+                    if (filesToAdd.Any()) {
 
-                    // WinRAR will add each entry with only its original filename.
-                    // Rename the entry if needed.
+                        File.WriteAllText(tempFilePath, string.Join(Environment.NewLine, filesToAdd));
 
-                    if (!PathUtilities.GetFilename(entry.FilePath).Equals(entry.Name)) {
+                        argumentsBuilder = new CmdArgumentsBuilder()
+                            .WithArgument(File.Exists(filePath) ? "u" : "a");
 
-                        argumentsBuilder.Clear();
+                        AddTypeArgument(argumentsBuilder);
+                        AddCompressionLevelArguments(argumentsBuilder);
 
-                        argumentsBuilder.WithArgument("rn");
+                        argumentsBuilder.WithArgument(filePath)
+                            .WithArgument("-ep") // Add files to root of archive
+                            .WithArgument(GetEncodingArgument()) // We must specify the encoding for the list file
+                            .WithArgument($"@{tempFilePath}");
+
+                        processStartInfo.Arguments = argumentsBuilder.ToString();
+
+                        using (Process process = Process.Start(processStartInfo))
+                            process.WaitForExit();
+
+                    }
+
+                    // Next, add the files that do need to be renamed using their fully-qualified paths.
+                    // After the files have been added, they will be renamed.
+
+                    filesToAdd = newEntries.Where(entry => entry.RenameRequired).Select(entry => entry.FilePath);
+
+                    if (filesToAdd.Any()) {
+
+                        File.WriteAllText(tempFilePath, string.Join(Environment.NewLine, filesToAdd));
+
+                        argumentsBuilder = new CmdArgumentsBuilder()
+                            .WithArgument(File.Exists(filePath) ? "u" : "a");
+
+                        AddTypeArgument(argumentsBuilder);
+                        AddCompressionLevelArguments(argumentsBuilder);
+
+                        argumentsBuilder.WithArgument(filePath)
+                            .WithArgument("-ep3") // use fully-qualified path
+                            .WithArgument(GetEncodingArgument())
+                            .WithArgument($"@{tempFilePath}");
+
+                        processStartInfo.Arguments = argumentsBuilder.ToString();
+
+                        using (Process process = Process.Start(processStartInfo))
+                            process.WaitForExit();
+
+                        // Finally, rename the files that need to be renamed.
+
+                        File.WriteAllText(tempFilePath, string.Join(Environment.NewLine, newEntries.Where(entry => entry.RenameRequired).Select(entry => ConvertToEp3Path(entry.FilePath) + Environment.NewLine + entry.Name)));
+
+                        argumentsBuilder = new CmdArgumentsBuilder()
+                           .WithArgument("rn");
 
                         AddTypeArgument(argumentsBuilder);
 
                         argumentsBuilder.WithArgument(filePath)
-                            .WithArgument(PathUtilities.GetFilename(entry.FilePath))
-                            .WithArgument(entry.Name);
+                            .WithArgument(GetEncodingArgument())
+                            .WithArgument($"@{tempFilePath}");
 
                         processStartInfo.Arguments = argumentsBuilder.ToString();
 
@@ -511,12 +473,16 @@ namespace Gsemac.IO.Compression.Winrar {
                     }
 
                 }
+                finally {
+
+                    // Delete the temporary file that we created.
+
+                    if (File.Exists(tempFilePath))
+                        File.Delete(tempFilePath);
+
+                }
 
             }
-
-            // Update archive comment.
-
-            CommitComment(processStartInfo);
 
         }
 

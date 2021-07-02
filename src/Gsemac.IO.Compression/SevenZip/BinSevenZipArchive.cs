@@ -1,5 +1,4 @@
 ﻿using Gsemac.Core;
-using Gsemac.Core.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -10,8 +9,8 @@ using System.Text.RegularExpressions;
 
 namespace Gsemac.IO.Compression.SevenZip {
 
-    internal class BinSevenZipArchive :
-        ArchiveBase {
+    internal sealed class BinSevenZipArchive :
+        DeferredCreationArchiveBase {
 
         // Public members
 
@@ -60,7 +59,6 @@ namespace Gsemac.IO.Compression.SevenZip {
 
                 this.filePath = Path.GetFullPath(fileStream.Name);
                 this.archiveFormat = archiveFormat;
-                this.existingEntries = new Lazy<List<IArchiveEntry>>(ReadArchiveEntries);
                 this.compressionLevel = options.CompressionLevel;
 
                 // We must close the file stream to ensure that 7-Zip can access the archive.
@@ -76,91 +74,6 @@ namespace Gsemac.IO.Compression.SevenZip {
 
         }
 
-        public override IArchiveEntry AddEntry(Stream stream, string entryName, IArchiveEntryOptions options) {
-
-            if (!CanWrite)
-                throw new InvalidOperationException(Properties.ExceptionMessages.ArchiveIsReadOnly);
-
-            if (stream is null)
-                throw new ArgumentNullException(nameof(stream));
-
-            if (stream is FileStream fileStream) {
-
-                if (options is null)
-                    options = ArchiveEntryOptions.Default;
-
-                IArchiveEntry existingEntry = GetEntry(entryName);
-
-                NewArchiveEntry newEntry = new NewArchiveEntry() {
-                    Name = SanitizeEntryName(entryName),
-                    LastModified = DateTimeOffset.Now,
-                    Comment = options.Comment,
-                    FilePath = Path.GetFullPath(fileStream.Name),
-                };
-
-                if (existingEntry is object) {
-
-                    if (!options.Overwrite) {
-
-                        throw new ArchiveEntryExistsException();
-
-                    }
-                    else if (newEntry.RenameRequired) {
-
-                        // While 7-Zip will happily overwrite old entries when adding new entries to the archive with the same name, it will
-                        // not delete an older entry when renaming a new entry to the same name. Instead, it creates a duplicate.
-                        // We need to make sure that we delete the old entry to avoid creating a duplicate.
-
-                        DeleteEntry(existingEntry);
-
-                    }
-
-                }
-
-                newEntries.Add(newEntry);
-
-                if (!options.LeaveStreamOpen)
-                    stream.Close();
-
-                return newEntries.Last();
-
-            }
-            else {
-
-                throw new ArgumentException(Properties.ExceptionMessages.ArchiveOnlySupportsFileStreams);
-
-            }
-
-        }
-        public override void DeleteEntry(IArchiveEntry entry) {
-
-            if (!CanWrite)
-                throw new InvalidOperationException(Properties.ExceptionMessages.ArchiveIsReadOnly);
-
-            if (entry is null)
-                throw new ArgumentNullException(nameof(entry));
-
-            bool entryRemoved = false;
-
-            // If this is an entry that we added previously, remove it.
-
-            if (entry is NewArchiveEntry newArchiveEntry)
-                entryRemoved = newEntries.Remove(newArchiveEntry);
-
-            // If this is an existing entry, remove it.
-
-            if (existingEntries.Value.Contains(entry)) {
-
-                deletedEntries.Add(entry);
-
-                entryRemoved = true;
-
-            }
-
-            if (!entryRemoved)
-                throw new ArchiveEntryDoesNotExistException();
-
-        }
         public override void ExtractEntry(IArchiveEntry entry, Stream outputStream) {
 
             if (!CanRead)
@@ -172,7 +85,7 @@ namespace Gsemac.IO.Compression.SevenZip {
             if (outputStream is null)
                 throw new ArgumentNullException(nameof(outputStream));
 
-            if (!existingEntries.Value.Contains(entry))
+            if (!GetEntries().Where(e => !(e is NewArchiveEntry)).Contains(entry))
                 throw new ArchiveEntryDoesNotExistException();
 
             // Extract the given entry.
@@ -190,48 +103,10 @@ namespace Gsemac.IO.Compression.SevenZip {
                 processStream.CopyTo(outputStream);
 
         }
-        public override IEnumerable<IArchiveEntry> GetEntries() {
 
-            if (!CanRead)
-                throw new InvalidOperationException(Properties.ExceptionMessages.ArchiveIsWriteOnly);
+        // Protected members
 
-            // Include all existing and new entries minus deleted and overwritten entries.
-
-            return existingEntries.Value
-                .Concat(newEntries)
-                .Except(deletedEntries)
-                .Except(existingEntries.Value.Where(entry => newEntries.Any(newEntry => newEntry.Name.Equals(entry.Name))));
-
-        }
-        public override void Close() {
-
-            if (!archiveIsClosed)
-                CommitChanges();
-
-            archiveIsClosed = true;
-
-        }
-
-        // Private members
-
-        private class NewArchiveEntry :
-            GenericArchiveEntry {
-
-            public string FilePath { get; set; }
-            public bool RenameRequired => !Name.Equals(PathUtilities.GetFilename(FilePath));
-
-        }
-
-        private readonly string filePath;
-        private readonly string sevenZipDirectoryPath;
-        private readonly IFileFormat archiveFormat;
-        private readonly Lazy<List<IArchiveEntry>> existingEntries;
-        private readonly List<NewArchiveEntry> newEntries = new List<NewArchiveEntry>();
-        private readonly List<IArchiveEntry> deletedEntries = new List<IArchiveEntry>();
-        private CompressionLevel compressionLevel = CompressionLevel.Maximum;
-        private bool archiveIsClosed = false;
-
-        private List<IArchiveEntry> ReadArchiveEntries() {
+        protected override List<IArchiveEntry> ReadArchiveEntries() {
 
             List<IArchiveEntry> items = new List<IArchiveEntry>();
 
@@ -279,6 +154,31 @@ namespace Gsemac.IO.Compression.SevenZip {
             return items;
 
         }
+
+        protected override void CommitChanges(IEnumerable<NewArchiveEntry> newEntries, IEnumerable<IArchiveEntry> deletedEntries) {
+
+            ProcessStartInfo processStartInfo = CreateProcessStartInfo();
+
+            if (File.Exists(filePath) && FileUtilities.GetFileSize(filePath) <= 0)
+                File.Delete(filePath);
+
+            // Remove deleted entries from the archive.
+
+            CommitDeletedEntries(processStartInfo, deletedEntries);
+
+            // Add new entries to the archive.
+
+            CommitNewEntries(processStartInfo, newEntries);
+
+        }
+
+        // Private members
+
+        private readonly string filePath;
+        private readonly string sevenZipDirectoryPath;
+        private readonly IFileFormat archiveFormat;
+        private CompressionLevel compressionLevel = CompressionLevel.Maximum;
+
         private ProcessStartInfo CreateProcessStartInfo() {
 
             ProcessStartInfo processStartInfo = new ProcessStartInfo() {
@@ -359,7 +259,7 @@ namespace Gsemac.IO.Compression.SevenZip {
 
         }
 
-        private void CommitDeletedEntries(ProcessStartInfo processStartInfo) {
+        private void CommitDeletedEntries(ProcessStartInfo processStartInfo, IEnumerable<IArchiveEntry> deletedEntries) {
 
             if (deletedEntries.Any()) {
 
@@ -395,7 +295,7 @@ namespace Gsemac.IO.Compression.SevenZip {
             }
 
         }
-        private void CommitNewEntries(ProcessStartInfo processStartInfo) {
+        private void CommitNewEntries(ProcessStartInfo processStartInfo, IEnumerable<NewArchiveEntry> newEntries) {
 
             if (newEntries.Any()) {
 
@@ -403,8 +303,6 @@ namespace Gsemac.IO.Compression.SevenZip {
                 ICmdArgumentsBuilder argumentsBuilder;
 
                 try {
-
-                    // Save the names of the new entries to a text file.
 
                     tempFilePath = PathUtilities.GetUniqueTemporaryFilePath();
 
@@ -491,22 +389,6 @@ namespace Gsemac.IO.Compression.SevenZip {
                 }
 
             }
-
-        }
-        private void CommitChanges() {
-
-            ProcessStartInfo processStartInfo = CreateProcessStartInfo();
-
-            if (File.Exists(filePath) && FileUtilities.GetFileSize(filePath) <= 0)
-                File.Delete(filePath);
-
-            // Remove deleted entries from the archive.
-
-            CommitDeletedEntries(processStartInfo);
-
-            // Add new entries to the archive.
-
-            CommitNewEntries(processStartInfo);
 
         }
 
