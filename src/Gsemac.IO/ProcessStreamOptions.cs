@@ -1,26 +1,39 @@
-﻿using System;
+﻿namespace Gsemac.IO {
 
-namespace Gsemac.IO {
+    public class ProcessStreamOptions :
+        IProcessStreamOptions {
 
-    [Flags]
-    public enum ProcessStreamOptions {
-        /// <summary>
-        /// Redirect Standard Input to the stream.
-        /// </summary>
-        RedirectStandardOutput = 1,
-        /// <summary>
-        /// Redirect writes to the stream to Standard Input.
-        /// </summary>
-        RedirectStandardInput = 2,
-        /// <summary>
-        /// Redirect Standard Error to the stream.
-        /// </summary>
-        RedirectStandardError = 4,
-        /// <summary>
-        /// Redirect Standard Output and Standard Error to the same stream.
-        /// </summary>
-        RedirectStandardErrorToStandardOutput = 8,
-        Default = RedirectStandardOutput | RedirectStandardInput | RedirectStandardError
+        // Public members
+
+        public bool RedirectStandardOutput { get; set; } = true;
+        public bool RedirectStandardInput { get; set; } = false;
+        public bool RedirectStandardError { get; set; } = false;
+        public bool RedirectStandardErrorToStandardOutput {
+            get => redirectStandardErrorToStandardOutput;
+            set {
+
+                redirectStandardErrorToStandardOutput = true;
+
+                RedirectStandardError = true;
+
+            }
+        }
+        public bool ExitOnUserInputPrompt { get; set; } = false;
+
+        public static ProcessStreamOptions Default => new ProcessStreamOptions();
+
+        public ProcessStreamOptions(bool redirectStandardOutput = true, bool redirectStandardInput = true, bool redirectStandardError = true) {
+
+            RedirectStandardOutput = redirectStandardOutput;
+            RedirectStandardInput = redirectStandardInput;
+            RedirectStandardError = redirectStandardError;
+
+        }
+
+        // Private members
+
+        private bool redirectStandardErrorToStandardOutput = false;
+
     }
 
 }

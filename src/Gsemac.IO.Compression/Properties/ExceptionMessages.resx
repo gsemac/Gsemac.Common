@@ -141,6 +141,9 @@
   <data name="ArchiveOnlySupportsFileStreams" xml:space="preserve">
     <value>This archive implementation can only be used with FileStream instances.</value>
   </data>
+  <data name="PasswordIsMissingOrIncorrect" xml:space="preserve">
+    <value>The archive password is missing or incorrect.</value>
+  </data>
   <data name="SevenZipExecutableNotFound" xml:space="preserve">
     <value>'7z.exe' was not found.</value>
   </data>

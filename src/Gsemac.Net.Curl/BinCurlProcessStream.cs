@@ -11,12 +11,12 @@ namespace Gsemac.Net.Curl {
 
         // Public members
 
-        public BinCurlProcessStream(string filename, ProcessStreamOptions options = ProcessStreamOptions.Default) :
-            base(filename, options) { }
-        public BinCurlProcessStream(string filename, string arguments, ProcessStreamOptions options = ProcessStreamOptions.Default) :
-            base(filename, arguments, options) { }
-        public BinCurlProcessStream(ProcessStartInfo startInfo, ProcessStreamOptions options = ProcessStreamOptions.Default) :
-            base(startInfo, options) { }
+        public BinCurlProcessStream(string filename, IProcessStreamOptions options = null) :
+            base(filename, options ?? ProcessStreamOptions.Default) { }
+        public BinCurlProcessStream(string filename, string arguments, IProcessStreamOptions options = null) :
+            base(filename, arguments, options ?? ProcessStreamOptions.Default) { }
+        public BinCurlProcessStream(ProcessStartInfo startInfo, IProcessStreamOptions options = null) :
+            base(startInfo, options ?? ProcessStreamOptions.Default) { }
 
         public override void Close() {
 

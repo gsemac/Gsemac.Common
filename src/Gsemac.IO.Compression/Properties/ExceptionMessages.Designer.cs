@@ -133,6 +133,15 @@ namespace Gsemac.IO.Compression.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The archive password is missing or incorrect..
+        /// </summary>
+        internal static string PasswordIsMissingOrIncorrect {
+            get {
+                return ResourceManager.GetString("PasswordIsMissingOrIncorrect", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to &apos;7z.exe&apos; was not found..
         /// </summary>
         internal static string SevenZipExecutableNotFound {

@@ -86,25 +86,37 @@ namespace Gsemac.IO.Compression.SevenZip {
             if (outputStream is null)
                 throw new ArgumentNullException(nameof(outputStream));
 
-            if (!GetEntries().Where(e => !(e is NewArchiveEntry)).Contains(entry))
+            if (!GetEntries().Contains(entry))
                 throw new ArchiveEntryDoesNotExistException();
 
-            // Extract the given entry.
+            if (entry is NewArchiveEntry newArchiveEntry) {
 
-            ProcessStartInfo processStartInfo = CreateProcessStartInfo();
+                // If the archive is a newly-added entry that hasn't already been committed to the archive, just copy it.
 
-            ICmdArgumentsBuilder argumentsBuilder = new CmdArgumentsBuilder()
-                .WithArgument("e")
-                .WithArgument(filePath)
-                .WithArgument("-so")
-                .WithArgument(SanitizeEntryName(entry.Name));
+                using (Stream fileStream = File.OpenRead(newArchiveEntry.FilePath))
+                    fileStream.CopyTo(outputStream);
 
-            AddPasswordArguments(argumentsBuilder);
+            }
+            else {
 
-            processStartInfo.Arguments = argumentsBuilder.ToString();
+                // Extract the given entry.
 
-            using (Stream processStream = new ProcessStream(processStartInfo, ProcessStreamOptions.RedirectStandardOutput))
-                processStream.CopyTo(outputStream);
+                ProcessStartInfo processStartInfo = CreateProcessStartInfo();
+
+                ICmdArgumentsBuilder argumentsBuilder = new CmdArgumentsBuilder()
+                    .WithArgument("e")
+                    .WithArgument(filePath)
+                    .WithArgument("-so")
+                    .WithArgument(SanitizeEntryName(entry.Name));
+
+                AddPasswordArguments(argumentsBuilder);
+
+                processStartInfo.Arguments = argumentsBuilder.ToString();
+
+                using (Stream processStream = new ProcessStream(processStartInfo, new ProcessStreamOptions(redirectStandardOutput: true)))
+                    processStream.CopyTo(outputStream);
+
+            }
 
         }
 
@@ -123,11 +135,15 @@ namespace Gsemac.IO.Compression.SevenZip {
                     .WithArgument(filePath)
                     .WithArgument("-sccUTF-8"); // output filenames in UTF-8 instead of Windows' default charset
 
-                AddPasswordArguments(argumentsBuilder);
+                // Include an empty password if no password has been specified to prevent 7-Zip from prompting for a password.
+                // This trick doesn't work for other operations (for example, when adding files, it will always prompt for a password),
+                // so we rely on this method always being called before other operations.
+
+                AddPasswordArguments(argumentsBuilder, includeEmptyPassword: true);
 
                 processStartInfo.Arguments = argumentsBuilder.ToString();
 
-                using (Stream processStream = new ProcessStream(processStartInfo, ProcessStreamOptions.RedirectStandardOutput))
+                using (Stream processStream = new ProcessStream(processStartInfo, new ProcessStreamOptions(redirectStandardOutput: true, redirectStandardError: true) { RedirectStandardErrorToStandardOutput = true }))
                 using (StreamReader streamReader = new StreamReader(processStream)) {
 
                     string output = streamReader.ReadToEnd();
@@ -153,6 +169,9 @@ namespace Gsemac.IO.Compression.SevenZip {
                         items.Add(entry);
 
                     }
+
+                    if (!items.Any() && output.Contains("Wrong password?"))
+                        throw new PasswordException();
 
                 }
 
@@ -266,11 +285,16 @@ namespace Gsemac.IO.Compression.SevenZip {
             }
 
         }
-        private void AddPasswordArguments(ICmdArgumentsBuilder argumentsBuilder) {
+        private void AddPasswordArguments(ICmdArgumentsBuilder argumentsBuilder, bool includeEmptyPassword = false) {
 
-            if (!string.IsNullOrEmpty(options.Password)) {
+            // A default password can optionally be included to prevent 7-Zip from prompting for one.
+            // This should only be enabled for non-constructive operations like reading files from the archive.
 
-                argumentsBuilder.WithArgument($"-p{options.Password}");
+            if (!string.IsNullOrEmpty(options.Password) || includeEmptyPassword) {
+
+                string password = string.IsNullOrEmpty(options.Password) ? "_" : options.Password;
+
+                argumentsBuilder.WithArgument($"-p{password}");
 
                 if (options.EncryptHeaders)
                     argumentsBuilder.WithArgument("-mhe");

@@ -92,23 +92,35 @@ namespace Gsemac.IO.Compression.Winrar {
             if (outputStream is null)
                 throw new ArgumentNullException(nameof(outputStream));
 
-            if (!GetEntries().Where(e => !(e is NewArchiveEntry)).Contains(entry))
+            if (!GetEntries().Contains(entry))
                 throw new ArchiveEntryDoesNotExistException();
 
-            // Extract the given entry.
+            if (entry is NewArchiveEntry newArchiveEntry) {
 
-            ProcessStartInfo processStartInfo = CreateProcessStartInfo(unrar: true);
+                // If the archive is a newly-added entry that hasn't already been committed to the archive, just copy it.
 
-            processStartInfo.Arguments = new CmdArgumentsBuilder()
-                .WithArgument("p")
-                .WithArgument("-inul") // disable header and progress bar
-                .WithArgument(filePath)
-                .WithArgument(GetPasswordArgument())
-                .WithArgument(SanitizeEntryName(entry.Name))
-                .ToString();
+                using (Stream fileStream = File.OpenRead(newArchiveEntry.FilePath))
+                    fileStream.CopyTo(outputStream);
 
-            using (Stream processStream = new ProcessStream(processStartInfo, ProcessStreamOptions.RedirectStandardOutput))
-                processStream.CopyTo(outputStream);
+            }
+            else {
+
+                // Extract the given entry.
+
+                ProcessStartInfo processStartInfo = CreateProcessStartInfo(unrar: true);
+
+                processStartInfo.Arguments = new CmdArgumentsBuilder()
+                    .WithArgument("p")
+                    .WithArgument("-inul") // disable header and progress bar
+                    .WithArgument(filePath)
+                    .WithArgument(GetPasswordArgument())
+                    .WithArgument(SanitizeEntryName(entry.Name))
+                    .ToString();
+
+                using (Stream processStream = new ProcessStream(processStartInfo, new ProcessStreamOptions(redirectStandardOutput: true)))
+                    processStream.CopyTo(outputStream);
+
+            }
 
         }
 
@@ -126,10 +138,10 @@ namespace Gsemac.IO.Compression.Winrar {
                     .WithArgument("l")
                     .WithArgument(filePath)
                     .WithArgument("-scf") // output filenames in UTF-8 instead of Windows' default charset
-                    .WithArgument(GetPasswordArgument())
+                    .WithArgument(GetPasswordArgument(includeEmptyPassword: true))
                     .ToString();
 
-                using (Stream processStream = new ProcessStream(processStartInfo, ProcessStreamOptions.RedirectStandardOutput))
+                using (Stream processStream = new ProcessStream(processStartInfo, new ProcessStreamOptions(redirectStandardOutput: true, redirectStandardError: true) { RedirectStandardErrorToStandardOutput = true }))
                 using (StreamReader streamReader = new StreamReader(processStream)) {
 
                     string output = streamReader.ReadToEnd();
@@ -156,6 +168,9 @@ namespace Gsemac.IO.Compression.Winrar {
                         items.Add(entry);
 
                     }
+
+                    if (!items.Any() && output.Contains("Incorrect password"))
+                        throw new PasswordException();
 
                 }
 
@@ -200,7 +215,6 @@ namespace Gsemac.IO.Compression.Winrar {
 
             return Regex.Replace(filePath, @"^\/+|:", m => "".PadLeft(m.Length, '_'));
 
-
         }
 
         private string ReadArchiveComment() {
@@ -213,13 +227,17 @@ namespace Gsemac.IO.Compression.Winrar {
             processStartInfo.Arguments = new CmdArgumentsBuilder()
                 .WithArgument("cw")
                 .WithArgument(filePath)
+                .WithArgument(GetPasswordArgument(includeEmptyPassword: true))
                 .WithArgument(GetEncodingArgument())
                 .ToString();
 
-            using (Stream processStream = new ProcessStream(processStartInfo, ProcessStreamOptions.RedirectStandardOutput))
+            using (Stream processStream = new ProcessStream(processStartInfo, new ProcessStreamOptions(redirectStandardOutput: true)))
             using (StreamReader streamReader = new StreamReader(processStream, options.Encoding)) {
 
                 string output = streamReader.ReadToEnd().Trim();
+
+                if (output.Contains("Program aborted"))
+                    throw new PasswordException();
 
                 // Skip the first two lines that are displayed before the comment content.
 
@@ -318,14 +336,18 @@ namespace Gsemac.IO.Compression.Winrar {
             }
 
         }
-        private string GetPasswordArgument() {
+        private string GetPasswordArgument(bool includeEmptyPassword = false) {
 
-            if (string.IsNullOrEmpty(options.Password))
+            // A default password can optionally be included to prevent WinRAR from prompting for one.
+            // This should only be enabled for non-constructive operations like reading files from the archive.
+
+            if (string.IsNullOrEmpty(options.Password) && !includeEmptyPassword)
                 return "";
 
             string switchStr = options.EncryptHeaders ? "hp" : "p";
+            string password = string.IsNullOrEmpty(options.Password) ? "_" : options.Password;
 
-            return $"-{switchStr}{options.Password}";
+            return $"-{switchStr}{password}";
 
         }
 
@@ -344,7 +366,7 @@ namespace Gsemac.IO.Compression.Winrar {
 
                     processStartInfo.Arguments = new CmdArgumentsBuilder()
                          .WithArgument("c")
-                         .WithArgument(GetPasswordArgument())
+                         .WithArgument(GetPasswordArgument(includeEmptyPassword: true))
                          .WithArgument(GetEncodingArgument())
                          .WithArgument($"-z{tempFilePath}")
                          .WithArgument(filePath)

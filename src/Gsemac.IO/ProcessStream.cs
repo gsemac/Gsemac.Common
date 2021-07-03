@@ -18,7 +18,7 @@ namespace Gsemac.IO {
 
         public override bool CanRead => GetCanRead();
         public override bool CanSeek => false;
-        public override bool CanWrite => options.HasFlag(ProcessStreamOptions.RedirectStandardInput);
+        public override bool CanWrite => options.RedirectStandardInput;
         public override bool CanTimeout => true;
         public override long Length => throw new NotSupportedException(Properties.ExceptionMessages.StreamDoesNotSupportSeeking);
         public override long Position {
@@ -75,8 +75,8 @@ namespace Gsemac.IO {
         /// </summary>
         /// <param name="filename">File path to the process.</param>
         /// <param name="options">Output flags.</param>
-        public ProcessStream(string filename, ProcessStreamOptions options = ProcessStreamOptions.Default) :
-            this(filename, string.Empty, options) {
+        public ProcessStream(string filename, IProcessStreamOptions options = null) :
+            this(filename, string.Empty, options ?? ProcessStreamOptions.Default) {
         }
         /// <summary>
         /// Initializes a new instance of the <see cref="ProcessStream"/> class.
@@ -84,7 +84,7 @@ namespace Gsemac.IO {
         /// <param name="filename">File path to the process.</param>
         /// <param name="arguments">Arguments to pass to the process.</param>
         /// <param name="options">Output flags.</param>
-        public ProcessStream(string filename, string arguments, ProcessStreamOptions options = ProcessStreamOptions.Default) :
+        public ProcessStream(string filename, string arguments, IProcessStreamOptions options = null) :
             this(new ProcessStartInfo {
                 FileName = filename,
                 Arguments = arguments
@@ -95,7 +95,7 @@ namespace Gsemac.IO {
         /// </summary>
         /// <param name="startInfo"><see cref="ProcessStartInfo"/> object used to start the process.</param>
         /// <param name="options">Output flags.</param>
-        public ProcessStream(ProcessStartInfo startInfo, ProcessStreamOptions options = ProcessStreamOptions.Default) {
+        public ProcessStream(ProcessStartInfo startInfo, IProcessStreamOptions options = null) {
 
             this.options = options;
 
@@ -240,7 +240,7 @@ namespace Gsemac.IO {
         private Process process;
         private bool processHasStarted = false;
         private int exitCode = 0;
-        private readonly ProcessStreamOptions options = ProcessStreamOptions.Default;
+        private readonly IProcessStreamOptions options = ProcessStreamOptions.Default;
         private ConcurrentMemoryStream stdoutStream;
         private ConcurrentMemoryStream stderrStream;
         private ConcurrentMemoryStream stdinStream;
@@ -254,8 +254,8 @@ namespace Gsemac.IO {
 
             // Consider the stream to be readable if we are able to read from stdin.
 
-            return options.HasFlag(ProcessStreamOptions.RedirectStandardOutput) ||
-                (options.HasFlag(ProcessStreamOptions.RedirectStandardError) && options.HasFlag(ProcessStreamOptions.RedirectStandardErrorToStandardOutput));
+            return options.RedirectStandardOutput ||
+                (options.RedirectStandardError && options.RedirectStandardErrorToStandardOutput);
 
         }
 
@@ -264,22 +264,17 @@ namespace Gsemac.IO {
             startInfo.UseShellExecute = false;
             startInfo.CreateNoWindow = true;
 
-            if (options.HasFlag(ProcessStreamOptions.RedirectStandardOutput))
-                startInfo.RedirectStandardOutput = true;
+            startInfo.RedirectStandardOutput = options.RedirectStandardInput;
+            startInfo.RedirectStandardError = options.RedirectStandardError;
+            startInfo.RedirectStandardInput = options.RedirectStandardInput;
 
-            if (options.HasFlag(ProcessStreamOptions.RedirectStandardError))
-                startInfo.RedirectStandardError = true;
-
-            if (options.HasFlag(ProcessStreamOptions.RedirectStandardInput))
-                startInfo.RedirectStandardInput = true;
-
-            if (options.HasFlag(ProcessStreamOptions.RedirectStandardOutput) || options.HasFlag(ProcessStreamOptions.RedirectStandardErrorToStandardOutput))
+            if (options.RedirectStandardOutput || options.RedirectStandardErrorToStandardOutput)
                 stdoutStream = new ConcurrentMemoryStream();
 
-            if (options.HasFlag(ProcessStreamOptions.RedirectStandardError))
+            if (options.RedirectStandardError)
                 stderrStream = new ConcurrentMemoryStream();
 
-            if (options.HasFlag(ProcessStreamOptions.RedirectStandardInput))
+            if (options.RedirectStandardInput)
                 stdinStream = new ConcurrentMemoryStream();
 
             if (process is null)
@@ -300,13 +295,13 @@ namespace Gsemac.IO {
 
                 // Begin asynchronously reading from both output streams.
 
-                if (options.HasFlag(ProcessStreamOptions.RedirectStandardOutput))
+                if (options.RedirectStandardOutput)
                     StartStandardOutputReaderTask();
 
-                if (options.HasFlag(ProcessStreamOptions.RedirectStandardError))
+                if (options.RedirectStandardError)
                     StartStandardErrorReaderTask();
 
-                if (options.HasFlag(ProcessStreamOptions.RedirectStandardOutput) || options.HasFlag(ProcessStreamOptions.RedirectStandardError)) {
+                if (options.RedirectStandardOutput || options.RedirectStandardError) {
 
                     // Wait for at least one of the reader tasks to begin reading.
                     // We need to do this before any calls to Read, or else tasksUsingStdOutStream <= 0 and the read will unblock and think there's nothing left.
@@ -384,8 +379,8 @@ namespace Gsemac.IO {
 
             CancellationToken cancellationToken = cancellationTokenSource.Token;
 
-            bool redirectingStdErrToStdOut = options.HasFlag(ProcessStreamOptions.RedirectStandardErrorToStandardOutput);
-            bool redirectingStdErrOnly = !options.HasFlag(ProcessStreamOptions.RedirectStandardOutput) && options.HasFlag(ProcessStreamOptions.RedirectStandardError);
+            bool redirectingStdErrToStdOut = options.RedirectStandardErrorToStandardOutput;
+            bool redirectingStdErrOnly = !options.RedirectStandardOutput && options.RedirectStandardError;
             bool writingToStdOut = redirectingStdErrToStdOut | redirectingStdErrOnly;
 
             Stream inputStream = process.StandardError.BaseStream;
