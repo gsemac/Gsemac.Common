@@ -226,6 +226,10 @@ namespace Gsemac.Net {
         }
         public static bool RemoteFileExists(IHttpWebRequest httpWebRequest) {
 
+            // Rather than catching all exceptions, I check for certain conditions that indicate with certainty that the remote file does not exist.
+            // For example, if we get a 404 error or the domain name can't be resolved altogether, there's a good chance the file doesn't exist.
+            // Gneral connection erorrs are more ambiguous.
+
             try {
 
                 return GetStatusCode(httpWebRequest) == HttpStatusCode.OK;
@@ -234,10 +238,28 @@ namespace Gsemac.Net {
 
                 // ex.Response will be a regular HttpWebResponse instead of an IHttpWebResponse when the request fails.
 
-                if ((ex.Response as HttpWebResponse)?.StatusCode == HttpStatusCode.NotFound)
-                    return false;
+                HttpStatusCode? statusCode = (ex.Response as HttpWebResponse)?.StatusCode;
 
-                throw ex;
+                switch (ex.Status) {
+
+                    // If the name cannot be resolved, assume the entire endpoint is unavailable/offline.
+
+                    case WebExceptionStatus.NameResolutionFailure:
+                        return false;
+
+                    // Check the status code of the response.
+
+                    default:
+                        switch (statusCode) {
+
+                            case HttpStatusCode.NotFound:
+                                return false;
+
+                            default:
+                                throw ex;
+
+                        }
+                }
 
             }
 
