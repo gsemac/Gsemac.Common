@@ -2,12 +2,12 @@
 
 using Gsemac.IO;
 using Gsemac.IO.Extensions;
-using Gsemac.Reflection;
 using Gsemac.Reflection.Plugins;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using WebPWrapper;
 
 namespace Gsemac.Drawing.Imaging {
 
@@ -48,16 +48,19 @@ namespace Gsemac.Drawing.Imaging {
 
         }
 
-        private void EncodeWebPBitmap(Image image, Stream stream, IImageEncoderOptions encoderOptions) {
+        private void EncodeWebPBitmap(Bitmap bitmap, Stream stream, IImageEncoderOptions encoderOptions) {
 
-            using (WebPWrapper.WebP encoder = new WebPWrapper.WebP())
-            using (MemoryStream webPStream = new MemoryStream(encoder.EncodeLossy(image as Bitmap, encoderOptions.Quality)))
+            bool useLosslessEncoding = encoderOptions.Quality >= 100 ||
+                encoderOptions.OptimizationMode == ImageOptimizationMode.Lossless;
+
+            using (WebP encoder = new WebP())
+            using (MemoryStream webPStream = new MemoryStream(useLosslessEncoding ? encoder.EncodeLossless(bitmap) : encoder.EncodeLossy(bitmap, encoderOptions.Quality)))
                 webPStream.CopyTo(stream);
 
         }
         private Image DecodeWebPBitmap(Stream stream) {
 
-            using (WebPWrapper.WebP decoder = new WebPWrapper.WebP())
+            using (WebP decoder = new WebP())
                 return decoder.Decode(stream.ToArray());
 
         }
