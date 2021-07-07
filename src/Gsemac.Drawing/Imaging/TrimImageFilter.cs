@@ -1,11 +1,7 @@
 ﻿#if NETFRAMEWORK
 
-using Gsemac.Drawing.Extensions;
-using Gsemac.Drawing.Imaging;
 using System;
-using System.Collections.Generic;
 using System.Drawing;
-using System.Text;
 
 namespace Gsemac.Drawing.Imaging {
 
