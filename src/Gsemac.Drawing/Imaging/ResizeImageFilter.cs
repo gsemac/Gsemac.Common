@@ -1,8 +1,5 @@
 ﻿#if NETFRAMEWORK
 
-using Gsemac.Drawing.Imaging;
-using System.Drawing;
-
 namespace Gsemac.Drawing.Imaging {
 
     public class ResizeImageFilter :
@@ -52,7 +49,11 @@ namespace Gsemac.Drawing.Imaging {
             if (!newHeight.HasValue && verticalScale.HasValue)
                 newHeight = (int)(sourceImage.Height * verticalScale.Value);
 
-            return ImageUtilities.CreateImageFromBitmap(ImageUtilities.ResizeImage(sourceImage.ToBitmap(disposeOriginal: true), newWidth, newHeight, disposeOriginal: true));
+            // If the image hasn't been resized at all, just return the source image.
+
+            return newWidth.HasValue || newHeight.HasValue ?
+                    ImageUtilities.CreateImageFromBitmap(ImageUtilities.ResizeImage(sourceImage.ToBitmap(disposeOriginal: true), newWidth, newHeight, disposeOriginal: true)) :
+                    sourceImage;
 
         }
 

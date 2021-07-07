@@ -36,6 +36,13 @@ namespace Gsemac.Drawing {
                 newHeight = height.Value;
 
             }
+            else {
+
+                // If no dimensions have been specified, simply return the original image.
+
+                return image;
+
+            }
 
             Bitmap resultImage = new Bitmap(image, new Size(newWidth, newHeight));
 
