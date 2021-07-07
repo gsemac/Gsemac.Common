@@ -11,6 +11,9 @@ namespace Gsemac.Drawing.Imaging {
 
     [RequiresAssemblyOrTypes("Magick.NET.Core", "ImageMagick.IMagickImage")]
     [RequiresAssemblyOrTypes("Magick.NET-Q16-AnyCPU", "ImageMagick.MagickImage")]
+#if NETFRAMEWORK
+    [RequiresAssemblies("Magick.NET.SystemDrawing")]
+#endif
     public class MagickImageCodec :
         PluginBase,
         IImageCodec {
