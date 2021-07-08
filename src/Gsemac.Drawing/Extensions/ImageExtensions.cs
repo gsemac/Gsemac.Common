@@ -50,6 +50,11 @@ namespace Gsemac.Drawing.Extensions {
             image.Save(filePath, ImageEncoderOptions.Default);
 
         }
+        public static void Save(this IImage image, string filePath, IFileFormat imageFormat) {
+
+            image.Save(filePath, imageFormat, ImageEncoderOptions.Default);
+
+        }
         public static void Save(this IImage image, string filePath, IImageEncoderOptions encoderOptions) {
 
             IFileFormat imageFormat = FileFormatFactory.Default.FromFileExtension(filePath);
