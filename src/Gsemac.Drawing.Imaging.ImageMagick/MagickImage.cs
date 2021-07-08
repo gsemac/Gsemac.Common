@@ -37,14 +37,13 @@ namespace Gsemac.Drawing.Imaging {
 
         }
 
-        public void Dispose() {
+        public IImage Clone() {
 
-            Dispose(disposing: true);
-
-            GC.SuppressFinalize(this);
+            return Format is null ?
+                  new MagickImage((ImageMagick.MagickImage)image.Clone(), Codec) :
+                  new MagickImage((ImageMagick.MagickImage)image.Clone(), Format, Codec);
 
         }
-
 #if NETFRAMEWORK
         public Bitmap ToBitmap() {
 
@@ -52,6 +51,14 @@ namespace Gsemac.Drawing.Imaging {
 
         }
 #endif
+
+        public void Dispose() {
+
+            Dispose(disposing: true);
+
+            GC.SuppressFinalize(this);
+
+        }
 
         // Protected members
 

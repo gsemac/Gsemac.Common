@@ -14,6 +14,8 @@ namespace Gsemac.Drawing {
         IFileFormat Format { get; }
         IImageCodec Codec { get; }
 
+        IImage Clone();
+
 #if NETFRAMEWORK
         Bitmap ToBitmap();
 #endif

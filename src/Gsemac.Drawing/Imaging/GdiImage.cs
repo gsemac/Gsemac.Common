@@ -35,6 +35,11 @@ namespace Gsemac.Drawing.Imaging {
             this(image, GetImageFormatFromImageFormat(imageFormat), imageCodec) {
         }
 
+        public IImage Clone() {
+
+            return new GdiImage((Bitmap)image.Clone(), Format, Codec);
+
+        }
         public Bitmap ToBitmap() {
 
             // The cloned bitmap will share image data with the source bitmap.

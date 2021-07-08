@@ -32,7 +32,7 @@ namespace Gsemac.Drawing {
 
             if (ImageUtilities.HasIndexedPixelFormat(bitmap)) {
 
-                this.bitmap = (Bitmap)ImageUtilities.ConvertImageToNonIndexedPixelFormat(bitmap, disposeOriginal: false);
+                this.bitmap = (Bitmap)ImageUtilities.ConvertImageToNonIndexedPixelFormat(bitmap, disposeSourceImage: false);
                 this.disposeBitmap = true;
 
             }
