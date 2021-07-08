@@ -35,17 +35,12 @@ namespace Gsemac.Drawing.Imaging {
             this(image, GetImageFormatFromImageFormat(imageFormat), imageCodec) {
         }
 
-        public Bitmap ToBitmap(bool disposeOriginal = false) {
+        public Bitmap ToBitmap() {
 
             // The cloned bitmap will share image data with the source bitmap.
-            // This allows us to avoid copying the bitmap while allowing the user to call Dispose().
+            // This allows us to avoid copying the bitmap while allowing the user to call Dispose() on either Bitmap without affecting the other.
 
-            Bitmap bitmap = (Bitmap)image.Clone();
-
-            if (disposeOriginal)
-                Dispose();
-
-            return bitmap;
+            return (Bitmap)image.Clone();
 
         }
 

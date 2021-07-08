@@ -15,7 +15,7 @@ namespace Gsemac.Drawing {
         IImageCodec Codec { get; }
 
 #if NETFRAMEWORK
-        Bitmap ToBitmap(bool disposeOriginal = false);
+        Bitmap ToBitmap();
 #endif
 
     }

@@ -11,8 +11,8 @@ namespace Gsemac.Drawing {
         // Public members
         public static Image ResizeImage(Image image, int? width = null, int? height = null, bool disposeOriginal = false) {
 
-            int newWidth = image.Width;
-            int newHeight = image.Height;
+            int newWidth;
+            int newHeight;
 
             if (width.HasValue && height.HasValue) {
 
@@ -55,10 +55,18 @@ namespace Gsemac.Drawing {
 
         public static bool HasIndexedPixelFormat(Image image) {
 
-            return image.PixelFormat == System.Drawing.Imaging.PixelFormat.Format1bppIndexed ||
-                image.PixelFormat == System.Drawing.Imaging.PixelFormat.Format4bppIndexed ||
-                image.PixelFormat == System.Drawing.Imaging.PixelFormat.Format8bppIndexed ||
-                image.PixelFormat == System.Drawing.Imaging.PixelFormat.Indexed;
+            switch (image.PixelFormat) {
+
+                case System.Drawing.Imaging.PixelFormat.Format1bppIndexed:
+                case System.Drawing.Imaging.PixelFormat.Format4bppIndexed:
+                case System.Drawing.Imaging.PixelFormat.Format8bppIndexed:
+                case System.Drawing.Imaging.PixelFormat.Indexed:
+                    return true;
+
+                default:
+                    return false;
+
+            }
 
         }
         public static Image ConvertImageToNonIndexedPixelFormat(Image image, bool disposeOriginal = false) {

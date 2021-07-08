@@ -46,14 +46,9 @@ namespace Gsemac.Drawing.Imaging {
         }
 
 #if NETFRAMEWORK
-        public Bitmap ToBitmap(bool disposeOriginal = false) {
+        public Bitmap ToBitmap() {
 
-            Bitmap bitmap = image.ToBitmap();
-
-            if (disposeOriginal)
-                Dispose();
-
-            return bitmap;
+            return image.ToBitmap();
 
         }
 #endif

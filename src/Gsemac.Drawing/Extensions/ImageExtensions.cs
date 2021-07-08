@@ -1,6 +1,7 @@
 ﻿using Gsemac.Drawing.Imaging;
 using Gsemac.IO;
 using System;
+using System.Drawing;
 using System.IO;
 
 namespace Gsemac.Drawing.Extensions {
@@ -68,6 +69,19 @@ namespace Gsemac.Drawing.Extensions {
                 image.Save(stream, imageFormat, encoderOptions);
 
         }
+
+#if NETFRAMEWORK
+        public static Bitmap ToBitmap(this IImage image, bool disposeOriginal) {
+
+            Bitmap bitmap = image.ToBitmap();
+
+            if (disposeOriginal)
+                image.Dispose();
+
+            return bitmap;
+
+        }
+#endif
 
     }
 
