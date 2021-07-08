@@ -71,11 +71,11 @@ namespace Gsemac.Drawing.Extensions {
         }
 
 #if NETFRAMEWORK
-        public static Bitmap ToBitmap(this IImage image, bool disposeOriginal) {
+        public static Bitmap ToBitmap(this IImage image, bool disposeSourceImage) {
 
             Bitmap bitmap = image.ToBitmap();
 
-            if (disposeOriginal)
+            if (disposeSourceImage)
                 image.Dispose();
 
             return bitmap;

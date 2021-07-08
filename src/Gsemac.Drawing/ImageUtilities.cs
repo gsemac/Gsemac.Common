@@ -9,7 +9,7 @@ namespace Gsemac.Drawing {
     public static class ImageUtilities {
 
         // Public members
-        public static Image ResizeImage(Image image, int? width = null, int? height = null, bool disposeOriginal = false) {
+        public static Image ResizeImage(Image image, int? width = null, int? height = null, bool disposeSourceImage = false) {
 
             int newWidth;
             int newHeight;
@@ -46,7 +46,7 @@ namespace Gsemac.Drawing {
 
             Bitmap resultImage = new Bitmap(image, new Size(newWidth, newHeight));
 
-            if (disposeOriginal)
+            if (disposeSourceImage)
                 image.Dispose();
 
             return resultImage;
@@ -69,7 +69,7 @@ namespace Gsemac.Drawing {
             }
 
         }
-        public static Image ConvertImageToNonIndexedPixelFormat(Image image, bool disposeOriginal = false) {
+        public static Image ConvertImageToNonIndexedPixelFormat(Image image, bool disposeSourceImage = false) {
 
             // We can't create a graphics object from an image with an indexed pixel format, so we need to create a new bitmap.
 
@@ -78,20 +78,20 @@ namespace Gsemac.Drawing {
 
             Bitmap resultImage = new Bitmap(image);
 
-            if (disposeOriginal)
+            if (disposeSourceImage)
                 image.Dispose();
 
             return resultImage;
 
         }
-        public static Image ConvertImageToNonIndexedPixelFormat(IImage image, bool disposeOriginal = false) {
+        public static Image ConvertImageToNonIndexedPixelFormat(IImage image, bool disposeSourceImage = false) {
 
             Bitmap resultImage = image.ToBitmap();
 
-            if (disposeOriginal)
+            if (disposeSourceImage)
                 image.Dispose();
 
-            return ConvertImageToNonIndexedPixelFormat(resultImage, disposeOriginal: true);
+            return ConvertImageToNonIndexedPixelFormat(resultImage, disposeSourceImage: true);
 
         }
 
