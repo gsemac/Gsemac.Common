@@ -48,13 +48,10 @@ namespace Gsemac.Drawing.Imaging {
 
                 // Re-encode the image using the specified settings.
 
-                IImage image;
+                using (IImage image = imageFactory.FromFile(sourceFilePath))
+                using (IImage filteredImage = options.Filters.Any() ? ImageFilter.ApplyAll(image, options.Filters) : image) {
 
-                using (image = imageFactory.FromFile(sourceFilePath)) {
-
-                    image = ImageFilter.ApplyAll(image, options.Filters);
-
-                    image.Save(destinationFilePath, options.EncoderOptions);
+                    filteredImage.Save(destinationFilePath, options.EncoderOptions);
 
                 }
 

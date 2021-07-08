@@ -1,5 +1,6 @@
 ﻿#if NETFRAMEWORK
 
+using Gsemac.Drawing.Extensions;
 using System;
 using System.Drawing;
 
@@ -12,24 +13,24 @@ namespace Gsemac.Drawing.Imaging {
 
         public TrimImageFilter() {
         }
-        public TrimImageFilter(double tolerance) {
+        public TrimImageFilter(int tolerance) {
 
             this.tolerance = tolerance;
 
         }
-        public TrimImageFilter(double tolerance, IColorDistanceStrategy distanceAlgorithm) {
+        public TrimImageFilter(int tolerance, IColorDistanceStrategy distanceAlgorithm) {
 
             this.tolerance = tolerance;
             this.distanceAlgorithm = distanceAlgorithm;
 
         }
-        public TrimImageFilter(Color trimColor, double tolerance) {
+        public TrimImageFilter(Color trimColor, int tolerance) {
 
             this.trimColor = trimColor;
             this.tolerance = tolerance;
 
         }
-        public TrimImageFilter(Color trimColor, double tolerance, IColorDistanceStrategy distanceAlgorithm) {
+        public TrimImageFilter(Color trimColor, int tolerance, IColorDistanceStrategy distanceAlgorithm) {
 
             this.trimColor = trimColor;
             this.distanceAlgorithm = distanceAlgorithm;
@@ -43,85 +44,87 @@ namespace Gsemac.Drawing.Imaging {
 
         }
 
-        public IImage Apply(IImage sourceImage) {
+        public IImage Apply(IImage image) {
 
-            Bitmap sourceBitmap = sourceImage.ToBitmap(disposeOriginal: true);
+            Image newImage = null;
 
-            sourceBitmap = (Bitmap)ImageUtilities.ConvertImageToNonIndexedPixelFormat(sourceBitmap, disposeOriginal: true);
+            try {
 
-            if (sourceBitmap.Width > 0 && sourceBitmap.Height > 0) {
+                using (Bitmap sourceBitmap = (Bitmap)ImageUtilities.ConvertImageToNonIndexedPixelFormat(image)) {
 
-                // Get the trim color if the user didn't specify one.
+                    if (sourceBitmap.Width > 0 && sourceBitmap.Height > 0) {
 
-                if (!trimColor.HasValue)
-                    trimColor = sourceBitmap.GetPixel(0, 0);
+                        // Get the trim color if the user didn't specify one.
 
-                // Calculate the area to trim.
+                        if (!trimColor.HasValue)
+                            trimColor = sourceBitmap.GetPixel(0, 0);
 
-                int left, right, top, bottom;
+                        // Calculate the area to trim.
 
-                for (left = 0; left < sourceBitmap.Width; ++left)
-                    if (!ColumnIsColor(sourceBitmap, left, trimColor.Value))
-                        break;
+                        int left, right, top, bottom;
 
-                for (right = sourceBitmap.Width - 1; right >= 0; --right)
-                    if (!ColumnIsColor(sourceBitmap, right, trimColor.Value))
-                        break;
+                        for (left = 0; left < sourceBitmap.Width; ++left)
+                            if (!ColumnIsColor(sourceBitmap, left, trimColor.Value))
+                                break;
 
-                for (top = 0; top < sourceBitmap.Height; ++top)
-                    if (!RowIsColor(sourceBitmap, top, trimColor.Value))
-                        break;
+                        for (right = sourceBitmap.Width - 1; right >= 0; --right)
+                            if (!ColumnIsColor(sourceBitmap, right, trimColor.Value))
+                                break;
 
-                for (bottom = sourceBitmap.Height - 1; bottom >= 0; --bottom)
-                    if (!RowIsColor(sourceBitmap, bottom, trimColor.Value))
-                        break;
+                        for (top = 0; top < sourceBitmap.Height; ++top)
+                            if (!RowIsColor(sourceBitmap, top, trimColor.Value))
+                                break;
 
-                // Crop the image.
+                        for (bottom = sourceBitmap.Height - 1; bottom >= 0; --bottom)
+                            if (!RowIsColor(sourceBitmap, bottom, trimColor.Value))
+                                break;
 
-                int x = left;
-                int y = top;
-                int width = right + 1 - x;
-                int height = bottom + 1 - y;
+                        // Crop the image.
 
-                Bitmap result = new Bitmap(width, height);
+                        int x = left;
+                        int y = top;
+                        int width = right + 1 - x;
+                        int height = bottom + 1 - y;
 
-                using (sourceBitmap)
-                using (Graphics graphics = Graphics.FromImage(result)) {
+                        newImage = new Bitmap(width, height);
 
-                    try {
+                        using (Graphics graphics = Graphics.FromImage(newImage)) {
 
-                        graphics.DrawImage(sourceBitmap, new Rectangle(0, 0, width, height), new Rectangle(x, y, width, height), GraphicsUnit.Pixel);
+                            graphics.DrawImage(sourceBitmap, new Rectangle(0, 0, width, height), new Rectangle(x, y, width, height), GraphicsUnit.Pixel);
 
-                    }
-                    catch (Exception ex) {
+                            return ImageUtilities.CreateImageFromBitmap(newImage);
 
-                        result.Dispose();
-
-                        throw ex;
+                        }
 
                     }
-
-                    return ImageUtilities.CreateImageFromBitmap(result);
+                    else
+                        return image;
 
                 }
 
             }
-            else
-                return sourceImage;
+            catch (Exception) {
+
+                if (newImage is object)
+                    newImage.Dispose();
+
+                throw;
+
+            }
 
         }
 
         // Private members
 
-        private const double defaultTolerance = 0.1;
+        private const int defaultTolerance = 10;
 
         private Color? trimColor;
         private readonly IColorDistanceStrategy distanceAlgorithm = new DeltaEColorDistanceStrategy();
-        private readonly double tolerance = defaultTolerance;
+        private readonly int tolerance = defaultTolerance;
 
         private bool CompareColors(Color first, Color second) {
 
-            return ColorUtilities.ComputeDistance(first, second, distanceAlgorithm) <= tolerance;
+            return ColorUtilities.ComputeDistance(first, second, distanceAlgorithm) <= tolerance / 100.0;
 
         }
         private bool RowIsColor(Bitmap bitmap, int row, Color trimColor) {

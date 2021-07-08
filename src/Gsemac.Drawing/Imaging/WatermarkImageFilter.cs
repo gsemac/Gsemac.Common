@@ -1,5 +1,6 @@
 ﻿#if NETFRAMEWORK
 
+using System;
 using System.Drawing;
 
 namespace Gsemac.Drawing.Imaging {
@@ -15,24 +16,36 @@ namespace Gsemac.Drawing.Imaging {
 
         }
 
-        public IImage Apply(IImage sourceImage) {
+        public IImage Apply(IImage image) {
 
-            Image resultImage = ImageUtilities.ConvertImageToNonIndexedPixelFormat(sourceImage, disposeOriginal: true);
+            Image newImage = null;
 
-            // Draw the modified image directly on top of the original image.
+            try {
 
-            using (Graphics graphics = Graphics.FromImage(resultImage)) {
+                newImage = ImageUtilities.ConvertImageToNonIndexedPixelFormat(image);
 
-                graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.None;
+                using (Graphics graphics = Graphics.FromImage(newImage)) {
 
-                graphics.DrawImage(overlayImage,
-                    new Rectangle(0, 0, overlayImage.Width, overlayImage.Height),
-                    new Rectangle(0, 0, overlayImage.Width, overlayImage.Height),
-                    GraphicsUnit.Pixel);
+                    graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.None;
+
+                    graphics.DrawImage(overlayImage,
+                        new Rectangle(0, 0, overlayImage.Width, overlayImage.Height),
+                        new Rectangle(0, 0, overlayImage.Width, overlayImage.Height),
+                        GraphicsUnit.Pixel);
+
+                }
+
+                return ImageUtilities.CreateImageFromBitmap(newImage);
 
             }
+            catch (Exception) {
 
-            return ImageUtilities.CreateImageFromBitmap(resultImage);
+                if (newImage is object)
+                    newImage.Dispose();
+
+                throw;
+
+            }
 
         }
 

@@ -1,5 +1,6 @@
 ﻿#if NETFRAMEWORK
 
+using System;
 using System.Drawing;
 using System.Drawing.Imaging;
 
@@ -8,36 +9,48 @@ namespace Gsemac.Drawing.Imaging {
     public class GrayscaleImageFilter :
         IImageFilter {
 
-        public IImage Apply(IImage sourceImage) {
+        public IImage Apply(IImage image) {
 
-            Image resultImage = ImageUtilities.ConvertImageToNonIndexedPixelFormat(sourceImage, disposeOriginal: true);
+            Image newImage = null;
 
-            ColorMatrix colorMatrix = new ColorMatrix(new float[][] {
-                new[]{0.3f, 0.3f, 0.3f, 0.0f, 0.0f},
-                new[]{0.59f, 0.59f, 0.59f, 0.0f, 0.0f},
-                new[]{0.11f, 0.11f, 0.11f, 0.0f, 0.0f},
-                new[]{0.0f, 0.0f, 0.0f, 1.0f, 0.0f},
-                new[]{0.0f, 0.0f, 0.0f, 0.0f, 1.0f},
-            });
+            try {
 
-            using (ImageAttributes attributes = new ImageAttributes()) {
+                ColorMatrix colorMatrix = new ColorMatrix(new float[][] {
+                    new[]{0.3f, 0.3f, 0.3f, 0.0f, 0.0f},
+                    new[]{0.59f, 0.59f, 0.59f, 0.0f, 0.0f},
+                    new[]{0.11f, 0.11f, 0.11f, 0.0f, 0.0f},
+                    new[]{0.0f, 0.0f, 0.0f, 1.0f, 0.0f},
+                    new[]{0.0f, 0.0f, 0.0f, 0.0f, 1.0f},
+                });
 
-                attributes.SetColorMatrix(colorMatrix);
+                using (ImageAttributes attributes = new ImageAttributes()) {
 
-                // Note that one of the reasons for drawing on top of new image is so that transluscent pixels from the old image aren't visible through the new one.
+                    attributes.SetColorMatrix(colorMatrix);
 
-                Image imageWithAlphaChannel = new Bitmap(resultImage.Width, resultImage.Height, PixelFormat.Format32bppArgb);
+                    // Note that one of the reasons for drawing on top of new image is so that transluscent pixels from the old image aren't visible through the new one.
 
-                using (resultImage)
-                using (Graphics graphics = Graphics.FromImage(imageWithAlphaChannel)) {
+                    newImage = new Bitmap(image.Width, image.Height, PixelFormat.Format32bppArgb);
 
-                    graphics.Clear(Color.Transparent);
+                    using (Image sourceBitmap = ImageUtilities.ConvertImageToNonIndexedPixelFormat(image))
+                    using (Graphics graphics = Graphics.FromImage(newImage)) {
 
-                    graphics.DrawImage(resultImage, new Rectangle(0, 0, resultImage.Width, resultImage.Height), 0, 0, resultImage.Width, resultImage.Height, GraphicsUnit.Pixel, attributes);
+                        graphics.Clear(Color.Transparent);
+
+                        graphics.DrawImage(sourceBitmap, new Rectangle(0, 0, sourceBitmap.Width, sourceBitmap.Height), 0, 0, sourceBitmap.Width, sourceBitmap.Height, GraphicsUnit.Pixel, attributes);
+
+                    }
+
+                    return ImageUtilities.CreateImageFromBitmap(newImage);
 
                 }
 
-                return ImageUtilities.CreateImageFromBitmap(imageWithAlphaChannel);
+            }
+            catch (Exception) {
+
+                if (newImage is object)
+                    newImage.Dispose();
+
+                throw;
 
             }
 

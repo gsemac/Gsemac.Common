@@ -1,5 +1,7 @@
 ﻿#if NETFRAMEWORK
 
+using Gsemac.Drawing.Extensions;
+using System;
 using System.Drawing;
 using System.Drawing.Imaging;
 
@@ -16,27 +18,43 @@ namespace Gsemac.Drawing.Imaging {
 
         }
 
-        public IImage Apply(IImage sourceImage) {
+        public IImage Apply(IImage image) {
 
-            ColorMatrix colorMatrix = new ColorMatrix() {
-                Matrix33 = opacity,
-            };
+            Image newImage = null;
 
-            using (ImageAttributes attributes = new ImageAttributes()) {
+            try {
 
-                attributes.SetColorMatrix(colorMatrix, ColorMatrixFlag.Default, ColorAdjustType.Bitmap);
+                ColorMatrix colorMatrix = new ColorMatrix() {
+                    Matrix33 = opacity,
+                };
 
-                System.Drawing.Image imageWithAlphaChannel = new Bitmap(sourceImage.Width, sourceImage.Height, PixelFormat.Format32bppArgb);
+                using (ImageAttributes attributes = new ImageAttributes()) {
 
-                using (Bitmap sourceBitmap = sourceImage.ToBitmap(disposeOriginal: true))
-                using (Graphics graphics = Graphics.FromImage(imageWithAlphaChannel)) {
+                    attributes.SetColorMatrix(colorMatrix, ColorMatrixFlag.Default, ColorAdjustType.Bitmap);
 
-                    graphics.Clear(Color.Transparent);
-                    graphics.DrawImage(sourceBitmap, new Rectangle(0, 0, sourceBitmap.Width, sourceBitmap.Height), 0, 0, sourceBitmap.Width, sourceBitmap.Height, GraphicsUnit.Pixel, attributes);
+                    // Create a new bitmap with an alpha channel.
+
+                    newImage = new Bitmap(image.Width, image.Height, PixelFormat.Format32bppArgb);
+
+                    using (Image sourceBitmap = ImageUtilities.ConvertImageToNonIndexedPixelFormat(image))
+                    using (Graphics graphics = Graphics.FromImage(newImage)) {
+
+                        graphics.Clear(Color.Transparent);
+                        graphics.DrawImage(sourceBitmap, new Rectangle(0, 0, sourceBitmap.Width, sourceBitmap.Height), 0, 0, sourceBitmap.Width, sourceBitmap.Height, GraphicsUnit.Pixel, attributes);
+
+                    }
+
+                    return ImageUtilities.CreateImageFromBitmap(newImage);
 
                 }
 
-                return ImageUtilities.CreateImageFromBitmap(imageWithAlphaChannel);
+            }
+            catch (Exception) {
+
+                if (newImage is object)
+                    newImage.Dispose();
+
+                throw;
 
             }
 

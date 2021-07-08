@@ -1,5 +1,7 @@
 ﻿#if NETFRAMEWORK
 
+using System.Drawing;
+
 namespace Gsemac.Drawing.Imaging {
 
     public class ResizeImageFilter :
@@ -21,22 +23,22 @@ namespace Gsemac.Drawing.Imaging {
 
         }
 
-        public IImage Apply(IImage sourceImage) {
+        public IImage Apply(IImage image) {
 
             if (!width.HasValue && !height.HasValue && !horizontalScale.HasValue && !verticalScale.HasValue)
-                return sourceImage;
+                return image.Clone();
 
             if (options == ImageSizingMode.ResizeIfLarger) {
 
-                if ((!width.HasValue || sourceImage.Width <= width.Value) && (!height.HasValue || sourceImage.Height <= height.Value))
-                    return sourceImage;
+                if ((!width.HasValue || image.Width <= width.Value) && (!height.HasValue || image.Height <= height.Value))
+                    return image.Clone();
 
             }
 
             if (options == ImageSizingMode.ResizeIfSmaller) {
 
-                if ((!width.HasValue || sourceImage.Width >= width.Value) && (!height.HasValue || sourceImage.Height >= height.Value))
-                    return sourceImage;
+                if ((!width.HasValue || image.Width >= width.Value) && (!height.HasValue || image.Height >= height.Value))
+                    return image.Clone();
 
             }
 
@@ -44,16 +46,18 @@ namespace Gsemac.Drawing.Imaging {
             int? newHeight = height;
 
             if (!newWidth.HasValue && horizontalScale.HasValue)
-                newWidth = (int)(sourceImage.Width * horizontalScale.Value);
+                newWidth = (int)(image.Width * horizontalScale.Value);
 
             if (!newHeight.HasValue && verticalScale.HasValue)
-                newHeight = (int)(sourceImage.Height * verticalScale.Value);
+                newHeight = (int)(image.Height * verticalScale.Value);
 
             // If the image hasn't been resized at all, just return the source image.
 
-            return newWidth.HasValue || newHeight.HasValue ?
-                    ImageUtilities.CreateImageFromBitmap(ImageUtilities.ResizeImage(sourceImage.ToBitmap(disposeOriginal: true), newWidth, newHeight, disposeOriginal: true)) :
-                    sourceImage;
+            if (!newWidth.HasValue && !newHeight.HasValue)
+                return image.Clone();
+
+            using (Bitmap sourceBitmap = image.ToBitmap())
+                return ImageUtilities.CreateImageFromBitmap(ImageUtilities.ResizeImage(sourceBitmap, newWidth, newHeight));
 
         }
 
