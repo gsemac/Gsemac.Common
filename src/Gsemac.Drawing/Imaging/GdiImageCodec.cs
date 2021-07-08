@@ -130,7 +130,7 @@ namespace Gsemac.Drawing.Imaging {
 
             return new List<string>(new[]{
                 ".bmp",
-                ".exif",
+                //".exif",
                 ".gif",
                 ".ico",
                 ".jpeg",
