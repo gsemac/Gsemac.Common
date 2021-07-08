@@ -86,6 +86,22 @@ namespace Gsemac.Drawing.Imaging {
                         int width = right + 1 - x;
                         int height = bottom + 1 - y;
 
+                        // If the cropped area is impossible (this can occur if the tolerance is too high or the image is entirely cropped), use the original dimensions.
+
+                        if (width <= 0) {
+
+                            x = 0;
+                            width = image.Width;
+
+                        }
+
+                        if (height <= 0) {
+
+                            y = 0;
+                            height = image.Height;
+
+                        }
+
                         newImage = new Bitmap(width, height);
 
                         using (Graphics graphics = Graphics.FromImage(newImage)) {
