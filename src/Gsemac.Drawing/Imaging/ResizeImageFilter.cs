@@ -11,8 +11,8 @@ namespace Gsemac.Drawing.Imaging {
 
         public ResizeImageFilter(int? width = null, int? height = null, ImageSizingMode options = ImageSizingMode.None) {
 
-            this.width = width;
-            this.height = height;
+            this.width = (width ?? 0) <= 0 ? null : width;
+            this.height = (height ?? 0) <= 0 ? null : height;
             this.options = options;
 
         }

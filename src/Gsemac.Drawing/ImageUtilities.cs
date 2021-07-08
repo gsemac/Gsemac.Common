@@ -11,6 +11,12 @@ namespace Gsemac.Drawing {
         // Public members
         public static Image ResizeImage(Image image, int? width = null, int? height = null, bool disposeSourceImage = false) {
 
+            if ((width ?? 0) <= 0)
+                width = null;
+
+            if ((height ?? 0) <= 0)
+                height = null;
+
             int newWidth;
             int newHeight;
 
