@@ -21,7 +21,7 @@ namespace Gsemac.IO {
             if (obj is IFileFormat fileFormat)
                 return CompareTo(fileFormat);
 
-            throw new ArgumentException("The given object is not a valid file format.", nameof(obj));
+            throw new ArgumentException(string.Format(Core.Properties.ExceptionMessages.ObjectIsNotAnInstanceOfWithType, nameof(IFileFormat)), nameof(obj));
 
         }
         public int CompareTo(IFileFormat other) {
@@ -48,7 +48,7 @@ namespace Gsemac.IO {
             if (obj is IFileFormat fileFormat)
                 return Extensions.Any(ext => fileFormat.Extensions.Any(otherExt => otherExt.Equals(ext, StringComparison.OrdinalIgnoreCase)));
 
-            throw new ArgumentException("The given object is not a valid file format.", nameof(obj));
+            throw new ArgumentException(string.Format(Core.Properties.ExceptionMessages.ObjectIsNotAnInstanceOfWithType, nameof(IFileFormat)), nameof(obj));
 
         }
         public override int GetHashCode() {

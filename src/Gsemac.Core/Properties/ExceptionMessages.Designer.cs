@@ -68,5 +68,14 @@ namespace Gsemac.Core.Properties {
                 return ResourceManager.GetString("CannotCastTypeToTypeWithTypeAndType", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The object is not an instance of &apos;{0}&apos;..
+        /// </summary>
+        internal static string ObjectIsNotAnInstanceOfWithType {
+            get {
+                return ResourceManager.GetString("ObjectIsNotAnInstanceOfWithType", resourceCulture);
+            }
+        }
     }
 }
