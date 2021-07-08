@@ -75,6 +75,12 @@ namespace Gsemac.Drawing.Imaging {
 
                 // If the image is not a MagickImage, save it to an intermediate stream and load it.
 
+                // If the image's codec is an instance of MagickImageCodec but it isn't a MagickImage instance, the codec is mismatched.
+                // This shouldn't happen under normal conditions other than user error, but it will result in infinite recursion when calling Encode.
+
+                if (image.Codec is MagickImageCodec)
+                    throw new CodecMismatchException();
+
                 using (MemoryStream ms = new MemoryStream()) {
 
                     image.Codec.Encode(image, ms);
