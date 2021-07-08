@@ -32,7 +32,10 @@ namespace Gsemac.IO {
             if (Equals(other))
                 return 0;
 
-            return (MimeType?.ToString() ?? "").ToLowerInvariant().CompareTo((other.MimeType?.ToString() ?? "").ToLowerInvariant());
+            string lhsMimeType = (MimeType?.ToString() ?? "").ToLowerInvariant();
+            string rhsMimeType = (other.MimeType?.ToString() ?? "").ToLowerInvariant();
+
+            return lhsMimeType.CompareTo(rhsMimeType);
 
         }
         public override bool Equals(object obj) {
