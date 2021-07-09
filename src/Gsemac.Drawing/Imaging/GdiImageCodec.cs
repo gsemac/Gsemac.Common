@@ -143,6 +143,10 @@ namespace Gsemac.Drawing.Imaging {
 
             // The following approach was adapted from the solution given here: https://stackoverflow.com/a/27284866/5383169 (ILIA BROUDNO)
 
+            // Unfortunately, it seems that the image is scaled to match the dimensions of the display device.
+            // There is some discussion of the issue here: https://stackoverflow.com/questions/53530519/what-governs-dc-scaling
+            // How can I fix this to maintain the original image dimensions?
+
             Metafile metafile = null;
 
             try {
