@@ -89,38 +89,38 @@ namespace Gsemac.Forms {
         }
         private static void SetNativeColumnSortIcon(ListView listView, int column, SortOrder sortOrder) {
 
-            IntPtr columnHeader = User32.SendMessage(listView.Handle, CommCtrl.LVM_GETHEADER, IntPtr.Zero, IntPtr.Zero);
+            IntPtr columnHeader = User32.SendMessage(listView.Handle, Comctl32.LVM_GETHEADER, IntPtr.Zero, IntPtr.Zero);
 
             for (int columnIndex = 0; columnIndex < listView.Columns.Count; ++columnIndex) {
 
                 var columnPtr = new IntPtr(columnIndex);
 
                 HDItemA item = new HDItemA() {
-                    Mask = CommCtrl.HDI_FORMAT,
+                    Mask = Comctl32.HDI_FORMAT,
                 };
 
-                if (User32.SendMessage(columnHeader, CommCtrl.HDM_GETITEM, columnPtr, ref item) == IntPtr.Zero)
+                if (User32.SendMessage(columnHeader, Comctl32.HDM_GETITEM, columnPtr, ref item) == IntPtr.Zero)
                     throw new Win32Exception();
 
-                item.Fmt &= ~CommCtrl.HDF_SORTDOWN & ~CommCtrl.HDF_SORTUP;
+                item.Fmt &= ~Comctl32.HDF_SORTDOWN & ~Comctl32.HDF_SORTUP;
 
                 if (sortOrder != SortOrder.None && columnIndex == column) {
 
                     switch (sortOrder) {
 
                         case SortOrder.Ascending:
-                            item.Fmt |= CommCtrl.HDF_SORTUP;
+                            item.Fmt |= Comctl32.HDF_SORTUP;
                             break;
 
                         case SortOrder.Descending:
-                            item.Fmt |= CommCtrl.HDF_SORTDOWN;
+                            item.Fmt |= Comctl32.HDF_SORTDOWN;
                             break;
 
                     }
 
                 }
 
-                if (User32.SendMessage(columnHeader, CommCtrl.HDM_SETITEM, columnPtr, ref item) == IntPtr.Zero)
+                if (User32.SendMessage(columnHeader, Comctl32.HDM_SETITEM, columnPtr, ref item) == IntPtr.Zero)
                     throw new Win32Exception();
 
             }

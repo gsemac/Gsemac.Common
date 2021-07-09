@@ -20,7 +20,7 @@ namespace Gsemac.Win32 {
         public uint State;
     }
 
-    public static class CommCtrl {
+    public static class Comctl32 {
 
         public const int HDF_SORTUP = 0x0400;
         public const int HDF_SORTDOWN = 0x0200;
