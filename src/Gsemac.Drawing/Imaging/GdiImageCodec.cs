@@ -3,6 +3,7 @@
 using Gsemac.IO;
 using Gsemac.IO.Extensions;
 using Gsemac.Reflection.Plugins;
+using Gsemac.Win32;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -109,18 +110,72 @@ namespace Gsemac.Drawing.Imaging {
             if (encoderOptions is null)
                 throw new ArgumentNullException(nameof(encoderOptions));
 
-            using (EncoderParameters encoderParameters = new EncoderParameters(1))
-            using (EncoderParameter qualityParameter = new EncoderParameter(Encoder.Quality, encoderOptions.Quality)) {
+            System.Drawing.Imaging.ImageFormat format = imageFormat is null ? image.RawFormat : GetImageFormatFromFileExtension(imageFormat.Extensions.FirstOrDefault());
 
-                encoderParameters.Param[0] = qualityParameter;
+            // The Save method cannot encode WMF images.
+            // https://stackoverflow.com/questions/5270763/convert-an-image-into-wmf-with-net
 
-                System.Drawing.Imaging.ImageFormat format = imageFormat is null ? image.RawFormat : GetImageFormatFromFileExtension(imageFormat.Extensions.FirstOrDefault());
-                ImageCodecInfo encoder = GetEncoderFromImageFormat(format);
+            if (format.Equals(System.Drawing.Imaging.ImageFormat.Wmf)) {
 
-                if (encoder is null)
-                    encoder = GetEncoderFromImageFormat(System.Drawing.Imaging.ImageFormat.Png);
+                EncodeBitmapToWmf(image, stream);
 
-                image.Save(stream, encoder, encoderParameters);
+            }
+            else {
+
+                using (EncoderParameters encoderParameters = new EncoderParameters(1))
+                using (EncoderParameter qualityParameter = new EncoderParameter(Encoder.Quality, encoderOptions.Quality)) {
+
+                    encoderParameters.Param[0] = qualityParameter;
+
+                    ImageCodecInfo encoder = GetEncoderFromImageFormat(format);
+
+                    if (encoder is null)
+                        encoder = GetEncoderFromImageFormat(System.Drawing.Imaging.ImageFormat.Png);
+
+                    image.Save(stream, encoder, encoderParameters);
+
+                }
+
+            }
+
+        }
+        private void EncodeBitmapToWmf(Image image, Stream stream) {
+
+            // The following approach was adapted from the solution given here: https://stackoverflow.com/a/27284866/5383169 (ILIA BROUDNO)
+
+            Metafile metafile = null;
+
+            try {
+
+                using (Graphics graphics = Graphics.FromImage(image)) {
+
+                    IntPtr hdc = graphics.GetHdc();
+
+                    metafile = new Metafile(hdc, new Rectangle(0, 0, image.Width, image.Height), MetafileFrameUnit.Pixel, EmfType.EmfOnly);
+
+                    graphics.ReleaseHdc(hdc);
+
+                }
+
+                using (Graphics graphics = Graphics.FromImage(metafile))
+                    graphics.DrawImage(image, new Rectangle(0, 0, image.Width, image.Height), new Rectangle(0, 0, image.Width, image.Height), GraphicsUnit.Pixel);
+
+                IntPtr hEmf = metafile.GetHenhmetafile();
+
+                uint bufferSize = GdiPlus.GdipEmfToWmfBits(hEmf, 0, null, Gdi32.MM_ANISOTROPIC, EmfToWmfBitsFlags.EmfToWmfBitsFlagsDefault);
+                byte[] buffer = new byte[bufferSize];
+
+                GdiPlus.GdipEmfToWmfBits(hEmf, bufferSize, buffer, Gdi32.MM_ANISOTROPIC, EmfToWmfBitsFlags.EmfToWmfBitsFlagsDefault);
+
+                Gdi32.DeleteEnhMetaFile(hEmf);
+
+                stream.Write(buffer, 0, (int)bufferSize);
+
+            }
+            finally {
+
+                if (metafile is object)
+                    metafile.Dispose();
 
             }
 

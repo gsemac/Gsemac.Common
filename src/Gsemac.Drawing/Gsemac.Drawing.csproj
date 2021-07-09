@@ -20,6 +20,7 @@
 
 	<ItemGroup Condition="$(DefineConstants.Contains('NETFRAMEWORK'))">
 		<Reference Include="System.Drawing" />
+    <ProjectReference Include="..\Gsemac.Win32\Gsemac.Win32.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>
