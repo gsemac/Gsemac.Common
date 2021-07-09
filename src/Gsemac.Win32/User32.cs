@@ -7,6 +7,10 @@ namespace Gsemac.Win32 {
 
         // Public members
 
+        public const int HTCAPTION = 0x2;
+
+        public const int WM_NCLBUTTONDOWN = 0xA1;
+
         public static IntPtr GetDC(IntPtr hwnd) {
 
             return GetDCNative(hwnd);
