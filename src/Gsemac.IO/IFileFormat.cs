@@ -5,7 +5,8 @@ namespace Gsemac.IO {
 
     public interface IFileFormat :
         IComparable,
-        IComparable<IFileFormat> {
+        IComparable<IFileFormat>,
+        IEquatable<IFileFormat> {
 
         IEnumerable<string> Extensions { get; }
         IEnumerable<IFileSignature> Signatures { get; }

@@ -13,18 +13,18 @@ namespace Gsemac.IO {
         public virtual IEnumerable<IFileSignature> Signatures => Enumerable.Empty<IFileSignature>();
         public abstract IMimeType MimeType { get; }
 
-        public int CompareTo(object obj) {
+        public int CompareTo(object other) {
 
-            if (obj is null)
-                throw new ArgumentNullException(nameof(obj));
+            if (other is null)
+                throw new ArgumentNullException(nameof(other));
 
-            if (obj is IFileFormat fileFormat)
+            if (other is IFileFormat fileFormat)
                 return CompareTo(fileFormat);
 
-            throw new ArgumentException(string.Format(Core.Properties.ExceptionMessages.ObjectIsNotAnInstanceOfWithType, nameof(IFileFormat)), nameof(obj));
+            throw new ArgumentException(string.Format(Core.Properties.ExceptionMessages.ObjectIsNotAnInstanceOfWithType, nameof(IFileFormat)), nameof(other));
 
         }
-        public int CompareTo(IFileFormat other) {
+        public virtual int CompareTo(IFileFormat other) {
 
             if (other is null)
                 throw new ArgumentNullException(nameof(other));
@@ -32,34 +32,50 @@ namespace Gsemac.IO {
             if (Equals(other))
                 return 0;
 
-            string lhsMimeType = (MimeType?.ToString() ?? "").ToLowerInvariant();
-            string rhsMimeType = (other.MimeType?.ToString() ?? "").ToLowerInvariant();
+            string lhsMimeType = GetMimeTypeString(this);
+            string rhsMimeType = GetMimeTypeString(other);
 
             return lhsMimeType.CompareTo(rhsMimeType);
 
         }
-        public override bool Equals(object obj) {
+        public override bool Equals(object other) {
 
-            if (ReferenceEquals(this, obj))
+            if (ReferenceEquals(this, other))
                 return true;
 
-            if (obj is null)
+            if (other is null)
                 return false;
 
-            // We check for file extension similarities instead of comparing the mimetype since unidentified but different formats will have the same mimetype (application/octet-stream).
+            if (other is IFileFormat fileFormat)
+                return Equals(fileFormat);
 
-            if (obj is IFileFormat fileFormat)
-                return Extensions.Any(ext => fileFormat.Extensions.Any(otherExt => otherExt.Equals(ext, StringComparison.OrdinalIgnoreCase)));
-
-            throw new ArgumentException(string.Format(Core.Properties.ExceptionMessages.ObjectIsNotAnInstanceOfWithType, nameof(IFileFormat)), nameof(obj));
+            throw new ArgumentException(string.Format(Core.Properties.ExceptionMessages.ObjectIsNotAnInstanceOfWithType, nameof(IFileFormat)), nameof(other));
 
         }
+        public virtual bool Equals(IFileFormat other) {
+
+            if (other is null)
+                return false;
+
+            // Start by comparing the MIME types, as long as they're not generic (application/octet-stream).
+
+            string lhsMimeType = GetMimeTypeString(this);
+            string rhsMimeType = GetMimeTypeString(other);
+
+            if (!string.IsNullOrWhiteSpace(lhsMimeType) && !lhsMimeType.Equals("application/octet-stream", StringComparison.OrdinalIgnoreCase))
+                return lhsMimeType.Equals(rhsMimeType, StringComparison.OrdinalIgnoreCase);
+
+            // If we have a generic MIME type, check for matching file extensions.
+
+            return Extensions.Any(ext => other.Extensions.Any(otherExt => otherExt.Equals(ext, StringComparison.OrdinalIgnoreCase)));
+
+        }
+
         public override int GetHashCode() {
 
             return (MimeType.ToString().ToLowerInvariant() ?? Extensions?.FirstOrDefault()?.ToLowerInvariant()).GetHashCode();
 
         }
-
         public override string ToString() {
 
             return MimeType?.ToString();
@@ -97,6 +113,14 @@ namespace Gsemac.IO {
         public static bool operator >=(FileFormatBase left, FileFormatBase right) {
 
             return left is null ? right is null : left.CompareTo(right) >= 0;
+
+        }
+
+        // Private members
+
+        private static string GetMimeTypeString(IFileFormat fileFormat) {
+
+            return (fileFormat?.MimeType?.ToString() ?? "").ToLowerInvariant();
 
         }
 
