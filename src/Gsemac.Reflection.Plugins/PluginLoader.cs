@@ -58,6 +58,7 @@ namespace Gsemac.Reflection.Plugins {
             // All plugins that cannot be loaded successfully will be silently ignored.
 
             return pluginTypes.Where(type => serviceProvider is object || type.IsDefaultConstructable())
+                .Where(type => !type.GetCustomAttributes(inherit: false).OfType<IgnorePluginAttribute>().Any())
                 .Select(type => TryCreateInstance(type))
                 .Where(obj => !(obj is null))
                 .Cast<IPlugin>()
