@@ -125,7 +125,7 @@ namespace Gsemac.Net {
                     }
                     else {
 
-                        // We did not receive an HTTP redirection.
+                        // We did not receive an HTTP redirection by the location header.
 
                         return response;
 
