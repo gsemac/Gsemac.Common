@@ -22,7 +22,7 @@
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
 		<PackageReference Include="Portable.BouncyCastle" Version="1.8.10" />
 		<PackageReference Include="Selenium.WebDriver" Version="3.141.0" />
-		<PackageReference Include="System.Data.SQLite" Version="1.0.114.4" />
+		<PackageReference Include="System.Data.SQLite" Version="1.0.115" />
 	</ItemGroup>
 
 	<ItemGroup Condition="$(DefineConstants.Contains('NETFRAMEWORK'))">
