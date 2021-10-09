@@ -111,6 +111,24 @@ namespace Gsemac.Net {
 
         }
 
+        public static bool IsRedirectStatusCode(HttpStatusCode statusCode) {
+
+            switch (statusCode) {
+
+                case HttpStatusCode.Ambiguous:
+                case HttpStatusCode.Moved:
+                case HttpStatusCode.Redirect:
+                case HttpStatusCode.RedirectMethod:
+                case HttpStatusCode.RedirectKeepVerb:
+                case (HttpStatusCode)308: // PermanentRedirect, doesn't exist in .NET 4.0
+                    return true;
+
+                default:
+                    return false;
+
+            }
+
+        }
         public static bool IsSuccessStatusCode(HttpStatusCode statusCode) {
 
             return !((int)statusCode >= 400 && (int)statusCode < 600);

@@ -46,7 +46,7 @@ namespace Gsemac.Net {
 
                     response = base.Send(request, cancellationToken);
 
-                    if (response is object && IsRedirectStatusCode(response.StatusCode)) {
+                    if (response is object && WebRequestUtilities.IsRedirectStatusCode(response.StatusCode)) {
 
                         if (response.Headers.TryGetHeader(HttpResponseHeader.Location, out string locationValue) && !string.IsNullOrWhiteSpace(locationValue)) {
 
@@ -151,25 +151,6 @@ namespace Gsemac.Net {
         // Private members
 
         private readonly IHttpWebRequestFactory httpWebRequestFactory;
-
-        private static bool IsRedirectStatusCode(HttpStatusCode statusCode) {
-
-            switch (statusCode) {
-
-                case HttpStatusCode.Ambiguous:
-                case HttpStatusCode.Moved:
-                case HttpStatusCode.Redirect:
-                case HttpStatusCode.RedirectMethod:
-                case HttpStatusCode.RedirectKeepVerb:
-                case (HttpStatusCode)308: // PermanentRedirect, doesn't exist in .NET 4.0
-                    return true;
-
-                default:
-                    return false;
-
-            }
-
-        }
 
     }
 
