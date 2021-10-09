@@ -22,7 +22,7 @@ namespace Gsemac.Core.Extensions.Tests {
         [TestMethod]
         public void TestToBooleanWithNullValue() {
 
-            Assert.IsTrue(TriState.Unset.ToBoolean() is null);
+            Assert.IsTrue(TriState.None.ToBoolean() is null);
 
         }
 
