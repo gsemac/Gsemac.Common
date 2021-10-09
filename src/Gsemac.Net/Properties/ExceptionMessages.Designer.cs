@@ -79,6 +79,15 @@ namespace Gsemac.Net.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The given string was not a valid HTTP header..
+        /// </summary>
+        internal static string InvalidHttpHeader {
+            get {
+                return ResourceManager.GetString("InvalidHttpHeader", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The URL was malformed..
         /// </summary>
         internal static string MalformedUrl {

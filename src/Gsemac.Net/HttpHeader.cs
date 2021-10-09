@@ -21,7 +21,7 @@ namespace Gsemac.Net {
             if (TryParse(httpHeader, out HttpHeader result))
                 return result;
             else
-                throw new ArgumentException("The given string was not a valid HTTP header.", nameof(httpHeader));
+                throw new ArgumentException(Properties.ExceptionMessages.InvalidHttpHeader, nameof(httpHeader));
 
 
         }
