@@ -1,5 +1,6 @@
 ﻿using Gsemac.Net.Extensions;
 using System;
+using System.Linq;
 using System.Net;
 using System.Threading;
 
@@ -12,6 +13,8 @@ namespace Gsemac.Net {
         HttpWebRequestHandler {
 
         // Public members
+
+        public TimeSpan MaximumRefreshTimeout { get; set; } = TimeSpan.MaxValue;
 
         public RedirectHandler(IHttpWebRequestFactory httpWebRequestFactory) {
 
@@ -46,7 +49,9 @@ namespace Gsemac.Net {
 
                     response = base.Send(request, cancellationToken);
 
-                    if (response is object && WebRequestUtilities.IsRedirectStatusCode(response.StatusCode)) {
+                    IHttpWebRequest originatingRequest = request;
+
+                    if (IsRedirect(response)) {
 
                         if (response.Headers.TryGetHeader(HttpResponseHeader.Location, out string locationValue) && !string.IsNullOrWhiteSpace(locationValue)) {
 
@@ -55,8 +60,6 @@ namespace Gsemac.Net {
                                 // Follow the redirect to the new location.
 
                                 if (Uri.TryCreate(request.RequestUri, locationValue, out Uri locationUri) && (locationUri.Scheme == Uri.UriSchemeHttp || locationUri.Scheme == Uri.UriSchemeHttps)) {
-
-                                    IHttpWebRequest originatingRequest = request;
 
                                     // Create a new web request.
 
@@ -123,6 +126,39 @@ namespace Gsemac.Net {
                         }
 
                     }
+                    else if (IsRefresh(response)) {
+
+                        try {
+
+                            // We encountered a refresh header.
+
+                            RefreshHeader header = new RefreshHeader(response.Headers["refresh"]);
+
+                            // Wait for the timeout period, preferring the request's timeout if it is shorter.
+
+                            TimeSpan timeout = new[] {
+                                header.Timeout,
+                                TimeSpan.FromMilliseconds(originatingRequest.Timeout),
+                                MaximumRefreshTimeout,
+                            }.Min();
+
+                            Thread.Sleep(timeout);
+
+                            // Initiate a new request to the new endpoint, preserving any cookies that have been set.
+                            // Unlike regular redirects, no referer is included, and the request is treated like an entirely new GET request. 
+
+                            request = httpWebRequestFactory.Create(header.Url);
+
+                            request.CookieContainer = originatingRequest.CookieContainer;
+
+                        }
+                        finally {
+
+                            response.Close();
+
+                        }
+
+                    }
                     else {
 
                         // We did not receive an HTTP redirection by the location header.
@@ -151,6 +187,20 @@ namespace Gsemac.Net {
         // Private members
 
         private readonly IHttpWebRequestFactory httpWebRequestFactory;
+
+        private static bool IsRedirect(IHttpWebResponse response) {
+
+            return response is object &&
+                WebRequestUtilities.IsRedirectStatusCode(response.StatusCode);
+
+        }
+        private static bool IsRefresh(IHttpWebResponse response) {
+
+            return response is object &&
+                response.Headers.TryGetHeader("refresh", out string refreshHeaderValue) &&
+                !string.IsNullOrWhiteSpace(refreshHeaderValue);
+
+        }
 
     }
 
