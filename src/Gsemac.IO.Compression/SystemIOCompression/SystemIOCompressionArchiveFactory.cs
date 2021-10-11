@@ -35,7 +35,7 @@ namespace Gsemac.IO.Compression.SystemIOCompression {
                 archiveOptions = ArchiveOptions.Default;
 
             if (!this.IsSupportedFileFormat(archiveFormat))
-                throw new FileFormatException(IO.Properties.ExceptionMessages.UnsupportedFileFormat);
+                throw new UnsupportedFileFormatException(archiveFormat);
 
             return new SystemIOCompressionArchive(stream, archiveOptions);
 

@@ -44,7 +44,7 @@ namespace Gsemac.IO.Compression.Winrar {
                 archiveOptions = ArchiveOptions.Default;
 
             if (!this.IsSupportedFileFormat(archiveFormat))
-                throw new FileFormatException(IO.Properties.ExceptionMessages.UnsupportedFileFormat);
+                throw new UnsupportedFileFormatException(archiveFormat);
 
             return new BinWinrarArchive(stream, options.WinrarDirectoryPath, archiveFormat, archiveOptions);
 

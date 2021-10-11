@@ -37,7 +37,7 @@ namespace Gsemac.IO.Compression {
                 archiveOptions = ArchiveOptions.Default;
 
             if (!this.IsSupportedFileFormat(archiveFormat))
-                throw new FileFormatException(IO.Properties.ExceptionMessages.UnsupportedFileFormat);
+                throw new UnsupportedFileFormatException(archiveFormat);
 
             if (archiveFormat.Equals(ArchiveFormat.Zip)) {
 
@@ -51,7 +51,7 @@ namespace Gsemac.IO.Compression {
             }
             else {
 
-                throw new FileFormatException(IO.Properties.ExceptionMessages.UnsupportedFileFormat);
+                throw new UnsupportedFileFormatException(archiveFormat);
 
             }
 

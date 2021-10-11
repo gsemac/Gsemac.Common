@@ -44,7 +44,7 @@ namespace Gsemac.IO.Compression.SevenZip {
                 archiveOptions = ArchiveOptions.Default;
 
             if (!this.IsSupportedFileFormat(archiveFormat))
-                throw new FileFormatException(IO.Properties.ExceptionMessages.UnsupportedFileFormat);
+                throw new UnsupportedFileFormatException(archiveFormat);
 
             return new BinSevenZipArchive(stream, options.SevenZipDirectoryPath, archiveFormat, archiveOptions);
 

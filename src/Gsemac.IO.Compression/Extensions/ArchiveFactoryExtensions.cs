@@ -31,7 +31,7 @@ namespace Gsemac.IO.Compression.Extensions {
 
         public static IArchive Open(this IArchiveFactory archiveFactory, string filePath) {
 
-            return Open(archiveFactory, filePath, null);
+            return Open(archiveFactory, filePath, archiveOptions: null);
 
         }
         public static IArchive Open(this IArchiveFactory archiveFactory, string filePath, FileAccess fileAccess) {
