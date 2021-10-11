@@ -32,22 +32,20 @@ namespace Gsemac.IO {
             return fileFormat;
 
         }
-        public IFileFormat FromFileExtension(string fileExtension) {
+        public IFileFormat FromFileExtension(string filePath) {
 
             // Accepts full file paths, or plain image extensions (with or without leading period, e.g. ".jpeg" and "jpeg").
 
-            if (fileExtension is null)
-                throw new ArgumentNullException(nameof(fileExtension));
+            if (filePath is null)
+                throw new ArgumentNullException(nameof(filePath));
 
-            if (string.IsNullOrWhiteSpace(fileExtension))
-                throw new ArgumentException(fileExtension);
+            if (string.IsNullOrWhiteSpace(filePath))
+                throw new ArgumentException(filePath);
 
-            fileExtension = PathUtilities.GetFilename(fileExtension);
-
-            string ext = PathUtilities.GetFileExtension(fileExtension);
+            string ext = PathUtilities.GetFileExtension(filePath);
 
             if (string.IsNullOrWhiteSpace(ext))
-                ext = fileExtension;
+                ext = PathUtilities.GetFilename(filePath);
             else
                 ext = PathUtilities.NormalizeFileExtension(ext);
 

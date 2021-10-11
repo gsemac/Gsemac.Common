@@ -97,6 +97,24 @@ namespace Gsemac.IO.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The given string is not a valid file extension..
+        /// </summary>
+        internal static string InvalidFileExtension {
+            get {
+                return ResourceManager.GetString("InvalidFileExtension", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The string &apos;{0}&apos; is not a valid file extension..
+        /// </summary>
+        internal static string InvalidFileExtensionWithFileExtension {
+            get {
+                return ResourceManager.GetString("InvalidFileExtensionWithFileExtension", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The MIME type was malformed..
         /// </summary>
         internal static string MalformedMimeType {

@@ -149,35 +149,25 @@ namespace Gsemac.IO {
 
         public static string GetFilename(string path) {
 
+            return GetFilename(path, pathInfo: null);
+
+        }
+        public static string GetFilename(string path, IPathInfo pathInfo) {
+
+            if (pathInfo is null)
+                pathInfo = new PathInfo();
+
             // This process should work for both remote and local paths.
+            // The user is optionally able to specify explicitly whether the path is a URL or a local path.
 
-            string result = path is null ? string.Empty : "";
+            if ((pathInfo.IsUrl.HasValue && pathInfo.IsUrl.Value) || (!pathInfo.IsUrl.HasValue && IsUrl(path)))
+                return GetFilenameFromUrl(path);
 
-            if (!string.IsNullOrEmpty(path)) {
+            // If the path cannot be determined to be a URL, treat it like a local path.
+            // Invalid path characters are be allowed (e.g. "|"), and content after the hash character ("#") should be included in the filename.
+            // While this signifies the start of a URI fragment for URLs, it is a valid path character on Windows and most Linux flavors.
 
-                try {
-
-                    if (!Uri.TryCreate(path, UriKind.Absolute, out Uri uri))
-                        uri = new Uri(new Uri("http://anything"), path);
-
-                    result = System.IO.Path.GetFileName(uri.LocalPath);
-
-                }
-                catch (ArgumentException) {
-
-                    // We can end up here if the path contains illegal characters (e.g. "|").
-                    // Even though it shouldn't be allowed, there are URLs out there that contain them.
-                    // We should still be able to handle this case.
-
-                    Match filenameMatch = Regex.Match(path, @"(?:.*\/)?(.+?)(?:$|\?|#)");
-
-                    if (filenameMatch.Success)
-                        result = filenameMatch.Groups[1].Value;
-
-                }
-            }
-
-            return result;
+            return GetFilenameWithRegex(path, pathInfo.IsUrl ?? false);
 
         }
         public static string GetFilenameWithoutExtension(string path) {
@@ -241,7 +231,7 @@ namespace Gsemac.IO {
                 throw new ArgumentNullException(nameof(extension));
 
             if (string.IsNullOrWhiteSpace(extension))
-                throw new ArgumentException("The given string is not a valid file extension.", nameof(extension));
+                throw new ArgumentException(Properties.ExceptionMessages.InvalidFileExtension, nameof(extension));
 
             extension = extension.ToLowerInvariant()
                 .Trim('.')
@@ -546,6 +536,13 @@ namespace Gsemac.IO {
 
         private static readonly object uniquePathMutex = new object();
 
+        private static bool EndsWithDirectorySeparatorChar(string path) {
+
+            return !string.IsNullOrEmpty(path) &&
+                (path.EndsWith(System.IO.Path.DirectorySeparatorChar.ToString()) ||
+                path.EndsWith(System.IO.Path.AltDirectorySeparatorChar.ToString()));
+
+        }
         private static string ReplaceInvalidPathChars(string path, SanitizePathOptions options = SanitizePathOptions.Default) {
 
             return ReplaceInvalidPathChars(path, string.Empty, options);
@@ -694,6 +691,74 @@ namespace Gsemac.IO {
             }
 
         }
+        private static string GetFilenameFromUrl(string path) {
+
+            if (path is null)
+                return string.Empty;
+
+            if (string.IsNullOrWhiteSpace(path))
+                return "";
+
+            try {
+
+                if (!Uri.TryCreate(path, UriKind.Absolute, out Uri uri))
+                    uri = new Uri(new Uri("http://anything"), path);
+
+                return System.IO.Path.GetFileName(uri.LocalPath);
+
+            }
+            catch (ArgumentException) {
+
+                // We can end up here if the path contains illegal characters (e.g. "|").
+                // Even though it shouldn't be allowed, there are URLs out there that contain them.
+                // We should still be able to handle this case.
+
+                return GetFilenameWithRegex(path, isUrl: true);
+
+            }
+
+        }
+        private static string GetFilenameWithRegex(string path, bool isUrl) {
+
+            if (path is null)
+                return string.Empty;
+
+            if (string.IsNullOrWhiteSpace(path))
+                return "";
+
+            string urlPathTerminals = @"?#";
+            string localPathTerminals = @"?";
+
+            string[] pathTerminals = (isUrl ? urlPathTerminals : localPathTerminals)
+                .Split()
+                .Select(c => Regex.Escape(c))
+                .ToArray();
+
+            Match filenameMatch = Regex.Match(path, @"(?:.*[\/\\])?(.+?)(?:$|" + string.Join("|", pathTerminals) + @")");
+
+            return filenameMatch.Success ?
+                filenameMatch.Groups[1].Value :
+                "";
+
+        }
+        private static string GetRootOrScheme(string path) {
+
+            // Returns things like "\\", "C:\", "https://", etc.
+
+            Match rootOrSchemeMatch = Regex.Match(path, @"^(?:[^\\\/]+):(?:[\\\/]{1,2})?|^[\\\/]{2}");
+
+            return rootOrSchemeMatch.Success ?
+                rootOrSchemeMatch.Value :
+                string.Empty;
+
+        }
+        private static bool StartsWithDirectorySeparatorChar(string path) {
+
+            return !string.IsNullOrEmpty(path) &&
+                (path.StartsWith(System.IO.Path.DirectorySeparatorChar.ToString()) ||
+                path.StartsWith(System.IO.Path.AltDirectorySeparatorChar.ToString()));
+
+        }
         private static string StripRepeatedForwardSlashesAfterScheme(string path) {
 
             string scheme = GetScheme(path);
@@ -718,31 +783,6 @@ namespace Gsemac.IO {
             });
 
             return path;
-
-        }
-        private static string GetRootOrScheme(string path) {
-
-            // Returns things like "\\", "C:\", "https://", etc.
-
-            Match rootOrSchemeMatch = Regex.Match(path, @"^(?:[^\\\/]+):(?:[\\\/]{1,2})?|^[\\\/]{2}");
-
-            return rootOrSchemeMatch.Success ?
-                rootOrSchemeMatch.Value :
-                string.Empty;
-
-        }
-        private static bool StartsWithDirectorySeparatorChar(string path) {
-
-            return !string.IsNullOrEmpty(path) &&
-                (path.StartsWith(System.IO.Path.DirectorySeparatorChar.ToString()) ||
-                path.StartsWith(System.IO.Path.AltDirectorySeparatorChar.ToString()));
-
-        }
-        private static bool EndsWithDirectorySeparatorChar(string path) {
-
-            return !string.IsNullOrEmpty(path) &&
-                (path.EndsWith(System.IO.Path.DirectorySeparatorChar.ToString()) ||
-                path.EndsWith(System.IO.Path.AltDirectorySeparatorChar.ToString()));
 
         }
 

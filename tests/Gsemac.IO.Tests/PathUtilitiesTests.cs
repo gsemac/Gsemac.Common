@@ -318,6 +318,32 @@ namespace Gsemac.IO.Tests {
             Assert.AreEqual("|file.jpg", PathUtilities.GetFilename("path/|file.jpg"));
 
         }
+        [TestMethod]
+        public void TestGetFilenameFromUriWithIllegalCharactersWithHashCharacter() {
+
+            // The hash character ("#") is a valid path character on Windows.
+            // Filenames containing the hash character ("#") are valid on Windows, and the part after the hash should not be stripped.
+
+            Assert.AreEqual("|file.jpg#hash.png", PathUtilities.GetFilename("path/|file.jpg#hash.png"));
+
+        }
+        [TestMethod]
+        public void TestGetFilenameFromUriWithHashCharacter() {
+
+            // URL fragments begin with the hash ("#") character.
+            // Filenames containing the hash character ("#") are valid on Windows, and the part after the hash should not be stripped.
+
+            Assert.AreEqual(@"PathWith#Hash.jpg", PathUtilities.GetFilename(@"C:\PathWith#Hash.jpg"));
+
+        }
+        [TestMethod]
+        public void TestGetFilenameFromUrlWithHashCharacter() {
+
+            // For URLs, everything after the hash character ("#") should be ignored as it indicates the start of a URI fragment.
+
+            Assert.AreEqual(@"PathWith.png", PathUtilities.GetFilename(@"https://example.com/PathWith.png#Hash.jpg"));
+
+        }
 
         // GetFileNameWithoutExtension
 
@@ -363,6 +389,26 @@ namespace Gsemac.IO.Tests {
             // However, the actual filename here is "proxy", which does not have an extension.
 
             Assert.IsTrue(string.IsNullOrEmpty(PathUtilities.GetFileExtension("https://website.com/proxy?img=file=&file.jpg")));
+
+        }
+        [TestMethod]
+        public void TestGetFileExtensionFromUriWithHashCharacter() {
+
+            Assert.AreEqual(@".jpg", PathUtilities.GetFileExtension(@"C:\PathWith#Hash.jpg"));
+
+        }
+        [TestMethod]
+        public void TestGetFileExtensionFromUrlWithHashCharacter() {
+
+            Assert.AreEqual(@".png", PathUtilities.GetFileExtension(@"https://example.com/PathWith.png#Hash.jpg"));
+
+        }
+        [TestMethod]
+        public void TestGetFileExtensionFromUriWithFilenameWithHashCharacter() {
+
+            // Filenames containing the hash character ("#") are valid on Windows, and the part after the hash should not be stripped.
+
+            Assert.AreEqual(@".jpg", PathUtilities.GetFileExtension(@"PathWith#Hash.jpg"));
 
         }
 

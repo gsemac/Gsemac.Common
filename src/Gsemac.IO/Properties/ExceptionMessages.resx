@@ -129,6 +129,12 @@
   <data name="IncorrectFileFormat" xml:space="preserve">
     <value>The file was not in the correct format.</value>
   </data>
+  <data name="InvalidFileExtension" xml:space="preserve">
+    <value>The given string is not a valid file extension.</value>
+  </data>
+  <data name="InvalidFileExtensionWithFileExtension" xml:space="preserve">
+    <value>The string '{0}' is not a valid file extension.</value>
+  </data>
   <data name="MalformedMimeType" xml:space="preserve">
     <value>The MIME type was malformed.</value>
   </data>
