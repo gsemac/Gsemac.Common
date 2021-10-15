@@ -28,7 +28,7 @@ Individual NuGet packages are available for each project.
 * Facilities for parsing information from paths and URLs
 * Various stream implementations such as `ConcatStream`, `ConcurrentMemoryStream`, `ProcessStream`, and `ProducerConsumerStream`
 
-## [Gsemac.IO.Compression](src/Gsemac.IO.Compression)
+### [Gsemac.IO.Compression](src/Gsemac.IO.Compression)
 
 * Facilities for creating and modifying various archive formats such as ZIP, RAR, and 7Z
 
@@ -38,26 +38,26 @@ Individual NuGet packages are available for each project.
 * Various interfaces such as `IWebRequest`, `IHttpWebRequest`, and `IWebClient`
 * Various factory classes such as `HttpWebRequestFactory` and `WebClientFactory`
 
-## [Gsemac.Net.Curl](src/Gsemac.Net.Curl)
+### [Gsemac.Net.Curl](src/Gsemac.Net.Curl)
 
 * Allows `HttpWebRequest` to handle requests through libcurl
 
-## [Gsemac.Net.GitHub](src/Gsemac.Net.GitHub)
+### [Gsemac.Net.GitHub](src/Gsemac.Net.GitHub)
 
 * Various facilities for reading and iterating over repository and release information
 
-## [Gsemac.Net.WebBrowsers](src/Gsemac.Net.WebBrowsers)
+### [Gsemac.Net.WebBrowsers](src/Gsemac.Net.WebBrowsers)
 
 * Facilities for detecting installed web browsers
 * Facilities for reading and decrypting cookies from browsers such as Chrome and Firefox
 
-## [Gsemac.Net.WebDrivers](src/Gsemac.Net.WebDrivers)
+### [Gsemac.Net.WebDrivers](src/Gsemac.Net.WebDrivers)
 
 * Facilities for instantiating and pooling web driver instances
 * Utilities for screenshotting webpages and individual elements
 * Integrates stealth features from `puppeteer-extra`
 
-## [Gsemac.Net.Polyfills](src/Gsemac.Net.Polyfills)
+## [Gsemac.Polyfills](src/Gsemac.Polyfills)
 
 * Implementations of `Task`-related methods for .NET Framework 4.0
 * Implementation of `Microsoft.Extensions.DependencyInjection` for .NET Framework 4.0
