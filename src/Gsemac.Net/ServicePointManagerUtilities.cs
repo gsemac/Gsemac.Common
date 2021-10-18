@@ -9,17 +9,93 @@ namespace Gsemac.Net {
 
         // Public members
 
+        public const SecurityProtocolType Net40SecurityProtocols = SecurityProtocolType.Ssl3 | SecurityProtocolType.Tls;
+        public const SecurityProtocolType Net45SecurityProtocols = Net40SecurityProtocols | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls12;
+        public const SecurityProtocolType Net48SecurityProtocols = Net45SecurityProtocols | SecurityProtocolType.Tls13;
+
         public static bool CertificateValidationEnabled {
             get => IsCertificateValidationEnabled();
             set => SetCertificateValidationEnabled(value);
         }
+        public static SecurityProtocolType SecurityProtocol {
+            get => (SecurityProtocolType)System.Net.ServicePointManager.SecurityProtocol;
+            set {
 
-        public static bool IsCertificateValidationEnabled() {
+                // Disable all currently-enabled security protocols before enabling the new ones.
+
+                TrySetSecurityProtocolEnabled(Net48SecurityProtocols, enabled: false);
+
+                SetSecurityProtocolEnabled(value, true);
+
+            }
+        }
+
+        public static void SetSecurityProtocolEnabled(SecurityProtocolType securityProtocol, bool enabled = true) {
+
+            SetSecurityProtocolsEnabled((System.Net.SecurityProtocolType)securityProtocol, enabled);
+
+        }
+        public static void SetSecurityProtocolsEnabled(System.Net.SecurityProtocolType securityProtocol, bool enabled = true) {
+
+            if (enabled)
+                System.Net.ServicePointManager.SecurityProtocol |= securityProtocol;
+            else
+                System.Net.ServicePointManager.SecurityProtocol &= ~securityProtocol;
+
+        }
+
+        public static bool TrySetSecurityProtocolEnabled(SecurityProtocolType securityProtocol, bool enabled = true) {
+
+            return TrySetSecurityProtocolEnabled((System.Net.SecurityProtocolType)securityProtocol, enabled);
+
+        }
+        public static bool TrySetSecurityProtocolEnabled(System.Net.SecurityProtocolType securityProtocol, bool enabled = true) {
+
+            try {
+
+                SetSecurityProtocolsEnabled(securityProtocol, enabled);
+
+                return true;
+
+            }
+#pragma warning disable CA1031 // Do not catch general exception types
+            catch (NotSupportedException) {
+
+                // A NotSupportedException will be thrown when the enum values are outside the range of System.Net.SecurityProtocolType.
+                // This may occur for values added that don't exist in the vanilla framework (such as Tls13 in .NET 4.0).
+
+                return false;
+
+            }
+#pragma warning restore CA1031 // Do not catch general exception types
+
+        }
+
+        public static bool IsSecurityProtocolEnabled(SecurityProtocolType securityProtocol) {
+
+            return IsSecurityProtocolEnabled((System.Net.SecurityProtocolType)securityProtocol);
+
+        }
+        public static bool IsSecurityProtocolEnabled(System.Net.SecurityProtocolType securityProtocol) {
+
+            return System.Net.ServicePointManager.SecurityProtocol.HasFlag(securityProtocol);
+
+        }
+
+        // Private members
+
+        private static bool ServerCertificateValidationCallback(object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors) {
+
+            return true;
+
+        }
+
+        private static bool IsCertificateValidationEnabled() {
 
             return System.Net.ServicePointManager.ServerCertificateValidationCallback != ServerCertificateValidationCallback;
 
         }
-        public static void SetCertificateValidationEnabled(bool enabled) {
+        private static void SetCertificateValidationEnabled(bool enabled) {
 
             if (enabled) {
 
@@ -32,57 +108,6 @@ namespace Gsemac.Net {
                 System.Net.ServicePointManager.Expect100Continue = true;
 
             }
-
-        }
-
-        public static bool TrySetSecurityProtocolsEnabled(SecurityProtocolType securityProtocols, bool enabled) {
-
-            return TrySetSecurityProtocolsEnabled((System.Net.SecurityProtocolType)securityProtocols, enabled);
-
-        }
-        public static bool TrySetSecurityProtocolsEnabled(System.Net.SecurityProtocolType securityProtocols, bool enabled) {
-
-            try {
-
-                if (enabled)
-                    System.Net.ServicePointManager.SecurityProtocol |= securityProtocols;
-                else
-                    System.Net.ServicePointManager.SecurityProtocol &= ~securityProtocols;
-
-                return true;
-
-            }
-            catch (Exception) {
-
-                return false;
-
-            }
-
-        }
-
-        public static bool TrySetNet40SecurityProtocolsEnabled(bool enabled) {
-
-            return TrySetSecurityProtocolsEnabled(SecurityProtocolType.Ssl3, enabled) &&
-               TrySetSecurityProtocolsEnabled(SecurityProtocolType.Tls, enabled);
-
-        }
-        public static bool TrySetNet45SecurityProtocolsEnabled(bool enabled) {
-
-            return TrySetSecurityProtocolsEnabled(SecurityProtocolType.Tls11, enabled) &&
-                TrySetSecurityProtocolsEnabled(SecurityProtocolType.Tls12, enabled);
-
-        }
-        public static bool TrySetNet48SecurityProtocolsEnabled(bool enabled) {
-
-            return TrySetSecurityProtocolsEnabled(SecurityProtocolType.Tls13, enabled);
-
-        }
-
-        // Private members
-
-        private static bool ServerCertificateValidationCallback(object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors) {
-
-            return true;
 
         }
 
