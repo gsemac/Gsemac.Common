@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace Gsemac.Net {
 
-    public class HttpWebRequestHandler :
+    public abstract class HttpWebRequestHandler :
         DelegatingWebRequestHandler {
 
         // Protected members
