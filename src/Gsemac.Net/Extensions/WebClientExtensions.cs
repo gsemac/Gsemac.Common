@@ -8,6 +8,8 @@ namespace Gsemac.Net.Extensions {
 
     public static class WebClientExtensions {
 
+        // Public members
+
         public static void DownloadFile(this WebClient client, Uri address) {
 
             DownloadFile(new WebClientAdapter(client), address);
@@ -56,47 +58,27 @@ namespace Gsemac.Net.Extensions {
         }
         public static void DownloadFileSync(this IWebClient client, Uri address, string filename, CancellationToken cancellationToken) {
 
-            // Events are only fired when downloading asynchronously with DownloadFileAsync.
-            // This method allows for synchronous downloads while still firing events. 
-            // Based on the solution given here: https://stackoverflow.com/a/25834736 (user195275)
+            // Note that CancelAsync doesn't actually work if the download has already started: https://github.com/dotnet/runtime/issues/31479 
+            // So that we can cancel the download, we'll run the download in a new thread and join it.
+            // Instead of canceling the download through WebClient, we'll simply abort the thread (ahhh!).
 
-            object mutex = new object();
-            bool downloadCancelled = false;
+            // It's my understanding that this is not a problem in newer versions of .NET Framework, although it has resurfaced in .NET Core.
+            // It might be a good idea to detect the runtime version and react accordingly.
 
-            void handleDownloadComplete(object sender, AsyncCompletedEventArgs e) {
+            if (cancellationToken.IsCancellationRequested)
+                throw new WebException(Properties.ExceptionMessages.RequestCanceled, WebExceptionStatus.RequestCanceled);
 
-                downloadCancelled = e.Cancelled;
+            Thread downloadThread = new Thread(() => DownloadFileSyncInternal(client, address, filename, cancellationToken));
 
-                lock (e.UserState)
-                    Monitor.Pulse(e.UserState);
+            using (cancellationToken.Register(() => downloadThread.Abort())) {
 
-            }
-
-            client.DownloadFileCompleted += handleDownloadComplete;
-
-            try {
-
-                lock (mutex) {
-
-                    using (cancellationToken.Register(() => client.CancelAsync())) {
-
-                        client.DownloadFileAsync(address, filename, mutex);
-
-                        Monitor.Wait(mutex);
-
-                    }
-
-                }
-
-            }
-            finally {
-
-                client.DownloadFileCompleted -= handleDownloadComplete;
+                downloadThread.Start();
+                downloadThread.Join();
 
             }
 
-            if (downloadCancelled)
-                throw new WebException(Properties.ExceptionMessages.TheRequestWasCancelled, WebExceptionStatus.RequestCanceled);
+            if (downloadThread.ThreadState == ThreadState.Aborted)
+                throw new WebException(Properties.ExceptionMessages.RequestCanceled, WebExceptionStatus.RequestCanceled);
 
         }
         public static void DownloadFileSync(this WebClient client, string address, string filename) {
@@ -138,6 +120,54 @@ namespace Gsemac.Net.Extensions {
             client.Headers[HttpRequestHeader.UserAgent] = options.UserAgent;
 
             return client;
+
+        }
+
+        // Private members
+
+        public static void DownloadFileSyncInternal(IWebClient client, Uri address, string filename, CancellationToken cancellationToken) {
+
+            // Events are only fired when downloading asynchronously with DownloadFileAsync.
+            // This method allows for synchronous downloads while still firing events. 
+            // Based on the solution given here: https://stackoverflow.com/a/25834736 (user195275)
+
+            object mutex = new object();
+            bool downloadCancelled = false;
+
+            void handleDownloadComplete(object sender, AsyncCompletedEventArgs e) {
+
+                downloadCancelled = e.Cancelled;
+
+                lock (e.UserState)
+                    Monitor.Pulse(e.UserState);
+
+            }
+
+            client.DownloadFileCompleted += handleDownloadComplete;
+
+            try {
+
+                lock (mutex) {
+
+                    using (cancellationToken.Register(() => client.CancelAsync())) {
+
+                        client.DownloadFileAsync(address, filename, mutex);
+
+                        Monitor.Wait(mutex);
+
+                    }
+
+                }
+
+            }
+            finally {
+
+                client.DownloadFileCompleted -= handleDownloadComplete;
+
+            }
+
+            if (downloadCancelled)
+                throw new WebException(Properties.ExceptionMessages.TheRequestWasCancelled, WebExceptionStatus.RequestCanceled);
 
         }
 

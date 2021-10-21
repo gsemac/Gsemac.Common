@@ -129,6 +129,9 @@
   <data name="MalformedUrl" xml:space="preserve">
     <value>The URL was malformed.</value>
   </data>
+  <data name="RequestCanceled" xml:space="preserve">
+    <value>The request was aborted: The request was canceled.</value>
+  </data>
   <data name="SchemeContainsInvalidCharacters" xml:space="preserve">
     <value>The scheme contains invalid characters.</value>
   </data>
