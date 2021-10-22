@@ -10,8 +10,8 @@ namespace Gsemac.Net {
         // Public members
 
         public const SecurityProtocolType Net40SecurityProtocols = SecurityProtocolType.Ssl3 | SecurityProtocolType.Tls;
-        public const SecurityProtocolType Net45SecurityProtocols = Net40SecurityProtocols | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls12;
-        public const SecurityProtocolType Net48SecurityProtocols = Net45SecurityProtocols | SecurityProtocolType.Tls13;
+        public const SecurityProtocolType Net45SecurityProtocols = SecurityProtocolType.Tls11 | SecurityProtocolType.Tls12;
+        public const SecurityProtocolType Net48SecurityProtocols = SecurityProtocolType.Tls13;
 
         public static bool CertificateValidationEnabled {
             get => IsCertificateValidationEnabled();
