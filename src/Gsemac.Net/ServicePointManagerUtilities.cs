@@ -13,21 +13,25 @@ namespace Gsemac.Net {
         public const SecurityProtocolType Net45SecurityProtocols = SecurityProtocolType.Tls11 | SecurityProtocolType.Tls12;
         public const SecurityProtocolType Net48SecurityProtocols = SecurityProtocolType.Tls13;
 
-        public static bool CertificateValidationEnabled {
-            get => IsCertificateValidationEnabled();
-            set => SetCertificateValidationEnabled(value);
+        public static bool IsCertificateValidationEnabled() {
+
+            return System.Net.ServicePointManager.ServerCertificateValidationCallback != ServerCertificateValidationCallback;
+
         }
-        public static SecurityProtocolType SecurityProtocol {
-            get => (SecurityProtocolType)System.Net.ServicePointManager.SecurityProtocol;
-            set {
+        public static void SetCertificateValidationEnabled(bool enabled) {
 
-                // Disable all currently-enabled security protocols before enabling the new ones.
+            if (enabled) {
 
-                TrySetSecurityProtocolEnabled(Net48SecurityProtocols, enabled: false);
-
-                SetSecurityProtocolEnabled(value, true);
+                System.Net.ServicePointManager.ServerCertificateValidationCallback = null;
 
             }
+            else {
+
+                System.Net.ServicePointManager.ServerCertificateValidationCallback = ServerCertificateValidationCallback;
+                System.Net.ServicePointManager.Expect100Continue = true;
+
+            }
+
         }
 
         public static void SetSecurityProtocolEnabled(SecurityProtocolType securityProtocol, bool enabled = true) {
@@ -43,7 +47,6 @@ namespace Gsemac.Net {
                 System.Net.ServicePointManager.SecurityProtocol &= ~securityProtocol;
 
         }
-
         public static bool TrySetSecurityProtocolEnabled(SecurityProtocolType securityProtocol, bool enabled = true) {
 
             return TrySetSecurityProtocolEnabled((System.Net.SecurityProtocolType)securityProtocol, enabled);
@@ -70,7 +73,6 @@ namespace Gsemac.Net {
 #pragma warning restore CA1031 // Do not catch general exception types
 
         }
-
         public static bool IsSecurityProtocolEnabled(SecurityProtocolType securityProtocol) {
 
             return IsSecurityProtocolEnabled((System.Net.SecurityProtocolType)securityProtocol);
@@ -87,27 +89,6 @@ namespace Gsemac.Net {
         private static bool ServerCertificateValidationCallback(object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors) {
 
             return true;
-
-        }
-
-        private static bool IsCertificateValidationEnabled() {
-
-            return System.Net.ServicePointManager.ServerCertificateValidationCallback != ServerCertificateValidationCallback;
-
-        }
-        private static void SetCertificateValidationEnabled(bool enabled) {
-
-            if (enabled) {
-
-                System.Net.ServicePointManager.ServerCertificateValidationCallback = null;
-
-            }
-            else {
-
-                System.Net.ServicePointManager.ServerCertificateValidationCallback = ServerCertificateValidationCallback;
-                System.Net.ServicePointManager.Expect100Continue = true;
-
-            }
 
         }
 
