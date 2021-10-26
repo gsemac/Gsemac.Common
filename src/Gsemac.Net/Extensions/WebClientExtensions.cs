@@ -186,7 +186,7 @@ namespace Gsemac.Net.Extensions {
                 // https://referencesource.microsoft.com/#system/net/System/Net/webclient.cs,416
 
                 if (downloadCancelled && File.Exists(filename))
-                    FileUtilities.TryDeleteFile(filename);
+                    FileUtilities.TryDelete(filename);
 
                 throw new WebException(Properties.ExceptionMessages.RequestCanceled, WebExceptionStatus.RequestCanceled);
 

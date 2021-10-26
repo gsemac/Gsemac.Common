@@ -165,7 +165,7 @@ namespace Gsemac.IO {
 
         }
 
-        public static bool CopyFile(string filePath, string newFilePath, bool overwrite = false, TimeSpan? timeout = null) {
+        public static bool Copy(string filePath, string newFilePath, bool overwrite = false, TimeSpan? timeout = null) {
 
             if (!File.Exists(filePath))
                 throw new FileNotFoundException(string.Format(Properties.ExceptionMessages.FileNotFound, filePath), filePath);
@@ -188,7 +188,7 @@ namespace Gsemac.IO {
             return true;
 
         }
-        public static bool TryCopyFile(string filePath, string newFilePath, bool overwrite = false, TimeSpan? timeout = null) {
+        public static bool TryCopy(string filePath, string newFilePath, bool overwrite = false, TimeSpan? timeout = null) {
 
             if (!File.Exists(filePath))
                 return false;
@@ -196,10 +196,10 @@ namespace Gsemac.IO {
             if (File.Exists(newFilePath) && !overwrite)
                 return false;
 
-            return TryWithTimeout(() => CopyFile(filePath, newFilePath, overwrite, timeout), timeout);
+            return TryWithTimeout(() => Copy(filePath, newFilePath, overwrite, timeout), timeout);
 
         }
-        public static bool MoveFile(string filePath, string newFilePath, bool overwrite = false, TimeSpan? timeout = null) {
+        public static bool Move(string filePath, string newFilePath, bool overwrite = false, TimeSpan? timeout = null) {
 
             // Be careful that we don't delete the original file if the two paths point to the same file.
             // If the paths are equivalent, the move is considered to be a success.
@@ -207,25 +207,25 @@ namespace Gsemac.IO {
             if (PathsPointToSameFile(filePath, newFilePath))
                 return true;
 
-            bool success = CopyFile(filePath, newFilePath, overwrite, timeout);
+            bool success = Copy(filePath, newFilePath, overwrite, timeout);
 
             if (success) {
 
                 // Delete the original file if it was successfully copied.
 
-                success = DeleteFile(filePath, timeout);
+                success = Delete(filePath, timeout);
 
                 // If we fail to delete the original file, delete the copied file.
 
                 if (!success)
-                    DeleteFile(newFilePath, timeout);
+                    Delete(newFilePath, timeout);
 
             }
 
             return success;
 
         }
-        public static bool TryMoveFile(string filePath, string newFilePath, bool overwrite = false, TimeSpan? timeout = null) {
+        public static bool TryMove(string filePath, string newFilePath, bool overwrite = false, TimeSpan? timeout = null) {
 
             if (!File.Exists(filePath))
                 return false;
@@ -239,42 +239,41 @@ namespace Gsemac.IO {
             if (PathsPointToSameFile(filePath, newFilePath))
                 return true;
 
-            bool success = TryCopyFile(filePath, newFilePath, overwrite, timeout);
+            bool success = TryCopy(filePath, newFilePath, overwrite, timeout);
 
             if (success) {
 
                 // Delete the original file if it was successfully copied.
 
-                success = TryDeleteFile(filePath, timeout);
+                success = TryDelete(filePath, timeout);
 
                 // If we fail to delete the original file, delete the copied file.
 
                 if (!success)
-                    TryDeleteFile(newFilePath, timeout);
+                    TryDelete(newFilePath, timeout);
 
             }
 
             return success;
 
         }
-        public static bool RenameFile(string filePath, string newFilename, bool overwrite = false, TimeSpan? timeout = null) {
+        public static bool Rename(string filePath, string newFilename, bool overwrite = false, TimeSpan? timeout = null) {
 
             string directoryPath = Path.GetDirectoryName(Path.GetFullPath(filePath));
             string newFilePath = Path.Combine(directoryPath, newFilename);
 
-            return MoveFile(filePath, newFilePath, overwrite, timeout);
+            return Move(filePath, newFilePath, overwrite, timeout);
 
         }
-        public static bool TryRenameFile(string filePath, string newFilename, bool overwrite = false, TimeSpan? timeout = null) {
+        public static bool TryRename(string filePath, string newFilename, bool overwrite = false, TimeSpan? timeout = null) {
 
             string directoryPath = Path.GetDirectoryName(Path.GetFullPath(filePath));
             string newFilePath = Path.Combine(directoryPath, newFilename);
 
-            return TryMoveFile(filePath, newFilePath, overwrite, timeout);
+            return TryMove(filePath, newFilePath, overwrite, timeout);
 
         }
-
-        public static bool DeleteFile(string filePath, TimeSpan? timeout = null) {
+        public static bool Delete(string filePath, TimeSpan? timeout = null) {
 
             // File.Delete doesn't wait for the operation to finish before returning, so this is a workaround.
             // More info: https://stackoverflow.com/questions/9370012/waiting-for-system-to-delete-file
@@ -307,12 +306,12 @@ namespace Gsemac.IO {
             return true;
 
         }
-        public static bool TryDeleteFile(string filePath, TimeSpan? timeout = null) {
+        public static bool TryDelete(string filePath, TimeSpan? timeout = null) {
 
             if (!File.Exists(filePath))
                 return true;
 
-            return TryWithTimeout(() => DeleteFile(filePath, timeout), timeout);
+            return TryWithTimeout(() => Delete(filePath, timeout), timeout);
 
         }
 
