@@ -167,7 +167,7 @@ namespace Gsemac.Net.Curl {
 
         private void SetCertificateValidationEnabled(CurlEasyHandle easyHandle) {
 
-            if (!ServicePointManagerUtilities.CertificateValidationEnabled)
+            if (!ServicePointManagerUtilities.IsCertificateValidationEnabled())
                 LibCurl.EasySetOpt(easyHandle, CurlOption.SslVerifyHost, 0);
 
         }

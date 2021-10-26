@@ -62,7 +62,7 @@ namespace Gsemac.Net.Curl {
                 .WithConsoleOutput()
                 .WithAutomaticRedirect(AllowAutoRedirect ? MaximumAutomaticRedirections : 0)
                 .WithAutomaticDecompression(AutomaticDecompression)
-                .WithCertificateValidation(ServicePointManagerUtilities.CertificateValidationEnabled)
+                .WithCertificateValidation(ServicePointManagerUtilities.IsCertificateValidationEnabled())
                 .WithConnectTimeout(Timeout)
                 .WithCookies(CookieContainer, RequestUri)
                 .WithCredentials(Credentials, RequestUri)
