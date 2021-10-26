@@ -1,6 +1,7 @@
 ﻿using Gsemac.IO;
 using System;
 using System.ComponentModel;
+using System.IO;
 using System.Net;
 using System.Threading;
 
@@ -58,27 +59,10 @@ namespace Gsemac.Net.Extensions {
         }
         public static void DownloadFileSync(this IWebClient client, Uri address, string filename, CancellationToken cancellationToken) {
 
-            // Note that CancelAsync doesn't actually work if the download has already started: https://github.com/dotnet/runtime/issues/31479 
-            // So that we can cancel the download, we'll run the download in a new thread and join it.
-            // Instead of canceling the download through WebClient, we'll simply abort the thread (ahhh!).
-
-            // It's my understanding that this is not a problem in newer versions of .NET Framework, although it has resurfaced in .NET Core.
-            // It might be a good idea to detect the runtime version and react accordingly.
-
             if (cancellationToken.IsCancellationRequested)
                 throw new WebException(Properties.ExceptionMessages.RequestCanceled, WebExceptionStatus.RequestCanceled);
 
-            Thread downloadThread = new Thread(() => DownloadFileSyncInternal(client, address, filename, cancellationToken));
-
-            using (cancellationToken.Register(() => downloadThread.Abort())) {
-
-                downloadThread.Start();
-                downloadThread.Join();
-
-            }
-
-            if (downloadThread.ThreadState == ThreadState.Aborted)
-                throw new WebException(Properties.ExceptionMessages.RequestCanceled, WebExceptionStatus.RequestCanceled);
+            DownloadFileSyncInternal(client, address, filename, cancellationToken);
 
         }
         public static void DownloadFileSync(this WebClient client, string address, string filename) {
@@ -127,6 +111,9 @@ namespace Gsemac.Net.Extensions {
 
         public static void DownloadFileSyncInternal(IWebClient client, Uri address, string filename, CancellationToken cancellationToken) {
 
+            if (cancellationToken.IsCancellationRequested)
+                throw new WebException(Properties.ExceptionMessages.RequestCanceled, WebExceptionStatus.RequestCanceled);
+
             // Events are only fired when downloading asynchronously with DownloadFileAsync.
             // This method allows for synchronous downloads while still firing events. 
             // Based on the solution given here: https://stackoverflow.com/a/25834736 (user195275)
@@ -149,7 +136,26 @@ namespace Gsemac.Net.Extensions {
 
                 lock (mutex) {
 
-                    using (cancellationToken.Register(() => client.CancelAsync())) {
+                    using (cancellationToken.Register(() => {
+
+                        // The download was canceled.
+
+                        // Note that CancelAsync doesn't actually work if the download has already started: https://github.com/dotnet/runtime/issues/31479 
+                        // It's my understanding that this is not a problem in newer versions of .NET Framework (4.7.2+), although it has resurfaced in .NET Core (2.0+).
+                        // For this reason, we need to manually unblock the waiting thread.
+
+                        client.CancelAsync();
+
+                        // Unblock the waiting thread, and flag the download as canceled.
+
+                        lock (mutex)
+                            Monitor.Pulse(mutex);
+
+                        downloadCancelled = true;
+
+                    })) {
+
+                        // Initiate the asynchronous download process and wait for its completion.
 
                         client.DownloadFileAsync(address, filename, mutex);
 
@@ -160,14 +166,31 @@ namespace Gsemac.Net.Extensions {
                 }
 
             }
+            catch (ThreadInterruptedException ex) {
+
+                // If the waiting thread is interrupted, treat it as if the download was canceled.
+                // We will only end up here if this method was called in a new thread that was interrupted (via Thread.Interrupt) prior to download completion.
+
+                throw new WebException(Properties.ExceptionMessages.RequestCanceled, ex, WebExceptionStatus.RequestCanceled, response: null);
+
+            }
             finally {
 
                 client.DownloadFileCompleted -= handleDownloadComplete;
 
             }
 
-            if (downloadCancelled)
-                throw new WebException(Properties.ExceptionMessages.TheRequestWasCancelled, WebExceptionStatus.RequestCanceled);
+            if (downloadCancelled) {
+
+                // The DownloadFile method deletes partially-downloaded files if the download is not successful.
+                // https://referencesource.microsoft.com/#system/net/System/Net/webclient.cs,416
+
+                if (downloadCancelled && File.Exists(filename))
+                    FileUtilities.TryDeleteFile(filename);
+
+                throw new WebException(Properties.ExceptionMessages.RequestCanceled, WebExceptionStatus.RequestCanceled);
+
+            }
 
         }
 

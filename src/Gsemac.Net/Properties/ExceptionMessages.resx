@@ -138,9 +138,6 @@
   <data name="TheRemoteServerReturnedAnErrorWithStatusCode" xml:space="preserve">
     <value>The remote server returned an error: {0}.</value>
   </data>
-  <data name="TheRequestWasCancelled" xml:space="preserve">
-    <value>The request was aborted: The request was canceled.</value>
-  </data>
   <data name="TooManyAutomaticRedirections" xml:space="preserve">
     <value>Too many automatic redirections were attempted.</value>
   </data>
