@@ -9,12 +9,12 @@ namespace Gsemac.Net {
 
         public bool Success { get; }
         public Uri Uri { get; }
-        public string FilePath { get; }
+        public string Filename { get; }
 
-        public DownloadFileCompletedEventArgs(Uri uri, string filePath, bool success) {
+        public DownloadFileCompletedEventArgs(Uri uri, string filename, bool success) {
 
             Uri = uri;
-            FilePath = filePath;
+            Filename = filename;
             Success = success;
 
         }
