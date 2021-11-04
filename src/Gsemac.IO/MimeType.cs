@@ -19,8 +19,6 @@ namespace Gsemac.IO {
             if (string.IsNullOrEmpty(mimeType))
                 throw new ArgumentNullException(nameof(mimeType));
 
-            mimeType = mimeType.ToLowerInvariant();
-
             string[] parts = mimeType.Split(';');
 
             if (!parts.Any())
@@ -70,9 +68,9 @@ namespace Gsemac.IO {
 
             StringBuilder sb = new StringBuilder();
 
-            sb.Append(Type);
+            sb.Append(Type.ToLowerInvariant());
             sb.Append('/');
-            sb.Append(Subtype);
+            sb.Append(Subtype.ToLowerInvariant());
 
             if (withParameters && Parameters is object) {
 
@@ -87,7 +85,7 @@ namespace Gsemac.IO {
 
             }
 
-            return sb.ToString().ToLowerInvariant();
+            return sb.ToString();
 
         }
 
@@ -119,7 +117,7 @@ namespace Gsemac.IO {
 
         private void ParseTypeAndSubtype(string typeAndSubtype) {
 
-            string[] parts = typeAndSubtype.Split('/');
+            string[] parts = typeAndSubtype.ToLowerInvariant().Split('/');
 
             if (parts.Count() != 2 || parts.Any(part => string.IsNullOrWhiteSpace(part)))
                 throw new ArgumentException(Properties.ExceptionMessages.MalformedMimeType, nameof(typeAndSubtype));
