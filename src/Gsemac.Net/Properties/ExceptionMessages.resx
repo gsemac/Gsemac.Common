@@ -126,6 +126,9 @@
   <data name="InvalidHttpHeader" xml:space="preserve">
     <value>The given string was not a valid HTTP header.</value>
   </data>
+  <data name="MalformedDataUrl" xml:space="preserve">
+    <value>The data URL was malformed.</value>
+  </data>
   <data name="MalformedUrl" xml:space="preserve">
     <value>The URL was malformed.</value>
   </data>

@@ -88,6 +88,15 @@ namespace Gsemac.Net.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The data URL was malformed..
+        /// </summary>
+        internal static string MalformedDataUrl {
+            get {
+                return ResourceManager.GetString("MalformedDataUrl", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The URL was malformed..
         /// </summary>
         internal static string MalformedUrl {
