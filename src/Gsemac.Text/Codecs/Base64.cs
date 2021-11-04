@@ -39,11 +39,22 @@ namespace Gsemac.Text.Codecs {
             return GetEncoder().EncodeString(stringToEncode, encoding);
 
         }
+        public static string EncodeString(byte[] bytesToEncode, Encoding encoding = null) {
+
+            return GetEncoder().EncodeString(bytesToEncode, encoding);
+
+        }
         public static string DecodeString(string encodedString, Encoding encoding = null) {
 
             return GetDecoder().DecodeString(encodedString, encoding);
 
         }
+        public static string DecodeString(byte[] encodedBytes, Encoding encoding = null) {
+
+            return GetDecoder().DecodeString(encodedBytes, encoding);
+
+        }
+
         public static bool IsBase64String(string input) {
 
             // Slightly modified from the answer given here:

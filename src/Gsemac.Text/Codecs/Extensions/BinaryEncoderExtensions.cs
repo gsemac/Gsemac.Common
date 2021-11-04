@@ -34,6 +34,14 @@ namespace Gsemac.Text.Codecs.Extensions {
             return encoding.GetString(encoder.Encode(stringToEncode, encoding));
 
         }
+        public static string EncodeString(this IBinaryEncoder encoder, byte[] bytesToEncode, Encoding encoding = null) {
+
+            if (encoding is null)
+                encoding = defaultEncoding;
+
+            return encoding.GetString(encoder.Encode(bytesToEncode));
+
+        }
 
         // Private members
 

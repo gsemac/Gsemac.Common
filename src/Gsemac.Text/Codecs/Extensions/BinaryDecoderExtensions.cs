@@ -32,6 +32,14 @@ namespace Gsemac.Text.Codecs.Extensions {
             return encoding.GetString(decoder.Decode(encodedString, encoding));
 
         }
+        public static string DecodeString(this IBinaryDecoder decoder, byte[] encodedBytes, Encoding encoding = null) {
+
+            if (encoding is null)
+                encoding = Encoding.UTF8;
+
+            return encoding.GetString(decoder.Decode(encodedBytes));
+
+        }
 
     }
 
