@@ -270,7 +270,7 @@ namespace Gsemac.Net.Tests {
 
         }
         [TestMethod]
-        public void TestGetDomainNameWithoutProtocol() {
+        public void TestGetDomainNameWithoutScheme() {
 
             Url url = new Url("www.stackoverflow.com");
 
@@ -341,6 +341,117 @@ namespace Gsemac.Net.Tests {
             Url url = new Url("stackoverflow.com");
 
             Assert.AreEqual("stackoverflow.com", Url.GetDomainName(url.ToString()));
+
+        }
+
+        // Combine
+
+        [TestMethod]
+        public void TestCombineWithSingleArgument() {
+
+            Assert.AreEqual("https://example.com", Url.Combine("https://example.com"));
+
+        }
+        [TestMethod]
+        public void TestCombineWithSchemeAndNoScheme() {
+
+            Assert.AreEqual("https://example.com", Url.Combine("https://", "example.com"));
+
+        }
+        [TestMethod]
+        public void TestCombineWithSchemeAndRelativeScheme() {
+
+            Assert.AreEqual("https://example.com", Url.Combine("https://", "//example.com"));
+
+        }
+        [TestMethod]
+        public void TestCombineWithUrlAndRelativeScheme() {
+
+            Assert.AreEqual("https://website.com", Url.Combine("https://example.com", "//website.com"));
+
+        }
+        [TestMethod]
+        public void TestCombineWithOnlySchemes() {
+
+            Assert.AreEqual("https://", Url.Combine("http://", "https://"));
+
+        }
+        [TestMethod]
+        public void TestCombineWithDifferentSchemes() {
+
+            Assert.AreEqual("http://example.com/path", Url.Combine("https://example.com", "http://example.com", "path"));
+
+        }
+        [TestMethod]
+        public void TestCombineWithRootedPath() {
+
+            Assert.AreEqual("https://example.com/path2", Url.Combine("https://example.com/path1", "/path2"));
+
+        }
+        [TestMethod]
+        public void TestCombineWithRootedPathEndingWithDirectorySeparator() {
+
+            Assert.AreEqual("https://example.com/path2", Url.Combine("https://example.com/", "/path2"));
+
+        }
+        [TestMethod]
+        public void TestCombineWithRootedPathNotEndingWithDirectorySeparator() {
+
+            Assert.AreEqual("https://example.com/path2", Url.Combine("https://example.com", "/path2"));
+
+        }
+        [TestMethod]
+        public void TestCombineWithRelativePath() {
+
+            Assert.AreEqual("https://example.com/path1/path2", Url.Combine("https://example.com/path1", "path2"));
+
+        }
+        [TestMethod]
+        public void TestCombineWithRelativePathsEndingWithDirectorySeparators() {
+
+            Assert.AreEqual("https://example.com/path1/path2/", Url.Combine("https://example.com", "path1/", "path2/"));
+
+        }
+        [TestMethod]
+        public void TestCombineWithTwoRootedPaths() {
+
+            Assert.AreEqual("https://website.com/", Url.Combine("https://example.com/", "https://website.com/"));
+
+        }
+        [TestMethod]
+        public void TestCombineWithTwoRelativePaths() {
+
+            Assert.AreEqual("path1/path2", Url.Combine("path1", "path2"));
+
+        }
+        [TestMethod]
+        public void TestCombineWithUriParameter() {
+
+            Assert.AreEqual("https://example.com/?name=value", Url.Combine("https://example.com/", "?name=value"));
+
+        }
+        [TestMethod]
+        public void TestCombineWithMultipleUriParameters() {
+
+            Assert.AreEqual("https://example.com/?name=value&name2=value2", Url.Combine("https://example.com/", "?name=value", "name2=value2"));
+
+        }
+        [TestMethod]
+        public void TestCombineWithDirectorySeparator() {
+
+            Assert.AreEqual("https://example.com/", Url.Combine("https://example.com", "/"));
+
+        }
+        [TestMethod]
+        public void TestCombineWithMultipleDirectorySeparators() {
+
+            Assert.AreEqual("https://example.com/path///path2///", Url.Combine("https://example.com", "///path2///"));
+
+        }
+        [TestMethod]
+        public void TestCombineWithMultipleDirectorySeparatorsInMultipleParts() {
+
+            Assert.AreEqual("https://example.com/path/////path2//", Url.Combine("https://example.com", "/", "//", "///", "path2", "//"));
 
         }
 

@@ -1,4 +1,5 @@
 ﻿using Gsemac.Collections.Extensions;
+using Gsemac.IO;
 using Gsemac.Text;
 using System;
 using System.Collections.Generic;
@@ -13,6 +14,8 @@ namespace Gsemac.Net {
         IUrl {
 
         // Public members
+
+        public const char DirectorySeparatorChar = '/';
 
         public string Scheme {
             get => scheme;
@@ -166,6 +169,92 @@ namespace Gsemac.Net {
             }
 
             return domain;
+
+        }
+
+        public static string Combine(params string[] parts) {
+
+            if (parts is null)
+                throw new ArgumentNullException(nameof(parts));
+
+            string currentScheme = string.Empty;
+
+            bool insideParameterList = false;
+            bool lastPartEndedWithDirectorySeparator = false;
+
+            StringBuilder sb = new StringBuilder();
+
+            IEnumerable<string> filteredParts = parts.Where(p => !string.IsNullOrWhiteSpace(p))
+                .Select(p => p.Trim());
+
+            foreach (string part in filteredParts) {
+
+                // Get the scheme, and set it as the current scheme if one is present.
+                // The scheme will be prepended to later relative URLs that are missing a scheme.
+
+                string scheme = PathUtilities.GetScheme(part);
+
+                if (!string.IsNullOrWhiteSpace(scheme))
+                    currentScheme = scheme;
+
+                // If the current part is rooted, it will become the new start of the URL.
+
+                if (!string.IsNullOrWhiteSpace(scheme) || part.StartsWith("//"))
+                    sb.Clear();
+
+                if (!string.IsNullOrWhiteSpace(currentScheme) && part.StartsWith("//")) {
+
+                    // If the current part has a relative scheme or no scheme at all, prepend the current scheme.
+
+                    sb.Append(currentScheme);
+                    sb.Append(':');
+                    sb.Append(part);
+
+                }
+                else if (part.StartsWith("/")) {
+
+                    // If the current part is rooted, append it to the root of the current path.
+
+                    string rootUrl = PathUtilities.GetRootPath(sb.ToString(), new PathInfo() { IsUrl = true });
+                    string relativePath = PathUtilities.TrimLeftDirectorySeparators(part);
+
+                    sb.Clear();
+
+                    sb.Append(rootUrl);
+                    sb.Append(DirectorySeparatorChar);
+                    sb.Append(relativePath);
+
+                }
+                else if (part.StartsWith("?")) {
+
+                    insideParameterList = true;
+
+                    sb.Append(part);
+
+                }
+                else {
+
+                    if (insideParameterList) {
+
+                        if (!part.StartsWith("&"))
+                            sb.Append('&');
+
+                    }
+                    else if (sb.Length > 0 && !lastPartEndedWithDirectorySeparator) {
+
+                        sb.Append(DirectorySeparatorChar);
+
+                    }
+
+                    lastPartEndedWithDirectorySeparator = part.EndsWith("/");
+
+                    sb.Append(part);
+
+                }
+
+            }
+
+            return sb.ToString();
 
         }
 
