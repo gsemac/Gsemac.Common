@@ -149,13 +149,13 @@ namespace Gsemac.IO {
 
         public static string GetFilename(string path) {
 
-            return GetFilename(path, pathInfo: null);
+            return GetFilename(path, new PathInfo());
 
         }
         public static string GetFilename(string path, IPathInfo pathInfo) {
 
             if (pathInfo is null)
-                pathInfo = new PathInfo();
+                throw new ArgumentNullException(nameof(pathInfo));
 
             // This process should work for both remote and local paths.
             // The user is optionally able to specify explicitly whether the path is a URL or a local path.
@@ -301,7 +301,21 @@ namespace Gsemac.IO {
         }
         public static bool IsUrl(string path) {
 
+            if (string.IsNullOrWhiteSpace(path))
+                return false;
+
             return !string.IsNullOrWhiteSpace(GetScheme(path));
+
+        }
+        public static bool IsUrl(string path, IPathInfo pathInfo) {
+
+            if (pathInfo is null)
+                throw new ArgumentNullException(nameof(pathInfo));
+
+            if (pathInfo.IsUrl.HasValue)
+                return pathInfo.IsUrl.Value;
+
+            return IsUrl(path);
 
         }
 
@@ -375,12 +389,7 @@ namespace Gsemac.IO {
         }
         public static string NormalizeDirectorySeparators(string path) {
 
-            char directorySeparatorChar = System.IO.Path.DirectorySeparatorChar;
-
-            if (IsUrl(path))
-                directorySeparatorChar = '/';
-
-            return NormalizeDirectorySeparators(path, directorySeparatorChar);
+            return NormalizeDirectorySeparators(path, new PathInfo());
 
         }
         public static string NormalizeDirectorySeparators(string path, char directorySeparatorChar) {
@@ -390,6 +399,22 @@ namespace Gsemac.IO {
                 path.Split(System.IO.Path.DirectorySeparatorChar, System.IO.Path.AltDirectorySeparatorChar));
 
             return path;
+
+        }
+        public static string NormalizeDirectorySeparators(string path, IPathInfo pathInfo) {
+
+            if (pathInfo is null)
+                throw new ArgumentNullException(nameof(pathInfo));
+
+            if (string.IsNullOrEmpty(path))
+                return path;
+
+            char directorySeparatorChar = System.IO.Path.DirectorySeparatorChar;
+
+            if (IsUrl(path, pathInfo))
+                directorySeparatorChar = '/';
+
+            return NormalizeDirectorySeparators(path, directorySeparatorChar);
 
         }
 
