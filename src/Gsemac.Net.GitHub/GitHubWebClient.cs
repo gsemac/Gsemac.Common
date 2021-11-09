@@ -1,11 +1,11 @@
 ﻿using Gsemac.Net.Extensions;
+using Gsemac.Text;
 using HtmlAgilityPack;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -40,13 +40,16 @@ namespace Gsemac.Net.GitHub {
         }
         public IEnumerable<IRelease> GetReleases(string url) {
 
-            string nextPageUrl = new Repository(url).ReleasesUrl;
+            string releasesUrl = new Repository(url).ReleasesUrl;
+            string nextPageUrl = releasesUrl;
 
             using (IWebClient webClient = CreateWebClient()) {
 
                 HtmlDocument htmlDocument = new HtmlDocument();
 
                 while (!string.IsNullOrWhiteSpace(nextPageUrl)) {
+
+                    nextPageUrl = Url.Combine(releasesUrl, nextPageUrl);
 
                     htmlDocument.LoadHtml(webClient.DownloadString(nextPageUrl));
 
@@ -75,7 +78,7 @@ namespace Gsemac.Net.GitHub {
         public IEnumerable<IFileNode> GetFiles(string url, SearchOption searchOption) {
 
             IGitHubUrl gitHubUrl = GitHubUrl.Parse(url);
-            string branchName = gitHubUrl.Tree ?? GitHubUtilities.DefaultBranchName;
+            string branchName = gitHubUrl.Tree ?? Properties.GitHub.DefaultBranchName;
 
             if (string.IsNullOrWhiteSpace(gitHubUrl.Tree))
                 branchName = GetRepository(url).DefaultBranchName;
@@ -125,46 +128,51 @@ namespace Gsemac.Net.GitHub {
         }
         private IEnumerable<IRelease> ParseReleases(HtmlNode releasesNode) {
 
-            IEnumerable<HtmlNode> releaseNodes = releasesNode.SelectNodes(@"//div[@class='release-entry']");
+            IEnumerable<HtmlNode> releaseNodes = releasesNode.SelectNodes(Properties.QueryStrings.ReleasesXPath);
 
-            foreach (IRelease release in releaseNodes.Select(node => ParseRelease(node)))
-                yield return release;
+            if (releaseNodes is object) {
+
+                foreach (IRelease release in releaseNodes.Select(node => ParseRelease(node)))
+                    yield return release;
+
+            }
 
         }
         private IRelease ParseRelease(HtmlNode releaseNode) {
 
-            DateTimeOffset.TryParse(releaseNode.SelectNodes(@".//*[@datetime]")?.FirstOrDefault()?.GetAttributeValue("datetime", string.Empty), CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTimeOffset creationTime);
+            DateTimeOffset.TryParse(releaseNode.SelectNodes(Properties.QueryStrings.ReleaseDateTimeXPath)?.FirstOrDefault()?.GetAttributeValue("datetime", string.Empty), CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTimeOffset creationTime);
 
-            string description = releaseNode.SelectNodes(@".//div[@class='markdown-body']")?.FirstOrDefault()?.InnerText;
-            string tag = releaseNode.SelectNodes(@".//svg[contains(@class,'octicon-tag')]/following-sibling::span")?.FirstOrDefault()?.InnerText;
-            string title = releaseNode.SelectNodes(@".//div[contains(@class,'release-header')]/div/div")?.FirstOrDefault()?.InnerText;
-            string url = releaseNode.SelectNodes(@".//div[contains(@class,'release-header')]/div/div/a")?.FirstOrDefault()?.GetAttributeValue("href", string.Empty);
+            string description = releaseNode.SelectNodes(Properties.QueryStrings.ReleaseDescriptionXPath)?.FirstOrDefault()?.InnerText?.Trim() ?? "";
+            string tag = releaseNode.SelectNodes(Properties.QueryStrings.ReleaseTagXPath)?.FirstOrDefault()?.InnerText?.Trim() ?? "";
+            string title = releaseNode.SelectNodes(Properties.QueryStrings.ReleaseTitleXPath)?.FirstOrDefault()?.InnerText?.Trim() ?? "";
+            string url = releaseNode.SelectNodes(Properties.QueryStrings.ReleaseTitleXPath)?.FirstOrDefault()?.GetAttributeValue("href", string.Empty);
 
             return new Release() {
                 Published = creationTime,
-                Description = Uri.UnescapeDataString(description?.Trim() ?? ""),
+                Description = Uri.UnescapeDataString(description),
                 Tag = tag,
-                Title = Uri.UnescapeDataString(title?.Trim() ?? ""),
-                Url = GitHubUtilities.GitHubRootUrl.TrimEnd('/') + url,
+                Title = Uri.UnescapeDataString(title),
+                Url = Properties.GitHub.RootUrl.TrimEnd('/') + url,
                 Assets = ParseReleaseAssets(releaseNode),
             };
 
         }
         private IEnumerable<IReleaseAsset> ParseReleaseAssets(HtmlNode releaseNode) {
 
-            return releaseNode.SelectNodes(@".//summary[contains(.,'Assets')]/following-sibling::div/div/div")
-                ?.Select(node => ParseReleaseAsset(node))
-                .Where(asset => !string.IsNullOrWhiteSpace(asset.Name) && !string.IsNullOrWhiteSpace(asset.DownloadUrl));
+            return releaseNode.SelectNodes(Properties.QueryStrings.ReleaseAssetsXPath)?
+                .Select(node => ParseReleaseAsset(node))
+                .ToArray() // The HTML document will be reused, so we need these assets to be evaluated immediately
+                .Where(asset => !string.IsNullOrWhiteSpace(asset.Name) && !string.IsNullOrWhiteSpace(asset.DownloadUrl)) ?? Enumerable.Empty<IReleaseAsset>();
 
         }
         private IReleaseAsset ParseReleaseAsset(HtmlNode releaseAssetNode) {
 
-            string name = releaseAssetNode.SelectNodes(@".//a").FirstOrDefault()?.InnerText;
-            string downloadUrl = releaseAssetNode.SelectNodes(@".//a").FirstOrDefault()?.GetAttributeValue("href", string.Empty);
+            string name = GetNodeText(releaseAssetNode, Properties.QueryStrings.ReleaseAssetTitleXPath);
+            string downloadUrl = GetNodeHref(releaseAssetNode, Properties.QueryStrings.ReleaseAssetTitleXPath);
 
             return new ReleaseAsset() {
-                Name = Uri.UnescapeDataString(name?.Trim() ?? ""),
-                DownloadUrl = GitHubUtilities.GitHubRootUrl.TrimEnd('/') + downloadUrl,
+                Name = StringUtilities.NormalizeSpace(Uri.UnescapeDataString(name)),
+                DownloadUrl = Url.Combine(Properties.GitHub.RootUrl, downloadUrl),
             };
 
         }
@@ -174,12 +182,12 @@ namespace Gsemac.Net.GitHub {
 
             StringBuilder sb = new StringBuilder();
 
-            sb.Append(GitHubUtilities.GitHubRootUrl);
+            sb.Append(Properties.GitHub.RootUrl);
             sb.Append(Uri.EscapeUriString(gitHubUrl.Owner));
             sb.Append("/");
             sb.Append(Uri.EscapeUriString(gitHubUrl.RepositoryName));
             sb.Append("/file-list/");
-            sb.Append(Uri.EscapeUriString(branchName ?? GitHubUtilities.DefaultBranchName));
+            sb.Append(Uri.EscapeUriString(branchName ?? Properties.GitHub.DefaultBranchName));
 
             if (!string.IsNullOrWhiteSpace(gitHubUrl.Path))
                 sb.Append(Uri.EscapeUriString(gitHubUrl.Path));
@@ -230,7 +238,7 @@ namespace Gsemac.Net.GitHub {
             }
 
             if (fileUrl.StartsWith("/"))
-                fileUrl = GitHubUtilities.GitHubRootUrl.TrimEnd('/') + fileUrl;
+                fileUrl = Properties.GitHub.RootUrl.TrimEnd('/') + fileUrl;
 
             return new FileNode(fileUrl) {
                 CommitHash = commitHash,
@@ -238,6 +246,17 @@ namespace Gsemac.Net.GitHub {
                 IsDirectory = isDirectory,
                 LastModified = lastModified,
             };
+
+        }
+
+        private static string GetNodeText(HtmlNode node, string xPath) {
+
+            return node.SelectNodes(xPath).FirstOrDefault()?.InnerText?.Trim() ?? "";
+
+        }
+        private static string GetNodeHref(HtmlNode node, string xPath) {
+
+            return node.SelectNodes(xPath).FirstOrDefault()?.GetAttributeValue("href", "");
 
         }
 

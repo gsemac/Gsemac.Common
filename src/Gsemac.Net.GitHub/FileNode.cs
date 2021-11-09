@@ -32,7 +32,7 @@ namespace Gsemac.Net.GitHub {
 
             StringBuilder sb = new StringBuilder();
 
-            sb.Append(GitHubUtilities.GitHubRootUrl);
+            sb.Append(Properties.GitHub.RootUrl);
             sb.Append(Uri.EscapeUriString(gitHubUrl.Owner));
             sb.Append("/");
             sb.Append(Uri.EscapeUriString(gitHubUrl.RepositoryName));
@@ -41,7 +41,7 @@ namespace Gsemac.Net.GitHub {
             if (!string.IsNullOrWhiteSpace(gitHubUrl.Tree))
                 sb.Append(Uri.EscapeUriString(gitHubUrl.Tree));
             else
-                sb.Append(GitHubUtilities.DefaultBranchName);
+                sb.Append(Properties.GitHub.DefaultBranchName);
 
             sb.Append(Path);
 
@@ -52,7 +52,7 @@ namespace Gsemac.Net.GitHub {
 
             StringBuilder sb = new StringBuilder();
 
-            sb.Append(GitHubUtilities.RawRootUrl);
+            sb.Append(Properties.GitHub.RawRootUrl);
             sb.Append(Uri.EscapeUriString(gitHubUrl.Owner));
             sb.Append("/");
             sb.Append(Uri.EscapeUriString(gitHubUrl.RepositoryName));
@@ -61,7 +61,7 @@ namespace Gsemac.Net.GitHub {
             if (!string.IsNullOrWhiteSpace(gitHubUrl.Tree))
                 sb.Append(Uri.EscapeUriString(gitHubUrl.Tree));
             else
-                sb.Append(GitHubUtilities.DefaultBranchName);
+                sb.Append(Properties.GitHub.DefaultBranchName);
 
             sb.Append(Path);
 

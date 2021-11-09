@@ -42,7 +42,7 @@ namespace Gsemac.Net.GitHub {
 
             StringBuilder sb = new StringBuilder();
 
-            sb.Append(GitHubUtilities.GitHubRootUrl);
+            sb.Append(Properties.GitHub.RootUrl);
             sb.Append(Uri.EscapeUriString(Owner));
             sb.Append("/");
             sb.Append(Uri.EscapeUriString(Name));
@@ -76,7 +76,7 @@ namespace Gsemac.Net.GitHub {
             if (!string.IsNullOrWhiteSpace(Tree))
                 sb.Append(Uri.EscapeUriString(Tree));
             else
-                sb.Append(GitHubUtilities.DefaultBranchName);
+                sb.Append(Properties.GitHub.DefaultBranchName);
 
             sb.Append(".zip");
 

@@ -26,4 +26,14 @@
     <ProjectReference Include="..\Gsemac.Net\Gsemac.Net.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Compile Update="Properties\GitHub.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <DependentUpon>GitHub.resx</DependentUpon>
+    </Compile>
+    <Compile Update="Properties\QueryStrings.Designer.cs">
+      <DesignTime>True</DesignTime>
+    </Compile>
+  </ItemGroup>
+
 </Project>

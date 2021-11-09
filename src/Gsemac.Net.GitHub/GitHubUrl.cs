@@ -25,7 +25,7 @@ namespace Gsemac.Net.GitHub {
 
             // Read the owner and repository name from the URL.
 
-            Match ownerAndRepositoryNameMatch = Regex.Match(url, $@"^(?:{Regex.Escape(GitHubUtilities.GitHubRootUrl)}|{Regex.Escape(GitHubUtilities.RawRootUrl)})(?<owner>[^\/]+)\/(?<name>[^\/]+)");
+            Match ownerAndRepositoryNameMatch = Regex.Match(url, $@"^(?:{Regex.Escape(Properties.GitHub.RootUrl)}|{Regex.Escape(Properties.GitHub.RawRootUrl)})(?<owner>[^\/]+)\/(?<name>[^\/]+)");
 
             if (!ownerAndRepositoryNameMatch.Success)
                 throw new FormatException("The URL is not in the correct format.");
@@ -35,7 +35,7 @@ namespace Gsemac.Net.GitHub {
 
             // Read the branch name or commit hash.
 
-            Match treeNameMatch = Regex.Match(url, $@"\/(?:tree|blob)\/(?<tree>[^\/]+)|{Regex.Escape(GitHubUtilities.RawRootUrl)}[^\/]+\/[^\/]+\/([^\/]+)");
+            Match treeNameMatch = Regex.Match(url, $@"\/(?:tree|blob)\/(?<tree>[^\/]+)|{Regex.Escape(Properties.GitHub.RawRootUrl)}[^\/]+\/[^\/]+\/([^\/]+)");
 
             if (treeNameMatch.Success) {
 
