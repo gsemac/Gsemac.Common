@@ -19,9 +19,19 @@
             logger.Log(LogLevel.Info, logger.Name, message);
 
         }
+        public static void Log(this ILogger logger, LogLevel logLevel, string message) {
+
+            logger.Log(logLevel, logger.Name, message);
+
+        }
         public static void Log(this ILogger logger, object obj) {
 
             Log(logger, obj.ToString());
+
+        }
+        public static void Log(this ILogger logger, LogLevel logLevel, object obj) {
+
+            Log(logger, logLevel, logger.Name, obj.ToString());
 
         }
 
