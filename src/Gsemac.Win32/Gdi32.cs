@@ -35,7 +35,7 @@ namespace Gsemac.Win32 {
 
         [DllImport("gdi32", EntryPoint = "SetMetaFileBitsEx")]
         private static extern IntPtr SetMetaFileBitsExNative(uint cbBuffer, byte[] lpData);
-        [DllImport("gdi32", EntryPoint = "CopyMetaFile")]
+        [DllImport("gdi32", EntryPoint = "CopyMetaFile", CharSet = CharSet.Ansi, BestFitMapping = false, ThrowOnUnmappableChar = true)]
         private static extern IntPtr CopyMetaFileNative(IntPtr hmf, string filename);
         [DllImport("gdi32", EntryPoint = "DeleteMetaFile")]
         private static extern bool DeleteMetaFileNative(IntPtr hmf);
