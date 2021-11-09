@@ -152,7 +152,7 @@ namespace Gsemac.Net.GitHub {
                 Description = Uri.UnescapeDataString(description),
                 Tag = tag,
                 Title = Uri.UnescapeDataString(title),
-                Url = Properties.GitHub.RootUrl.TrimEnd('/') + url,
+                Url = Url.Combine(Properties.GitHub.RootUrl, url),
                 Assets = ParseReleaseAssets(releaseNode),
             };
 
@@ -238,7 +238,7 @@ namespace Gsemac.Net.GitHub {
             }
 
             if (fileUrl.StartsWith("/"))
-                fileUrl = Properties.GitHub.RootUrl.TrimEnd('/') + fileUrl;
+                fileUrl = Url.Combine(Properties.GitHub.RootUrl, fileUrl);
 
             return new FileNode(fileUrl) {
                 CommitHash = commitHash,
