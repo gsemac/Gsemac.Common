@@ -172,89 +172,106 @@ namespace Gsemac.Net {
 
         }
 
+        public static string StripQueryParameters(string url) {
+
+            return Regex.Replace(url, @"\?.+?(?=#|$)", string.Empty);
+
+        }
+        public static string StripFragment(string url) {
+
+            if (string.IsNullOrWhiteSpace(url))
+                return url;
+
+            int fragmentIndex = url.IndexOf("#");
+
+            return fragmentIndex < 0 ?
+                url :
+                url.Substring(0, fragmentIndex);
+
+        }
+
         public static string Combine(params string[] parts) {
 
             if (parts is null)
                 throw new ArgumentNullException(nameof(parts));
 
-            string currentScheme = string.Empty;
+            if (!parts.Any())
+                return string.Empty;
 
-            bool insideParameterList = false;
-            bool lastPartEndedWithDirectorySeparator = false;
+            if (parts.Length < 2)
+                return parts.First();
 
-            StringBuilder sb = new StringBuilder();
+            string leftPart = parts.First();
+            string rightPart = parts.Skip(1).First();
 
-            IEnumerable<string> filteredParts = parts.Where(p => !string.IsNullOrWhiteSpace(p))
-                .Select(p => p.Trim());
+            string result = leftPart;
 
-            foreach (string part in filteredParts) {
+            if (string.IsNullOrWhiteSpace(leftPart) || PathUtilities.IsPathRooted(rightPart, new PathInfo() { IsUrl = true })) {
 
-                // Get the scheme, and set it as the current scheme if one is present.
-                // The scheme will be prepended to later relative URLs that are missing a scheme.
+                result = rightPart;
 
-                string scheme = PathUtilities.GetScheme(part);
+            }
+            else if (!string.IsNullOrWhiteSpace(rightPart)) {
 
-                if (!string.IsNullOrWhiteSpace(scheme))
-                    currentScheme = scheme;
+                string scheme = PathUtilities.GetScheme(leftPart);
 
-                // If the current part is rooted, it will become the new start of the URL.
+                if (!string.IsNullOrWhiteSpace(scheme) && rightPart.StartsWith("//") && !rightPart.Equals("//")) {
 
-                if (!string.IsNullOrWhiteSpace(scheme) || part.StartsWith("//"))
-                    sb.Clear();
+                    // Prepend the new path with the scheme.
 
-                if (!string.IsNullOrWhiteSpace(currentScheme) && part.StartsWith("//")) {
-
-                    // If the current part has a relative scheme or no scheme at all, prepend the current scheme.
-
-                    sb.Append(currentScheme);
-                    sb.Append(':');
-                    sb.Append(part);
+                    result = $"{scheme}:{rightPart}";
 
                 }
-                else if (part.StartsWith("/")) {
+                else if (rightPart.StartsWith("/")) {
 
-                    // If the current part is rooted, append it to the root of the current path.
+                    // Make the new path relative to the root.
 
-                    string rootUrl = PathUtilities.GetRootPath(sb.ToString(), new PathInfo() { IsUrl = true });
-                    string relativePath = PathUtilities.TrimLeftDirectorySeparators(part);
+                    string rootUrl = PathUtilities.GetRootPath(leftPart, new PathInfo() { IsUrl = true });
+                    string relativePath = PathUtilities.TrimLeftDirectorySeparators(rightPart);
 
-                    sb.Clear();
-
-                    sb.Append(rootUrl);
-                    sb.Append(DirectorySeparatorChar);
-                    sb.Append(relativePath);
+                    result = $"{rootUrl}/{relativePath}";
 
                 }
-                else if (part.StartsWith("?")) {
+                else if (leftPart.EndsWith("/")) {
 
-                    insideParameterList = true;
+                    // Append the new path to the current path.
 
-                    sb.Append(part);
+                    result = $"{leftPart}{rightPart}";
+
+                }
+                else if (rightPart.StartsWith("?")) {
+
+                    // Replace the query parameters in the URL.
+
+                    result = $"{StripQueryParameters(leftPart)}{rightPart}";
+
+                }
+                else if (rightPart.StartsWith("#")) {
+
+                    // Replace the fragment in the URL.
+
+                    result = $"{StripFragment(leftPart)}{rightPart}";
 
                 }
                 else {
 
-                    if (insideParameterList) {
+                    // Replace the current directory with the new path.
 
-                        if (!part.StartsWith("&"))
-                            sb.Append('&');
+                    string parentUrl = PathUtilities.GetParentPath(leftPart);
 
-                    }
-                    else if (sb.Length > 0 && !lastPartEndedWithDirectorySeparator) {
+                    if (string.IsNullOrEmpty(parentUrl))
+                        parentUrl = leftPart;
 
-                        sb.Append(DirectorySeparatorChar);
+                    if (parentUrl.EndsWith("/"))
+                        parentUrl = parentUrl.Substring(0, parentUrl.Length - 1);
 
-                    }
-
-                    lastPartEndedWithDirectorySeparator = part.EndsWith("/");
-
-                    sb.Append(part);
+                    result = $"{parentUrl}/{rightPart}";
 
                 }
 
             }
 
-            return sb.ToString();
+            return Combine(new[] { (result ?? "").Trim() }.Concat(parts.Skip(2)).ToArray());
 
         }
 

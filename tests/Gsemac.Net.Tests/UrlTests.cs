@@ -347,75 +347,137 @@ namespace Gsemac.Net.Tests {
         // Combine
 
         [TestMethod]
-        public void TestCombineWithSingleArgument() {
+        public void TestCombineWithSingleUrl() {
+
+            // If only a single URL argument is passed, the argument itself should be returned.
 
             Assert.AreEqual("https://example.com", Url.Combine("https://example.com"));
 
         }
         [TestMethod]
-        public void TestCombineWithSchemeAndNoScheme() {
+        public void TestCombineWithRootedUrlAndRootedUrl() {
+
+            // When encountering multiple rooted URLs, The last rooted URL with be used.
+
+            Assert.AreEqual("https://website.com/", Url.Combine("https://example.com/", "https://website.com/"));
+
+        }
+        [TestMethod]
+        public void TestCombineWithUrlAndEmptyString() {
+
+            Assert.AreEqual("https://example.com", Url.Combine("https://example.com", string.Empty));
+
+        }
+        [TestMethod]
+        public void TestCombineWithEmptyStringAndUrl() {
+
+            Assert.AreEqual("https://example.com", Url.Combine(string.Empty, "https://example.com"));
+
+        }
+        [TestMethod]
+        public void TestCombineWithUrlAndDirectorySeparator() {
+
+            Assert.AreEqual("https://example.com/", Url.Combine("https://example.com", "/"));
+
+        }
+
+        [TestMethod]
+        public void TestCombineWithSchemeAndUrlWithNoScheme() {
+
+            // Given a scheme and a URL without any scheme, the scheme should be prepended.
 
             Assert.AreEqual("https://example.com", Url.Combine("https://", "example.com"));
 
         }
         [TestMethod]
-        public void TestCombineWithSchemeAndRelativeScheme() {
+        public void TestCombineWithSchemeAndUrlWithRelativeScheme() {
+
+            // Given a scheme and a URL with a relative scheme, the scheme should be prepended.
 
             Assert.AreEqual("https://example.com", Url.Combine("https://", "//example.com"));
 
         }
         [TestMethod]
-        public void TestCombineWithUrlAndRelativeScheme() {
+        public void TestCombineWithUrlWithSchemeAndUrlWithRelativeScheme() {
+
+            // The last scheme encountered will be the sheme for any URLs with relative schemes, even if the domains don't match.
 
             Assert.AreEqual("https://website.com", Url.Combine("https://example.com", "//website.com"));
 
         }
         [TestMethod]
-        public void TestCombineWithOnlySchemes() {
+        public void TestCombineWithSchemeAndScheme() {
+
+            // When encountering multiple schemes, the last scheme will be used.
 
             Assert.AreEqual("https://", Url.Combine("http://", "https://"));
 
         }
         [TestMethod]
-        public void TestCombineWithDifferentSchemes() {
+        public void TestCombineWithUrlsWithDifferentSchemes() {
 
-            Assert.AreEqual("http://example.com/path", Url.Combine("https://example.com", "http://example.com", "path"));
+            // When encountering URLs with different schemes, the last scheme will be used.
+            // Additionally, the latest root URL will always be used regardless of the scheme.
+
+            Assert.AreEqual("http://example.com/path", Url.Combine("https://example.com/", "http://example.com/", "path"));
 
         }
+
         [TestMethod]
-        public void TestCombineWithRootedPath() {
+        public void TestCombineWithUrlAndRootedPath() {
+
+            // The rooted path should be appended to the root of the base path, replacing the original path altogether.
 
             Assert.AreEqual("https://example.com/path2", Url.Combine("https://example.com/path1", "/path2"));
 
         }
         [TestMethod]
-        public void TestCombineWithRootedPathEndingWithDirectorySeparator() {
+        public void TestCombineWithUrlEndingWithDirectorySeparatorAndRootedPath() {
+
+            // When the rooted path is appended to the base path, there should only be a single directory separator.
+            // This is because "/" is technically a path of its own, which gets replaced by the new path.
 
             Assert.AreEqual("https://example.com/path2", Url.Combine("https://example.com/", "/path2"));
 
         }
         [TestMethod]
-        public void TestCombineWithRootedPathNotEndingWithDirectorySeparator() {
+        public void TestCombineWithUrlNotEndingWithDirectorySeparatorAndRootedPath() {
 
             Assert.AreEqual("https://example.com/path2", Url.Combine("https://example.com", "/path2"));
 
         }
-        [TestMethod]
-        public void TestCombineWithRelativePath() {
 
-            Assert.AreEqual("https://example.com/path1/path2", Url.Combine("https://example.com/path1", "path2"));
+        [TestMethod]
+        public void TestCombineWithUrlndingWithDirectorySeparatorAndRelativePath() {
+
+            // When the base path ends in a directory separator, the relative path should be appended to the existing path.
+
+            Assert.AreEqual("https://example.com/path1/path2", Url.Combine("https://example.com/path1/", "path2"));
 
         }
         [TestMethod]
-        public void TestCombineWithRelativePathsEndingWithDirectorySeparators() {
+        public void TestCombineWithUrlNotEndingWithDirectorySeparatorAndRelativePath() {
+
+            // When the base path does not end in a directory separator, the relative path should replace the current path.
+
+            Assert.AreEqual("https://example.com/path2", Url.Combine("https://example.com/path1", "path2"));
+
+        }
+        [TestMethod]
+        public void TestCombineWithRootedUrlWithRelativePath() {
+
+            // Under normal circumstances, if the base path doesn't end with a directory separator, the new relative path should replace the last segment of the existing path.
+            // However, the one time this rule doesn't apply is when base then URL is already rooted.
+
+            Assert.AreEqual("https://example.com/path", Url.Combine("https://example.com", "path"));
+
+        }
+        [TestMethod]
+        public void TestCombineWithUrlAndRelativePathsEndingWithDirectorySeparators() {
+
+            // If the paths end with directory separators, an extra one should not be inserted between them.
 
             Assert.AreEqual("https://example.com/path1/path2/", Url.Combine("https://example.com", "path1/", "path2/"));
-
-        }
-        [TestMethod]
-        public void TestCombineWithTwoRootedPaths() {
-
-            Assert.AreEqual("https://website.com/", Url.Combine("https://example.com/", "https://website.com/"));
 
         }
         [TestMethod]
@@ -424,34 +486,58 @@ namespace Gsemac.Net.Tests {
             Assert.AreEqual("path1/path2", Url.Combine("path1", "path2"));
 
         }
+
         [TestMethod]
-        public void TestCombineWithUriParameter() {
+        public void TestCombineWithUrlEndingWithDirectorySeparatorAndQueryParameter() {
 
             Assert.AreEqual("https://example.com/?name=value", Url.Combine("https://example.com/", "?name=value"));
 
         }
         [TestMethod]
-        public void TestCombineWithMultipleUriParameters() {
+        public void TestCombineWithUrlNotEndingWithDirectorySeparatorAndQueryParameter() {
 
-            Assert.AreEqual("https://example.com/?name=value&name2=value2", Url.Combine("https://example.com/", "?name=value", "name2=value2"));
-
-        }
-        [TestMethod]
-        public void TestCombineWithDirectorySeparator() {
-
-            Assert.AreEqual("https://example.com/", Url.Combine("https://example.com", "/"));
+            Assert.AreEqual("https://example.com?name=value", Url.Combine("https://example.com", "?name=value"));
 
         }
         [TestMethod]
-        public void TestCombineWithMultipleDirectorySeparators() {
+        public void TestCombineWithUrlWithQueryParameterAndPath() {
 
-            Assert.AreEqual("https://example.com/path///path2///", Url.Combine("https://example.com", "///path2///"));
+            // The URI parameters should not be applied to the new path.
+
+            Assert.AreEqual("https://example.com/path", Url.Combine("https://example.com/?name=value", "path"));
+
+        }
+
+        [TestMethod]
+        public void TestCombineWithUrlAndFragment() {
+
+            // The URI fragment should be appended to the end of the path.
+
+            Assert.AreEqual("https://example.com/path/#fragment", Url.Combine("https://example.com/path/", "#fragment"));
 
         }
         [TestMethod]
-        public void TestCombineWithMultipleDirectorySeparatorsInMultipleParts() {
+        public void TestCombineWithUrlNotEndingWithDirectorySeparatorAndFragment() {
 
-            Assert.AreEqual("https://example.com/path/////path2//", Url.Combine("https://example.com", "/", "//", "///", "path2", "//"));
+            // The URI fragment should be appended to the end of the path, even if it doesn't end with a directory separator.
+
+            Assert.AreEqual("https://example.com/path#fragment", Url.Combine("https://example.com/path", "#fragment"));
+
+        }
+        [TestMethod]
+        public void TestCombineWithUrlWithFragmentAndFragment() {
+
+            // Given a new URI fragment and a base URL with an existing URI fragment, the existing URI fragment should be replaced.
+
+            Assert.AreEqual("https://example.com/path#fragment2", Url.Combine("https://example.com/path#fragment1", "#fragment2"));
+
+        }
+        [TestMethod]
+        public void TestCombineWithUrlWithFragmentAndPath() {
+
+            // The fragment should be removed when setting a new path.
+
+            Assert.AreEqual("https://example.com/path2", Url.Combine("https://example.com/path1#fragment", "path2"));
 
         }
 
