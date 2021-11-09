@@ -208,6 +208,33 @@ namespace Gsemac.IO.Tests {
 
         }
 
+        // GetParentPath
+
+        [TestMethod]
+        public void TestGetParentPathWithUrlWithoutPath() {
+
+            Assert.AreEqual(string.Empty, PathUtilities.GetParentPath("https://stackoverflow.com"));
+
+        }
+        [TestMethod]
+        public void TestGetParentPathWithUrlEndingWithDirectorySeparator() {
+
+            Assert.AreEqual(string.Empty, PathUtilities.GetParentPath("https://stackoverflow.com/"));
+
+        }
+        [TestMethod]
+        public void TestGetParentPathWithUrlWithPath() {
+
+            Assert.AreEqual("https://stackoverflow.com", PathUtilities.GetParentPath("https://stackoverflow.com/questions/"));
+
+        }
+        [TestMethod]
+        public void TestGetParentPathWithRelativePath() {
+
+            Assert.AreEqual(@"dir", PathUtilities.GetParentPath(@"dir\subdir"));
+
+        }
+
         // GetPathSegments
 
         [TestMethod]

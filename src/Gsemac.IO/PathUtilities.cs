@@ -50,7 +50,15 @@ namespace Gsemac.IO {
                 return fullPath;
 
         }
-        public static string GetRootPath(string path, IPathInfo pathInfo = null) {
+        public static string GetRootPath(string path) {
+
+            return GetRootPath(path, new PathInfo());
+
+        }
+        public static string GetRootPath(string path, IPathInfo pathInfo) {
+
+            if (pathInfo is null)
+                throw new ArgumentNullException(nameof(pathInfo));
 
             string rootPath = string.Empty;
             string scheme = GetScheme(path);
@@ -68,7 +76,7 @@ namespace Gsemac.IO {
                 // If the path starts with a single slash, consider that to be the root.
                 // Don't consider the path rooted if it's a URL that starts with a forward slash (it's relative).
 
-                if (!((pathInfo?.IsUrl ?? false) && (path.StartsWith("/") || path.StartsWith("\\")))) {
+                if (!(IsUrl(path, pathInfo) && (path.StartsWith("/") || path.StartsWith("\\")))) {
 
                     Match rootMatch = Regex.Match(path, @"^([\/\\]{1})[^\/\\]");
 
@@ -85,6 +93,28 @@ namespace Gsemac.IO {
                 rootPath = TrimRightDirectorySeparators(rootPath);
 
             return rootPath;
+
+        }
+        public static string GetParentPath(string path) {
+
+            return GetParentPath(path, new PathInfo());
+
+        }
+        public static string GetParentPath(string path, IPathInfo pathInfo) {
+
+            if (pathInfo is null)
+                throw new ArgumentNullException(nameof(pathInfo));
+
+            if (string.IsNullOrWhiteSpace(path))
+                return string.Empty;
+
+            string rootPath = GetRootPath(path, pathInfo);
+            int separatorIndex = TrimRightDirectorySeparators(path).LastIndexOfAny(new[] { System.IO.Path.DirectorySeparatorChar, System.IO.Path.AltDirectorySeparatorChar });
+
+            if (separatorIndex < rootPath.Length)
+                return string.Empty;
+
+            return path.Substring(0, separatorIndex);
 
         }
         public static IEnumerable<string> GetPathSegments(string path) {
@@ -473,13 +503,21 @@ namespace Gsemac.IO {
             return isLocalPath;
 
         }
-        public static bool IsPathRooted(string path, IPathInfo pathInfo = null) {
+        public static bool IsPathRooted(string path) {
+
+            return IsPathRooted(path, new PathInfo());
+
+        }
+        public static bool IsPathRooted(string path, IPathInfo pathInfo) {
+
+            if (pathInfo is null)
+                throw new ArgumentNullException(nameof(pathInfo));
 
             // "System.IO.Path.IsPathRooted" throws an exception for paths longer than the maximum path length, as well as for malformed paths (e.g. paths containing invalid characters).
 
             // URLs starting with path separators are not rooted, but relative to the root.
 
-            if ((pathInfo?.IsUrl ?? false) && (path.StartsWith("/") || path.StartsWith("\\")))
+            if (IsUrl(path, pathInfo) && (path.StartsWith("/") || path.StartsWith("\\")))
                 return false;
 
             string directorySeparatorsStr = System.IO.Path.DirectorySeparatorChar.ToString() + System.IO.Path.AltDirectorySeparatorChar.ToString();
