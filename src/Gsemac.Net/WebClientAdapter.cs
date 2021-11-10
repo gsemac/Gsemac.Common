@@ -153,6 +153,10 @@ namespace Gsemac.Net {
         public void UploadValuesAsync(Uri address, NameValueCollection data) => webClient.UploadValuesAsync(address, data);
         public void UploadValuesAsync(Uri address, string method, NameValueCollection data, object userToken) => webClient.UploadValuesAsync(address, method, data, userToken);
 
+        // Internal members
+
+        internal WebClient InnerWebClient => webClient;
+
         // Private members
 
         private readonly WebClient webClient;
