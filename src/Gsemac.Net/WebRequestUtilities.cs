@@ -370,6 +370,37 @@ namespace Gsemac.Net {
 
         }
 
+        // Internal members
+
+        internal static WebRequest GetInnermostWebRequest(WebRequest webRequest) {
+
+            WebRequest result = webRequest;
+            bool exitLoop = false;
+
+            while (!exitLoop && result is object) {
+
+                switch (result) {
+
+                    case HttpWebRequestAdapter httpWebRequestAdapter:
+                        result = httpWebRequestAdapter.InnerWebRequest;
+                        break;
+
+                    case HttpWebRequestDecoratorBase httpWebRequestDecoratorBase:
+                        result = httpWebRequestDecoratorBase.InnerWebRequest;
+                        break;
+
+                    default:
+                        exitLoop = true;
+                        break;
+
+                }
+
+            }
+
+            return result;
+
+        }
+
     }
 
 }
