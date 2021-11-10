@@ -148,14 +148,21 @@ namespace Gsemac.Net.Resolvers {
 
                     // Get the final download URL.
 
-                    response = base.Send(redirectRequest, cancellationToken);
-
                     string speedbumpPageContent;
 
-                    using (StreamReader sr = new StreamReader(response.GetResponseStream(), Encoding.UTF8))
-                        speedbumpPageContent = sr.ReadToEnd();
+                    try {
 
-                    response.Close();
+                        response = base.Send(redirectRequest, cancellationToken);
+
+                        using (StreamReader sr = new StreamReader(response.GetResponseStream(), Encoding.UTF8))
+                            speedbumpPageContent = sr.ReadToEnd();
+
+                    }
+                    finally {
+
+                        response?.Close();
+
+                    }
 
                     Match directDownloadUrlMatch = Regex.Match(speedbumpPageContent, @"content_link"": ""([^ ""]+)");
 
