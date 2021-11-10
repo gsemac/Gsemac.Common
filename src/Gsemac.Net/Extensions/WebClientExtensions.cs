@@ -18,7 +18,7 @@ namespace Gsemac.Net.Extensions {
         }
         public static void DownloadFile(this IWebClient client, Uri address) {
 
-            client.DownloadFile(address, PathUtilities.SanitizePath(PathUtilities.GetFilename(address.AbsoluteUri), SanitizePathOptions.StripInvalidFilenameChars));
+            client.DownloadFile(address, GetFilenameFromUri(address));
 
         }
         public static void DownloadFile(this WebClient client, string address) {
@@ -38,7 +38,7 @@ namespace Gsemac.Net.Extensions {
         }
         public static void DownloadFileAsync(this IWebClient client, Uri address) {
 
-            client.DownloadFileAsync(address, PathUtilities.GetFilename(address.AbsoluteUri));
+            client.DownloadFileAsync(address, GetFilenameFromUri(address));
 
         }
 
@@ -109,7 +109,7 @@ namespace Gsemac.Net.Extensions {
 
         // Private members
 
-        public static void DownloadFileSyncInternal(IWebClient client, Uri address, string filename, CancellationToken cancellationToken) {
+        private static void DownloadFileSyncInternal(IWebClient client, Uri address, string filename, CancellationToken cancellationToken) {
 
             if (cancellationToken.IsCancellationRequested)
                 throw new WebException(Properties.ExceptionMessages.RequestCanceled, WebExceptionStatus.RequestCanceled);
@@ -191,6 +191,12 @@ namespace Gsemac.Net.Extensions {
                 throw new WebException(Properties.ExceptionMessages.RequestCanceled, WebExceptionStatus.RequestCanceled);
 
             }
+
+        }
+
+        private static string GetFilenameFromUri(Uri address) {
+
+            return PathUtilities.SanitizePath(PathUtilities.GetFilename(address.AbsoluteUri), SanitizePathOptions.StripInvalidFilenameChars);
 
         }
 
