@@ -190,14 +190,14 @@ namespace Gsemac.IO {
             // This process should work for both remote and local paths.
             // The user is optionally able to specify explicitly whether the path is a URL or a local path.
 
-            if ((pathInfo.IsUrl.HasValue && pathInfo.IsUrl.Value) || (!pathInfo.IsUrl.HasValue && IsUrl(path)))
+            if (IsUrl(path, pathInfo))
                 return GetFilenameFromUrl(path);
 
             // If the path cannot be determined to be a URL, treat it like a local path.
             // Invalid path characters are be allowed (e.g. "|"), and content after the hash character ("#") should be included in the filename.
             // While this signifies the start of a URI fragment for URLs, it is a valid path character on Windows and most Linux flavors.
 
-            return GetFilenameWithRegex(path, pathInfo.IsUrl ?? false);
+            return GetFilenameWithRegex(path, IsUrl(path, pathInfo));
 
         }
         public static string GetFilenameWithoutExtension(string path) {
