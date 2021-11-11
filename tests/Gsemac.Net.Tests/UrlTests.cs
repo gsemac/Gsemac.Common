@@ -259,6 +259,25 @@ namespace Gsemac.Net.Tests {
 
         }
 
+        // QueryParameters
+
+        [TestMethod]
+        public void TestUrlDecodesQueryParameters() {
+
+            Assert.AreEqual("!@#$%^&", new Url("https://example.com/?test=%21%40%23%24%25%5E%26").QueryParameters["test"]);
+
+        }
+        [TestMethod]
+        public void TestUrlEncodesQueryParameters() {
+
+            Url url = new Url("https://example.com/");
+
+            url.QueryParameters["test"] = "!@#$%^&";
+
+            Assert.AreEqual("https://example.com/?test=%21%40%23%24%25%5E%26", url.ToString());
+
+        }
+
         // GetDomainName
 
         [TestMethod]

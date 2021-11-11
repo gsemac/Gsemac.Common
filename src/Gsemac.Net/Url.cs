@@ -78,7 +78,7 @@ namespace Gsemac.Net {
             if (QueryParameters is object && QueryParameters.Any()) {
 
                 sb.Append("?");
-                sb.Append(string.Join("&", QueryParameters.Select(p => $"{p.Key}={p.Value}")));
+                sb.Append(string.Join("&", QueryParameters.Select(p => $"{p.Key}={Uri.EscapeDataString(p.Value)}")));
 
             }
 
@@ -172,11 +172,32 @@ namespace Gsemac.Net {
 
         }
 
+        public static string GetQueryParameter(string url, string parameter) {
+
+            if (GetQueryParameters(url).TryGetValue(parameter, out string value))
+                return value;
+
+            return string.Empty;
+
+        }
+        public static IDictionary<string, string> GetQueryParameters(string url) {
+
+            // Note that query parameter names are case-sensitive, so do not alter their casing.
+
+            IDictionary<string, string> queryParameters = new Dictionary<string, string>();
+
+            foreach (Match match in Regex.Matches(url, @"[?&](?<name>[^=]+)=(?<value>[^&#]+)"))
+                queryParameters[match.Groups["name"].Value] = Uri.UnescapeDataString(match.Groups["value"].Value);
+
+            return queryParameters;
+
+        }
         public static string StripQueryParameters(string url) {
 
             return Regex.Replace(url, @"\?.+?(?=#|$)", string.Empty);
 
         }
+
         public static string StripFragment(string url) {
 
             if (string.IsNullOrWhiteSpace(url))
@@ -414,7 +435,7 @@ namespace Gsemac.Net {
                 .Split('&')
                 .Where(p => !string.IsNullOrWhiteSpace(p))
                 .Select(p => p.Split(new[] { '=' }, 2))
-                .ToDictionary(p => p.First(), p => p.Last());
+                .ToDictionary(p => p.First(), p => Uri.UnescapeDataString(p.Last()));
 
         }
         private void SetFragment(string fragmentStr) {
