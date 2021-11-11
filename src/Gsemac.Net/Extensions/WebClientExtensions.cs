@@ -11,24 +11,28 @@ namespace Gsemac.Net.Extensions {
 
         // Public members
 
-        public static void DownloadFile(this WebClient client, Uri address) {
+        public static string DownloadFile(this WebClient client, Uri address) {
 
-            DownloadFile(new WebClientAdapter(client), address);
-
-        }
-        public static void DownloadFile(this IWebClient client, Uri address) {
-
-            client.DownloadFile(address, GetFilenameFromUri(address));
+            return DownloadFile(new WebClientAdapter(client), address);
 
         }
-        public static void DownloadFile(this WebClient client, string address) {
+        public static string DownloadFile(this IWebClient client, Uri address) {
 
-            DownloadFile(new WebClientAdapter(client), address);
+            string filename = GetFilenameFromUri(address);
+
+            client.DownloadFile(address, filename);
+
+            return filename;
 
         }
-        public static void DownloadFile(this IWebClient client, string address) {
+        public static string DownloadFile(this WebClient client, string address) {
 
-            DownloadFile(client, new Uri(address));
+            return DownloadFile(new WebClientAdapter(client), address);
+
+        }
+        public static string DownloadFile(this IWebClient client, string address) {
+
+            return DownloadFile(client, new Uri(address));
 
         }
         public static void DownloadFileAsync(this WebClient client, Uri address) {
