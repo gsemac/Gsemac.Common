@@ -262,6 +262,50 @@ namespace Gsemac.Net.Tests {
         // QueryParameters
 
         [TestMethod]
+        public void TestGetFirstQueryParameter() {
+
+            Assert.AreEqual("value1", new Url("https://example.com/?name1=value1&name2=value2").QueryParameters["name1"]);
+
+        }
+        [TestMethod]
+        public void TestGetLastQueryParameter() {
+
+            Assert.AreEqual("value2", new Url("https://example.com/?name1=value1&name2=value2").QueryParameters["name2"]);
+
+        }
+        [TestMethod]
+        public void TestGetQueryParameterWithoutValueIsAdded() {
+
+            Assert.IsTrue(new Url("https://example.com/?name1").QueryParameters.ContainsKey("name1"));
+
+        }
+        [TestMethod]
+        public void TestGetQueryParameterWithoutValueHasNoValue() {
+
+            Assert.AreEqual(string.Empty, new Url("https://example.com/?name1").QueryParameters["name1"]);
+
+        }
+        [TestMethod]
+        public void TestSetExistingQueryParameter() {
+
+            Url url = new Url("https://example.com/?name1=value1&name2=value2");
+
+            url.QueryParameters["name1"] = "newValue";
+
+            Assert.AreEqual("https://example.com/?name1=newValue&name2=value2", url.ToString());
+
+        }
+        [TestMethod]
+        public void TestSetNewQueryParameter() {
+
+            Url url = new Url("https://example.com/?name1=value1&name2=value2");
+
+            url.QueryParameters["name3"] = "value3";
+
+            Assert.AreEqual("https://example.com/?name1=value1&name2=value2&name3=value3", url.ToString());
+
+        }
+        [TestMethod]
         public void TestUrlDecodesQueryParameters() {
 
             Assert.AreEqual("!@#$%^&", new Url("https://example.com/?test=%21%40%23%24%25%5E%26").QueryParameters["test"]);
@@ -275,6 +319,19 @@ namespace Gsemac.Net.Tests {
             url.QueryParameters["test"] = "!@#$%^&";
 
             Assert.AreEqual("https://example.com/?test=%21%40%23%24%25%5E%26", url.ToString());
+
+        }
+
+        // ToString
+
+        [TestMethod]
+        public void TestToStringPreservesQueryParameterOrdering() {
+
+            // In an ideal world, it wouldn't matter what order the query parameters appear in. However, this is up to the server we're communicating with.
+            // To avoid problems, we'll maintain the query parameter ordering.
+
+            Assert.AreEqual("https://example.com/?a&b&c&d&e&f&g&h&i&j&k&l&m&n&o&p&q&r&s&t&u&v&w&x&y&z",
+                new Url("https://example.com/?a&b&c&d&e&f&g&h&i&j&k&l&m&n&o&p&q&r&s&t&u&v&w&x&y&z").ToString());
 
         }
 
@@ -360,15 +417,6 @@ namespace Gsemac.Net.Tests {
             Url url = new Url("stackoverflow.com");
 
             Assert.AreEqual("stackoverflow.com", Url.GetDomainName(url.ToString()));
-
-        }
-
-        // GetQueryParameter
-
-        [TestMethod]
-        public void TestGetQueryParameterDecodesQueryParameters() {
-
-            Assert.AreEqual("!@#$%^&", Url.GetQueryParameter("https://example.com/?test=%21%40%23%24%25%5E%26", "test"));
 
         }
 

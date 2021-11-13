@@ -1,4 +1,5 @@
-﻿using Gsemac.Collections.Extensions;
+﻿using Gsemac.Collections;
+using Gsemac.Collections.Extensions;
 using Gsemac.IO;
 using Gsemac.Text;
 using System;
@@ -38,7 +39,7 @@ namespace Gsemac.Net {
             Match match = Regex.Match(url, @"^(?<scheme>.+?:)?(?:\/\/)?(?<credentials>.+?:.+?@)?(?<host>.+?)?(?<path>\/.*?)?(?<query>\?.+?)?(?<fragment>#.+?)?$");
 
             if (!match.Success)
-                throw new ArgumentException(Properties.ExceptionMessages.MalformedUrl, nameof(url));
+                throw new FormatException(Properties.ExceptionMessages.MalformedUrl);
 
             Scheme = match.Groups["scheme"].Value;
             Path = match.Groups["path"].Value;
@@ -78,7 +79,7 @@ namespace Gsemac.Net {
             if (QueryParameters is object && QueryParameters.Any()) {
 
                 sb.Append("?");
-                sb.Append(string.Join("&", QueryParameters.Select(p => $"{p.Key}={Uri.EscapeDataString(p.Value)}")));
+                sb.Append(string.Join("&", QueryParameters.Select(p => !string.IsNullOrEmpty(p.Value) ? $"{p.Key}={Uri.EscapeDataString(p.Value)}" : p.Key)));
 
             }
 
@@ -109,7 +110,7 @@ namespace Gsemac.Net {
                 return true;
 
             }
-            catch (ArgumentException) {
+            catch (FormatException) {
 
                 result = null;
 
@@ -182,14 +183,19 @@ namespace Gsemac.Net {
         }
         public static IDictionary<string, string> GetQueryParameters(string url) {
 
-            // Note that query parameter names are case-sensitive, so do not alter their casing.
+            if (TryParse(url, out Url parsedUrl))
+                return parsedUrl.QueryParameters;
 
-            IDictionary<string, string> queryParameters = new Dictionary<string, string>();
+            return new Dictionary<string, string>();
 
-            foreach (Match match in Regex.Matches(url, @"[?&](?<name>[^=]+)=(?<value>[^&#]+)"))
-                queryParameters[match.Groups["name"].Value] = Uri.UnescapeDataString(match.Groups["value"].Value);
+        }
+        public static string SetQueryParameter(string url, string name, string value) {
 
-            return queryParameters;
+            Url parsedUrl = Parse(url);
+
+            parsedUrl.QueryParameters[name] = value;
+
+            return parsedUrl.ToString();
 
         }
         public static string StripQueryParameters(string url) {
@@ -426,16 +432,20 @@ namespace Gsemac.Net {
         }
         private void SetQueryParameters(string queryParametersStr) {
 
+            // Query parameter names are case-sensitive, so do not alter their casing.
+
             queryParametersStr = queryParametersStr ?? "";
 
             if (queryParametersStr.StartsWith("?"))
                 queryParametersStr = queryParametersStr.Substring(1);
 
-            this.QueryParameters = (queryParametersStr ?? "")
+            IEnumerable<KeyValuePair<string, string>> keyValuePairs = (queryParametersStr ?? "")
                 .Split('&')
                 .Where(p => !string.IsNullOrWhiteSpace(p))
                 .Select(p => p.Split(new[] { '=' }, 2))
-                .ToDictionary(p => p.First(), p => Uri.UnescapeDataString(p.Last()));
+                .Select(pair => new KeyValuePair<string, string>(pair.First(), Uri.UnescapeDataString(pair.Skip(1).FirstOrDefault() ?? string.Empty)));
+
+            QueryParameters = new OrderedDictionary<string, string>(keyValuePairs);
 
         }
         private void SetFragment(string fragmentStr) {
