@@ -24,6 +24,13 @@ namespace Gsemac.Collections {
             underlyingDict = new Dictionary<TKey, TValue>();
 
         }
+        public OrderedDictionary(IEnumerable<KeyValuePair<TKey, TValue>> collection) :
+            this() {
+
+            foreach (var pair in collection)
+                Add(pair);
+
+        }
         public OrderedDictionary(IDictionary<TKey, TValue> underlyingDictionary) {
 
             this.underlyingDict = underlyingDictionary;
