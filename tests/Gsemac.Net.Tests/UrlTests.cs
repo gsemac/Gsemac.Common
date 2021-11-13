@@ -363,6 +363,15 @@ namespace Gsemac.Net.Tests {
 
         }
 
+        // GetQueryParameter
+
+        [TestMethod]
+        public void TestGetQueryParameterDecodesQueryParameters() {
+
+            Assert.AreEqual("!@#$%^&", Url.GetQueryParameter("https://example.com/?test=%21%40%23%24%25%5E%26", "test"));
+
+        }
+
         // Combine
 
         [TestMethod]
