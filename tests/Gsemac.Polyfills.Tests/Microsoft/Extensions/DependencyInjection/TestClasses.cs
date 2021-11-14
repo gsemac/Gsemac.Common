@@ -14,7 +14,14 @@ namespace Gsemac.Polyfills.Microsoft.Extensions.DependencyInjection.Tests {
     internal class MyServiceWithDependencies :
         IMyService {
 
+        public string Name { get; set; }
+
         public MyServiceWithDependencies(MyServiceWithNoDependencies service) { }
+        public MyServiceWithDependencies(string name) {
+
+            Name = name;
+
+        }
 
     }
 
@@ -42,6 +49,24 @@ namespace Gsemac.Polyfills.Microsoft.Extensions.DependencyInjection.Tests {
 
     }
 
+    internal class MyServiceWithMultipleConstructorsAndDependencies :
+        IMyService {
+
+        public int InvokedConstructorId { get; } = -1;
+
+        public MyServiceWithMultipleConstructorsAndDependencies(MyServiceWithNoDependencies service) {
+
+            InvokedConstructorId = 1;
+
+        }
+        public MyServiceWithMultipleConstructorsAndDependencies(MyServiceWithNoDependencies service1, MyServiceWithDependencies service2) {
+
+            InvokedConstructorId = 2;
+
+        }
+
+    }
+
     internal class MyServiceWithMultipleConstructorsAndOptionalDependencies :
         IMyService {
 
@@ -52,7 +77,7 @@ namespace Gsemac.Polyfills.Microsoft.Extensions.DependencyInjection.Tests {
             InvokedConstructorId = 1;
 
         }
-        public MyServiceWithMultipleConstructorsAndOptionalDependencies(MyServiceWithNoDependencies service1 = null, MyServiceWithNoDependencies service2 = null) {
+        public MyServiceWithMultipleConstructorsAndOptionalDependencies(MyServiceWithNoDependencies service1 = null, MyServiceWithDependencies service2 = null) {
 
             InvokedConstructorId = 2;
 

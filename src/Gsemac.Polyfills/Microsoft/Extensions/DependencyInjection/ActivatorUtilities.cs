@@ -13,20 +13,46 @@ namespace Gsemac.Polyfills.Microsoft.Extensions.DependencyInjection {
 
         public static ObjectFactory CreateFactory(Type instanceType, Type[] argumentTypes) {
 
-            return (IServiceProvider serviceProvider, object[] arguments) => CreateInstance(serviceProvider, instanceType, argumentTypes, arguments);
+            if (instanceType is null)
+                throw new ArgumentNullException(nameof(instanceType));
+
+            if (argumentTypes is null)
+                argumentTypes = System.Array.Empty<Type>();
+
+            // Properly implemented, this method should create an optimized factory method by selecting a constructor with parameters of the given types.
+
+            if (!instanceType.GetConstructors().Any(c => IsConstructorInvokable(c, argumentTypes)))
+                throw new InvalidOperationException(string.Format(Properties.ExceptionMessages.NoSuitableConstructorWithTypeName, instanceType));
+
+            return (IServiceProvider serviceProvider, object[] arguments) => CreateInstanceInternal(serviceProvider, instanceType, arguments);
 
         }
         public static object CreateInstance(IServiceProvider provider, Type instanceType, params object[] parameters) {
 
-            return CreateInstance(provider, instanceType, null, parameters);
+            if (instanceType is null)
+                throw new ArgumentNullException(nameof(instanceType));
+
+            if (parameters is null)
+                parameters = System.Array.Empty<object>();
+
+            return CreateInstanceInternal(provider, instanceType, parameters);
 
         }
         public static T CreateInstance<T>(IServiceProvider provider, params object[] parameters) {
+
+            if (parameters is null)
+                parameters = System.Array.Empty<object>();
 
             return (T)CreateInstance(provider, typeof(T), parameters);
 
         }
         public static object GetServiceOrCreateInstance(IServiceProvider provider, Type type) {
+
+            if (provider is null)
+                throw new ArgumentNullException(nameof(provider));
+
+            if (type is null)
+                throw new ArgumentNullException(nameof(type));
 
             object serviceObject = provider.GetService(type);
 
@@ -44,7 +70,10 @@ namespace Gsemac.Polyfills.Microsoft.Extensions.DependencyInjection {
 
         // Private members
 
-        private static object CreateInstance(IServiceProvider provider, Type instanceType, Type[] argumentTypes, params object[] parameters) {
+        private static object CreateInstanceInternal(IServiceProvider provider, Type instanceType, params object[] parameters) {
+
+            if (instanceType is null)
+                throw new ArgumentNullException(nameof(instanceType));
 
             // All dependencies will be retrieved from the ServiceProvider except for the types specified in argumentTypes (which must be provided in parameters).
             // Any types that cannot be resolved will taken from parameters.
@@ -56,8 +85,11 @@ namespace Gsemac.Polyfills.Microsoft.Extensions.DependencyInjection {
             // We need to find a suitable constructor for which we have all the necessary arguments, or the one flagged with the ActivatorUtilitiesConstructorAttribute.
             // If there is only one constructor, we'll use that one regardless of the arguments we have available.
 
-            if (constructors.Count() == 1)
+            if (constructors.Count() == 1) {
+
                 selectedConstructor = constructors.First();
+
+            }
             else {
 
                 selectedConstructor = constructors
@@ -73,7 +105,7 @@ namespace Gsemac.Polyfills.Microsoft.Extensions.DependencyInjection {
 
                 foreach (ConstructorInfo constructorInfo in constructors.OrderByDescending(constructor => constructor.GetParameters().Count())) {
 
-                    constructorArguments = GetConstructorArguments(provider, constructorInfo, argumentTypes, parameters);
+                    constructorArguments = GetConstructorArguments(provider, constructorInfo, parameters);
 
                     if (IsConstructorInvokable(constructorInfo, constructorArguments)) {
 
@@ -87,44 +119,50 @@ namespace Gsemac.Polyfills.Microsoft.Extensions.DependencyInjection {
 
             }
 
-            if (selectedConstructor is object && !constructorArguments.Any())
-                constructorArguments = GetConstructorArguments(provider, selectedConstructor, argumentTypes, parameters);
+            if (selectedConstructor is null)
+                selectedConstructor = constructors.First();
 
-            EnsureConstructorIsInvokable(instanceType, selectedConstructor, constructorArguments);
+            if (!constructorArguments.Any())
+                constructorArguments = GetConstructorArguments(provider, selectedConstructor, parameters);
 
-            if (constructorArguments.Any())
-                return Activator.CreateInstance(instanceType, constructorArguments);
-            else
-                return Activator.CreateInstance(instanceType);
+            ThrowIfContsructorIsNotInvokable(instanceType, selectedConstructor, constructorArguments);
+
+            return selectedConstructor.Invoke(constructorArguments);
 
         }
 
-        private static object[] GetConstructorArguments(IServiceProvider provider, ConstructorInfo constructorInfo, Type[] argumentTypes, params object[] parameters) {
+        private static object[] GetConstructorArguments(IServiceProvider provider, ConstructorInfo constructorInfo, params object[] parameters) {
 
-            if (argumentTypes is null)
-                argumentTypes = System.Array.Empty<Type>();
+            // The official implementation of ActivatorUtilities throws a NullReferenceException if a null parameter array is passed.
+            // I don't appreciate this behavior, personally, so we'll treat a null parameter array as if it was an empty one.
+
+            if (parameters is null)
+                parameters = System.Array.Empty<Type>();
 
             IEnumerable<Type> parameterTypes = constructorInfo.GetParameters().Select(parameter => parameter.ParameterType);
-            IDictionary<Type, object> argumentDict = new Dictionary<Type, object>();
+            IDictionary<Type, object> argumentsDict = new Dictionary<Type, object>();
 
-            // Get arguments from the provided list of parameters.
+            // Get arguments from the parameter array and the service provider.
+            // Arguments provided by the parameter array should be prioritized.
 
-            foreach (Type type in argumentTypes)
-                argumentDict[type] = parameters.Where(argument => type.IsAssignableFrom(argument.GetType())).FirstOrDefault();
+            // The official implementation of ActivatorUtilities allows a null IServiceProvider to be passed.
+            // This requires that all necessary arguments are passed in the parameters array.
 
-            // Get arguments from the service provider.
+            foreach (Type type in parameterTypes) {
 
-            IEnumerable<Type> parameterTypesToResolve = parameterTypes
-                .Where(type => !argumentDict.ContainsKey(type))
-                .Where(type => !argumentTypes.Contains(type))
-                .Distinct();
+                object resolvedObject = parameters.Where(p => type.IsAssignableFrom(p.GetType())).FirstOrDefault();
 
-            foreach (Type type in parameterTypesToResolve)
-                argumentDict[type] = provider.GetService(type);
+                if (resolvedObject is null && provider is object)
+                    resolvedObject = provider.GetService(type);
+
+                if (resolvedObject is object)
+                    argumentsDict[type] = resolvedObject;
+
+            }
 
             // Get the arguments in the order that they will be passed to the constructor.
 
-            IEnumerable<object> constructorArguments = parameterTypes.Select(type => argumentDict.ContainsKey(type) ? argumentDict[type] : null);
+            IEnumerable<object> constructorArguments = parameterTypes.Select(type => argumentsDict.ContainsKey(type) ? argumentsDict[type] : null);
 
             return constructorArguments.ToArray();
 
@@ -139,7 +177,14 @@ namespace Gsemac.Polyfills.Microsoft.Extensions.DependencyInjection {
                 .All(tuple => tuple.Item1.IsOptional || tuple.Item2 is object);
 
         }
-        private static void EnsureConstructorIsInvokable(Type instanceType, ConstructorInfo constructorInfo, object[] arguments) {
+        private static bool IsConstructorInvokable(ConstructorInfo constructorInfo, Type[] parameterTypes) {
+
+            return constructorInfo.GetParameters()
+                .Zip(parameterTypes, (x, y) => Tuple.Create(x, y))
+                .All(tuple => tuple.Item1.ParameterType.IsAssignableFrom(tuple.Item2));
+
+        }
+        private static void ThrowIfContsructorIsNotInvokable(Type instanceType, ConstructorInfo constructorInfo, object[] arguments) {
 
             if (constructorInfo is null)
                 return;
@@ -148,8 +193,8 @@ namespace Gsemac.Polyfills.Microsoft.Extensions.DependencyInjection {
 
             for (int i = 0; i < constructorParameters.Count() && i < arguments.Count(); ++i) {
 
-                if (arguments[i] is null && !constructorParameters[i].IsOptional)
-                    throw new InvalidOperationException($"Unable to resolve service for type '{constructorParameters[i].ParameterType}' while attempting to activate '{instanceType}'.");
+                if (!IsConstructorInvokable(constructorInfo, arguments))
+                    throw new InvalidOperationException(string.Format(Properties.ExceptionMessages.UnableToResolveTypeWithTypeNameAndTypeName, constructorParameters[i].ParameterType, instanceType));
 
             }
 
