@@ -10,6 +10,9 @@ namespace Gsemac.Text.Codecs {
 
         public byte[] Decode(byte[] encodedBytes, int startIndex, int length) {
 
+            if (encodedBytes is null)
+                throw new ArgumentNullException(nameof(encodedBytes));
+
             string encodedString = Encoding.UTF8.GetString(encodedBytes, startIndex, length);
 
             // The hex string must have an even number of digits (since we process a pair of digits at a time).
@@ -32,6 +35,9 @@ namespace Gsemac.Text.Codecs {
 
         }
         public byte[] Encode(byte[] bytesToEncode, int startIndex, int length) {
+
+            if (bytesToEncode is null)
+                throw new ArgumentNullException(nameof(bytesToEncode));
 
             string encodedString = BitConverter.ToString(bytesToEncode, startIndex, length)
                 .Replace("-", string.Empty)
