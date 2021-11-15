@@ -1,36 +1,31 @@
 ﻿using Gsemac.Text.Codecs.Extensions;
-using System;
 using System.Text;
 using System.Text.RegularExpressions;
 
 namespace Gsemac.Text.Codecs {
 
-    public sealed class Base64 :
-        IBinaryCodec {
+    public static class Base64 {
 
         // Public members
 
-        public byte[] Encode(byte[] bytesToEncode, int startIndex, int length) {
+        public static byte[] Encode(byte[] bytesToEncode) {
 
-            return Encoding.UTF8.GetBytes(Convert.ToBase64String(bytesToEncode, startIndex, length));
-
-        }
-        public byte[] Decode(byte[] encodedBytes, int startIndex, int length) {
-
-            string base64String = PadBase64String(Encoding.UTF8.GetString(encodedBytes, startIndex, length));
-
-            return Convert.FromBase64String(base64String);
+            return GetEncoder().Encode(bytesToEncode);
 
         }
+        public static byte[] Encode(string stringToEncode, Encoding encoding = null) {
 
-        public static IBinaryEncoder GetEncoder() {
-
-            return new Base64();
+            return GetEncoder().Encode(stringToEncode, encoding);
 
         }
-        public static IBinaryDecoder GetDecoder() {
+        public static byte[] Decode(byte[] encodedBytes) {
 
-            return new Base64();
+            return GetDecoder().Decode(encodedBytes);
+
+        }
+        public static byte[] Decode(string encodedString, Encoding encoding = null) {
+
+            return GetDecoder().Decode(encodedString, encoding);
 
         }
 
@@ -67,6 +62,17 @@ namespace Gsemac.Text.Codecs {
 
             return input.Length % 4 == 0 &&
                 Regex.IsMatch(input, @"^[a-z0-9\+/]*={0,3}$", RegexOptions.IgnoreCase);
+
+        }
+
+        public static IBinaryEncoder GetEncoder() {
+
+            return new Base64Codec();
+
+        }
+        public static IBinaryDecoder GetDecoder() {
+
+            return new Base64Codec();
 
         }
 

@@ -3,42 +3,28 @@ using System.Text;
 
 namespace Gsemac.Text.Codecs {
 
-    public sealed class Base64Url :
-        IBinaryCodec {
+    public static class Base64Url {
 
-        public byte[] Decode(byte[] encodedBytes, int startIndex, int length) {
+        // Public members
 
-            string base64UrlString = Encoding.UTF8.GetString(encodedBytes, startIndex, length);
+        public static byte[] Encode(byte[] bytesToEncode) {
 
-            StringBuilder sb = new StringBuilder(base64UrlString);
-
-            sb.Replace('-', '+');
-            sb.Replace('_', '/');
-
-            return Base64.GetDecoder().Decode(Encoding.UTF8.GetBytes(sb.ToString()));
+            return GetEncoder().Encode(bytesToEncode);
 
         }
-        public byte[] Encode(byte[] bytesToEncode, int startIndex, int length) {
+        public static byte[] Encode(string stringToEncode, Encoding encoding = null) {
 
-            string base64String = Encoding.UTF8.GetString(Base64.GetEncoder().Encode(bytesToEncode, startIndex, length));
-
-            StringBuilder sb = new StringBuilder(base64String);
-
-            sb.Replace('+', '-');
-            sb.Replace('/', '_');
-
-            return Encoding.UTF8.GetBytes(sb.ToString());
+            return GetEncoder().Encode(stringToEncode, encoding);
 
         }
+        public static byte[] Decode(byte[] encodedBytes) {
 
-        public static IBinaryEncoder GetEncoder() {
-
-            return new Base64Url();
+            return GetDecoder().Decode(encodedBytes);
 
         }
-        public static IBinaryDecoder GetDecoder() {
+        public static byte[] Decode(string encodedString, Encoding encoding = null) {
 
-            return new Base64Url();
+            return GetDecoder().Decode(encodedString, encoding);
 
         }
 
@@ -60,6 +46,17 @@ namespace Gsemac.Text.Codecs {
         public static string DecodeString(byte[] encodedBytes, Encoding encoding = null) {
 
             return GetDecoder().DecodeString(encodedBytes, encoding);
+
+        }
+
+        public static IBinaryEncoder GetEncoder() {
+
+            return new Base64UrlCodec();
+
+        }
+        public static IBinaryDecoder GetDecoder() {
+
+            return new Base64UrlCodec();
 
         }
 

@@ -1,60 +1,28 @@
 ﻿using Gsemac.Text.Codecs.Extensions;
-using System;
-using System.Globalization;
 using System.Text;
 
 namespace Gsemac.Text.Codecs {
 
-    public sealed class Hex :
-         IBinaryCodec {
+    public static class Hex {
 
-        public byte[] Decode(byte[] encodedBytes, int startIndex, int length) {
+        public static byte[] Encode(byte[] bytesToEncode) {
 
-            if (encodedBytes is null)
-                throw new ArgumentNullException(nameof(encodedBytes));
-
-            string encodedString = Encoding.UTF8.GetString(encodedBytes, startIndex, length);
-
-            // The hex string must have an even number of digits (since we process a pair of digits at a time).
-            // If there are an odd number of digits, pad the string. This should not affect the output.
-
-            if (encodedString.Length % 2 != 0)
-                encodedString = '0' + encodedString;
-
-            byte[] decodedBytes = new byte[encodedString.Length / 2];
-
-            for (int index = 0; index < decodedBytes.Length; index++) {
-
-                string byteString = encodedString.Substring(index * 2, 2);
-
-                decodedBytes[index] = byte.Parse(byteString, NumberStyles.HexNumber, CultureInfo.InvariantCulture);
-
-            }
-
-            return decodedBytes;
+            return GetEncoder().Encode(bytesToEncode);
 
         }
-        public byte[] Encode(byte[] bytesToEncode, int startIndex, int length) {
+        public static byte[] Encode(string stringToEncode, Encoding encoding = null) {
 
-            if (bytesToEncode is null)
-                throw new ArgumentNullException(nameof(bytesToEncode));
-
-            string encodedString = BitConverter.ToString(bytesToEncode, startIndex, length)
-                .Replace("-", string.Empty)
-                .ToLowerInvariant();
-
-            return Encoding.UTF8.GetBytes(encodedString);
+            return GetEncoder().Encode(stringToEncode, encoding);
 
         }
+        public static byte[] Decode(byte[] encodedBytes) {
 
-        public static IBinaryEncoder GetEncoder() {
-
-            return new Hex();
+            return GetDecoder().Decode(encodedBytes);
 
         }
-        public static IBinaryDecoder GetDecoder() {
+        public static byte[] Decode(string encodedString, Encoding encoding = null) {
 
-            return new Hex();
+            return GetDecoder().Decode(encodedString, encoding);
 
         }
 
@@ -76,6 +44,17 @@ namespace Gsemac.Text.Codecs {
         public static string DecodeString(byte[] encodedBytes, Encoding encoding = null) {
 
             return GetDecoder().DecodeString(encodedBytes, encoding);
+
+        }
+
+        public static IBinaryEncoder GetEncoder() {
+
+            return new HexCodec();
+
+        }
+        public static IBinaryDecoder GetDecoder() {
+
+            return new HexCodec();
 
         }
 
