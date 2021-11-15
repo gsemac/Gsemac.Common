@@ -10,10 +10,16 @@ namespace Gsemac.Text.Codecs {
 
         public byte[] Encode(byte[] bytesToEncode, int startIndex, int length) {
 
+            if (bytesToEncode is null)
+                throw new ArgumentNullException(nameof(bytesToEncode));
+
             return Encoding.UTF8.GetBytes(Convert.ToBase64String(bytesToEncode, startIndex, length));
 
         }
         public byte[] Decode(byte[] encodedBytes, int startIndex, int length) {
+
+            if (encodedBytes is null)
+                throw new ArgumentNullException(nameof(encodedBytes));
 
             string base64String = PadBase64String(Encoding.UTF8.GetString(encodedBytes, startIndex, length));
 
