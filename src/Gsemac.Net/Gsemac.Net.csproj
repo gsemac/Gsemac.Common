@@ -35,6 +35,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <Compile Update="Properties\DefaultHeaders.Designer.cs">
+	    <DesignTime>True</DesignTime>
+	  </Compile>
 	  <Compile Update="Properties\ExceptionMessages.Designer.cs">
 	    <DesignTime>True</DesignTime>
 	  </Compile>

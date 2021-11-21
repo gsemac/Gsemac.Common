@@ -8,15 +8,27 @@ namespace Gsemac.Net {
 
         // Public members
 
-        public string Accept { get; set; } = "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8";
-        public string AcceptLanguage { get; set; } = "en-US,en;q=0.5";
+        public string Accept {
+            get => GetHeader(HttpRequestHeader.Accept);
+            set => SetHeader(HttpRequestHeader.Accept, value, removeIfEmpty: true);
+        }
+        public string AcceptLanguage {
+            get => GetHeader(HttpRequestHeader.AcceptLanguage);
+            set => SetHeader(HttpRequestHeader.AcceptLanguage, value, removeIfEmpty: true);
+        }
         public bool? AllowAutoRedirect { get; set; } = true;
         public DecompressionMethods AutomaticDecompression { get; set; } = DecompressionMethods.Deflate | DecompressionMethods.GZip;
         public CookieContainer Cookies { get; set; } = new CookieContainer();
         public ICredentials Credentials { get; set; }
-        public WebHeaderCollection Headers { get; set; } = new WebHeaderCollection();
+        public WebHeaderCollection Headers {
+            get => headers;
+            set => headers = value.Clone();
+        }
         public IWebProxy Proxy { get; set; } = WebProxyUtilities.GetDefaultProxy();
-        public string UserAgent { get; set; } = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.66 Safari/537.36";
+        public string UserAgent {
+            get => GetHeader(HttpRequestHeader.UserAgent);
+            set => SetHeader(HttpRequestHeader.UserAgent, value, removeIfEmpty: true);
+        }
 
         public static HttpWebRequestOptions Default => new HttpWebRequestOptions();
         public static HttpWebRequestOptions Empty {
@@ -36,6 +48,11 @@ namespace Gsemac.Net {
         }
 
         public HttpWebRequestOptions() {
+
+            Accept = Properties.DefaultHeaders.Accept;
+            AcceptLanguage = Properties.DefaultHeaders.AcceptLanguage;
+            UserAgent = Properties.DefaultHeaders.UserAgent;
+
         }
         public HttpWebRequestOptions(IHttpWebRequestOptions other, bool copyIfNull = true) {
 
@@ -76,6 +93,8 @@ namespace Gsemac.Net {
 
         // Private members
 
+        private WebHeaderCollection headers = new WebHeaderCollection();
+
         private void Combine(IHttpWebRequestOptions other, bool copyIfNull = true) {
 
             if (copyIfNull || !string.IsNullOrWhiteSpace(other.Accept))
@@ -106,6 +125,26 @@ namespace Gsemac.Net {
 
             if (copyIfNull || !string.IsNullOrWhiteSpace(other.UserAgent))
                 UserAgent = other.UserAgent;
+
+        }
+
+        private string GetHeader(HttpRequestHeader header) {
+
+            if (Headers is object && Headers.TryGetHeader(header, out string value))
+                return value;
+
+            return string.Empty;
+
+        }
+        private void SetHeader(HttpRequestHeader header, string value, bool removeIfEmpty) {
+
+            if (Headers is null)
+                Headers = new WebHeaderCollection();
+
+            if (removeIfEmpty && string.IsNullOrEmpty(value))
+                Headers.Remove(header);
+            else
+                Headers.TrySetHeader(header, value);
 
         }
 
