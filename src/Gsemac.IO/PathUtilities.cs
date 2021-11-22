@@ -40,8 +40,8 @@ namespace Gsemac.IO {
             if (string.IsNullOrEmpty(relativeToPath))
                 return fullPath;
 
-            string fullInputPath = System.IO.Path.GetFullPath(fullPath);
-            string fullRelativeToPath = TrimDirectorySeparators(System.IO.Path.GetFullPath(relativeToPath)) + System.IO.Path.DirectorySeparatorChar;
+            string fullInputPath = Path.GetFullPath(fullPath);
+            string fullRelativeToPath = TrimDirectorySeparators(Path.GetFullPath(relativeToPath)) + Path.DirectorySeparatorChar;
 
             int index = fullInputPath.IndexOf(fullRelativeToPath);
 
@@ -84,13 +84,13 @@ namespace Gsemac.IO {
                     if (rootMatch.Success)
                         rootPath = rootMatch.Groups[1].Value;
                     else
-                        rootPath = System.IO.Path.GetPathRoot(path);
+                        rootPath = Path.GetPathRoot(path);
 
                 }
 
             }
 
-            if (!string.IsNullOrEmpty(rootPath) && !rootPath.All(c => c.Equals(System.IO.Path.DirectorySeparatorChar) || c.Equals(System.IO.Path.AltDirectorySeparatorChar)))
+            if (!string.IsNullOrEmpty(rootPath) && !rootPath.All(c => c.Equals(Path.DirectorySeparatorChar) || c.Equals(Path.AltDirectorySeparatorChar)))
                 rootPath = TrimRightDirectorySeparators(rootPath);
 
             return rootPath;
@@ -110,7 +110,7 @@ namespace Gsemac.IO {
                 return string.Empty;
 
             string rootPath = GetRootPath(path, pathInfo);
-            int separatorIndex = TrimRightDirectorySeparators(path).LastIndexOfAny(new[] { System.IO.Path.DirectorySeparatorChar, System.IO.Path.AltDirectorySeparatorChar });
+            int separatorIndex = TrimRightDirectorySeparators(path).LastIndexOfAny(new[] { Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar });
 
             if (separatorIndex < rootPath.Length)
                 return string.Empty;
@@ -144,7 +144,7 @@ namespace Gsemac.IO {
 
             // Return the remaining segments.
 
-            IEnumerable<string> remainingSegments = StringUtilities.SplitAfter(path, System.IO.Path.DirectorySeparatorChar, System.IO.Path.AltDirectorySeparatorChar)
+            IEnumerable<string> remainingSegments = StringUtilities.SplitAfter(path, Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar)
                 .Where(segment => !string.IsNullOrEmpty(segment));
 
             foreach (string segment in remainingSegments)
@@ -164,7 +164,7 @@ namespace Gsemac.IO {
             if (string.IsNullOrWhiteSpace(path))
                 return 0;
 
-            return path.Split(new[] { System.IO.Path.DirectorySeparatorChar }).Count();
+            return path.Split(new[] { Path.DirectorySeparatorChar }).Count();
 
         }
         public static string GetScheme(string path) {
@@ -217,7 +217,7 @@ namespace Gsemac.IO {
             else if (string.IsNullOrEmpty(filename))
                 return "";
             else
-                return System.IO.Path.GetExtension(ReplaceInvalidPathChars(filename));
+                return Path.GetExtension(ReplaceInvalidPathChars(filename));
 
         }
         public static string SetFileExtension(string path, string extension) {
@@ -276,12 +276,12 @@ namespace Gsemac.IO {
 
         public static string GetRandomTemporaryDirectoryPath() {
 
-            return System.IO.Path.Combine(System.IO.Path.GetTempPath(), System.IO.Path.GetRandomFileName());
+            return Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
 
         }
         public static string GetRandomTemporaryFilePath() {
 
-            return System.IO.Path.Combine(System.IO.Path.GetTempPath(), System.IO.Path.GetRandomFileName());
+            return Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
 
         }
         public static string GetUniqueTemporaryDirectoryPath() {
@@ -296,9 +296,9 @@ namespace Gsemac.IO {
 
                     result = GetRandomTemporaryDirectoryPath();
 
-                } while (System.IO.Directory.Exists(result));
+                } while (Directory.Exists(result));
 
-                System.IO.Directory.CreateDirectory(result);
+                Directory.CreateDirectory(result);
 
                 return result;
 
@@ -307,7 +307,7 @@ namespace Gsemac.IO {
         }
         public static string GetUniqueTemporaryFilePath() {
 
-            return System.IO.Path.GetTempFileName();
+            return Path.GetTempFileName();
 
         }
         public static bool IsTemporaryFilePath(string path) {
@@ -316,9 +316,9 @@ namespace Gsemac.IO {
 
             try {
 
-                path = System.IO.Path.GetFullPath(path);
+                path = Path.GetFullPath(path);
 
-                isTemporaryFilePath = path.StartsWith(System.IO.Path.GetTempPath()) && IsFilePath(path);
+                isTemporaryFilePath = path.StartsWith(Path.GetTempPath()) && IsFilePath(path);
 
             }
             catch (Exception) {
@@ -367,7 +367,7 @@ namespace Gsemac.IO {
 
                     // If the path is directly inside of %USERPROFILE%, make the path relative to that variable.
 
-                    path = System.IO.Path.Combine("%USERPROFILE%", GetRelativePath(path, userDirectory));
+                    path = Path.Combine("%USERPROFILE%", GetRelativePath(path, userDirectory));
 
                 }
 
@@ -405,17 +405,17 @@ namespace Gsemac.IO {
 
         public static string TrimDirectorySeparators(string path) {
 
-            return path?.Trim(System.IO.Path.DirectorySeparatorChar, System.IO.Path.AltDirectorySeparatorChar);
+            return path?.Trim(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
 
         }
         public static string TrimLeftDirectorySeparators(string path) {
 
-            return path?.TrimStart(System.IO.Path.DirectorySeparatorChar, System.IO.Path.AltDirectorySeparatorChar);
+            return path?.TrimStart(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
 
         }
         public static string TrimRightDirectorySeparators(string path) {
 
-            return path?.TrimEnd(System.IO.Path.DirectorySeparatorChar, System.IO.Path.AltDirectorySeparatorChar);
+            return path?.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
 
         }
         public static string NormalizeDirectorySeparators(string path) {
@@ -427,7 +427,7 @@ namespace Gsemac.IO {
 
 
             path = string.Join(directorySeparatorChar.ToString(),
-                path.Split(System.IO.Path.DirectorySeparatorChar, System.IO.Path.AltDirectorySeparatorChar));
+                path.Split(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar));
 
             return path;
 
@@ -440,7 +440,7 @@ namespace Gsemac.IO {
             if (string.IsNullOrEmpty(path))
                 return path;
 
-            char directorySeparatorChar = System.IO.Path.DirectorySeparatorChar;
+            char directorySeparatorChar = Path.DirectorySeparatorChar;
 
             if (IsUrl(path, pathInfo))
                 directorySeparatorChar = '/';
@@ -452,11 +452,11 @@ namespace Gsemac.IO {
         public static bool IsFilePath(string path, bool verifyFileExists = false) {
 
             bool result = path.Any() &&
-                path.Last() != System.IO.Path.DirectorySeparatorChar &&
-                path.Last() != System.IO.Path.AltDirectorySeparatorChar;
+                path.Last() != Path.DirectorySeparatorChar &&
+                path.Last() != Path.AltDirectorySeparatorChar;
 
             if (verifyFileExists && result)
-                result = System.IO.File.Exists(path);
+                result = File.Exists(path);
 
             return result;
 
@@ -482,7 +482,7 @@ namespace Gsemac.IO {
                         (!verifyPathExists || PathExists(testUri.LocalPath));
 
                 }
-                else if (new char[] { System.IO.Path.AltDirectorySeparatorChar, System.IO.Path.DirectorySeparatorChar }.Any(c => c == path.First())) {
+                else if (new char[] { Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar }.Any(c => c == path.First())) {
 
                     // Rooted paths that don't specify a scheme will be considered local.
 
@@ -493,7 +493,7 @@ namespace Gsemac.IO {
 
                     // Check the full path for this relative path.
 
-                    path = System.IO.Path.GetFullPath(path);
+                    path = Path.GetFullPath(path);
 
                     isLocalPath = IsLocalPath(path, verifyPathExists: verifyPathExists);
 
@@ -521,7 +521,7 @@ namespace Gsemac.IO {
             if (IsUrl(path, pathInfo) && (path.StartsWith("/") || path.StartsWith("\\")))
                 return false;
 
-            string directorySeparatorsStr = System.IO.Path.DirectorySeparatorChar.ToString() + System.IO.Path.AltDirectorySeparatorChar.ToString();
+            string directorySeparatorsStr = Path.DirectorySeparatorChar.ToString() + Path.AltDirectorySeparatorChar.ToString();
             string pattern = @"^(?:[" + Regex.Escape(directorySeparatorsStr) + @"]|[a-z]+\:\/\/|[a-z]\:)";
 
             return Regex.IsMatch(path, pattern, RegexOptions.IgnoreCase);
@@ -534,13 +534,13 @@ namespace Gsemac.IO {
 
             path = ReplaceInvalidPathChars(path, " ", SanitizePathOptions.PreserveDirectoryStructure);
 
-            path = System.IO.Path.GetFullPath(path);
+            path = Path.GetFullPath(path);
 
             // Check the length of the entire path.
 
             if (IsFilePath(path, false)) {
 
-                if (System.IO.Path.GetDirectoryName(path).Length > MaxDirectoryPathLength || path.Length > MaxFilePathLength)
+                if (Path.GetDirectoryName(path).Length > MaxDirectoryPathLength || path.Length > MaxFilePathLength)
                     return true;
 
             }
@@ -581,7 +581,7 @@ namespace Gsemac.IO {
         }
         public static bool PathExists(string path) {
 
-            return System.IO.Directory.Exists(path) || System.IO.File.Exists(path);
+            return Directory.Exists(path) || File.Exists(path);
 
         }
         public static bool PathContainsSegment(string path, string pathSegment) {
@@ -621,8 +621,8 @@ namespace Gsemac.IO {
         private static bool EndsWithDirectorySeparatorChar(string path) {
 
             return !string.IsNullOrEmpty(path) &&
-                (path.EndsWith(System.IO.Path.DirectorySeparatorChar.ToString()) ||
-                path.EndsWith(System.IO.Path.AltDirectorySeparatorChar.ToString()));
+                (path.EndsWith(Path.DirectorySeparatorChar.ToString()) ||
+                path.EndsWith(Path.AltDirectorySeparatorChar.ToString()));
 
         }
         private static string ReplaceInvalidPathChars(string path, SanitizePathOptions options = SanitizePathOptions.Default) {
@@ -653,10 +653,10 @@ namespace Gsemac.IO {
                 path = NormalizeDirectorySeparators(path);
 
             if (options.HasFlag(SanitizePathOptions.StripInvalidPathChars))
-                invalidCharacters = invalidCharacters.Concat(System.IO.Path.GetInvalidPathChars());
+                invalidCharacters = invalidCharacters.Concat(Path.GetInvalidPathChars());
 
             if (options.HasFlag(SanitizePathOptions.StripInvalidFilenameChars))
-                invalidCharacters = invalidCharacters.Concat(System.IO.Path.GetInvalidFileNameChars());
+                invalidCharacters = invalidCharacters.Concat(Path.GetInvalidFileNameChars());
 
             if (options.HasFlag(SanitizePathOptions.PreserveDirectoryStructure)) {
 
@@ -668,7 +668,7 @@ namespace Gsemac.IO {
                 if (!string.IsNullOrEmpty(rootOrScheme))
                     path = path.Substring(rootOrScheme.Length);
 
-                invalidCharacters = invalidCharacters.Where(c => c != System.IO.Path.DirectorySeparatorChar && c != System.IO.Path.AltDirectorySeparatorChar);
+                invalidCharacters = invalidCharacters.Where(c => c != Path.DirectorySeparatorChar && c != Path.AltDirectorySeparatorChar);
 
             }
 
@@ -786,7 +786,7 @@ namespace Gsemac.IO {
                 if (!Uri.TryCreate(path, UriKind.Absolute, out Uri uri))
                     uri = new Uri(new Uri("http://anything"), path);
 
-                return System.IO.Path.GetFileName(uri.LocalPath);
+                return Path.GetFileName(uri.LocalPath);
 
             }
             catch (ArgumentException) {
@@ -837,8 +837,8 @@ namespace Gsemac.IO {
         private static bool StartsWithDirectorySeparatorChar(string path) {
 
             return !string.IsNullOrEmpty(path) &&
-                (path.StartsWith(System.IO.Path.DirectorySeparatorChar.ToString()) ||
-                path.StartsWith(System.IO.Path.AltDirectorySeparatorChar.ToString()));
+                (path.StartsWith(Path.DirectorySeparatorChar.ToString()) ||
+                path.StartsWith(Path.AltDirectorySeparatorChar.ToString()));
 
         }
         private static string StripRepeatedForwardSlashesAfterScheme(string path) {
@@ -853,12 +853,12 @@ namespace Gsemac.IO {
         }
         private static string StripRepeatedDirectorySeparators(string path) {
 
-            path = Regex.Replace(path, $@"[{Regex.Escape(System.IO.Path.DirectorySeparatorChar.ToString())}{Regex.Escape(System.IO.Path.AltDirectorySeparatorChar.ToString())}]+", m => {
+            path = Regex.Replace(path, $@"[{Regex.Escape(Path.DirectorySeparatorChar.ToString())}{Regex.Escape(Path.AltDirectorySeparatorChar.ToString())}]+", m => {
 
-                if (m.Value.First() == System.IO.Path.DirectorySeparatorChar)
-                    return System.IO.Path.DirectorySeparatorChar.ToString();
-                else if (m.Value.First() == System.IO.Path.AltDirectorySeparatorChar)
-                    return System.IO.Path.AltDirectorySeparatorChar.ToString();
+                if (m.Value.First() == Path.DirectorySeparatorChar)
+                    return Path.DirectorySeparatorChar.ToString();
+                else if (m.Value.First() == Path.AltDirectorySeparatorChar)
+                    return Path.AltDirectorySeparatorChar.ToString();
                 else
                     return m.Value;
 
