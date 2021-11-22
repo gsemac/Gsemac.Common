@@ -123,6 +123,9 @@
   <data name="InnerHandlerHasNotBeenSet" xml:space="preserve">
     <value>The inner handler has not been set.</value>
   </data>
+  <data name="InvalidCookieDomainPattern" xml:space="preserve">
+    <value>The given cookie domain pattern is invalid.</value>
+  </data>
   <data name="InvalidHttpHeader" xml:space="preserve">
     <value>The given string was not a valid HTTP header.</value>
   </data>

@@ -79,6 +79,15 @@ namespace Gsemac.Net.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The given cookie domain pattern is invalid..
+        /// </summary>
+        internal static string InvalidCookieDomainPattern {
+            get {
+                return ResourceManager.GetString("InvalidCookieDomainPattern", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The given string was not a valid HTTP header..
         /// </summary>
         internal static string InvalidHttpHeader {
