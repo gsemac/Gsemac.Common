@@ -370,6 +370,25 @@ namespace Gsemac.Net {
 
         }
 
+        public static char[] GetInvalidCookieChars() {
+
+            // There is a detailed discussion of invalid cookie characters here:
+            // https://stackoverflow.com/a/1969339/5383169 (bobince)
+
+            // Despite RFC 6265 being the most recent standard, in the "real world" we're still using Netscape's cookie_spec.
+            // http://curl.haxx.se/rfc/cookie_spec.html
+            // This specification dictates that the only invalid characters are "semi-colon, comma and white space".
+
+            // Even so, browsers will allow surrounding whitespace (trimming it).
+            // It's also not unheard of to encounter cookies that ignore this specification altogether and still contain commas.
+            // Therefore, a robust cookie container implmentation should be prepared for anything.
+
+            // That said, this method is useful for sanitizing cookies before adding them to a Net.CookieContainer, which will throw on invalid characters.
+
+            return new[] { ',', ';' };
+
+        }
+
         // Internal members
 
         internal static WebRequest GetInnermostWebRequest(WebRequest webRequest) {
