@@ -137,7 +137,7 @@ namespace Gsemac.Net.Resolvers {
 
                 IHttpWebResponse response = base.Send(request, cancellationToken);
 
-                if (WebRequestUtilities.IsRedirectStatusCode(response.StatusCode) && response.Headers.TryGetHeader(HttpResponseHeader.Location, out string locationHeaderValue)) {
+                if (HttpUtilities.IsRedirectStatusCode(response.StatusCode) && response.Headers.TryGetHeader(HttpResponseHeader.Location, out string locationHeaderValue)) {
 
                     // We got redirected, so try to determine the actual download URL.
 

@@ -6,7 +6,7 @@ using System.Net;
 
 namespace Gsemac.Net {
 
-    public static class WebRequestUtilities {
+    public static class HttpUtilities {
 
         // Public members
 

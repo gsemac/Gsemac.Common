@@ -191,7 +191,7 @@ namespace Gsemac.Net {
         private static bool IsRedirect(IHttpWebResponse response) {
 
             return response is object &&
-                WebRequestUtilities.IsRedirectStatusCode(response.StatusCode);
+                HttpUtilities.IsRedirectStatusCode(response.StatusCode);
 
         }
         private static bool IsRefresh(IHttpWebResponse response) {

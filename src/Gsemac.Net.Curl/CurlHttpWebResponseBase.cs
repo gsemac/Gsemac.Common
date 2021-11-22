@@ -62,7 +62,7 @@ namespace Gsemac.Net.Curl {
                 throw new WebException(Properties.ExceptionMessages.ConnectedPartyDidNotRespond, null, WebExceptionStatus.ServerProtocolViolation, this);
 
             }
-            else if (!WebRequestUtilities.IsSuccessStatusCode(StatusCode)) {
+            else if (!HttpUtilities.IsSuccessStatusCode(StatusCode)) {
 
                 // We got a response, but didn't get a success code.
 
