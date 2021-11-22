@@ -734,6 +734,47 @@ namespace Gsemac.IO.Tests {
 
         }
 
+        // IsSubpathOf
+
+        [TestMethod]
+        public void TestIsSubpathOfWithPathAndRootedPath() {
+
+            // If the second path is rooted, it must start with the entirety of the parent path in order to be a subpath.
+
+            Assert.IsFalse(PathUtilities.IsSubpathOf("/1/2/3/", "/3/4"));
+
+        }
+        [TestMethod]
+        public void TestIsSubpathOfWithPathAndRootedSubpath() {
+
+            Assert.IsTrue(PathUtilities.IsSubpathOf("/1/2/3/", "/1/2/3/4/"));
+
+        }
+        [TestMethod]
+        public void TestIsSubpathOfWithPathAndSamePath() {
+
+            Assert.IsFalse(PathUtilities.IsSubpathOf("/1/2/3/", "/1/2/3/"));
+
+        }
+        [TestMethod]
+        public void TestIsSubpathOfWithPathAndSamePathWithoutLeadingDirectorySeparator() {
+
+            Assert.IsFalse(PathUtilities.IsSubpathOf("/1/2/3/", "1/2/3/"));
+
+        }
+        [TestMethod]
+        public void TestIsSubpathOfWithPathAndSamePathWithoutTrailingDirectorySeparator() {
+
+            Assert.IsFalse(PathUtilities.IsSubpathOf("/1/2/3/", "/1/2/3"));
+
+        }
+        [TestMethod]
+        public void TestIsSubpathOfWithUrlAndSubpath() {
+
+            Assert.IsTrue(PathUtilities.IsSubpathOf("https://example.com/1", "https://example.com/1/2"));
+
+        }
+
         // PathContainsSegment
 
         [TestMethod]

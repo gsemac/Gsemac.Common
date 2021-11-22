@@ -1,6 +1,7 @@
 ﻿using Gsemac.Text;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -558,6 +559,24 @@ namespace Gsemac.IO {
                 return true;
 
             return false;
+
+        }
+        public static bool IsSubpathOf(string parentPath, string childPath) {
+
+            if (string.IsNullOrWhiteSpace(parentPath) || string.IsNullOrWhiteSpace(childPath))
+                return false;
+
+            if (!IsPathRooted(parentPath))
+                parentPath = Path.GetFullPath(parentPath);
+
+            if (!IsPathRooted(childPath))
+                childPath = Path.GetFullPath(childPath);
+
+            parentPath = NormalizeDirectorySeparators(TrimRightDirectorySeparators(parentPath) + "/");
+            childPath = NormalizeDirectorySeparators(TrimRightDirectorySeparators(childPath) + "/");
+
+            return !AreEqual(parentPath, childPath) &&
+                childPath.StartsWith(parentPath);
 
         }
         public static bool PathExists(string path) {
