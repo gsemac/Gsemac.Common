@@ -23,7 +23,7 @@ namespace Gsemac.IO.Compression {
 
             if (options is null)
                 options = new ArchiveOptions();
-
+            
             this.CompressionLevel = options.CompressionLevel;
 
             sourceStream = stream;
