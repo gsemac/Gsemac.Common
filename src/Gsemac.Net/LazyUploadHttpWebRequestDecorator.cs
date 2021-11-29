@@ -17,13 +17,13 @@ namespace Gsemac.Net {
         public LazyUploadHttpWebRequestDecorator(IHttpWebRequest innerHttpWebRequest) :
             this(innerHttpWebRequest, () => new MemoryStream()) {
         }
-        public LazyUploadHttpWebRequestDecorator(IHttpWebRequest innerHttpWebRequest, Func<Stream> steamFactory) :
+        public LazyUploadHttpWebRequestDecorator(IHttpWebRequest innerHttpWebRequest, Func<Stream> streamFactory) :
           base(innerHttpWebRequest) {
 
-            if (steamFactory is null)
-                throw new ArgumentNullException(nameof(steamFactory));
+            if (streamFactory is null)
+                throw new ArgumentNullException(nameof(streamFactory));
 
-            this.requestStream = new Lazy<Stream>(() => steamFactory());
+            requestStream = new Lazy<Stream>(() => streamFactory());
 
         }
 
@@ -37,7 +37,7 @@ namespace Gsemac.Net {
             if (requestStream.IsValueCreated) {
 
                 // We need to copy the request stream before copying it to the base request stream because the user is likely to have disposed it.
-                // Fortunately, the ToArray method is still usuable after the MemoryStream has been disposed.
+                // Fortunately, the ToArray method is still usable after the MemoryStream has been disposed.
 
                 using (Stream copiedRequestStream = new MemoryStream(requestStream.Value.ToArray()))
                 using (Stream baseRequestStream = base.GetRequestStream())
