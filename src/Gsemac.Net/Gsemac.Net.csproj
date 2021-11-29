@@ -1,49 +1,49 @@
 ﻿<Project Sdk="MSBuild.Sdk.Extras/2.0.54">
 
-	<PropertyGroup>
-		<TargetFrameworks>netstandard2.0;net40-client</TargetFrameworks>
-		<Company />
-		<Authors>gsemac</Authors>
-		<Version>0.23.2</Version>
-		<GeneratePackageOnBuild>false</GeneratePackageOnBuild>
-		<PackageProjectUrl>https://github.com/gsemac/Gsemac.Common</PackageProjectUrl>
-		<RepositoryUrl>https://github.com/gsemac/Gsemac.Common</RepositoryUrl>
-		<RepositoryType>git</RepositoryType>
-		<PackageLicenseExpression>MIT</PackageLicenseExpression>
-		<Copyright></Copyright>
-	</PropertyGroup>
+  <PropertyGroup>
+    <TargetFrameworks>netstandard2.0;net40-client</TargetFrameworks>
+    <Company />
+    <Authors>gsemac</Authors>
+    <Version>0.24.0</Version>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+    <PackageProjectUrl>https://github.com/gsemac/Gsemac.Common</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/gsemac/Gsemac.Common</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <Copyright></Copyright>
+  </PropertyGroup>
 
-	<PropertyGroup Condition="'$(Configuration)' == 'Release'">
-		<DebugType>none</DebugType>
-		<DebugSymbols>false</DebugSymbols>
-	</PropertyGroup>
-  
-	<ItemGroup Condition="$(DefineConstants.Contains('NETFRAMEWORK'))">
-		<Reference Include="System.Security" />
-	</ItemGroup>
-  
-	<ItemGroup>
-		<Content Include="Gsemac.Net.targets" PackagePath="build/Gsemac.Net.targets" />
+  <PropertyGroup Condition="'$(Configuration)' == 'Release'">
+    <DebugType>none</DebugType>
+    <DebugSymbols>false</DebugSymbols>
+  </PropertyGroup>
+
+  <ItemGroup Condition="$(DefineConstants.Contains('NETFRAMEWORK'))">
+    <Reference Include="System.Security" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Gsemac.Net.targets" PackagePath="build/Gsemac.Net.targets" />
     <Content Include="licenses\*" Pack="true" PackagePath="contentFiles\licenses" />
-	</ItemGroup>
+  </ItemGroup>
 
-	<ItemGroup>
-	  <ProjectReference Include="..\Gsemac.Drawing\Gsemac.Drawing.csproj" />
-	  <ProjectReference Include="..\Gsemac.IO\Gsemac.IO.csproj" />
-	  <ProjectReference Include="..\Gsemac.Polyfills\Gsemac.Polyfills.csproj" />
-	  <ProjectReference Include="..\Gsemac.Text\Gsemac.Text.csproj" />
-	</ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Gsemac.Drawing\Gsemac.Drawing.csproj" />
+    <ProjectReference Include="..\Gsemac.IO\Gsemac.IO.csproj" />
+    <ProjectReference Include="..\Gsemac.Polyfills\Gsemac.Polyfills.csproj" />
+    <ProjectReference Include="..\Gsemac.Text\Gsemac.Text.csproj" />
+  </ItemGroup>
 
-	<ItemGroup>
-	  <Compile Update="Properties\DefaultHeaders.Designer.cs">
-	    <DesignTime>True</DesignTime>
-	  </Compile>
-	  <Compile Update="Properties\ExceptionMessages.Designer.cs">
-	    <DesignTime>True</DesignTime>
-	  </Compile>
-	  <Compile Update="Properties\Resources.Designer.cs">
-	    <DesignTime>True</DesignTime>
-	  </Compile>
-	</ItemGroup>
+  <ItemGroup>
+    <Compile Update="Properties\DefaultHeaders.Designer.cs">
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Update="Properties\ExceptionMessages.Designer.cs">
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Update="Properties\Resources.Designer.cs">
+      <DesignTime>True</DesignTime>
+    </Compile>
+  </ItemGroup>
 
 </Project>
