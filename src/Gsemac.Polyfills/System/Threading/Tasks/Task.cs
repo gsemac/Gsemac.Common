@@ -13,20 +13,44 @@ namespace Gsemac.Polyfills.System.Threading.Tasks {
         public static global::System.Threading.Tasks.Task Delay(int millisecondsDelay, CancellationToken cancellationToken) {
 
             TaskCompletionSource<bool> taskCompletionSource = new TaskCompletionSource<bool>();
+
+            // We need to initialize these variables to null beforehand so we can access them from within the callbacks.
+
             Timer timer = null;
             CancellationTokenRegistration? cancellationTokenRegistration = null;
+            bool timerDisposed = false;
+
+            // Create the Timer.
 
             timer = new Timer(state => {
 
                 taskCompletionSource.TrySetResult(true);
 
-                timer.Dispose();
+                // Disposing of the cancellation token registration will prevent it from being called when/if the cancellation token is canceled.
+                // Beacuse we check that the Timer is disposed in the callback it shouldn't pose any problems even if it is called, but it's unnecessary to keep around nonetheless.
+
+                cancellationTokenRegistration?.Dispose();
+
+                lock (timer) {
+
+                    timer.Dispose();
+
+                    timerDisposed = true;
+
+                }
 
             }, null, millisecondsDelay, Timeout.Infinite);
 
+            // Add a new cancellation token registration that, upon cancellation, causes the Timer to complete immediately.
+
             cancellationTokenRegistration = cancellationToken.Register(() => {
 
-                timer.Change(0, Timeout.Infinite);
+                lock (timer) {
+
+                    if (!timerDisposed)
+                        timer.Change(0, Timeout.Infinite);
+
+                }
 
                 cancellationTokenRegistration?.Dispose();
 
