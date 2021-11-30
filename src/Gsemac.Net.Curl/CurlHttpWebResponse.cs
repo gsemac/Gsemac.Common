@@ -21,10 +21,16 @@ namespace Gsemac.Net.Curl {
 
         public override void Close() {
 
-            // Cancel the thread reading data from curl.
+            if (!isClosed) {
 
-            taskCancellationTokenSource.Cancel();
-            taskCancellationTokenSource.Dispose();
+                // Cancel the thread reading data from curl.
+
+                taskCancellationTokenSource.Cancel();
+                taskCancellationTokenSource.Dispose();
+
+                isClosed = true;
+
+            }
 
             base.Close();
 
@@ -32,6 +38,7 @@ namespace Gsemac.Net.Curl {
 
         // Private members
 
+        private bool isClosed;
         private readonly CancellationTokenSource taskCancellationTokenSource;
 
     }
