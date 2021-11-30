@@ -81,7 +81,7 @@ namespace Gsemac.IO {
             lock (streamBuffer) {
 
                 if (isClosed)
-                    throw new ObjectDisposedException(ExceptionMessages.CannotAccessAClosedStream);
+                    throw new ObjectDisposedException(null, ExceptionMessages.CannotAccessAClosedStream);
 
                 streamBuffer.Write(buffer, offset, count);
 

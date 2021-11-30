@@ -61,7 +61,7 @@ namespace Gsemac.IO.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Cannot access a closed stream..
+        ///   Looks up a localized string similar to Cannot access a closed Stream..
         /// </summary>
         internal static string CannotAccessAClosedStream {
             get {

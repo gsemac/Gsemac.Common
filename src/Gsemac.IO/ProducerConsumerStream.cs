@@ -48,7 +48,7 @@ namespace Gsemac.IO {
                             throw new TimeoutException();
 
                     if (isClosed)
-                        throw new ObjectDisposedException(ExceptionMessages.CannotAccessAClosedStream);
+                        throw new ObjectDisposedException(null, ExceptionMessages.CannotAccessAClosedStream);
 
                     int bytesAvailableInBuffer = capacity - ((int)Length + 1);
                     int bytesWritten = Math.Min(bytesLeftToWrite, bytesAvailableInBuffer);
