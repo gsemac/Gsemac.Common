@@ -120,6 +120,9 @@
   <data name="CannotCastTypeToTypeWithTypeAndType" xml:space="preserve">
     <value>Cannot cast type '{0}' to type '{1}'.</value>
   </data>
+  <data name="NonNegativeNumberRequired" xml:space="preserve">
+    <value>Non-negative number required.</value>
+  </data>
   <data name="ObjectIsNotAnInstanceOfWithType" xml:space="preserve">
     <value>The object is not an instance of '{0}'.</value>
   </data>

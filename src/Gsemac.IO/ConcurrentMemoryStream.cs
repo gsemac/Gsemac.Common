@@ -52,6 +52,9 @@ namespace Gsemac.IO {
         /// <param name="bufferSize">Initial size of the underlying buffer.</param>
         public ConcurrentMemoryStream(int bufferSize) {
 
+            if (bufferSize < 0)
+                throw new ArgumentOutOfRangeException(nameof(bufferSize), ExceptionMessages.CapacityMustBePositive);
+
             streamBuffer.Capacity = bufferSize;
 
         }
@@ -59,6 +62,15 @@ namespace Gsemac.IO {
         public override void Flush() {
         }
         public override int Read(byte[] buffer, int offset, int count) {
+
+            if (buffer is null)
+                throw new ArgumentNullException(nameof(buffer));
+
+            if (offset < 0)
+                throw new ArgumentOutOfRangeException(nameof(offset), Core.Properties.ExceptionMessages.NonNegativeNumberRequired);
+
+            if (count < 0)
+                throw new ArgumentOutOfRangeException(nameof(count), Core.Properties.ExceptionMessages.NonNegativeNumberRequired);
 
             // Closed streams can be read from, but cannot be written to.
             // A closed stream indicates that there is no more data to write it.
@@ -77,6 +89,15 @@ namespace Gsemac.IO {
         public override long Seek(long offset, SeekOrigin origin) => throw new NotSupportedException(ExceptionMessages.StreamDoesNotSupportSeeking);
         public override void SetLength(long value) => throw new NotSupportedException(ExceptionMessages.StreamDoesNotSupportThisOperation);
         public override void Write(byte[] buffer, int offset, int count) {
+
+            if (buffer is null)
+                throw new ArgumentNullException(nameof(buffer));
+
+            if (offset < 0)
+                throw new ArgumentOutOfRangeException(nameof(offset), Core.Properties.ExceptionMessages.NonNegativeNumberRequired);
+
+            if (count < 0)
+                throw new ArgumentOutOfRangeException(nameof(count), Core.Properties.ExceptionMessages.NonNegativeNumberRequired);
 
             lock (streamBuffer) {
 

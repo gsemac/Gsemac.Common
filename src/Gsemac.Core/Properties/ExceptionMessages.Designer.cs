@@ -70,6 +70,15 @@ namespace Gsemac.Core.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Non-negative number required..
+        /// </summary>
+        internal static string NonNegativeNumberRequired {
+            get {
+                return ResourceManager.GetString("NonNegativeNumberRequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The object is not an instance of &apos;{0}&apos;..
         /// </summary>
         internal static string ObjectIsNotAnInstanceOfWithType {

@@ -12,6 +12,9 @@ namespace Gsemac.IO {
         public ProducerConsumerStream(int capacity) :
             base(capacity) {
 
+            if (capacity < 0)
+                throw new ArgumentOutOfRangeException(nameof(capacity), ExceptionMessages.CapacityMustBePositive);
+
             this.capacity = capacity;
 
             Blocking = true;

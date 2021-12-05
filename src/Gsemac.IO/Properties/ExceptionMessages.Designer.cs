@@ -70,6 +70,15 @@ namespace Gsemac.IO.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Capacity must be positive..
+        /// </summary>
+        internal static string CapacityMustBePositive {
+            get {
+                return ResourceManager.GetString("CapacityMustBePositive", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The file &apos;{0}&apos; already exists..
         /// </summary>
         internal static string FileAlreadyExists {

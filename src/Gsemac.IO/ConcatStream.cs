@@ -83,6 +83,15 @@ namespace Gsemac.IO {
 
         public override int Read(byte[] buffer, int offset, int count) {
 
+            if (buffer is null)
+                throw new ArgumentNullException(nameof(buffer));
+
+            if (offset < 0)
+                throw new ArgumentOutOfRangeException(nameof(offset), Core.Properties.ExceptionMessages.NonNegativeNumberRequired);
+
+            if (count < 0)
+                throw new ArgumentOutOfRangeException(nameof(count), Core.Properties.ExceptionMessages.NonNegativeNumberRequired);
+
             int bytesRead = stream1.Read(buffer, offset, count);
 
             count -= bytesRead;
@@ -94,6 +103,15 @@ namespace Gsemac.IO {
 
         }
         public override void Write(byte[] buffer, int offset, int count) {
+
+            if (buffer is null)
+                throw new ArgumentNullException(nameof(buffer));
+
+            if (offset < 0)
+                throw new ArgumentOutOfRangeException(nameof(offset), Core.Properties.ExceptionMessages.NonNegativeNumberRequired);
+
+            if (count < 0)
+                throw new ArgumentOutOfRangeException(nameof(count), Core.Properties.ExceptionMessages.NonNegativeNumberRequired);
 
             long bytesLeftInStream1 = stream1.Length - stream1.Position;
             long bytesWritten = Math.Min(count, bytesLeftInStream1);
