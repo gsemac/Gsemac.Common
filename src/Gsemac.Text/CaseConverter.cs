@@ -9,7 +9,10 @@ namespace Gsemac.Text {
 
         // Public members
 
-        public CaseConverter(StringCasing casing, CasingOptions options = CasingOptions.Default) {
+        public CaseConverter(StringCasing casing) :
+            this(casing, CasingOptions.Default) {
+        }
+        public CaseConverter(StringCasing casing, CasingOptions options) {
 
             this.casing = casing;
             this.options = options;
@@ -22,7 +25,12 @@ namespace Gsemac.Text {
 
         }
 
-        public static string ToCase(string input, StringCasing casing, CasingOptions options = CasingOptions.Default) {
+        public static string ToCase(string input, StringCasing casing) {
+
+            return ToCase(input, casing, CasingOptions.Default);
+
+        }
+        public static string ToCase(string input, StringCasing casing, CasingOptions options) {
 
             if (string.IsNullOrEmpty(input))
                 return input;
@@ -39,10 +47,10 @@ namespace Gsemac.Text {
                     return input.ToUpperInvariant();
 
                 case StringCasing.Proper:
-                    return ToProperCase(input, options);
+                    return ToProper(input, options);
 
                 case StringCasing.Sentence:
-                    return ToSentenceCase(input, options);
+                    return ToSentence(input, options);
 
                 default:
                     throw new ArgumentOutOfRangeException(nameof(input));
@@ -50,7 +58,22 @@ namespace Gsemac.Text {
             }
 
         }
-        public static string ToProperCase(string input, CasingOptions options = CasingOptions.Default) {
+
+        public static string ToLower(string input) {
+
+            if (string.IsNullOrEmpty(input))
+                return input;
+
+            return input.ToLowerInvariant();
+
+        }
+
+        public static string ToProper(string input) {
+
+            return ToProper(input, CasingOptions.Default);
+
+        }
+        public static string ToProper(string input, CasingOptions options) {
 
             if (string.IsNullOrEmpty(input))
                 return input;
@@ -73,22 +96,23 @@ namespace Gsemac.Text {
             return result;
 
         }
-        public static string ToSentenceCase(string input) {
 
-            return ToSentenceCase(input, CasingOptions.Default, SentenceCasingOptions.Default);
+        public static string ToSentence(string input) {
 
-        }
-        public static string ToSentenceCase(string input, CasingOptions options) {
-
-            return ToSentenceCase(input, options, SentenceCasingOptions.Default);
+            return ToSentence(input, CasingOptions.Default, SentenceCasingOptions.Default);
 
         }
-        public static string ToSentenceCase(string input, SentenceCasingOptions options) {
+        public static string ToSentence(string input, CasingOptions options) {
 
-            return ToSentenceCase(input, CasingOptions.Default, options);
+            return ToSentence(input, options, SentenceCasingOptions.Default);
 
         }
-        public static string ToSentenceCase(string input, CasingOptions options, SentenceCasingOptions sentenceCasingOptions) {
+        public static string ToSentence(string input, SentenceCasingOptions options) {
+
+            return ToSentence(input, CasingOptions.Default, options);
+
+        }
+        public static string ToSentence(string input, CasingOptions options, SentenceCasingOptions sentenceCasingOptions) {
 
             if (string.IsNullOrEmpty(input))
                 return input;
@@ -121,6 +145,15 @@ namespace Gsemac.Text {
                 result = CapitalizeRomanNumerals(result);
 
             return result;
+
+        }
+
+        public static string ToUpper(string input) {
+
+            if (string.IsNullOrEmpty(input))
+                return input;
+
+            return input.ToUpperInvariant();
 
         }
 

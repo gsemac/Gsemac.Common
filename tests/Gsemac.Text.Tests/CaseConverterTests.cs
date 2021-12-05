@@ -10,37 +10,37 @@ namespace Gsemac.Text.Tests {
         [TestMethod]
         public void TestToProperCaseWithMixedCase() {
 
-            Assert.AreEqual("My Title", CaseConverter.ToProperCase("mY tItLe"));
+            Assert.AreEqual("My Title", CaseConverter.ToProper("mY tItLe"));
 
         }
         [TestMethod]
         public void TestToProperCaseWithUpperCase() {
 
-            Assert.AreEqual("My Title", CaseConverter.ToProperCase("MY TITLE"));
+            Assert.AreEqual("My Title", CaseConverter.ToProper("MY TITLE"));
 
         }
         [TestMethod]
         public void TestToProperCaseWithUpperCaseAndPreserveAcronymsOption() {
 
-            Assert.AreEqual("MY TITLE", CaseConverter.ToProperCase("MY TITLE", CasingOptions.PreserveAcronyms));
+            Assert.AreEqual("MY TITLE", CaseConverter.ToProper("MY TITLE", CasingOptions.PreserveAcronyms));
 
         }
         [TestMethod]
         public void TestToProperCaseWithRomanNumerals() {
 
-            Assert.AreEqual("James III Of Scotland", CaseConverter.ToProperCase("james iii of scotland", CasingOptions.CapitalizeRomanNumerals));
+            Assert.AreEqual("James III Of Scotland", CaseConverter.ToProper("james iii of scotland", CasingOptions.CapitalizeRomanNumerals));
 
         }
         [TestMethod]
         public void TestToProperCaseWithRomanNumeralsInsideOfWord() {
 
-            Assert.AreEqual("The Liver Is An Organ", CaseConverter.ToProperCase("the liver is an organ", CasingOptions.CapitalizeRomanNumerals));
+            Assert.AreEqual("The Liver Is An Organ", CaseConverter.ToProper("the liver is an organ", CasingOptions.CapitalizeRomanNumerals));
 
         }
         [TestMethod]
         public void TestToProperCaseWithPossessiveS() {
 
-            Assert.AreEqual("John's House", CaseConverter.ToProperCase("john's house"));
+            Assert.AreEqual("John's House", CaseConverter.ToProper("john's house"));
 
         }
 
@@ -49,33 +49,33 @@ namespace Gsemac.Text.Tests {
         [TestMethod]
         public void TestToSentenceCaseWithMultipleSentences() {
 
-            Assert.AreEqual("Hello! welcome to my test case.", CaseConverter.ToSentenceCase("Hello! welcome to my test case."));
+            Assert.AreEqual("Hello! welcome to my test case.", CaseConverter.ToSentence("Hello! welcome to my test case."));
 
         }
         [TestMethod]
         public void TestToSentenceCaseWithLeadingWhitespace() {
 
-            Assert.AreEqual("    Hello!", CaseConverter.ToSentenceCase("    hello!"));
+            Assert.AreEqual("    Hello!", CaseConverter.ToSentence("    hello!"));
 
         }
         [TestMethod]
         public void TestToSentenceCaseWithMultipleSentencesAndMultiSentenceOption() {
 
-            Assert.AreEqual("Hello! Welcome to my test case.", CaseConverter.ToSentenceCase("hello! welcome to my test case.",
+            Assert.AreEqual("Hello! Welcome to my test case.", CaseConverter.ToSentence("hello! welcome to my test case.",
                 SentenceCasingOptions.DetectMultipleSentences));
 
         }
         [TestMethod]
         public void TestToSentenceCaseWithPunctuationWithoutFollowingWhitespace() {
 
-            Assert.AreEqual("Hello! Please see the attatched archive.Zip.", CaseConverter.ToSentenceCase("hello! please see the attatched archive.zip.",
+            Assert.AreEqual("Hello! Please see the attatched archive.Zip.", CaseConverter.ToSentence("hello! please see the attatched archive.zip.",
                 SentenceCasingOptions.DetectMultipleSentences));
 
         }
         [TestMethod]
         public void TestToSentenceCaseWithPunctuationWithoutFollowingWhitespaceWithRequireWhitespaceAfterPunctuationOption() {
 
-            Assert.AreEqual("Hello! Please see the attatched archive.zip.", CaseConverter.ToSentenceCase("hello! please see the attatched archive.zip.",
+            Assert.AreEqual("Hello! Please see the attatched archive.zip.", CaseConverter.ToSentence("hello! please see the attatched archive.zip.",
                 SentenceCasingOptions.DetectMultipleSentences | SentenceCasingOptions.RequireWhitespaceAfterPunctuation));
 
         }

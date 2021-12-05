@@ -1,10 +1,48 @@
-﻿namespace Gsemac.Text.Extensions {
+﻿using System;
+
+namespace Gsemac.Text.Extensions {
 
     public static class StringExtensions {
 
-        public static string ToProper(this string input, CasingOptions options = CasingOptions.Default) {
+        public static string ToProper(this string input) {
 
-            return CaseConverter.ToProperCase(input, options);
+            return CaseConverter.ToProper(input);
+
+        }
+        public static string ToProper(this string input, CasingOptions options) {
+
+            return CaseConverter.ToProper(input, options);
+
+        }
+
+        public static string After(this string input, string substring, StringComparison comparisonType = StringComparison.CurrentCulture) {
+
+            return StringUtilities.After(input, substring, comparisonType);
+
+        }
+        public static string AfterLast(string input, string substring, StringComparison comparisonType = StringComparison.CurrentCulture) {
+
+            return StringUtilities.AfterLast(input, substring, comparisonType);
+
+        }
+        public static string Before(string input, string substring, StringComparison comparisonType = StringComparison.CurrentCulture) {
+
+            return StringUtilities.Before(input, substring, comparisonType);
+
+        }
+        public static string BeforeLast(string input, string substring, StringComparison comparisonType = StringComparison.CurrentCulture) {
+
+            return StringUtilities.BeforeLast(input, substring, comparisonType);
+
+        }
+        public static string Between(string input, string leftSubstring, string rightSubstring, StringComparison comparisonType = StringComparison.CurrentCulture) {
+
+            return StringUtilities.Between(input, leftSubstring, rightSubstring, comparisonType);
+
+        }
+        public static string BetweenLast(string input, string leftSubstring, string rightSubstring, StringComparison comparisonType = StringComparison.CurrentCulture) {
+
+            return StringUtilities.BetweenLast(input, leftSubstring, rightSubstring, comparisonType);
 
         }
 

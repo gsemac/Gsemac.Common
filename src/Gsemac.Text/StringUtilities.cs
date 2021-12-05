@@ -87,12 +87,20 @@ namespace Gsemac.Text {
             return string.Empty;
 
         }
-        public static string BetweenLast(string input, string leftSubstring, string rightSubstring) {
+        public static string BetweenLast(string input, string leftSubstring, string rightSubstring, StringComparison comparisonType = StringComparison.CurrentCulture) {
 
             leftSubstring = Regex.Escape(leftSubstring);
             rightSubstring = Regex.Escape(rightSubstring);
 
-            Regex regex = new Regex(string.Format("{0}(.*?){1}", leftSubstring, rightSubstring), RegexOptions.RightToLeft | RegexOptions.Singleline);
+            RegexOptions regexOptions = RegexOptions.RightToLeft | RegexOptions.Singleline;
+
+            if (comparisonType == StringComparison.InvariantCultureIgnoreCase || comparisonType == StringComparison.Ordinal || comparisonType == StringComparison.OrdinalIgnoreCase)
+                regexOptions |= RegexOptions.CultureInvariant;
+
+            if (comparisonType == StringComparison.CurrentCultureIgnoreCase || comparisonType == StringComparison.InvariantCultureIgnoreCase || comparisonType == StringComparison.InvariantCultureIgnoreCase)
+                regexOptions |= RegexOptions.IgnoreCase;
+
+            Regex regex = new Regex(string.Format("{0}(.*?){1}", leftSubstring, rightSubstring), regexOptions);
 
             Match match = regex.Match(input);
 
