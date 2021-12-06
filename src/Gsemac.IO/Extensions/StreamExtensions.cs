@@ -5,6 +5,8 @@ namespace Gsemac.IO.Extensions {
 
     public static class StreamExtensions {
 
+        // Public members
+
         public static byte[] ToArray(this Stream stream) {
 
             if (stream is null)
@@ -47,6 +49,41 @@ namespace Gsemac.IO.Extensions {
                 stream.Seek(currentPos, SeekOrigin.Begin);
 
             return result;
+
+        }
+
+        public static void CopyTo(this Stream source, Stream destination, int bufferSize, int count) {
+
+            if (source is null)
+                throw new ArgumentNullException(nameof(source));
+
+            if (destination is null)
+                throw new ArgumentNullException(nameof(destination));
+
+            if (bufferSize <= 0)
+                throw new ArgumentOutOfRangeException(nameof(bufferSize), Core.Properties.ExceptionMessages.PositiveNumberRequired);
+
+            if (count < 0)
+                throw new ArgumentOutOfRangeException(nameof(count), Core.Properties.ExceptionMessages.NonNegativeNumberRequired);
+
+            int bytesToRead = count;
+
+            byte[] buffer = new byte[bufferSize];
+
+            while (bytesToRead > 0) {
+
+                int bytesRead = source.Read(buffer, 0, buffer.Length);
+
+                // It's tempting to stop reading if bytesRead < bufferSize, because this implies there aren't enough bytes to fill the buffer and we have therefore reached the end.
+                // This is not strictly true, as noted in the documentation for Stream.Read: "An implementation is free to return fewer bytes than requested even if the end of the stream has not been reached."
+                // https://docs.microsoft.com/en-us/dotnet/api/system.io.stream.read?view=net-6.0
+
+                if (bytesRead > 0)
+                    destination.Write(buffer, 0, bytesRead);
+                else
+                    break;
+
+            }
 
         }
 

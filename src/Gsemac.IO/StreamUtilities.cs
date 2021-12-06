@@ -7,6 +7,8 @@ namespace Gsemac.IO {
 
         // Public members
 
+        public const int DefaultBufferSize = 81920; // https://docs.microsoft.com/en-us/dotnet/api/system.io.stream.copyto?view=net-6.0
+
         public static string StreamToString(Stream stream) {
 
             return StreamToString(stream, Encoding.UTF8);

@@ -126,4 +126,7 @@
   <data name="ObjectIsNotAnInstanceOfWithType" xml:space="preserve">
     <value>The object is not an instance of '{0}'.</value>
   </data>
+  <data name="PositiveNumberRequired" xml:space="preserve">
+    <value>Positive number required.</value>
+  </data>
 </root>

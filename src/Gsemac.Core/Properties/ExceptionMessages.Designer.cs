@@ -86,5 +86,14 @@ namespace Gsemac.Core.Properties {
                 return ResourceManager.GetString("ObjectIsNotAnInstanceOfWithType", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Positive number required..
+        /// </summary>
+        internal static string PositiveNumberRequired {
+            get {
+                return ResourceManager.GetString("PositiveNumberRequired", resourceCulture);
+            }
+        }
     }
 }
