@@ -11,9 +11,9 @@ namespace Gsemac.Collections.Tests {
         public void TestRotateWithPositiveOffset() {
 
             int[] beforeItems = new int[] { 1, 2, 3, 4, 5 };
-            int[] afterItems = new int[] { 4, 5, 1, 2, 3 };
+            int[] afterItems = new int[] { 3, 4, 5, 1, 2 };
 
-            ArrayUtilities.Rotate(beforeItems, 2);
+            ArrayUtilities.Rotate(beforeItems, 3);
 
             CollectionAssert.AreEqual(afterItems, beforeItems);
 
@@ -22,9 +22,9 @@ namespace Gsemac.Collections.Tests {
         public void TestRotateWithNegativeOffset() {
 
             int[] beforeItems = new int[] { 1, 2, 3, 4, 5 };
-            int[] afterItems = new int[] { 3, 4, 5, 1, 2 };
+            int[] afterItems = new int[] { 4, 5, 1, 2, 3 };
 
-            ArrayUtilities.Rotate(beforeItems, -2);
+            ArrayUtilities.Rotate(beforeItems, -3);
 
             CollectionAssert.AreEqual(afterItems, beforeItems);
 
@@ -33,9 +33,9 @@ namespace Gsemac.Collections.Tests {
         public void TestRotateWithPositiveOffsetGreaterThanArrayLength() {
 
             int[] beforeItems = new int[] { 1, 2, 3, 4, 5 };
-            int[] afterItems = new int[] { 4, 5, 1, 2, 3 };
+            int[] afterItems = new int[] { 3, 4, 5, 1, 2 };
 
-            ArrayUtilities.Rotate(beforeItems, 7);
+            ArrayUtilities.Rotate(beforeItems, 8);
 
             CollectionAssert.AreEqual(afterItems, beforeItems);
 
@@ -44,9 +44,9 @@ namespace Gsemac.Collections.Tests {
         public void TestRotateWithNegativeOffsetGreaterThanArrayLength() {
 
             int[] beforeItems = new int[] { 1, 2, 3, 4, 5 };
-            int[] afterItems = new int[] { 3, 4, 5, 1, 2 };
+            int[] afterItems = new int[] { 4, 5, 1, 2, 3 };
 
-            ArrayUtilities.Rotate(beforeItems, -7);
+            ArrayUtilities.Rotate(beforeItems, -8);
 
             CollectionAssert.AreEqual(afterItems, beforeItems);
 
@@ -58,9 +58,9 @@ namespace Gsemac.Collections.Tests {
         public void TestShiftWithPositiveOffset() {
 
             int[] beforeItems = new int[] { 1, 2, 3, 4, 5 };
-            int[] afterItems = new int[] { 0, 0, 1, 2, 3 };
+            int[] afterItems = new int[] { 0, 0, 0, 1, 2 };
 
-            ArrayUtilities.Shift(beforeItems, 2);
+            ArrayUtilities.Shift(beforeItems, 3);
 
             CollectionAssert.AreEqual(afterItems, beforeItems);
 
@@ -69,9 +69,9 @@ namespace Gsemac.Collections.Tests {
         public void TestShiftWithNegativeOffset() {
 
             int[] beforeItems = new int[] { 1, 2, 3, 4, 5 };
-            int[] afterItems = new int[] { 3, 4, 5, 0, 0 };
+            int[] afterItems = new int[] { 4, 5, 0, 0, 0 };
 
-            ArrayUtilities.Shift(beforeItems, -2);
+            ArrayUtilities.Shift(beforeItems, -3);
 
             CollectionAssert.AreEqual(afterItems, beforeItems);
 

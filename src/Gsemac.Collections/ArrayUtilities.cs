@@ -52,13 +52,13 @@ namespace Gsemac.Collections {
 
                 offset = Math.Abs(offset);
 
-                Array.Copy(array, offset, array, 0, offset + 1);
-                Array.Clear(array, offset + 1, array.Length - offset - 1);
+                Array.Copy(array, offset, array, 0, array.Length - offset);
+                Array.Clear(array, array.Length - offset, offset);
 
             }
             else if (offset > 0) {
 
-                Array.Copy(array, 0, array, offset, offset + 1);
+                Array.Copy(array, 0, array, offset, array.Length - offset);
                 Array.Clear(array, 0, offset);
 
             }
