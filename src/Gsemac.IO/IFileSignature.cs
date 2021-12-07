@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.IO;
 
 namespace Gsemac.IO {
 
@@ -9,7 +10,7 @@ namespace Gsemac.IO {
 
         int Length { get; }
 
-        bool IsMatch(IEnumerable<byte> bytes);
+        bool IsMatch(Stream stream);
 
     }
 

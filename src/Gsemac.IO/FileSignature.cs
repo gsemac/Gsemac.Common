@@ -1,6 +1,6 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 
 namespace Gsemac.IO {
@@ -23,10 +23,24 @@ namespace Gsemac.IO {
             this(signatureBytes.Select(i => (byte?)i).ToArray()) {
         }
 
-        public bool IsMatch(IEnumerable<byte> bytes) {
+        public bool IsMatch(Stream stream) {
 
-            return signatureBytes.Zip(bytes, (first, second) => Tuple.Create(first, second))
-                .All(pair => !pair.Item1.HasValue || pair.Item1 == pair.Item2);
+            foreach (byte? b in signatureBytes) {
+
+                int nextStreamByte = stream.ReadByte();
+
+                if (nextStreamByte < 0)
+                    return false;
+
+                if (b is null)
+                    continue;
+
+                if (b != nextStreamByte)
+                    return false;
+
+            }
+
+            return true;
 
         }
 

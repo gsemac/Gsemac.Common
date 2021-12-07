@@ -75,15 +75,20 @@ namespace Gsemac.IO {
 
                             if (sig.Length > streamBytes.Length) {
 
-                                int count = sig.Length - (int)streamBytes.Length;
+                                int count = (int)(sig.Length - streamBytes.Length);
                                 byte[] buffer = new byte[sig.Length - streamBytes.Length];
 
                                 stream.Read(buffer, 0, count);
+
+                                streamBytes.Seek(0, SeekOrigin.End);
+
                                 streamBytes.Write(buffer, 0, count);
 
                             }
 
-                            return sig.IsMatch(streamBytes.ToArray());
+                            streamBytes.Seek(0, SeekOrigin.Begin);
+
+                            return sig.IsMatch(streamBytes);
 
                         });
 
