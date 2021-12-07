@@ -171,7 +171,7 @@ namespace Gsemac.Net.GitHub {
             string downloadUrl = GetNodeHref(releaseAssetNode, Properties.QueryStrings.ReleaseAssetTitleXPath);
 
             return new ReleaseAsset() {
-                Name = StringUtilities.NormalizeSpace(Uri.UnescapeDataString(name)),
+                Name = StringUtilities.NormalizeWhiteSpace(Uri.UnescapeDataString(name)),
                 DownloadUrl = Url.Combine(Properties.GitHub.RootUrl, downloadUrl),
             };
 

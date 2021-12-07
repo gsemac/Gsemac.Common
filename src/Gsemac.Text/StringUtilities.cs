@@ -151,7 +151,7 @@ namespace Gsemac.Text {
 
         }
 
-        public static string NormalizeSpace(string input, NormalizeSpaceOptions options = NormalizeSpaceOptions.Default) {
+        public static string NormalizeWhiteSpace(string input, NormalizeSpaceOptions options = NormalizeSpaceOptions.Default) {
 
             string pattern = options.HasFlag(NormalizeSpaceOptions.PreserveLineBreaks) ?
                 @"[^\S\r\n]+" :
