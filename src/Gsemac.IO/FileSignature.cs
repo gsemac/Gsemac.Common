@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -23,7 +24,10 @@ namespace Gsemac.IO {
             this(signatureBytes.Select(i => (byte?)i).ToArray()) {
         }
 
-        public bool IsMatch(Stream stream) {
+        public virtual bool IsMatch(Stream stream) {
+
+            if (stream is null)
+                throw new ArgumentNullException(nameof(stream));
 
             foreach (byte? b in signatureBytes) {
 
