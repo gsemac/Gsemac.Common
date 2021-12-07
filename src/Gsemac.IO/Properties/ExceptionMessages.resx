@@ -120,6 +120,9 @@
   <data name="CannotAccessAClosedStream" xml:space="preserve">
     <value>Cannot access a closed Stream.</value>
   </data>
+  <data name="CannotMovePositionBeforeBeginningOfStream" xml:space="preserve">
+    <value>An attempt was made to move the position before the beginning of the stream.</value>
+  </data>
   <data name="CapacityMustBePositive" xml:space="preserve">
     <value>Capacity must be positive.</value>
   </data>
@@ -137,6 +140,9 @@
   </data>
   <data name="InvalidFileExtensionWithFileExtension" xml:space="preserve">
     <value>The string '{0}' is not a valid file extension.</value>
+  </data>
+  <data name="InvalidSeekOrigin" xml:space="preserve">
+    <value>Invalid seek origin.</value>
   </data>
   <data name="MalformedMimeType" xml:space="preserve">
     <value>The MIME type was malformed.</value>

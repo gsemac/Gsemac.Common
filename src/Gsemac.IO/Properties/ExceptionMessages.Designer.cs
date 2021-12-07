@@ -70,6 +70,15 @@ namespace Gsemac.IO.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to An attempt was made to move the position before the beginning of the stream..
+        /// </summary>
+        internal static string CannotMovePositionBeforeBeginningOfStream {
+            get {
+                return ResourceManager.GetString("CannotMovePositionBeforeBeginningOfStream", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Capacity must be positive..
         /// </summary>
         internal static string CapacityMustBePositive {
@@ -120,6 +129,15 @@ namespace Gsemac.IO.Properties {
         internal static string InvalidFileExtensionWithFileExtension {
             get {
                 return ResourceManager.GetString("InvalidFileExtensionWithFileExtension", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Invalid seek origin..
+        /// </summary>
+        internal static string InvalidSeekOrigin {
+            get {
+                return ResourceManager.GetString("InvalidSeekOrigin", resourceCulture);
             }
         }
         
