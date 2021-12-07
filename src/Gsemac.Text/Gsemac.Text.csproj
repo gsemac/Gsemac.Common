@@ -18,9 +18,4 @@
 		<DebugSymbols>false</DebugSymbols>
 	</PropertyGroup>
 
-	<ItemGroup>
-		<ProjectReference Include="..\Gsemac.Collections\Gsemac.Collections.csproj" />
-		<ProjectReference Include="..\Gsemac.Reflection\Gsemac.Reflection.csproj" />
-	</ItemGroup>
-
 </Project>
