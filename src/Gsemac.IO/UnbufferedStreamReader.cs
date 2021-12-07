@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Text;
 
 namespace Gsemac.IO {
@@ -8,16 +9,22 @@ namespace Gsemac.IO {
 
         // Public members
 
-        public static new UnbufferedStreamReader Null => new UnbufferedStreamReader(null);
+        public static new UnbufferedStreamReader Null => new UnbufferedStreamReader();
 
         public Stream BaseStream => stream;
         public Encoding CurrentEncoding => encoding;
         public bool EndOfStream => endOfStream;
 
         public UnbufferedStreamReader(Stream stream) :
-            this(stream, Encoding.UTF8) {
+            this(stream, DefaultEncoding) {
         }
         public UnbufferedStreamReader(Stream stream, Encoding encoding) {
+
+            if (stream is null)
+                throw new ArgumentNullException(nameof(stream));
+
+            if (encoding is null)
+                throw new ArgumentNullException(nameof(encoding));
 
             this.stream = stream;
             this.encoding = encoding;
@@ -112,10 +119,14 @@ namespace Gsemac.IO {
         // Private members
 
         private readonly Stream stream;
-        private readonly Encoding encoding;
+        private readonly Encoding encoding = DefaultEncoding;
         private readonly char[] buffer = new char[1];
         private bool endOfStream = false;
         private bool isBufferEmpty = true;
+
+        private static readonly Encoding DefaultEncoding = Encoding.UTF8;
+
+        private UnbufferedStreamReader() { }
 
         private int PeekNextCharacter() {
 
