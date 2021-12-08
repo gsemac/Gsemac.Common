@@ -17,6 +17,9 @@ namespace Gsemac.IO {
 
         public FileSignature(params byte?[] signatureBytes) {
 
+            if (signatureBytes is null)
+                throw new ArgumentNullException(nameof(signatureBytes));
+
             this.signatureBytes = signatureBytes;
 
         }
@@ -29,17 +32,17 @@ namespace Gsemac.IO {
             if (stream is null)
                 throw new ArgumentNullException(nameof(stream));
 
-            foreach (byte? b in signatureBytes) {
+            foreach (byte? signatureBytes in signatureBytes) {
 
                 int nextStreamByte = stream.ReadByte();
 
                 if (nextStreamByte < 0)
                     return false;
 
-                if (b is null)
+                if (signatureBytes is null)
                     continue;
 
-                if (b != nextStreamByte)
+                if (signatureBytes != nextStreamByte)
                     return false;
 
             }
