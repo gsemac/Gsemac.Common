@@ -46,40 +46,19 @@ namespace Gsemac.IO {
             return fileFormat;
 
         }
-        public IFileFormat FromStream(Stream stream) {
+        public IFileFormat FromStream(Stream stream, int bufferSize) {
 
             if (stream is null)
                 throw new ArgumentNullException(nameof(stream));
 
-            using (MemoryStream streamBytes = new MemoryStream()) {
+            using (MemoryStream streamBytes = new MemoryStream(bufferSize)) {
+
+                streamBytes.SetLength(stream.Read(streamBytes.GetBuffer(), 0, bufferSize));
 
                 IFileFormat fileFormat = GetKnownFileFormats()
                     .Where(format => format.Signatures.Any())
                     .OrderByDescending(format => format.Signatures.Max(sig => sig.Length))
-                    .Where(format => {
-
-                        return format.Signatures.Any(sig => {
-
-                            if (sig.Length > streamBytes.Length) {
-
-                                int count = (int)(sig.Length - streamBytes.Length);
-                                byte[] buffer = new byte[sig.Length - streamBytes.Length];
-
-                                stream.Read(buffer, 0, count);
-
-                                streamBytes.Seek(0, SeekOrigin.End);
-
-                                streamBytes.Write(buffer, 0, count);
-
-                            }
-
-                            streamBytes.Seek(0, SeekOrigin.Begin);
-
-                            return sig.IsMatch(streamBytes);
-
-                        });
-
-                    })
+                    .Where(format => FormatIsMatch(format, stream))
                     .FirstOrDefault();
 
                 return fileFormat;
@@ -91,6 +70,26 @@ namespace Gsemac.IO {
         // Protected members
 
         protected abstract IEnumerable<IFileFormat> GetKnownFileFormats();
+
+        // Private members
+
+        private static bool FormatIsMatch(IFileFormat fileFormat, Stream stream) {
+
+            if (fileFormat is null)
+                throw new ArgumentNullException(nameof(fileFormat));
+
+            if (stream is null)
+                throw new ArgumentNullException(nameof(stream));
+
+            return fileFormat.Signatures.Any(sig => {
+
+                stream.Seek(0, SeekOrigin.Begin);
+
+                return sig.IsMatch(stream);
+
+            });
+
+        }
 
     }
 

@@ -24,6 +24,10 @@ namespace Gsemac.IO {
 
         }
 
+        // Internal members
+
+        internal const int DefaultReadBufferSize = 64;
+
         // Protected members
 
         protected override IEnumerable<IFileFormat> GetKnownFileFormats() {

@@ -19,9 +19,14 @@ namespace Gsemac.IO.Extensions {
 
         }
 
+        public static IFileFormat FromStream(this IFileFormatFactory fileFormatFactory, Stream stream) {
+
+            return fileFormatFactory.FromStream(stream, FileFormatFactory.DefaultReadBufferSize);
+
+        }
         public static Stream FromStream(this IFileFormatFactory fileFormatFactory, Stream stream, out IFileFormat fileFormat) {
 
-            return FromStream(fileFormatFactory, stream, bufferSize: ReaderBufferSize, out fileFormat);
+            return FromStream(fileFormatFactory, stream, bufferSize: FileFormatFactory.DefaultReadBufferSize, out fileFormat);
 
         }
         public static Stream FromStream(this IFileFormatFactory fileFormatFactory, Stream stream, int bufferSize, out IFileFormat fileFormat) {
@@ -33,7 +38,7 @@ namespace Gsemac.IO.Extensions {
 
             try {
 
-                int bytesRead = stream.Read(fileSignatureBuffer.GetBuffer(), 0, ReaderBufferSize);
+                int bytesRead = stream.Read(fileSignatureBuffer.GetBuffer(), 0, FileFormatFactory.DefaultReadBufferSize);
 
                 fileSignatureBuffer.SetLength(bytesRead);
 
@@ -53,10 +58,6 @@ namespace Gsemac.IO.Extensions {
             }
 
         }
-
-        // Private members
-
-        private const int ReaderBufferSize = 64;
 
     }
 

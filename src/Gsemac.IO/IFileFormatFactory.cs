@@ -6,7 +6,7 @@ namespace Gsemac.IO {
 
         IFileFormat FromMimeType(IMimeType mimeType);
         IFileFormat FromFileExtension(string fileExtension);
-        IFileFormat FromStream(Stream stream);
+        IFileFormat FromStream(Stream stream, int bufferSize);
 
     }
 
