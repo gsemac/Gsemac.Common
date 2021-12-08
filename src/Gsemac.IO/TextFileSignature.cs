@@ -93,7 +93,7 @@ namespace Gsemac.IO {
                 throw new ArgumentNullException(nameof(encoding));
 
             if (string.IsNullOrEmpty(signature))
-                return Polyfills.System.Array.Empty<byte?>();
+                return Enumerable.Empty<byte?>().ToArray();
 
             if (options.HasFlag(FileSignatureOptions.CaseInsensitive))
                 signature = signature.ToLowerInvariant();
