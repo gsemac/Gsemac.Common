@@ -25,6 +25,7 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\Gsemac.IO.Compression\Gsemac.IO.Compression.csproj" />
+		<ProjectReference Include="..\Gsemac.IO.Logging\Gsemac.IO.Logging.csproj" />
 		<ProjectReference Include="..\Gsemac.Net.GitHub\Gsemac.Net.GitHub.csproj" />
 		<ProjectReference Include="..\Gsemac.Net.WebBrowsers\Gsemac.Net.WebBrowsers.csproj" />
 		<ProjectReference Include="..\Gsemac.Net\Gsemac.Net.csproj" />
