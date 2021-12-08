@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Gsemac.IO {
+namespace Gsemac.IO.FileFormats {
 
     public sealed class AnyFileFormat :
         FileFormatBase {

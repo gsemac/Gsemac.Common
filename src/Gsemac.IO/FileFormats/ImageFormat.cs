@@ -1,6 +1,8 @@
-﻿using Gsemac.IO;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 
-namespace Gsemac.Drawing.Imaging {
+namespace Gsemac.IO.FileFormats {
 
     public static class ImageFormat {
 
@@ -16,6 +18,14 @@ namespace Gsemac.Drawing.Imaging {
         public static IFileFormat Tiff => new TiffFileFormat();
         public static IFileFormat WebP => new WebPFileFormat();
         public static IFileFormat Wmf => new WmfFileFormat();
+
+        public static IEnumerable<IFileFormat> GetFormats() {
+
+            return typeof(ImageFormat).GetProperties(BindingFlags.Public | BindingFlags.Static)
+                .Select(property => property.GetValue(null, null))
+                .Cast<IFileFormat>();
+
+        }
 
     }
 

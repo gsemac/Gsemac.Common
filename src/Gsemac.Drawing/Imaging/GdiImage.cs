@@ -1,6 +1,7 @@
 ﻿#if NETFRAMEWORK
 
 using Gsemac.IO;
+using Gsemac.IO.FileFormats;
 using System;
 using System.Drawing;
 

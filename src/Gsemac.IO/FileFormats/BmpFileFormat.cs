@@ -1,7 +1,7 @@
 ﻿using Gsemac.IO;
 using System.Collections.Generic;
 
-namespace Gsemac.Drawing.Imaging {
+namespace Gsemac.IO.FileFormats {
 
     public sealed class BmpFileFormat :
         FileFormatBase {

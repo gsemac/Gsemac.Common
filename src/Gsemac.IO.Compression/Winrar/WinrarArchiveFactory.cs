@@ -1,4 +1,5 @@
 ﻿using Gsemac.IO.Extensions;
+using Gsemac.IO.FileFormats;
 using Gsemac.Reflection.Plugins;
 using System.Collections.Generic;
 using System.IO;

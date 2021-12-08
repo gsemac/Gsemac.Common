@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Gsemac.IO.Compression {
+namespace Gsemac.IO.FileFormats {
 
     public class RarFileFormat :
         FileFormatBase {
