@@ -1,5 +1,4 @@
-﻿using Gsemac.IO;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace Gsemac.IO.FileFormats {
 
