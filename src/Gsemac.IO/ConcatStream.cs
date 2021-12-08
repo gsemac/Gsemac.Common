@@ -17,7 +17,10 @@ namespace Gsemac.IO {
             set => SetPosition(value);
         }
 
-        public ConcatStream(Stream stream1, Stream stream2) {
+        public ConcatStream(Stream stream1, Stream stream2) :
+            this(stream1, stream2, closeStreams: false) {
+        }
+        public ConcatStream(Stream stream1, Stream stream2, bool closeStreams) {
 
             if (stream1 is null)
                 throw new ArgumentNullException(nameof(stream1));
@@ -27,6 +30,7 @@ namespace Gsemac.IO {
 
             this.stream1 = stream1;
             this.stream2 = stream2;
+            this.closeStreams = closeStreams;
 
             if (stream2.CanSeek)
                 stream2StartPos = stream2.Position;
@@ -123,11 +127,24 @@ namespace Gsemac.IO {
 
         }
 
+        public override void Close() {
+
+            if (closeStreams) {
+
+                stream1.Close();
+                stream2.Close();
+
+            }
+
+            base.Close();
+
+        }
+
         // Protected members
 
         protected override void Dispose(bool disposing) {
 
-            if (disposing) {
+            if (disposing && closeStreams) {
 
                 stream1.Dispose();
                 stream2.Dispose();
@@ -143,6 +160,7 @@ namespace Gsemac.IO {
         private readonly Stream stream1;
         private readonly Stream stream2;
         private readonly long stream2StartPos = 0;
+        private readonly bool closeStreams = false;
 
         private long GetLength() {
 
