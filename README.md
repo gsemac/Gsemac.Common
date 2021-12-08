@@ -37,6 +37,11 @@ Individual NuGet packages are available for each project.
 
 * Facilities for creating and modifying various archive formats such as ZIP, RAR, and 7Z
 
+### [Gsemac.IO.Logging](src/Gsemac.IO.Logging)
+[![NuGet](https://img.shields.io/nuget/v/Gsemac.IO.Logging.svg)](https://www.nuget.org/packages/Gsemac.IO.Logging/)
+
+* Facilities for logging to console and files
+
 ## [Gsemac.Net](src/Gsemac.Net)
 [![NuGet](https://img.shields.io/nuget/v/Gsemac.Net.svg)](https://www.nuget.org/packages/Gsemac.Net/)
 
@@ -83,8 +88,12 @@ Individual NuGet packages are available for each project.
 ## [Gsemac.Text](src/Gsemac.Text)
 [![NuGet](https://img.shields.io/nuget/v/Gsemac.Text.svg)](https://www.nuget.org/packages/Gsemac.Text/)
 
-* Facilities for loading and modifying INI documents
 * Facilities for converting between various text and data encodings
+
+### [Gsemac.Text.Ini](src/Gsemac.Text.Ini)
+[![NuGet](https://img.shields.io/nuget/v/Gsemac.Text.Ini.svg)](https://www.nuget.org/packages/Gsemac.Text.Ini/)
+
+* Facilities for loading and modifying INI documents
 
 ## [Gsemac.Win32](src/Gsemac.Win32)
 [![NuGet](https://img.shields.io/nuget/v/Gsemac.Win32.svg)](https://www.nuget.org/packages/Gsemac.Win32/)
