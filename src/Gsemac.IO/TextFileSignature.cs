@@ -44,7 +44,7 @@ namespace Gsemac.IO {
 
                     nextChar = reader.Read();
 
-                    if (nextChar != -1 && !char.IsWhiteSpace((char)nextChar)) {
+                    if (nextChar != -1 && (!options.HasFlag(FileSignatureOptions.IgnoreLeadingWhiteSpace) || !char.IsWhiteSpace((char)nextChar))) {
 
                         // We've detected a non-whitespace character, so begin the comparison.
 

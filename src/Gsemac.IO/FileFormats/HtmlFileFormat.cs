@@ -7,8 +7,8 @@ namespace Gsemac.IO.FileFormats {
 
         public override IEnumerable<string> Extensions => new[] { ".html", ".htm" };
         public override IEnumerable<IFileSignature> Signatures => new[] {
-            new TextFileSignature("<html ", FileSignatureOptions.CaseInsensitive),
-            new TextFileSignature("<!doctype html>", FileSignatureOptions.CaseInsensitive),
+            new TextFileSignature("<html ", FileSignatureOptions.IgnoreLeadingWhiteSpace | FileSignatureOptions.CaseInsensitive),
+            new TextFileSignature("<!doctype html>", FileSignatureOptions.IgnoreLeadingWhiteSpace | FileSignatureOptions.CaseInsensitive),
         };
         public override IMimeType MimeType => new MimeType("text/html");
 
