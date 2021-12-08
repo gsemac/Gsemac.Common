@@ -1,10 +1,11 @@
 ﻿using System;
 using System.IO;
-using System.Linq;
 
 namespace Gsemac.IO.Extensions {
 
     public static class FileFormatFactoryExtensions {
+
+        // Public members
 
         public static IFileFormat FromFile(this IFileFormatFactory fileFormatFactory, string filePath) {
 
@@ -17,22 +18,22 @@ namespace Gsemac.IO.Extensions {
             return fileFormatFactory.FromMimeType(new MimeType(mimeType));
 
         }
+
         public static Stream FromStream(this IFileFormatFactory fileFormatFactory, Stream stream, out IFileFormat fileFormat) {
+
+            return FromStream(fileFormatFactory, stream, bufferSize: ReaderBufferSize, out fileFormat);
+
+        }
+        public static Stream FromStream(this IFileFormatFactory fileFormatFactory, Stream stream, int bufferSize, out IFileFormat fileFormat) {
 
             // Read the file signature from the stream into a buffer, which is then concatenated with the original stream.
             // This allows us to read the file signature from streams that don't support seeking.
 
-            int maxSignatureLength = fileFormatFactory.GetKnownFileFormats()
-                .Where(format => format.Signatures is object && format.Signatures.Any())
-                .SelectMany(format => format.Signatures.Select(sig => sig.Length))
-                .OrderByDescending(length => length)
-                .FirstOrDefault();
-
-            MemoryStream fileSignatureBuffer = new MemoryStream(new byte[maxSignatureLength], 0, maxSignatureLength, writable: true, publiclyVisible: true);
+            MemoryStream fileSignatureBuffer = new MemoryStream(new byte[bufferSize], 0, count: bufferSize, writable: true, publiclyVisible: true);
 
             try {
 
-                int bytesRead = stream.Read(fileSignatureBuffer.GetBuffer(), 0, maxSignatureLength);
+                int bytesRead = stream.Read(fileSignatureBuffer.GetBuffer(), 0, ReaderBufferSize);
 
                 fileSignatureBuffer.SetLength(bytesRead);
 
@@ -52,6 +53,10 @@ namespace Gsemac.IO.Extensions {
             }
 
         }
+
+        // Private members
+
+        private const int ReaderBufferSize = 64;
 
     }
 
