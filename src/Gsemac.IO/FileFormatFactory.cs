@@ -15,9 +15,22 @@ namespace Gsemac.IO {
 
         public static FileFormatFactory Default => new FileFormatFactory();
 
+        public FileFormatFactory() { }
+        public FileFormatFactory(IEnumerable<IFileFormat> knownFileFormats) {
+
+            if (knownFileFormats is null)
+                throw new ArgumentNullException(nameof(knownFileFormats));
+
+            fileFormats = knownFileFormats;
+
+        }
+
         public IEnumerable<IFileFormat> GetKnownFileFormats() {
 
-            return knownFileFormats.Value;
+            if (fileFormats is object)
+                return fileFormats;
+
+            return globalFileFormats.Value;
 
         }
 
@@ -26,7 +39,7 @@ namespace Gsemac.IO {
             if (mimeType is null)
                 throw new ArgumentNullException(nameof(mimeType));
 
-            IFileFormat fileFormat = GetKnownFileFormatsInternal()
+            IFileFormat fileFormat = GetKnownFileFormats()
                 .Where(format => format.MimeType.Equals(mimeType))
                 .FirstOrDefault();
 
@@ -50,12 +63,9 @@ namespace Gsemac.IO {
             else
                 ext = PathUtilities.NormalizeFileExtension(ext);
 
-            IFileFormat fileFormat = GetKnownFileFormatsInternal()
+            IFileFormat fileFormat = GetKnownFileFormats()
                 .Where(format => format.Extensions.Any(formatExt => formatExt.Equals(ext, StringComparison.OrdinalIgnoreCase)))
                 .FirstOrDefault();
-
-            if (fileFormat is null)
-                fileFormat = new FileFormat(ext);
 
             return fileFormat;
 
@@ -67,7 +77,7 @@ namespace Gsemac.IO {
 
             using (MemoryStream streamBytes = new MemoryStream()) {
 
-                IFileFormat fileFormat = GetKnownFileFormatsInternal()
+                IFileFormat fileFormat = GetKnownFileFormats()
                     .Where(format => format.Signatures.Any())
                     .OrderByDescending(format => format.Signatures.Max(sig => sig.Length))
                     .Where(format => {
@@ -104,7 +114,9 @@ namespace Gsemac.IO {
 
         // Private members
 
-        private static readonly Lazy<IEnumerable<IFileFormat>> knownFileFormats = new Lazy<IEnumerable<IFileFormat>>(InitializeKnownFileFormats);
+        private readonly IEnumerable<IFileFormat> fileFormats;
+
+        private static readonly Lazy<IEnumerable<IFileFormat>> globalFileFormats = new Lazy<IEnumerable<IFileFormat>>(InitializeKnownFileFormats);
 
         private static IEnumerable<IFileFormat> InitializeKnownFileFormats() {
 
@@ -113,11 +125,6 @@ namespace Gsemac.IO {
                 .Where(type => type.IsDefaultConstructable())
                 .Select(type => Activator.CreateInstance(type))
                 .OfType<IFileFormat>();
-
-        }
-        private static IEnumerable<IFileFormat> GetKnownFileFormatsInternal() {
-
-            return knownFileFormats.Value;
 
         }
 
