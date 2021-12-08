@@ -26,7 +26,7 @@ namespace Gsemac.IO {
 
         // Internal members
 
-        internal const int DefaultReadBufferSize = 64;
+        internal const int DefaultReadBufferSize = 1024;
 
         // Protected members
 
