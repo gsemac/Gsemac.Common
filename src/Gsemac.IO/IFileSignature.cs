@@ -8,6 +8,7 @@ namespace Gsemac.IO {
 
         byte? this[int index] { get; }
 
+        int Offset { get; }
         int Length { get; }
 
         bool IsMatch(Stream stream);

@@ -13,6 +13,7 @@ namespace Gsemac.IO {
 
         public byte? this[int index] => signatureBytes[index];
 
+        public int Offset { get; set; } = 0;
         public int Length => signatureBytes.Length;
 
         public FileSignature(params byte?[] signatureBytes) {
@@ -32,9 +33,24 @@ namespace Gsemac.IO {
             if (stream is null)
                 throw new ArgumentNullException(nameof(stream));
 
+            int currentOffset = 0;
+
+            int nextStreamByte;
+
+            while (currentOffset < Offset) {
+
+                nextStreamByte = stream.ReadByte();
+
+                if (nextStreamByte < 0)
+                    return false;
+
+                ++currentOffset;
+
+            }
+
             foreach (byte? signatureBytes in signatureBytes) {
 
-                int nextStreamByte = stream.ReadByte();
+                nextStreamByte = stream.ReadByte();
 
                 if (nextStreamByte < 0)
                     return false;
