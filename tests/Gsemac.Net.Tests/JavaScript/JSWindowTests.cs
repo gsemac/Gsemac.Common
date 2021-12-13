@@ -8,13 +8,13 @@ namespace Gsemac.Net.JavaScript.Tests {
         [TestMethod]
         public void TestBtoaWithAsciiString() {
 
-            Assert.AreEqual("aGVsbG8gd29ybGQ=", JsWindow.Btoa("hello world"));
+            Assert.AreEqual("aGVsbG8gd29ybGQ=", new JSWindow().Btoa("hello world"));
 
         }
         [TestMethod]
         public void TestAtobWithAsciiString() {
 
-            Assert.AreEqual("hello world", JsWindow.Atob("aGVsbG8gd29ybGQ="));
+            Assert.AreEqual("hello world", new JSWindow().Atob("aGVsbG8gd29ybGQ="));
 
         }
 

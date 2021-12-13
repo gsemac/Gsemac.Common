@@ -3,9 +3,10 @@ using System.Text;
 
 namespace Gsemac.Net.JavaScript {
 
-    public static class JsWindow {
+    public class JSWindow :
+        IJSWindow {
 
-        public static string Atob(string encodedData) {
+        public string Atob(string encodedData) {
 
             byte[] bytes = Convert.FromBase64String(encodedData);
 
@@ -13,7 +14,7 @@ namespace Gsemac.Net.JavaScript {
 
 
         }
-        public static string Btoa(string stringToEncode) {
+        public string Btoa(string stringToEncode) {
 
             byte[] bytes = Encoding.GetEncoding(28591).GetBytes(stringToEncode);
 

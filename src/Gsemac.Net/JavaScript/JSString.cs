@@ -1,6 +1,8 @@
 ﻿namespace Gsemac.Net.JavaScript {
 
-    public static class JsString {
+    public static class JSString {
+
+        // Public members
 
         public static string FromCharCode(ushort charCode) {
 

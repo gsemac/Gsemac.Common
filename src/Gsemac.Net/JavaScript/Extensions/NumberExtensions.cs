@@ -3,7 +3,7 @@ using System.Text;
 
 namespace Gsemac.Net.JavaScript.Extensions {
 
-    public static class JsNumberExtensions {
+    public static class NumberExtensions {
 
         // Public members
 

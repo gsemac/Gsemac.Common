@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace Gsemac.Net.JavaScript.Extensions {
 
-    public static class JsArrayExtensions {
+    public static class ArrayExtensions {
 
         public static T Pop<T>(this IList<T> array) {
 

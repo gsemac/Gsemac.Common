@@ -2,7 +2,7 @@
 
 namespace Gsemac.Net.JavaScript.Extensions {
 
-    public static class JsStringExtensions {
+    public static class StringExtensions {
 
         public static string CharAt(this string str, int index) {
 

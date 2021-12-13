@@ -11,7 +11,7 @@ namespace Gsemac.Net.JavaScript.Tests {
             // Example from https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/decodeURI
 
             Assert.AreEqual("https://developer.mozilla.org/ru/docs/JavaScript_шеллы",
-                JsGlobal.DecodeUri("https://developer.mozilla.org/ru/docs/JavaScript_%D1%88%D0%B5%D0%BB%D0%BB%D1%8B"));
+                JSGlobal.DecodeUri("https://developer.mozilla.org/ru/docs/JavaScript_%D1%88%D0%B5%D0%BB%D0%BB%D1%8B"));
 
         }
 
@@ -20,7 +20,7 @@ namespace Gsemac.Net.JavaScript.Tests {
 
             // Example from https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/encodeURI
 
-            Assert.AreEqual(";,/?:@&=+$#", JsGlobal.EncodeUri(";,/?:@&=+$#"));
+            Assert.AreEqual(";,/?:@&=+$#", JSGlobal.EncodeUri(";,/?:@&=+$#"));
 
         }
         [TestMethod]
@@ -28,7 +28,7 @@ namespace Gsemac.Net.JavaScript.Tests {
 
             // Example from https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/encodeURI
 
-            Assert.AreEqual("-_.!~*'()", JsGlobal.EncodeUri("-_.!~*'()"));
+            Assert.AreEqual("-_.!~*'()", JSGlobal.EncodeUri("-_.!~*'()"));
 
         }
         [TestMethod]
@@ -36,7 +36,7 @@ namespace Gsemac.Net.JavaScript.Tests {
 
             // Example from https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/encodeURI
 
-            Assert.AreEqual("ABC%20abc%20123", JsGlobal.EncodeUri("ABC abc 123"));
+            Assert.AreEqual("ABC%20abc%20123", JSGlobal.EncodeUri("ABC abc 123"));
 
         }
 
@@ -45,7 +45,7 @@ namespace Gsemac.Net.JavaScript.Tests {
 
             // Example from https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/encodeURI
 
-            Assert.AreEqual("%3B%2C%2F%3F%3A%40%26%3D%2B%24%23", JsGlobal.EncodeUriComponent(";,/?:@&=+$#"));
+            Assert.AreEqual("%3B%2C%2F%3F%3A%40%26%3D%2B%24%23", JSGlobal.EncodeUriComponent(";,/?:@&=+$#"));
 
         }
         [TestMethod]
@@ -53,7 +53,7 @@ namespace Gsemac.Net.JavaScript.Tests {
 
             // Example from https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/encodeURI
 
-            Assert.AreEqual("-_.!~*'()", JsGlobal.EncodeUriComponent("-_.!~*'()"));
+            Assert.AreEqual("-_.!~*'()", JSGlobal.EncodeUriComponent("-_.!~*'()"));
 
         }
         [TestMethod]
@@ -61,20 +61,20 @@ namespace Gsemac.Net.JavaScript.Tests {
 
             // Example from https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/encodeURI
 
-            Assert.AreEqual("ABC%20abc%20123", JsGlobal.EncodeUriComponent("ABC abc 123"));
+            Assert.AreEqual("ABC%20abc%20123", JSGlobal.EncodeUriComponent("ABC abc 123"));
 
         }
 
         [TestMethod]
         public void TestPartIntWithBase10() {
 
-            Assert.AreEqual(123, JsGlobal.ParseInt("123", 10));
+            Assert.AreEqual(123, JSGlobal.ParseInt("123", 10));
 
         }
         [TestMethod]
         public void TestPartIntWithBase16() {
 
-            Assert.AreEqual(291, JsGlobal.ParseInt("0x123"));
+            Assert.AreEqual(291, JSGlobal.ParseInt("0x123"));
 
         }
         [TestMethod]
@@ -83,7 +83,7 @@ namespace Gsemac.Net.JavaScript.Tests {
             // ECMAScript 5 forbids a leading 0 denoting an octal number, and it should be interpreted as base-10.
             // All major browsers follow this convention.
 
-            Assert.AreEqual(123, JsGlobal.ParseInt("0123"));
+            Assert.AreEqual(123, JSGlobal.ParseInt("0123"));
 
         }
 
@@ -92,7 +92,7 @@ namespace Gsemac.Net.JavaScript.Tests {
 
             // Example from https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/unescape
 
-            Assert.AreEqual("abc123", JsGlobal.Unescape("abc123"));
+            Assert.AreEqual("abc123", JSGlobal.Unescape("abc123"));
 
         }
         [TestMethod]
@@ -100,7 +100,7 @@ namespace Gsemac.Net.JavaScript.Tests {
 
             // Example from https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/unescape
 
-            Assert.AreEqual("äöü", JsGlobal.Unescape("%E4%F6%FC"));
+            Assert.AreEqual("äöü", JSGlobal.Unescape("%E4%F6%FC"));
 
         }
         [TestMethod]
@@ -108,7 +108,7 @@ namespace Gsemac.Net.JavaScript.Tests {
 
             // Example from https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/unescape
 
-            Assert.AreEqual("ć", JsGlobal.Unescape("%u0107"));
+            Assert.AreEqual("ć", JSGlobal.Unescape("%u0107"));
 
         }
 

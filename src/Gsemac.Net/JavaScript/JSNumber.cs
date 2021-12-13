@@ -1,11 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Globalization;
-using System.Text;
 
 namespace Gsemac.Net.JavaScript {
 
-    public static class JsNumber {
+    public static class JSNumber {
+
+        // Public members
 
         public static bool IsNaN(object value) {
 

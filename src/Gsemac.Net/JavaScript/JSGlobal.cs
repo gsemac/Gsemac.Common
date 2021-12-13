@@ -5,7 +5,9 @@ using System.Text.RegularExpressions;
 
 namespace Gsemac.Net.JavaScript {
 
-    public static class JsGlobal {
+    public static class JSGlobal {
+
+        // Public members
 
         public static string DecodeUri(string str) {
 

@@ -1,6 +1,8 @@
 ﻿namespace Gsemac.Net.JavaScript {
 
-    public static class JsOperators {
+    public static class JSOperators {
+
+        // Public members
 
         public static int UnsignedRightShift(int lhs, int rhs) {
 
