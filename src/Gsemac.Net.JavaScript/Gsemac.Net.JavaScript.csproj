@@ -19,6 +19,10 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+	  <PackageReference Include="Jint" Version="2.11.58" />
+	</ItemGroup>
+
+	<ItemGroup>
 	  <ProjectReference Include="..\Gsemac.Text\Gsemac.Text.csproj" />
 	</ItemGroup>
 
