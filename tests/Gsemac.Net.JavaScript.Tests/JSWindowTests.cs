@@ -3,7 +3,7 @@
 namespace Gsemac.Net.JavaScript.Tests {
 
     [TestClass]
-    public class JsWindowTests {
+    public class JSWindowTests {
 
         [TestMethod]
         public void TestBtoaWithAsciiString() {

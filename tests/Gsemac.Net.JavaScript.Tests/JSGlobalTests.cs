@@ -3,7 +3,7 @@
 namespace Gsemac.Net.JavaScript.Tests {
 
     [TestClass]
-    public class JsGlobalTests {
+    public class JSGlobalTests {
 
         [TestMethod]
         public void TestDecodeUri() {

@@ -65,6 +65,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Gsemac.Text.Ini", "src\Gsem
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Gsemac.IO.Logging", "src\Gsemac.IO.Logging\Gsemac.IO.Logging.csproj", "{78A83842-EF67-4D41-A202-2FB0E625C5DB}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Gsemac.Net.JavaScript", "src\Gsemac.Net.JavaScript\Gsemac.Net.JavaScript.csproj", "{B87D8E0D-2FC5-495C-B11E-EAC16D59FD70}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Gsemac.Net.JavaScript.Tests", "tests\Gsemac.Net.JavaScript.Tests\Gsemac.Net.JavaScript.Tests.csproj", "{BD268136-7729-40F7-9995-4F0D9F529C87}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -187,6 +191,14 @@ Global
 		{78A83842-EF67-4D41-A202-2FB0E625C5DB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{78A83842-EF67-4D41-A202-2FB0E625C5DB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{78A83842-EF67-4D41-A202-2FB0E625C5DB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B87D8E0D-2FC5-495C-B11E-EAC16D59FD70}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B87D8E0D-2FC5-495C-B11E-EAC16D59FD70}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B87D8E0D-2FC5-495C-B11E-EAC16D59FD70}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B87D8E0D-2FC5-495C-B11E-EAC16D59FD70}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BD268136-7729-40F7-9995-4F0D9F529C87}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BD268136-7729-40F7-9995-4F0D9F529C87}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BD268136-7729-40F7-9995-4F0D9F529C87}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BD268136-7729-40F7-9995-4F0D9F529C87}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -221,6 +233,8 @@ Global
 		{0E66AF6B-0591-428F-BD8C-C6C6C7FFBBCF} = {559AE943-A0A6-43B1-ACF0-BE305C5B4FCE}
 		{3DFD4DC3-C058-4D73-BA8B-EC3B5603BB5E} = {559AE943-A0A6-43B1-ACF0-BE305C5B4FCE}
 		{78A83842-EF67-4D41-A202-2FB0E625C5DB} = {559AE943-A0A6-43B1-ACF0-BE305C5B4FCE}
+		{B87D8E0D-2FC5-495C-B11E-EAC16D59FD70} = {559AE943-A0A6-43B1-ACF0-BE305C5B4FCE}
+		{BD268136-7729-40F7-9995-4F0D9F529C87} = {742EDB7B-BAAD-43E2-82B6-2ECAA2D28338}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {D040AD76-9C92-4D4E-99AD-45B26C068360}
