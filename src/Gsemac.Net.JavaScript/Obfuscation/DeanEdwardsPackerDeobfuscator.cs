@@ -10,7 +10,7 @@ namespace Gsemac.Net.JavaScript.Obfuscation {
 
         public string Deobfuscate(string script) {
 
-            string deobfuscated = Regex.Replace(script, @"\beval\((?<unpacker>function\((?:[a-z]{1}\,?\s*){6}\).+?{}\))\)",
+            string deobfuscated = Regex.Replace(script, @"\beval\s*\(\s*(?<unpacker>function\s*\((?:\s*[a-z]{1}\s*\,?\s*){6}\s*\).+?{}\))\s*\)",
                 m => Unpack(m.Groups["unpacker"].Value),
                 RegexOptions.Singleline);
 

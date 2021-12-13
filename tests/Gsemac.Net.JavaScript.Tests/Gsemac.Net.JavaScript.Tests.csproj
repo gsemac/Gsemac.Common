@@ -17,4 +17,23 @@
 	  <ProjectReference Include="..\..\src\Gsemac.Net.JavaScript\Gsemac.Net.JavaScript.csproj" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <Compile Update="Properties\SamplePaths.Designer.cs">
+	    <DesignTime>True</DesignTime>
+	    <AutoGen>True</AutoGen>
+	    <DependentUpon>SamplePaths.resx</DependentUpon>
+	  </Compile>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <EmbeddedResource Update="Properties\SamplePaths.resx">
+	    <Generator>ResXFileCodeGenerator</Generator>
+	    <LastGenOutput>SamplePaths.Designer.cs</LastGenOutput>
+	  </EmbeddedResource>
+	</ItemGroup>
+
+	<Target Name="PreBuild" BeforeTargets="PreBuildEvent">
+	  <Exec Command="xcopy &quot;$(ProjectDir)Samples\*.*&quot; &quot;$(OutDir)Samples&quot; /Y /I /E&#xD;&#xA;" />
+	</Target>
+
 </Project>
