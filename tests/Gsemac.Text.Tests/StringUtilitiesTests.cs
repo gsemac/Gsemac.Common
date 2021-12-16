@@ -36,6 +36,33 @@ namespace Gsemac.Text.Tests {
 
         }
 
+        // After
+
+        [TestMethod]
+        public void TestAfterWithStringContainingSubstring() {
+
+            Assert.AreEqual("world!", StringUtilities.After("hello, world!", ", "));
+
+        }
+        [TestMethod]
+        public void TestAfterWithStringNotContainingSubstring() {
+
+            Assert.AreEqual("hello, world!", StringUtilities.After("hello, world!", "x"));
+
+        }
+        [TestMethod]
+        public void TestAfterWithNullString() {
+
+            Assert.AreEqual(string.Empty, StringUtilities.After(string.Empty, ", "));
+
+        }
+        [TestMethod]
+        public void TestAfterWithNullSubstring() {
+
+            Assert.AreEqual("hello, world!", StringUtilities.After("hello, world!", string.Empty));
+
+        }
+
         // SplitAfter
 
         [TestMethod]
