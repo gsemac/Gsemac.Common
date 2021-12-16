@@ -45,7 +45,10 @@ namespace Gsemac.Text {
         }
         public static string Before(string input, string substring, StringComparison comparisonType = StringComparison.CurrentCulture) {
 
-            int index = input.IndexOf(substring, comparisonType);
+            int index = -1;
+
+            if (!string.IsNullOrEmpty(substring))
+                index = input.IndexOf(substring, comparisonType);
 
             if (index >= 0)
                 return input.Substring(0, index);

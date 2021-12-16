@@ -9,6 +9,33 @@ namespace Gsemac.Text.Tests {
     [TestClass]
     public class StringUtilitiesTests {
 
+        // Before
+
+        [TestMethod]
+        public void TestBeforeWithStringContainingSubstring() {
+
+            Assert.AreEqual("hello", StringUtilities.Before("hello, world!", ", "));
+
+        }
+        [TestMethod]
+        public void TestBeforeWithStringNotContainingSubstring() {
+
+            Assert.AreEqual("hello, world!", StringUtilities.Before("hello, world!", "x"));
+
+        }
+        [TestMethod]
+        public void TestBeforeWithNullString() {
+
+            Assert.AreEqual(string.Empty, StringUtilities.Before(string.Empty, ", "));
+
+        }
+        [TestMethod]
+        public void TestBeforeWithNullSubstring() {
+
+            Assert.AreEqual("hello, world!", StringUtilities.Before("hello, world!", string.Empty));
+
+        }
+
         // SplitAfter
 
         [TestMethod]
