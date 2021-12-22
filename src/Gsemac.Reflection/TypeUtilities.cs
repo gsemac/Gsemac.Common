@@ -3,7 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using System.Reflection;
 
 namespace Gsemac.Reflection {
 
@@ -34,7 +33,7 @@ namespace Gsemac.Reflection {
             return GetType(typeName) != null;
 
         }
-             
+
         public static bool TryCast<T>(object obj, out T result) {
 
             if (TryCast(obj, typeof(T), out object resultObject)) {
@@ -75,7 +74,7 @@ namespace Gsemac.Reflection {
 
                     if (newType.IsEnum) {
 
-                        success = EnumUtilities.TryParse(obj, newType, ignoreCase: true, out result);
+                        success = EnumUtilities.TryParse(obj, newType, EnumParseOptions.IgnoreCase, out result);
 
                     }
                     else {
