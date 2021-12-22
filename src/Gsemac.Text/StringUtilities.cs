@@ -224,9 +224,25 @@ namespace Gsemac.Text {
 
         }
 
-        public static bool IsNumeric(string input, NumberStyles style = NumberStyles.AllowLeadingWhite | NumberStyles.AllowTrailingWhite | NumberStyles.AllowDecimalPoint) {
+        public static bool IsNumeric(string input) {
 
-            return double.TryParse(input, style, CultureInfo.InvariantCulture, out _);
+            if (string.IsNullOrWhiteSpace(input))
+                return false;
+
+            // The idea behind this method is that it should return true for any string a naive observer would consider to be a number.
+            // By default, decimals and negative numbers are considered numeric.
+
+            // Allow a leading a sign for negative numbers, but not positive numbers.
+
+            if (input.TrimStart().StartsWith("+"))
+                return false;
+
+            return IsNumeric(input, NumberStyles.Integer | NumberStyles.AllowDecimalPoint);
+
+        }
+        public static bool IsNumeric(string input, NumberStyles styles) {
+
+            return double.TryParse(input, styles, CultureInfo.InvariantCulture, out _);
 
         }
         public static string PadLeadingDigits(string input, int numberOfDigits) {

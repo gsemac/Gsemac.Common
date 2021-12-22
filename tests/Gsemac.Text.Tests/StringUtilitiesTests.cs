@@ -188,30 +188,54 @@ namespace Gsemac.Text.Tests {
         // IsNumeric
 
         [TestMethod]
-        public void TestIsNumericWithPositiveInteger() {
+        public void TestIsNumericWithPositiveNumber() {
 
             Assert.IsTrue(StringUtilities.IsNumeric("1"));
 
         }
         [TestMethod]
-        public void TestIsNumericWithNegativeInteger() {
+        public void TestIsNumericWithNumberWithNegativeSign() {
 
-            // By default, negative integers should not be counted as numeric ("-" is not a digit).
-            // This can be controlled by providing a different set of NumberStyles.
-
-            Assert.IsFalse(StringUtilities.IsNumeric("-1"));
+            Assert.IsTrue(StringUtilities.IsNumeric("-1"));
 
         }
         [TestMethod]
-        public void TestIsNumericWithSingleDecimalPoint() {
+        public void TestIsNumericWithNumberWithPositiveSign() {
+
+            // By default, only the negative sign is allowed.
+            // The reason is that users do not normally express positive numbers in this way.
+
+            Assert.IsFalse(StringUtilities.IsNumeric("+1"));
+
+        }
+        [TestMethod]
+        public void TestIsNumericWithNumberWithMultipleSigns() {
+
+            Assert.IsFalse(StringUtilities.IsNumeric("--1"));
+
+        }
+        [TestMethod]
+        public void TestIsNumericWithNumberWithSurroundingWhiteSpace() {
+
+            Assert.IsTrue(StringUtilities.IsNumeric("    -1     "));
+
+        }
+        [TestMethod]
+        public void TestIsNumericWithNumberWithDecimalPoint() {
 
             Assert.IsTrue(StringUtilities.IsNumeric("1.0"));
 
         }
         [TestMethod]
-        public void TestIsNumericWithMultipleDecimalPoints() {
+        public void TestIsNumericWithNumberWithMultipleDecimalPoints() {
 
             Assert.IsFalse(StringUtilities.IsNumeric("1.0.0"));
+
+        }
+        [TestMethod]
+        public void TestIsNumericWithEmptyString() {
+
+            Assert.IsFalse(StringUtilities.IsNumeric(string.Empty));
 
         }
 
