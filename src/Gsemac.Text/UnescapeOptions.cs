@@ -1,5 +1,8 @@
-﻿namespace Gsemac.Text {
+﻿using System;
 
+namespace Gsemac.Text {
+
+    [Flags]
     public enum UnescapeOptions {
         RepairTextEncoding = 1,
         UnescapeEscapeSequences = 2,
