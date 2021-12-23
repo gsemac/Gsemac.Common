@@ -2,10 +2,11 @@
 
     public enum Architecture {
         X86,
-        Arm,
         X64,
+        Arm,
         Arm64,
         Wasm,
+        S390x,
     }
 
 }
