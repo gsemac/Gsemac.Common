@@ -2,9 +2,9 @@
 
     public static class CharExtensions {
 
-        public static bool IsNewLine(this char c) {
+        public static bool IsNewLine(this char value) {
 
-            return CharUtilities.IsNewLine(c);
+            return CharUtilities.IsNewLine(value);
 
         }
 
