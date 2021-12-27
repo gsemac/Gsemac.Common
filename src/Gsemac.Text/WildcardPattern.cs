@@ -21,7 +21,7 @@ namespace Gsemac.Text {
 
         public bool IsMatch(string input) {
 
-            string[] split = pattern.Split(new[] { WildcardChar }, StringSplitOptions.None);
+            string[] split = pattern.Split(new[] { WildcardChar }, System.StringSplitOptions.None);
 
             if (split.Length > 1) {
 

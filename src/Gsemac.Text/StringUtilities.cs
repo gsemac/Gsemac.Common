@@ -126,23 +126,63 @@ namespace Gsemac.Text {
 
         }
 
-        public static IEnumerable<string> SplitAfter(string input, params char[] delimiters) {
+        public static IEnumerable<string> Split(string value, char separator, int count, StringSplitOptions options = StringSplitOptions.None) {
 
-            string pattern = "([" + Regex.Escape(string.Join("", delimiters)) + "])";
-            string[] items = Regex.Split(input, pattern);
+            return Split(value, new[] { separator }, count, options);
 
-            for (int i = 0; i < items.Count(); i += 2) {
+        }
+        public static IEnumerable<string> Split(string value, string[] separator, int count, StringSplitOptions options = StringSplitOptions.None) {
 
-                string item = items[i];
+            IEnumerable<string> items;
 
-                if (i + 1 < items.Count())
-                    item += items[i + 1];
+            if (options <= StringSplitOptions.TrimEntries) {
 
-                yield return item;
+                // No special options have been specified, so we can do a normal string split.
+
+                items = value.Split(separator, count, GetStringSplitOptions(options));
+
+            }
+            else {
+
+                items = SplitWithDelimiters(value, separator, count);
 
             }
 
+            foreach (string item in ApplyPostSplitOptions(items, options))
+                yield return item;
+
         }
+        public static IEnumerable<string> Split(string value, char[] separators, int count, StringSplitOptions options = StringSplitOptions.None) {
+
+            return Split(value, separators.Select(c => c.ToString()).ToArray(), count, options);
+
+        }
+        public static IEnumerable<string> Split(string value, string[] separators, StringSplitOptions options = StringSplitOptions.None) {
+
+            return Split(value, separators, int.MaxValue, options);
+
+        }
+        public static IEnumerable<string> Split(string value, string separator, int count, StringSplitOptions options = StringSplitOptions.None) {
+
+            return Split(value, new[] { separator }, count, options);
+
+        }
+        public static IEnumerable<string> Split(string value, char[] separators, StringSplitOptions options = StringSplitOptions.None) {
+
+            return Split(value, separators.Select(c => c.ToString()).ToArray(), int.MaxValue, options);
+
+        }
+        public static IEnumerable<string> Split(string value, char separator, StringSplitOptions options = StringSplitOptions.None) {
+
+            return Split(value, separator, int.MaxValue, options);
+
+        }
+        public static IEnumerable<string> Split(string value, string separator, StringSplitOptions options = StringSplitOptions.None) {
+
+            return Split(value, separator, int.MaxValue, options);
+
+        }
+
         public static string ReplaceLast(string input, string oldValue, string newValue, StringComparison comparisonType = StringComparison.CurrentCulture) {
 
             int index = input.LastIndexOf(oldValue, comparisonType);
@@ -494,6 +534,105 @@ namespace Gsemac.Text {
             sb.Replace(@"â€", @"”");
 
             return sb.ToString();
+
+        }
+
+        private static System.StringSplitOptions GetStringSplitOptions(StringSplitOptions options) {
+
+            System.StringSplitOptions result = System.StringSplitOptions.None;
+
+            if (options.HasFlag(StringSplitOptions.RemoveEmptyEntries))
+                result |= System.StringSplitOptions.RemoveEmptyEntries;
+
+            return result;
+
+        }
+        private static IEnumerable<string> ApplyPostSplitOptions(IEnumerable<string> items, StringSplitOptions options) {
+
+            IEnumerator<string> enumerator = items.GetEnumerator();
+            bool onFirstItem = true;
+
+            while (enumerator.MoveNext()) {
+
+                string item = enumerator.Current;
+
+                if (options.HasFlag(StringSplitOptions.TrimEntries) && !string.IsNullOrEmpty(item))
+                    item = item.Trim();
+
+                bool hasNextItem = ((!onFirstItem && options.HasFlag(StringSplitOptions.PrependDelimiter)) ||
+                    options.HasFlag(StringSplitOptions.AppendDelimiter)) &&
+                    enumerator.MoveNext();
+
+                if (!options.HasFlag(StringSplitOptions.RemoveEmptyEntries) || !string.IsNullOrEmpty(item)) {
+
+                    if (hasNextItem) {
+
+                        string nextItem = enumerator.Current;
+
+                        item += nextItem;
+
+                    }
+
+                    yield return item;
+
+                    onFirstItem = false;
+
+                }
+
+            }
+
+        }
+        private static IEnumerable<string> SplitWithDelimiters(string value, string[] separators, int count) {
+
+            int startIndex = 0;
+            int itemCount = 0;
+
+            for (int i = 0; i < value.Length && itemCount < count; ++i) {
+
+                int endIndex = TryFindSeparatorEndIndex(value, i, separators);
+
+                if (endIndex >= 0) {
+
+                    yield return value.Substring(startIndex, i - startIndex);
+                    yield return value.Substring(i, endIndex - i + 1);
+
+                    i = endIndex;
+                    startIndex = i + 1;
+
+                    ++itemCount;
+
+                }
+
+            }
+
+            // Return the last item (remainder of the string).
+
+            yield return value.Substring(startIndex, value.Length - startIndex);
+
+        }
+        private static int TryFindSeparatorEndIndex(string value, int startIndex, string[] separators) {
+
+            foreach (string separator in separators) {
+
+                int i = startIndex;
+                int j = 0;
+
+                while (i < value.Length && j < separator.Length) {
+
+                    if (value[i] != separator[j])
+                        break;
+
+                    ++i;
+                    ++j;
+
+                }
+
+                if (j >= separator.Length)
+                    return startIndex + j - 1;
+
+            }
+
+            return -1;
 
         }
 

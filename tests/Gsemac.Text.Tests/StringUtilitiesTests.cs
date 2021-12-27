@@ -63,36 +63,36 @@ namespace Gsemac.Text.Tests {
 
         }
 
-        // SplitAfter
+        // Split
 
         [TestMethod]
-        public void TestSplitAfter() {
+        public void TestSplitWithAppendDelimeterOption() {
 
             string input = "a/b/c";
             string[] expectedResult = { "a/", "b/", "c" };
-            IEnumerable<string> result = StringUtilities.SplitAfter(input, '/');
+            IEnumerable<string> result = StringUtilities.Split(input, '/', StringSplitOptions.AppendDelimiter);
 
-            Assert.IsTrue(result.SequenceEqual(expectedResult));
+            CollectionAssert.AreEqual(expectedResult, result.ToArray());
 
         }
         [TestMethod]
-        public void TestSplitAfterWithStartingDelimiter() {
+        public void TestSplitWithAppendDelimeterOptionWithStartingDelimiter() {
 
             string input = "/a/b/c";
             string[] expectedResult = { "/", "a/", "b/", "c" };
-            IEnumerable<string> result = StringUtilities.SplitAfter(input, '/');
+            IEnumerable<string> result = StringUtilities.Split(input, '/', StringSplitOptions.AppendDelimiter);
 
-            Assert.IsTrue(result.SequenceEqual(expectedResult));
+            CollectionAssert.AreEqual(expectedResult, result.ToArray());
 
         }
         [TestMethod]
-        public void TestSplitAfterWithEndingDelimiter() {
+        public void TestSplitWithAppendDelimeterOptionWithEndingDelimiter() {
 
             string input = "a/b/c/";
             string[] expectedResult = { "a/", "b/", "c/", "" };
-            IEnumerable<string> result = StringUtilities.SplitAfter(input, '/');
+            IEnumerable<string> result = StringUtilities.Split(input, '/', StringSplitOptions.AppendDelimiter);
 
-            Assert.IsTrue(result.SequenceEqual(expectedResult));
+            CollectionAssert.AreEqual(expectedResult, result.ToArray());
 
         }
 
