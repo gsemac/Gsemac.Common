@@ -1,22 +1,22 @@
 ﻿<Project Sdk="MSBuild.Sdk.Extras/2.0.54">
 
-	<PropertyGroup>
-		<TargetFrameworks>netstandard2.0;net40-client</TargetFrameworks>
-		<Company />
-		<Authors>gsemac</Authors>
-		<Version>0.8.1</Version>
-		<GeneratePackageOnBuild>false</GeneratePackageOnBuild>
-		<PackageProjectUrl>https://github.com/gsemac/Gsemac.Common</PackageProjectUrl>
-		<RepositoryUrl>https://github.com/gsemac/Gsemac.Common</RepositoryUrl>
-		<RepositoryType>git</RepositoryType>
-		<PackageLicenseExpression>MIT</PackageLicenseExpression>
-		<Copyright></Copyright>
-		<RootNamespace>Gsemac.Win32</RootNamespace>
-	</PropertyGroup>
+  <PropertyGroup>
+    <TargetFrameworks>netstandard2.0;net40-client</TargetFrameworks>
+    <Company />
+    <Authors>gsemac</Authors>
+    <Version>0.8.2</Version>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+    <PackageProjectUrl>https://github.com/gsemac/Gsemac.Common</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/gsemac/Gsemac.Common</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <Copyright></Copyright>
+    <RootNamespace>Gsemac.Win32</RootNamespace>
+  </PropertyGroup>
 
-	<PropertyGroup Condition="'$(Configuration)' == 'Release'">
-		<DebugType>none</DebugType>
-		<DebugSymbols>false</DebugSymbols>
-	</PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)' == 'Release'">
+    <DebugType>none</DebugType>
+    <DebugSymbols>false</DebugSymbols>
+  </PropertyGroup>
 
 </Project>
