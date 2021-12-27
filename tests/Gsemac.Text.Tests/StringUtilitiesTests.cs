@@ -66,33 +66,103 @@ namespace Gsemac.Text.Tests {
         // Split
 
         [TestMethod]
-        public void TestSplitWithAppendDelimeterOption() {
+        public void TestSplit() {
 
-            string input = "a/b/c";
-            string[] expectedResult = { "a/", "b/", "c" };
-            IEnumerable<string> result = StringUtilities.Split(input, '/', StringSplitOptions.AppendDelimiter);
+            string str = "1,2,3,,";
+            string[] expected = { "1", "2", "3", "", "", };
+            IEnumerable<string> actual = StringUtilities.Split(str, ',');
 
-            CollectionAssert.AreEqual(expectedResult, result.ToArray());
-
-        }
-        [TestMethod]
-        public void TestSplitWithAppendDelimeterOptionWithStartingDelimiter() {
-
-            string input = "/a/b/c";
-            string[] expectedResult = { "/", "a/", "b/", "c" };
-            IEnumerable<string> result = StringUtilities.Split(input, '/', StringSplitOptions.AppendDelimiter);
-
-            CollectionAssert.AreEqual(expectedResult, result.ToArray());
+            CollectionAssert.AreEqual(expected, actual.ToArray());
 
         }
         [TestMethod]
-        public void TestSplitWithAppendDelimeterOptionWithEndingDelimiter() {
+        public void TestSplitOnWhiteSpace() {
 
-            string input = "a/b/c/";
-            string[] expectedResult = { "a/", "b/", "c/", "" };
-            IEnumerable<string> result = StringUtilities.Split(input, '/', StringSplitOptions.AppendDelimiter);
+            string str = "1 2  3\t4";
+            string[] expected = { "1", "2", "", "3", "4", };
+            IEnumerable<string> actual = StringUtilities.Split(str, (string[])null);
 
-            CollectionAssert.AreEqual(expectedResult, result.ToArray());
+            CollectionAssert.AreEqual(expected, actual.ToArray());
+
+        }
+        [TestMethod]
+        public void TestSplitWithRemoveEmptyEntriesOption() {
+
+            string str = "1,2,3,,";
+            string[] expected = { "1", "2", "3", };
+            IEnumerable<string> actual = StringUtilities.Split(str, ',', StringSplitOptions.RemoveEmptyEntries);
+
+            CollectionAssert.AreEqual(expected, actual.ToArray());
+
+        }
+        [TestMethod]
+        public void TestSplitWithTrimEntriesOption() {
+
+            string str = "1,   2,       3,        , ";
+            string[] expected = { "1", "2", "3", "", "", };
+            IEnumerable<string> actual = StringUtilities.Split(str, ',', StringSplitOptions.TrimEntries);
+
+            CollectionAssert.AreEqual(expected, actual.ToArray());
+
+        }
+        [TestMethod]
+        public void TestSplitWithPrependDelimiterOption() {
+
+            string str = "a/b/c";
+            string[] expected = { "a", "/b", "/c" };
+            IEnumerable<string> actual = StringUtilities.Split(str, '/', StringSplitOptions.PrependDelimiter);
+
+            CollectionAssert.AreEqual(expected, actual.ToArray());
+
+        }
+        [TestMethod]
+        public void TestSplitWithAppendDelimiterOption() {
+
+            string str = "a/b/c";
+            string[] expected = { "a/", "b/", "c" };
+            IEnumerable<string> actual = StringUtilities.Split(str, '/', StringSplitOptions.AppendDelimiter);
+
+            CollectionAssert.AreEqual(expected, actual.ToArray());
+
+        }
+        [TestMethod]
+        public void TestSplitWithAppendDelimiterOptionWithStartingDelimiter() {
+
+            string str = "/a/b/c";
+            string[] expected = { "/", "a/", "b/", "c" };
+            IEnumerable<string> actual = StringUtilities.Split(str, '/', StringSplitOptions.AppendDelimiter);
+
+            CollectionAssert.AreEqual(expected, actual.ToArray());
+
+        }
+        [TestMethod]
+        public void TestSplitWithAppendDelimiterOptionWithEndingDelimiter() {
+
+            string str = "a/b/c/";
+            string[] expected = { "a/", "b/", "c/", "" };
+            IEnumerable<string> actual = StringUtilities.Split(str, '/', StringSplitOptions.AppendDelimiter);
+
+            CollectionAssert.AreEqual(expected, actual.ToArray());
+
+        }
+        [TestMethod]
+        public void TestSplitWithAppendDelimiterAndRemoveEmptyEntriesOptions() {
+
+            string str = "1,2,3,,4,5,,6";
+            string[] expected = { "1,", "2,", "3,", "4,", "5,", "6" };
+            IEnumerable<string> actual = StringUtilities.Split(str, ',', StringSplitOptions.AppendDelimiter | StringSplitOptions.RemoveEmptyEntries);
+
+            CollectionAssert.AreEqual(expected, actual.ToArray());
+
+        }
+        [TestMethod]
+        public void TestSplitWithRespectEnclosingPunctuationOption() {
+
+            string str = "[1,2,3],(4,5,[6,7]),\"8,9\"";
+            string[] expected = { "[1,2,3]", "(4,5,[6,7])", "\"8,9\"" };
+            IEnumerable<string> actual = StringUtilities.Split(str, ',', StringSplitOptions.RespectEnclosingPunctuation);
+
+            CollectionAssert.AreEqual(expected, actual.ToArray());
 
         }
 
