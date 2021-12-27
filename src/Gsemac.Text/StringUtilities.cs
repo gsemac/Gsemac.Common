@@ -144,7 +144,7 @@ namespace Gsemac.Text {
             }
             else {
 
-                items = SplitWithDelimiters(value, separator, count);
+                items = SplitWithDelimiters(value, separator, count, options);
 
             }
 
@@ -154,7 +154,7 @@ namespace Gsemac.Text {
         }
         public static IEnumerable<string> Split(string value, char[] separators, int count, StringSplitOptions options = StringSplitOptions.None) {
 
-            return Split(value, separators.Select(c => c.ToString()).ToArray(), count, options);
+            return Split(value, separators is null ? null : separators.Select(c => c.ToString()).ToArray(), count, options);
 
         }
         public static IEnumerable<string> Split(string value, string[] separators, StringSplitOptions options = StringSplitOptions.None) {
@@ -169,7 +169,7 @@ namespace Gsemac.Text {
         }
         public static IEnumerable<string> Split(string value, char[] separators, StringSplitOptions options = StringSplitOptions.None) {
 
-            return Split(value, separators.Select(c => c.ToString()).ToArray(), int.MaxValue, options);
+            return Split(value, separators is null ? null : separators.Select(c => c.ToString()).ToArray(), int.MaxValue, options);
 
         }
         public static IEnumerable<string> Split(string value, char separator, StringSplitOptions options = StringSplitOptions.None) {
@@ -582,19 +582,55 @@ namespace Gsemac.Text {
             }
 
         }
-        private static IEnumerable<string> SplitWithDelimiters(string value, string[] separators, int count) {
+        private static IEnumerable<string> SplitWithDelimiters(string value, string[] separators, int count, StringSplitOptions options) {
 
             int startIndex = 0;
             int itemCount = 0;
+            IDictionary<char, int> enclosingPunctuationCounts = new Dictionary<char, int>();
 
             for (int i = 0; i < value.Length && itemCount < count; ++i) {
 
-                int endIndex = TryFindSeparatorEndIndex(value, i, separators);
+                if (options.HasFlag(StringSplitOptions.RespectEnclosingPunctuation)) {
+
+                    char currentChar = value[i];
+
+                    if (CharUtilities.IsLeftEnclosingPunctuation(currentChar)) {
+
+                        char key = currentChar;
+
+                        if (enclosingPunctuationCounts.ContainsKey(key))
+                            enclosingPunctuationCounts[key] += 1;
+                        else
+                            enclosingPunctuationCounts[key] = 1;
+
+                    }
+                    else if (CharUtilities.IsRightEnclosingPunctuation(currentChar)) {
+
+                        char key = CharUtilities.GetOppositeEnclosingPunctuation(currentChar);
+
+                        if (enclosingPunctuationCounts.ContainsKey(key))
+                            enclosingPunctuationCounts[key] -= 1;
+
+                    }
+
+                    if (enclosingPunctuationCounts.Values.Any(c => c > 0))
+                        continue;
+
+                }
+
+                // Find the end of any of the delimiters.
+                // If the list of delimiters is null, we'll split on any whitespace (same as .NET's implementation).
+
+                int endIndex = separators is null ?
+                    (char.IsWhiteSpace(value[i]) ? i : -1) :
+                    TryFindSeparatorEndIndex(value, i, separators);
 
                 if (endIndex >= 0) {
 
                     yield return value.Substring(startIndex, i - startIndex);
-                    yield return value.Substring(i, endIndex - i + 1);
+
+                    if (options.HasFlag(StringSplitOptions.PrependDelimiter) || options.HasFlag(StringSplitOptions.AppendDelimiter))
+                        yield return value.Substring(i, endIndex - i + 1);
 
                     i = endIndex;
                     startIndex = i + 1;

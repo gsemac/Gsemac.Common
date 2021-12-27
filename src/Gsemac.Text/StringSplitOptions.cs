@@ -9,7 +9,7 @@ namespace Gsemac.Text {
         TrimEntries = 2,
         AppendDelimiter = 4,
         PrependDelimiter = 8,
-        RespectParentheses = 16,
+        RespectEnclosingPunctuation = 16,
         Default = None,
     }
 
