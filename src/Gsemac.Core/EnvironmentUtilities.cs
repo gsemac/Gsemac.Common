@@ -39,6 +39,43 @@ namespace Gsemac.Core {
             return Version.Parse(FileVersionInfo.GetVersionInfo(typeof(int).Assembly.Location).ProductVersion);
 
         }
+        public static IPlatformInfo GetPlatformInfo() {
+
+            // This method was adapted from the answer given here: https://stackoverflow.com/a/38795621/5383169 (jariq)
+
+            string windir = Environment.GetEnvironmentVariable("windir");
+
+            if (!string.IsNullOrEmpty(windir) && windir.Contains(@"\") && Directory.Exists(windir)) {
+
+                // Detected Windows
+
+                return new PlatformInfo(PlatformId.Windows);
+
+            }
+            else if (File.Exists(@"/proc/sys/kernel/ostype")) {
+
+                string osType = File.ReadAllText(@"/proc/sys/kernel/ostype");
+
+                if (osType.StartsWith("Linux", StringComparison.OrdinalIgnoreCase)) {
+
+                    // Detected Linux or Android
+
+                    return new PlatformInfo(PlatformId.Linux);
+
+                }
+
+            }
+            else if (File.Exists(@"/System/Library/CoreServices/SystemVersion.plist")) {
+
+                // Detected MacOS or iOS
+
+                return new PlatformInfo(PlatformId.MacOS);
+
+            }
+
+            return new PlatformInfo(PlatformId.Unknown);
+
+        }
 
     }
 
