@@ -71,6 +71,16 @@ namespace Gsemac.Collections.Extensions {
             return source.OrderBy((item) => random.Next());
 
         }
+        public static T Random<T>(this IEnumerable<T> source) {
+
+            return source.Shuffle().First();
+
+        }
+        public static T RandomOrDefault<T>(this IEnumerable<T> source) {
+
+            return source.Shuffle().FirstOrDefault();
+
+        }
 
         // Private members
 
