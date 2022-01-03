@@ -6,6 +6,10 @@ namespace Gsemac.Net.JavaScript {
     public class JSWindow :
         IJSWindow {
 
+        // Public members
+
+        public IJSConsole Console { get; } = new JSConsole();
+
         public string Atob(string encodedData) {
 
             byte[] bytes = Convert.FromBase64String(encodedData);
