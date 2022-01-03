@@ -9,6 +9,8 @@ namespace Gsemac.Net.JavaScript {
         // Public members
 
         public IJSConsole Console { get; } = new JSConsole();
+        public IJSStorage LocalStorage { get; } = new JSStorage();
+        public IJSStorage SessionStorage { get; } = new JSStorage();
 
         public string Atob(string encodedData) {
 
