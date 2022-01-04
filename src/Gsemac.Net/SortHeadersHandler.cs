@@ -22,9 +22,6 @@ namespace Gsemac.Net {
         public SortHeadersHandler() :
             base() {
         }
-        public SortHeadersHandler(WebRequestHandler innerHandler) :
-            base(innerHandler) {
-        }
 
         // Protected members
 
