@@ -111,6 +111,7 @@ namespace Gsemac.Drawing.Imaging {
                 ".jpg",
                 ".jxl",
                 ".png",
+                ".svg",
                 ".tif",
                 ".tiff",
                 ".webp",

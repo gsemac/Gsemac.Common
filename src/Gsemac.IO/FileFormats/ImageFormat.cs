@@ -15,6 +15,7 @@ namespace Gsemac.IO.FileFormats {
         public static IFileFormat Jpeg => new JpegFileFormat();
         public static IFileFormat Jxl => new JxlFileFormat();
         public static IFileFormat Png => new PngFileFormat();
+        public static IFileFormat Svg => new SvgFileFormat();
         public static IFileFormat Tiff => new TiffFileFormat();
         public static IFileFormat WebP => new WebPFileFormat();
         public static IFileFormat Wmf => new WmfFileFormat();
