@@ -19,6 +19,17 @@ namespace Gsemac.IO.Tests {
 
         }
         [TestMethod]
+        public void TestEqualsWithEquivalentFileExtension() {
+
+            IFileFormatFactory fileFormatFactory = FileFormatFactory.Default;
+
+            IFileFormat lhs = fileFormatFactory.FromFileExtension(".jpg");
+            IFileFormat rhs = fileFormatFactory.FromFileExtension(".jpeg");
+
+            Assert.IsTrue(lhs.Equals(rhs));
+
+        }
+        [TestMethod]
         public void TestEqualsWithDifferentFileExtensions() {
 
             IFileFormatFactory fileFormatFactory = FileFormatFactory.Default;

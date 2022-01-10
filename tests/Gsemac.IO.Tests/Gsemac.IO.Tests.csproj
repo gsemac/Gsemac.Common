@@ -20,4 +20,8 @@
 		<ProjectReference Include="..\..\src\Gsemac.IO\Gsemac.IO.csproj" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <Folder Include="Samples\FileFormats\Images\" />
+	</ItemGroup>
+
 </Project>
