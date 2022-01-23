@@ -20,27 +20,27 @@ namespace Gsemac.Text.Extensions {
             return StringUtilities.After(input, substring, comparisonType);
 
         }
-        public static string AfterLast(string input, string substring, StringComparison comparisonType = StringComparison.CurrentCulture) {
+        public static string AfterLast(this string input, string substring, StringComparison comparisonType = StringComparison.CurrentCulture) {
 
             return StringUtilities.AfterLast(input, substring, comparisonType);
 
         }
-        public static string Before(string input, string substring, StringComparison comparisonType = StringComparison.CurrentCulture) {
+        public static string Before(this string input, string substring, StringComparison comparisonType = StringComparison.CurrentCulture) {
 
             return StringUtilities.Before(input, substring, comparisonType);
 
         }
-        public static string BeforeLast(string input, string substring, StringComparison comparisonType = StringComparison.CurrentCulture) {
+        public static string BeforeLast(this string input, string substring, StringComparison comparisonType = StringComparison.CurrentCulture) {
 
             return StringUtilities.BeforeLast(input, substring, comparisonType);
 
         }
-        public static string Between(string input, string leftSubstring, string rightSubstring, StringComparison comparisonType = StringComparison.CurrentCulture) {
+        public static string Between(this string input, string leftSubstring, string rightSubstring, StringComparison comparisonType = StringComparison.CurrentCulture) {
 
             return StringUtilities.Between(input, leftSubstring, rightSubstring, comparisonType);
 
         }
-        public static string BetweenLast(string input, string leftSubstring, string rightSubstring, StringComparison comparisonType = StringComparison.CurrentCulture) {
+        public static string BetweenLast(this string input, string leftSubstring, string rightSubstring, StringComparison comparisonType = StringComparison.CurrentCulture) {
 
             return StringUtilities.BetweenLast(input, leftSubstring, rightSubstring, comparisonType);
 
