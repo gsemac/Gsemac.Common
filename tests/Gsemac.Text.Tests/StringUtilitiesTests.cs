@@ -330,36 +330,36 @@ namespace Gsemac.Text.Tests {
 
         }
 
-        // PadLeadingDigits
+        // PadDigits
 
         [TestMethod]
-        public void TestPadLeadingDigitsWithEmptyString() {
+        public void TestPadDigitsWithEmptyString() {
 
-            Assert.AreEqual("000", StringUtilities.PadLeadingDigits(string.Empty, 3));
+            Assert.AreEqual("000", StringUtilities.PadDigits(string.Empty, 3));
 
         }
         [TestMethod]
-        public void TestPadLeadingDigitsWithInteger() {
+        public void TestPadDigitsWithInteger() {
 
-            Assert.AreEqual("001", StringUtilities.PadLeadingDigits("1", 3));
-
-        }
-        [TestMethod]
-        public void TestPadLeadingDigitsWithDecimalPoint() {
-
-            Assert.AreEqual("001.2", StringUtilities.PadLeadingDigits("1.2", 3));
+            Assert.AreEqual("001", StringUtilities.PadDigits("1", 3));
 
         }
         [TestMethod]
-        public void TestPadLeadingDigitsWithLeadingZeros() {
+        public void TestPadDigitsWithDecimalPoint() {
 
-            Assert.AreEqual("01", StringUtilities.PadLeadingDigits("000001", 2));
+            Assert.AreEqual("001.2", StringUtilities.PadDigits("1.2", 3));
 
         }
         [TestMethod]
-        public void TestPadLeadingDigitsWithPaddingLengthLessThanExistingLength() {
+        public void TestPadDigitsWithLeadingZeros() {
 
-            Assert.AreEqual("123", StringUtilities.PadLeadingDigits("123", 2));
+            Assert.AreEqual("01", StringUtilities.PadDigits("000001", 2));
+
+        }
+        [TestMethod]
+        public void TestPadDigitsWithPaddingLengthLessThanExistingLength() {
+
+            Assert.AreEqual("123", StringUtilities.PadDigits("123", 2));
 
         }
 

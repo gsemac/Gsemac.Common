@@ -293,7 +293,7 @@ namespace Gsemac.Text {
             return double.TryParse(input, styles, CultureInfo.InvariantCulture, out _);
 
         }
-        public static string PadLeadingDigits(string input, int numberOfDigits) {
+        public static string PadDigits(string input, int numberOfDigits) {
 
             // Trim all existing leading zeros.
 
