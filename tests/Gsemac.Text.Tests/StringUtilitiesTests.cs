@@ -193,7 +193,7 @@ namespace Gsemac.Text.Tests {
         // TrimOrDefault
 
         [TestMethod]
-        public void TestTrimOrDefaultWithStringWithSurroundingWhitespace() {
+        public void TestTrimOrDefaultWithStringWithSurroundingWhiteSpace() {
 
             Assert.AreEqual("hello  world", StringUtilities.TrimOrDefault("  hello  world  "));
 
