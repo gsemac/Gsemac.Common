@@ -194,13 +194,23 @@ namespace Gsemac.Text {
 
         }
 
-        public static string NormalizeWhiteSpace(string input, NormalizeSpaceOptions options = NormalizeSpaceOptions.Default) {
+        public static string NormalizeWhiteSpace(string input, string replacement, NormalizeSpaceOptions options = NormalizeSpaceOptions.Default) {
 
             string pattern = options.HasFlag(NormalizeSpaceOptions.PreserveLineBreaks) ?
                 @"[^\S\r\n]+" :
                 @"\s+";
 
-            return Regex.Replace(input, pattern, " ");
+            string result = Regex.Replace(input, pattern, replacement);
+
+            if (options.HasFlag(NormalizeSpaceOptions.Trim))
+                result = result.Trim();
+
+            return result;
+
+        }
+        public static string NormalizeWhiteSpace(string input, NormalizeSpaceOptions options = NormalizeSpaceOptions.Default) {
+
+            return NormalizeWhiteSpace(input, " ", options);
 
         }
         public static string NormalizeLineBreaks(string input, NormalizeSpaceOptions options = NormalizeSpaceOptions.Default) {
@@ -221,6 +231,9 @@ namespace Gsemac.Text {
             // Replace the temporary newlines with the evironment's newline sequence.
 
             result = Regex.Replace(result, @"\n", Environment.NewLine);
+
+            if (options.HasFlag(NormalizeSpaceOptions.Trim))
+                result = result.Trim();
 
             return result;
 

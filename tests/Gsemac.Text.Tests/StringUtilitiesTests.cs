@@ -166,6 +166,27 @@ namespace Gsemac.Text.Tests {
 
         }
 
+        // NormalizeWhiteSpace
+
+        [TestMethod]
+        public void TestNormalizeWhiteSpaceWithStringContainingWhiteSpace() {
+
+            Assert.AreEqual(" hello world ", StringUtilities.NormalizeWhiteSpace("    hello   world     "));
+
+        }
+        [TestMethod]
+        public void TestNormalizeWhiteSpaceWithStringContainingWhiteSpaceAndCustomReplacement() {
+
+            Assert.AreEqual("helloworld", StringUtilities.NormalizeWhiteSpace("    hello   world     ", string.Empty));
+
+        }
+        [TestMethod]
+        public void TestNormalizeWhiteSpaceWithTrimOption() {
+
+            Assert.AreEqual("hello world", StringUtilities.NormalizeWhiteSpace("    hello   world     ", NormalizeSpaceOptions.Trim));
+
+        }
+
         // NormalizeLineBreaks
 
         [TestMethod]
