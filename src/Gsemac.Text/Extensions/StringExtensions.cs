@@ -46,6 +46,12 @@ namespace Gsemac.Text.Extensions {
 
         }
 
+        public static string TrimOrDefault(this string input) {
+
+            return StringUtilities.TrimOrDefault(input);
+
+        }
+
     }
 
 }

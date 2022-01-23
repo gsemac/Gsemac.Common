@@ -190,6 +190,27 @@ namespace Gsemac.Text.Tests {
 
         }
 
+        // TrimOrDefault
+
+        [TestMethod]
+        public void TestTrimOrDefaultWithStringWithSurroundingWhitespace() {
+
+            Assert.AreEqual("hello  world", StringUtilities.TrimOrDefault("  hello  world  "));
+
+        }
+        [TestMethod]
+        public void TestTrimOrDefaultWithEmptyString() {
+
+            Assert.AreEqual("", StringUtilities.TrimOrDefault(""));
+
+        }
+        [TestMethod]
+        public void TestTrimOrDefaultWithNullString() {
+
+            Assert.AreEqual(null, StringUtilities.TrimOrDefault(null));
+
+        }
+
         // Unescape
 
         [TestMethod]

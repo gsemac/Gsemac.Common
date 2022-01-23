@@ -225,6 +225,14 @@ namespace Gsemac.Text {
             return result;
 
         }
+        public static string TrimOrDefault(string input) {
+
+            if (string.IsNullOrEmpty(input))
+                return input;
+
+            return input.Trim();
+
+        }
 
         public static string Unescape(string input, UnescapeOptions options = UnescapeOptions.Default) {
 
