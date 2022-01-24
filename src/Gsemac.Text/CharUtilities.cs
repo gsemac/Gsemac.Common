@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 
 namespace Gsemac.Text {
@@ -47,6 +48,32 @@ namespace Gsemac.Text {
                 case '.':
                 case '!':
                 case '?':
+                    return true;
+
+                default:
+                    return false;
+
+            }
+
+        }
+        public static bool IsWordCharacter(char value) {
+
+            // Returns true if the character is a word character as defined by the regex metacharacter "\w".
+            // Solution adapted from the one given here: https://stackoverflow.com/a/33809007/5383169 (thargy)
+
+            UnicodeCategory category = char.GetUnicodeCategory(value);
+
+            switch (category) {
+
+                case UnicodeCategory.ConnectorPunctuation:
+                case UnicodeCategory.DecimalDigitNumber:
+                case UnicodeCategory.LowercaseLetter:
+                case UnicodeCategory.ModifierLetter:
+                case UnicodeCategory.NonSpacingMark:
+                case UnicodeCategory.OtherLetter:
+                case UnicodeCategory.SpacingCombiningMark:
+                case UnicodeCategory.TitlecaseLetter:
+                case UnicodeCategory.UppercaseLetter:
                     return true;
 
                 default:
