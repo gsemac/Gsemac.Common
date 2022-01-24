@@ -1,6 +1,7 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 
@@ -24,15 +25,27 @@ namespace Gsemac.Text.Tests {
 
         }
         [TestMethod]
-        public void TestBeforeWithNullString() {
+        public void TestBeforeWithEmptyString() {
 
             Assert.AreEqual(string.Empty, StringUtilities.Before(string.Empty, ", "));
 
         }
         [TestMethod]
-        public void TestBeforeWithNullSubstring() {
+        public void TestBeforeWithEmptySubstring() {
 
             Assert.AreEqual("hello, world!", StringUtilities.Before("hello, world!", string.Empty));
+
+        }
+        [TestMethod]
+        public void TestBeforeWithNullString() {
+
+            Assert.AreEqual(null, StringUtilities.Before(null, ", "));
+
+        }
+        [TestMethod]
+        public void TestBeforeWithNullSubstring() {
+
+            Assert.AreEqual("hello, world!", StringUtilities.Before("hello, world!", null));
 
         }
 
@@ -51,15 +64,42 @@ namespace Gsemac.Text.Tests {
 
         }
         [TestMethod]
-        public void TestAfterWithNullString() {
+        public void TestAfterWithEmptyString() {
 
             Assert.AreEqual(string.Empty, StringUtilities.After(string.Empty, ", "));
 
         }
         [TestMethod]
-        public void TestAfterWithNullSubstring() {
+        public void TestAfterWithEmptySubstring() {
 
             Assert.AreEqual("hello, world!", StringUtilities.After("hello, world!", string.Empty));
+
+        }
+        [TestMethod]
+        public void TestAfterWithNullString() {
+
+            Assert.AreEqual(null, StringUtilities.After(null, ", "));
+
+        }
+        [TestMethod]
+        public void TestAfterWithNullSubstring() {
+
+            Assert.AreEqual("hello, world!", StringUtilities.After("hello, world!", null));
+
+        }
+
+        // Count
+
+        [TestMethod]
+        public void TestCountWithNullString() {
+
+            Assert.AreEqual(0, StringUtilities.Count(null, "substring"));
+
+        }
+        [TestMethod]
+        public void TestCountWithNullSubstring() {
+
+            Assert.AreEqual(0, StringUtilities.Count("string", null));
 
         }
 
@@ -83,6 +123,12 @@ namespace Gsemac.Text.Tests {
             IEnumerable<string> actual = StringUtilities.Split(str, (string[])null);
 
             CollectionAssert.AreEqual(expected, actual.ToArray());
+
+        }
+        [TestMethod]
+        public void TestSplitWithNullString() {
+
+            Assert.AreEqual(0, StringUtilities.Split(null, ',').Count());
 
         }
         [TestMethod]
@@ -482,6 +528,18 @@ namespace Gsemac.Text.Tests {
             Assert.IsFalse(StringUtilities.IsNumeric(string.Empty));
 
         }
+        [TestMethod]
+        public void TestIsNumericWithNullString() {
+
+            Assert.IsFalse(StringUtilities.IsNumeric(null));
+
+        }
+        [TestMethod]
+        public void TestIsNumericWithNullStringAndNumberStyle() {
+
+            Assert.IsFalse(StringUtilities.IsNumeric(null, NumberStyles.Integer));
+
+        }
 
         // PadDigits
 
@@ -489,6 +547,12 @@ namespace Gsemac.Text.Tests {
         public void TestPadDigitsWithEmptyString() {
 
             Assert.AreEqual("000", StringUtilities.PadDigits(string.Empty, 3));
+
+        }
+        [TestMethod]
+        public void TestPadDigitsWithNullString() {
+
+            Assert.AreEqual("000", StringUtilities.PadDigits(null, 3));
 
         }
         [TestMethod]

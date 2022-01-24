@@ -16,6 +16,9 @@ namespace Gsemac.Text {
 
         public static string After(string input, string substring, StringComparison comparisonType = StringComparison.CurrentCulture) {
 
+            if (string.IsNullOrEmpty(input) || string.IsNullOrEmpty(substring))
+                return input;
+
             int index = input.IndexOf(substring, comparisonType);
 
             if (index >= 0) {
@@ -30,6 +33,9 @@ namespace Gsemac.Text {
 
         }
         public static string AfterLast(string input, string substring, StringComparison comparisonType = StringComparison.CurrentCulture) {
+
+            if (string.IsNullOrEmpty(input) || string.IsNullOrEmpty(substring))
+                return input;
 
             int index = input.LastIndexOf(substring, comparisonType);
 
@@ -46,6 +52,9 @@ namespace Gsemac.Text {
         }
         public static string Before(string input, string substring, StringComparison comparisonType = StringComparison.CurrentCulture) {
 
+            if (string.IsNullOrEmpty(input) || string.IsNullOrEmpty(substring))
+                return input;
+
             int index = -1;
 
             if (!string.IsNullOrEmpty(substring))
@@ -59,6 +68,9 @@ namespace Gsemac.Text {
         }
         public static string BeforeLast(string input, string substring, StringComparison comparisonType = StringComparison.CurrentCulture) {
 
+            if (string.IsNullOrEmpty(input) || string.IsNullOrEmpty(substring))
+                return input;
+
             int index = input.LastIndexOf(substring, comparisonType);
 
             if (index >= 0)
@@ -68,6 +80,9 @@ namespace Gsemac.Text {
 
         }
         public static string Between(string input, string leftSubstring, string rightSubstring, StringComparison comparisonType = StringComparison.CurrentCulture) {
+
+            if (string.IsNullOrEmpty(input) || string.IsNullOrEmpty(leftSubstring) || string.IsNullOrEmpty(rightSubstring))
+                return input;
 
             // Find start and end indices of the desired substring.
 
@@ -93,6 +108,9 @@ namespace Gsemac.Text {
         }
         public static string BetweenLast(string input, string leftSubstring, string rightSubstring, StringComparison comparisonType = StringComparison.CurrentCulture) {
 
+            if (string.IsNullOrEmpty(input) || string.IsNullOrEmpty(leftSubstring) || string.IsNullOrEmpty(rightSubstring))
+                return input;
+
             leftSubstring = Regex.Escape(leftSubstring);
             rightSubstring = Regex.Escape(rightSubstring);
 
@@ -116,12 +134,18 @@ namespace Gsemac.Text {
         }
         public static IEnumerable<string> BetweenMany(string input, string leftSubstring, string rightSubstring) {
 
+            if (string.IsNullOrEmpty(input) || string.IsNullOrEmpty(leftSubstring) || string.IsNullOrEmpty(rightSubstring))
+                return Enumerable.Empty<string>();
+
             return Regex.Matches(input, Regex.Escape(leftSubstring) + "(.+?)" + Regex.Escape(rightSubstring), RegexOptions.Singleline)
                 .Cast<Match>()
                 .Select(m => m.Groups[1].Value);
 
         }
         public static int Count(string input, string substring) {
+
+            if (string.IsNullOrEmpty(input) || string.IsNullOrEmpty(substring))
+                return 0;
 
             return (input.Length - input.Replace(substring, string.Empty).Length) / substring.Length;
 
@@ -133,6 +157,9 @@ namespace Gsemac.Text {
 
         }
         public static IEnumerable<string> Split(string value, string[] separator, int count, StringSplitOptions options = StringSplitOptions.None) {
+
+            if (string.IsNullOrEmpty(value))
+                yield break;
 
             IEnumerable<string> items;
 
@@ -364,6 +391,9 @@ namespace Gsemac.Text {
         }
         public static bool IsNumeric(string input, NumberStyles styles) {
 
+            if (string.IsNullOrWhiteSpace(input))
+                return false;
+
             return double.TryParse(input, styles, CultureInfo.InvariantCulture, out _);
 
         }
@@ -482,6 +512,9 @@ namespace Gsemac.Text {
         }
 
         public static string ComputeMD5Hash(string input, Encoding encoding = null) {
+
+            if (input is null)
+                throw new ArgumentNullException(nameof(input));
 
             encoding = encoding ?? Encoding.UTF8;
 
