@@ -46,6 +46,32 @@ namespace Gsemac.Text.Extensions {
 
         }
 
+        public static string ReplaceFirst(this string input, string oldValue, string newValue, StringComparison comparisonType = StringComparison.CurrentCulture) {
+
+            return StringUtilities.ReplaceFirst(input, oldValue, newValue, comparisonType);
+
+        }
+        public static string ReplaceLast(this string input, string oldValue, string newValue, StringComparison comparisonType = StringComparison.CurrentCulture) {
+
+            return StringUtilities.ReplaceLast(input, oldValue, newValue, comparisonType);
+
+        }
+
+        public static string TrimStart(this string input, string substring, StringComparison comparisonType = StringComparison.CurrentCulture) {
+
+            return StringUtilities.TrimStart(input, substring, comparisonType);
+
+        }
+        public static string TrimEnd(this string input, string substring, StringComparison comparisonType = StringComparison.CurrentCulture) {
+
+            return StringUtilities.TrimEnd(input, substring, comparisonType);
+
+        }
+        public static string Trim(this string input, string substring, StringComparison comparisonType = StringComparison.CurrentCulture) {
+
+            return StringUtilities.Trim(input, substring, comparisonType);
+
+        }
         public static string TrimOrDefault(this string input) {
 
             return StringUtilities.TrimOrDefault(input);

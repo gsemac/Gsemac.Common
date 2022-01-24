@@ -166,12 +166,84 @@ namespace Gsemac.Text.Tests {
 
         }
 
+        // ReplaceFirst
+
+        [TestMethod]
+        public void TestReplaceFirstWithStringWithSingleMatchingSubstring() {
+
+            Assert.AreEqual("goodbye world", StringUtilities.ReplaceFirst("hello world", "hello", "goodbye"));
+
+        }
+        [TestMethod]
+        public void TestReplaceFirstWithStringWithMultipleMatchingSubstrings() {
+
+            Assert.AreEqual("goodbye hello world", StringUtilities.ReplaceFirst("hello hello world", "hello", "goodbye"));
+
+        }
+        [TestMethod]
+        public void TestReplaceFirstWithNullString() {
+
+            Assert.AreEqual(null, StringUtilities.ReplaceFirst(null, "hello", "goodbye"));
+
+        }
+        [TestMethod]
+        public void TestReplaceFirstWithNullSubstring() {
+
+            Assert.ThrowsException<ArgumentException>(() => StringUtilities.ReplaceFirst("", null, ""));
+
+        }
+        [TestMethod]
+        public void TestReplaceFirstWithNullReplacement() {
+
+            Assert.AreEqual(" world", StringUtilities.ReplaceFirst("hello world", "hello", null));
+
+        }
+
+        // ReplaceLast
+
+        [TestMethod]
+        public void TestReplaceLastWithStringWithSingleMatchingSubstring() {
+
+            Assert.AreEqual("hello everyone", StringUtilities.ReplaceLast("hello world", "world", "everyone"));
+
+        }
+        [TestMethod]
+        public void TestReplaceLastWithStringWithMultipleMatchingSubstrings() {
+
+            Assert.AreEqual("hello world everyone", StringUtilities.ReplaceLast("hello world world", "world", "everyone"));
+
+        }
+        [TestMethod]
+        public void TestReplaceLastWithNullString() {
+
+            Assert.AreEqual(null, StringUtilities.ReplaceLast(null, "world", "everyone"));
+
+        }
+        [TestMethod]
+        public void TestReplaceLastWithNullSubstring() {
+
+            Assert.ThrowsException<ArgumentException>(() => StringUtilities.ReplaceLast("", null, ""));
+
+        }
+        [TestMethod]
+        public void TestReplaceLastWithNullReplacement() {
+
+            Assert.AreEqual("hello ", StringUtilities.ReplaceLast("hello world", "world", null));
+
+        }
+
         // NormalizeWhiteSpace
 
         [TestMethod]
         public void TestNormalizeWhiteSpaceWithStringContainingWhiteSpace() {
 
             Assert.AreEqual(" hello world ", StringUtilities.NormalizeWhiteSpace("    hello   world     "));
+
+        }
+        [TestMethod]
+        public void TestNormalizeWhiteSpaceWithNullString() {
+
+            Assert.AreEqual(null, StringUtilities.NormalizeWhiteSpace(null));
 
         }
         [TestMethod]
@@ -197,6 +269,12 @@ namespace Gsemac.Text.Tests {
 
         }
         [TestMethod]
+        public void TestNormalizeLineBreaksWithNullString() {
+
+            Assert.AreEqual(null, StringUtilities.NormalizeLineBreaks(null));
+
+        }
+        [TestMethod]
         public void TestNormalizeLineBreaksWithPreserveLineBreaksOption() {
 
             Assert.AreEqual($"a{Environment.NewLine}{Environment.NewLine}b{Environment.NewLine}{Environment.NewLine}c",
@@ -208,6 +286,60 @@ namespace Gsemac.Text.Tests {
 
             Assert.AreEqual($"a{Environment.NewLine}{Environment.NewLine}b{Environment.NewLine}{Environment.NewLine}c",
                 StringUtilities.NormalizeLineBreaks("a\r\n\nb\n\r\n\n\nc", NormalizeSpaceOptions.PreserveParagraphBreaks));
+
+        }
+
+        // TrimStart
+
+        [TestMethod]
+        public void TestTrimStartWithStringBeginningWithSubstring() {
+
+            Assert.AreEqual("worldhellohello", StringUtilities.TrimStart("hellohelloworldhellohello", "hello"));
+
+        }
+        [TestMethod]
+        public void TestTrimStartWithStringNotBeginningWithSubstring() {
+
+            Assert.AreEqual("worldhello", StringUtilities.TrimStart("worldhello", "hello"));
+
+        }
+        [TestMethod]
+        public void TestTrimStartWithNullString() {
+
+            Assert.AreEqual(null, StringUtilities.TrimStart(null, "hello"));
+
+        }
+        [TestMethod]
+        public void TestTrimStartWithNullSubstring() {
+
+            Assert.AreEqual("helloworld", StringUtilities.TrimStart("helloworld", null));
+
+        }
+
+        // TrimEnd
+
+        [TestMethod]
+        public void TestTrimEndWithStringBeginningWithSubstring() {
+
+            Assert.AreEqual("hellohelloworld", StringUtilities.TrimEnd("hellohelloworldhellohello", "hello"));
+
+        }
+        [TestMethod]
+        public void TestTrimEndWithStringNotBeginningWithSubstring() {
+
+            Assert.AreEqual("helloworld", StringUtilities.TrimEnd("helloworld", "hello"));
+
+        }
+        [TestMethod]
+        public void TestTrimEndWithNullString() {
+
+            Assert.AreEqual(null, StringUtilities.TrimEnd(null, "world"));
+
+        }
+        [TestMethod]
+        public void TestTrimEndWithNullSubstring() {
+
+            Assert.AreEqual("helloworld", StringUtilities.TrimEnd("helloworld", null));
 
         }
 

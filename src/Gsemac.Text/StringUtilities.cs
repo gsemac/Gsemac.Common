@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Gsemac.Text.Properties;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
@@ -183,18 +184,47 @@ namespace Gsemac.Text {
 
         }
 
+        public static string ReplaceFirst(string input, string oldValue, string newValue, StringComparison comparisonType = StringComparison.CurrentCulture) {
+
+            // Note that "oldValue" and "newValue" match the parameter names of the vanilla Replace method.
+
+            if (string.IsNullOrEmpty(oldValue) || oldValue.Length <= 0)
+                throw new ArgumentException(ExceptionMessages.StringCannotBeOfZeroLength, nameof(oldValue));
+
+            if (string.IsNullOrEmpty(input))
+                return input;
+
+            int index = input.IndexOf(oldValue, comparisonType);
+
+            if (index >= 0)
+                input = input.Remove(index, oldValue.Length).Insert(index, newValue ?? "");
+
+            return input;
+
+        }
         public static string ReplaceLast(string input, string oldValue, string newValue, StringComparison comparisonType = StringComparison.CurrentCulture) {
+
+            // Note that "oldValue" and "newValue" match the parameter names of the vanilla Replace method.
+
+            if (string.IsNullOrEmpty(oldValue) || oldValue.Length <= 0)
+                throw new ArgumentException(ExceptionMessages.StringCannotBeOfZeroLength, nameof(oldValue));
+
+            if (string.IsNullOrEmpty(input))
+                return input;
 
             int index = input.LastIndexOf(oldValue, comparisonType);
 
             if (index >= 0)
-                input = input.Remove(index, oldValue.Length).Insert(index, newValue);
+                input = input.Remove(index, oldValue.Length).Insert(index, newValue ?? "");
 
             return input;
 
         }
 
         public static string NormalizeWhiteSpace(string input, string replacement, NormalizeSpaceOptions options = NormalizeSpaceOptions.Default) {
+
+            if (string.IsNullOrEmpty(input))
+                return input;
 
             string pattern = options.HasFlag(NormalizeSpaceOptions.PreserveLineBreaks) ?
                 @"[^\S\r\n]+" :
@@ -214,6 +244,9 @@ namespace Gsemac.Text {
 
         }
         public static string NormalizeLineBreaks(string input, NormalizeSpaceOptions options = NormalizeSpaceOptions.Default) {
+
+            if (string.IsNullOrEmpty(input))
+                return input;
 
             string result = Regex.Replace(input, @"\r\n|\n", "\n");
 
@@ -236,6 +269,34 @@ namespace Gsemac.Text {
                 result = result.Trim();
 
             return result;
+
+        }
+
+        public static string TrimStart(string input, string substring, StringComparison comparisonType = StringComparison.CurrentCulture) {
+
+            if (string.IsNullOrEmpty(input) || string.IsNullOrEmpty(substring))
+                return input;
+
+            if (input.StartsWith(substring, comparisonType))
+                return TrimStart(input.Substring(substring.Length), substring);
+
+            return input;
+
+        }
+        public static string TrimEnd(string input, string substring, StringComparison comparisonType = StringComparison.CurrentCulture) {
+
+            if (string.IsNullOrEmpty(input) || string.IsNullOrEmpty(substring))
+                return input;
+
+            if (input.EndsWith(substring, comparisonType))
+                return TrimEnd(input.Substring(0, input.Length - substring.Length), substring);
+
+            return input;
+
+        }
+        public static string Trim(string input, string substring, StringComparison comparisonType = StringComparison.CurrentCulture) {
+
+            return TrimEnd(TrimStart(input, substring, comparisonType), substring, comparisonType);
 
         }
         public static string TrimOrDefault(string input) {
