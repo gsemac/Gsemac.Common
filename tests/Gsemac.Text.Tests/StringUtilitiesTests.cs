@@ -103,6 +103,27 @@ namespace Gsemac.Text.Tests {
 
         }
 
+        // Reverse
+
+        [TestMethod]
+        public void TestReverseWithStringWithAsciiCharacters() {
+
+            Assert.AreEqual("dlrow olleh", StringUtilities.Reverse("hello world"));
+
+        }
+        [TestMethod]
+        public void TestReverseWithStringWithMultiByteCharacters() {
+
+            Assert.AreEqual("selbarאֳsiM seL", StringUtilities.Reverse("Les Misאֳrables"));
+
+        }
+        [TestMethod]
+        public void TestReverseWithNullString() {
+
+            Assert.AreEqual(null, StringUtilities.Reverse(null));
+
+        }
+
         // Split
 
         [TestMethod]

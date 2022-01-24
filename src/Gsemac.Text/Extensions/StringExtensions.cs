@@ -46,6 +46,12 @@ namespace Gsemac.Text.Extensions {
 
         }
 
+        public static string Reverse(this string input) {
+
+            return StringUtilities.Reverse(input);
+
+        }
+
         public static string ReplaceFirst(this string input, string oldValue, string newValue, StringComparison comparisonType = StringComparison.CurrentCulture) {
 
             return StringUtilities.ReplaceFirst(input, oldValue, newValue, comparisonType);

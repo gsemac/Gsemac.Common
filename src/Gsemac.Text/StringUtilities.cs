@@ -151,6 +151,28 @@ namespace Gsemac.Text {
 
         }
 
+        public static string Reverse(string input) {
+
+            if (string.IsNullOrEmpty(input))
+                return input;
+
+            // The following solution is based on the one given here: https://stackoverflow.com/a/15029493/5383169 (Michael Liu)
+            // The naive solution of reversing the result of ToCharArray is tempting but invalid, as it doesn't work correctly with multi-byte characters (e.g. "אֳ").
+            // See here for more details: https://stackoverflow.com/q/15029238/5383169
+
+            TextElementEnumerator enumerator = StringInfo.GetTextElementEnumerator(input);
+
+            List<string> elements = new List<string>(input.Length);
+
+            while (enumerator.MoveNext())
+                elements.Add(enumerator.GetTextElement());
+
+            elements.Reverse();
+
+            return string.Concat(elements);
+
+        }
+
         public static IEnumerable<string> Split(string value, char separator, int count, StringSplitOptions options = StringSplitOptions.None) {
 
             return Split(value, new[] { separator }, count, options);
