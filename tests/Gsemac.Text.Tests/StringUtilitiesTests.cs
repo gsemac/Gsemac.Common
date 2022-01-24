@@ -25,6 +25,12 @@ namespace Gsemac.Text.Tests {
 
         }
         [TestMethod]
+        public void TestBeforeWithStringStartingWithSubstring() {
+
+            Assert.AreEqual(string.Empty, StringUtilities.Before("hello, world!", "hello"));
+
+        }
+        [TestMethod]
         public void TestBeforeWithEmptyString() {
 
             Assert.AreEqual(string.Empty, StringUtilities.Before(string.Empty, ", "));
@@ -61,6 +67,12 @@ namespace Gsemac.Text.Tests {
         public void TestAfterWithStringNotContainingSubstring() {
 
             Assert.AreEqual("hello, world!", StringUtilities.After("hello, world!", "x"));
+
+        }
+        [TestMethod]
+        public void TestAfterWithStringEndingWithSubstring() {
+
+            Assert.AreEqual(string.Empty, StringUtilities.After("hello, world!", "world!"));
 
         }
         [TestMethod]
@@ -227,6 +239,16 @@ namespace Gsemac.Text.Tests {
 
             string str = "[1,2,3],(4,5,[6,7]),\"8,9\"";
             string[] expected = { "[1,2,3]", "(4,5,[6,7])", "\"8,9\"" };
+            IEnumerable<string> actual = StringUtilities.Split(str, ',', StringSplitOptions.RespectEnclosingPunctuation);
+
+            CollectionAssert.AreEqual(expected, actual.ToArray());
+
+        }
+        [TestMethod]
+        public void TestSplitWithRespectEnclosingPunctuationOptionWithoutEnclosingPunctuation() {
+
+            string str = "item 1,item 2,item 3";
+            string[] expected = { "item 1", "item 2", "item 3" };
             IEnumerable<string> actual = StringUtilities.Split(str, ',', StringSplitOptions.RespectEnclosingPunctuation);
 
             CollectionAssert.AreEqual(expected, actual.ToArray());
