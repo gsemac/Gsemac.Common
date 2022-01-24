@@ -4,6 +4,16 @@ namespace Gsemac.Text.Extensions {
 
     public static class StringExtensions {
 
+        public static string ToCase(this string input, StringCasing casing) {
+
+            return CaseConverter.ToCase(input, casing);
+
+        }
+        public static string ToCase(this string input, StringCasing casing, CasingOptions options) {
+
+            return CaseConverter.ToCase(input, casing, options);
+
+        }
         public static string ToProper(this string input) {
 
             return CaseConverter.ToProper(input);
@@ -12,6 +22,16 @@ namespace Gsemac.Text.Extensions {
         public static string ToProper(this string input, CasingOptions options) {
 
             return CaseConverter.ToProper(input, options);
+
+        }
+        public static string ToSentence(this string input) {
+
+            return CaseConverter.ToSentence(input);
+
+        }
+        public static string ToSentence(this string input, CasingOptions options) {
+
+            return CaseConverter.ToSentence(input, options);
 
         }
 
