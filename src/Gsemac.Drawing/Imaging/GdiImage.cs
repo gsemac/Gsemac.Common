@@ -27,7 +27,7 @@ namespace Gsemac.Drawing.Imaging {
             if (imageFormat is null)
                 imageFormat = GetImageFormatFromImageFormat(image.RawFormat);
 
-            this.image = image;
+            this.image = (Image)image.Clone();
             this.Format = imageFormat;
             this.Codec = imageCodec ?? (imageFormat is null ? new GdiImageCodec() : new GdiImageCodec(imageFormat));
 

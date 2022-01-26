@@ -22,11 +22,6 @@ namespace Gsemac.Drawing {
         }
 
 #if NETFRAMEWORK
-        public static IImage FromBitmap(Bitmap bitmap) {
-
-            return FromBitmap((Image)bitmap);
-
-        }
         public static IImage FromBitmap(Image bitmap) {
 
             return FromBitmap(bitmap, null, null);

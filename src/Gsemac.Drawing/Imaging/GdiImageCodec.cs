@@ -74,7 +74,7 @@ namespace Gsemac.Drawing.Imaging {
             // https://social.msdn.microsoft.com/Forums/vstudio/en-US/a4125122-63de-439a-bc33-cee2c65ec0ae/imagefromstream-and-imagefromfile-and-different-icon-files?forum=winforms
 
             using (Image imageFromStream = Image.FromStream(stream))
-                return new GdiImage(new Bitmap(imageFromStream), imageFromStream.RawFormat, this);
+                return new GdiImage(imageFromStream, imageFromStream.RawFormat, this);
 
         }
 
@@ -110,12 +110,12 @@ namespace Gsemac.Drawing.Imaging {
             if (encoderOptions is null)
                 throw new ArgumentNullException(nameof(encoderOptions));
 
-            System.Drawing.Imaging.ImageFormat format = imageFormat is null ? image.RawFormat : GetImageFormatFromFileExtension(imageFormat.Extensions.FirstOrDefault());
+            ImageFormat format = imageFormat is null ? image.RawFormat : GetImageFormatFromFileExtension(imageFormat.Extensions.FirstOrDefault());
 
             // The Save method cannot encode WMF images.
             // https://stackoverflow.com/questions/5270763/convert-an-image-into-wmf-with-net
 
-            if (format.Equals(System.Drawing.Imaging.ImageFormat.Wmf)) {
+            if (format.Equals(ImageFormat.Wmf)) {
 
                 EncodeBitmapToWmf(image, stream);
 
@@ -130,7 +130,7 @@ namespace Gsemac.Drawing.Imaging {
                     ImageCodecInfo encoder = GetEncoderFromImageFormat(format);
 
                     if (encoder is null)
-                        encoder = GetEncoderFromImageFormat(System.Drawing.Imaging.ImageFormat.Png);
+                        encoder = GetEncoderFromImageFormat(ImageFormat.Png);
 
                     image.Save(stream, encoder, encoderParameters);
 
@@ -203,7 +203,7 @@ namespace Gsemac.Drawing.Imaging {
             .Distinct();
 
         }
-        private static System.Drawing.Imaging.ImageFormat GetImageFormatFromFileExtension(string fileExtension) {
+        private static ImageFormat GetImageFormatFromFileExtension(string fileExtension) {
 
             if (fileExtension is null)
                 throw new ArgumentNullException(nameof(fileExtension));
@@ -211,30 +211,30 @@ namespace Gsemac.Drawing.Imaging {
             switch (fileExtension.ToLowerInvariant()) {
 
                 case ".bmp":
-                    return System.Drawing.Imaging.ImageFormat.Bmp;
+                    return ImageFormat.Bmp;
 
                 case ".gif":
-                    return System.Drawing.Imaging.ImageFormat.Gif;
+                    return ImageFormat.Gif;
 
                 case ".exif":
-                    return System.Drawing.Imaging.ImageFormat.Exif;
+                    return ImageFormat.Exif;
 
                 case ".ico":
-                    return System.Drawing.Imaging.ImageFormat.Icon;
+                    return ImageFormat.Icon;
 
                 case ".jpg":
                 case ".jpeg":
-                    return System.Drawing.Imaging.ImageFormat.Jpeg;
+                    return ImageFormat.Jpeg;
 
                 case ".png":
-                    return System.Drawing.Imaging.ImageFormat.Png;
+                    return ImageFormat.Png;
 
                 case ".tif":
                 case ".tiff":
-                    return System.Drawing.Imaging.ImageFormat.Tiff;
+                    return ImageFormat.Tiff;
 
                 case ".wmf":
-                    return System.Drawing.Imaging.ImageFormat.Wmf;
+                    return ImageFormat.Wmf;
 
                 default:
                     throw new ArgumentException("The file extension was not recognized.");
@@ -242,7 +242,7 @@ namespace Gsemac.Drawing.Imaging {
             }
 
         }
-        private ImageCodecInfo GetEncoderFromImageFormat(System.Drawing.Imaging.ImageFormat imageFormat) {
+        private ImageCodecInfo GetEncoderFromImageFormat(ImageFormat imageFormat) {
 
             if (imageFormat is null)
                 throw new ArgumentNullException(nameof(imageFormat));

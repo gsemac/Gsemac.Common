@@ -1,5 +1,6 @@
 ﻿using Gsemac.Drawing.Imaging;
 using Gsemac.IO;
+using Gsemac.IO.Extensions;
 using System;
 using System.Drawing;
 using System.IO;
@@ -22,7 +23,23 @@ namespace Gsemac.Drawing.Extensions {
         }
         public static void Save(this IImage image, Stream stream, IFileFormat imageFormat, IImageEncoderOptions encoderOptions) {
 
-            IImageEncoder encoder = ImageCodecFactory.Default.FromFileFormat(imageFormat);
+            if (image is null)
+                throw new ArgumentNullException(nameof(image));
+
+            if (stream is null)
+                throw new ArgumentNullException(nameof(stream));
+
+            if (imageFormat is null)
+                throw new ArgumentNullException(nameof(imageFormat));
+
+            if (encoderOptions is null)
+                throw new ArgumentNullException(nameof(encoderOptions));
+
+            // Attempt to use the same codec the image was created with if it supports the given image format.
+
+            IImageEncoder encoder = (image.Codec is object && image.Codec.IsSupportedFileFormat(imageFormat)) ?
+                image.Codec :
+                ImageCodecFactory.Default.FromFileFormat(imageFormat);
 
             if (encoder is null)
                 throw new FileFormatException(IO.Properties.ExceptionMessages.UnsupportedFileFormat);
@@ -67,8 +84,17 @@ namespace Gsemac.Drawing.Extensions {
         }
         public static void Save(this IImage image, string filePath, IFileFormat imageFormat, IImageEncoderOptions encoderOptions) {
 
+            if (image is null)
+                throw new ArgumentNullException(nameof(image));
+
+            if (filePath is null)
+                throw new ArgumentNullException(nameof(filePath));
+
             if (imageFormat is null)
                 throw new ArgumentNullException(nameof(imageFormat));
+
+            if (encoderOptions is null)
+                throw new ArgumentNullException(nameof(encoderOptions));
 
             using (FileStream stream = File.Open(filePath, FileMode.OpenOrCreate))
                 image.Save(stream, imageFormat, encoderOptions);
@@ -77,6 +103,9 @@ namespace Gsemac.Drawing.Extensions {
 
 #if NETFRAMEWORK
         public static Bitmap ToBitmap(this IImage image, bool disposeSourceImage) {
+
+            if (image is null)
+                throw new ArgumentNullException(nameof(image));
 
             Bitmap bitmap = image.ToBitmap();
 

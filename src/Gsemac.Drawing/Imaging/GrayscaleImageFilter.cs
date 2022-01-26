@@ -11,11 +11,7 @@ namespace Gsemac.Drawing.Imaging {
 
         public IImage Apply(IImage image) {
 
-            Image newImage = null;
-
-            try {
-
-                ColorMatrix colorMatrix = new ColorMatrix(new float[][] {
+            ColorMatrix colorMatrix = new ColorMatrix(new float[][] {
                     new[]{0.3f, 0.3f, 0.3f, 0.0f, 0.0f},
                     new[]{0.59f, 0.59f, 0.59f, 0.0f, 0.0f},
                     new[]{0.11f, 0.11f, 0.11f, 0.0f, 0.0f},
@@ -23,13 +19,13 @@ namespace Gsemac.Drawing.Imaging {
                     new[]{0.0f, 0.0f, 0.0f, 0.0f, 1.0f},
                 });
 
-                using (ImageAttributes attributes = new ImageAttributes()) {
+            using (ImageAttributes attributes = new ImageAttributes()) {
 
-                    attributes.SetColorMatrix(colorMatrix);
+                attributes.SetColorMatrix(colorMatrix);
 
-                    // Note that one of the reasons for drawing on top of new image is so that transluscent pixels from the old image aren't visible through the new one.
+                // Note that one of the reasons for drawing on top of new image is so that transluscent pixels from the old image aren't visible through the new one.
 
-                    newImage = new Bitmap(image.Width, image.Height, PixelFormat.Format32bppArgb);
+                using (Image newImage = new Bitmap(image.Width, image.Height, PixelFormat.Format32bppArgb)) {
 
                     using (Image sourceBitmap = ImageUtilities.ConvertToNonIndexedPixelFormat(image))
                     using (Graphics graphics = Graphics.FromImage(newImage)) {
@@ -43,14 +39,6 @@ namespace Gsemac.Drawing.Imaging {
                     return ImageFactory.FromBitmap(newImage);
 
                 }
-
-            }
-            catch (Exception) {
-
-                if (newImage is object)
-                    newImage.Dispose();
-
-                throw;
 
             }
 

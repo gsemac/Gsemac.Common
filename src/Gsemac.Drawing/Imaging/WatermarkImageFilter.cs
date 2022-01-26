@@ -18,32 +18,17 @@ namespace Gsemac.Drawing.Imaging {
 
         public IImage Apply(IImage image) {
 
-            Image newImage = null;
+            using (Image newImage = ImageUtilities.ConvertToNonIndexedPixelFormat(image))
+            using (Graphics graphics = Graphics.FromImage(newImage)) {
 
-            try {
+                graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.None;
 
-                newImage = ImageUtilities.ConvertToNonIndexedPixelFormat(image);
-
-                using (Graphics graphics = Graphics.FromImage(newImage)) {
-
-                    graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.None;
-
-                    graphics.DrawImage(overlayImage,
-                        new Rectangle(0, 0, overlayImage.Width, overlayImage.Height),
-                        new Rectangle(0, 0, overlayImage.Width, overlayImage.Height),
-                        GraphicsUnit.Pixel);
-
-                }
+                graphics.DrawImage(overlayImage,
+                    new Rectangle(0, 0, overlayImage.Width, overlayImage.Height),
+                    new Rectangle(0, 0, overlayImage.Width, overlayImage.Height),
+                    GraphicsUnit.Pixel);
 
                 return ImageFactory.FromBitmap(newImage);
-
-            }
-            catch (Exception) {
-
-                if (newImage is object)
-                    newImage.Dispose();
-
-                throw;
 
             }
 

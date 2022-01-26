@@ -20,41 +20,26 @@ namespace Gsemac.Drawing.Imaging {
 
         public IImage Apply(IImage image) {
 
-            Image newImage = null;
+            ColorMatrix colorMatrix = new ColorMatrix() {
+                Matrix33 = opacity,
+            };
 
-            try {
+            using (ImageAttributes attributes = new ImageAttributes()) {
 
-                ColorMatrix colorMatrix = new ColorMatrix() {
-                    Matrix33 = opacity,
-                };
+                attributes.SetColorMatrix(colorMatrix, ColorMatrixFlag.Default, ColorAdjustType.Bitmap);
 
-                using (ImageAttributes attributes = new ImageAttributes()) {
+                // Create a new bitmap with an alpha channel.
 
-                    attributes.SetColorMatrix(colorMatrix, ColorMatrixFlag.Default, ColorAdjustType.Bitmap);
+                using (Image newImage = new Bitmap(image.Width, image.Height, PixelFormat.Format32bppArgb))
+                using (Image sourceBitmap = ImageUtilities.ConvertToNonIndexedPixelFormat(image))
+                using (Graphics graphics = Graphics.FromImage(newImage)) {
 
-                    // Create a new bitmap with an alpha channel.
-
-                    newImage = new Bitmap(image.Width, image.Height, PixelFormat.Format32bppArgb);
-
-                    using (Image sourceBitmap = ImageUtilities.ConvertToNonIndexedPixelFormat(image))
-                    using (Graphics graphics = Graphics.FromImage(newImage)) {
-
-                        graphics.Clear(Color.Transparent);
-                        graphics.DrawImage(sourceBitmap, new Rectangle(0, 0, sourceBitmap.Width, sourceBitmap.Height), 0, 0, sourceBitmap.Width, sourceBitmap.Height, GraphicsUnit.Pixel, attributes);
-
-                    }
+                    graphics.Clear(Color.Transparent);
+                    graphics.DrawImage(sourceBitmap, new Rectangle(0, 0, sourceBitmap.Width, sourceBitmap.Height), 0, 0, sourceBitmap.Width, sourceBitmap.Height, GraphicsUnit.Pixel, attributes);
 
                     return ImageFactory.FromBitmap(newImage);
 
                 }
-
-            }
-            catch (Exception) {
-
-                if (newImage is object)
-                    newImage.Dispose();
-
-                throw;
 
             }
 

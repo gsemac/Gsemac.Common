@@ -18,25 +18,13 @@ namespace Gsemac.Drawing.Imaging {
 
         public IImage Apply(IImage image) {
 
-            Image newImage = null;
-
-            try {
-
-                newImage = ImageUtilities.ConvertToNonIndexedPixelFormat(image);
+            using (Image newImage = ImageUtilities.ConvertToNonIndexedPixelFormat(image)) {
 
                 using (Graphics graphics = Graphics.FromImage(newImage))
                 using (Brush brush = new SolidBrush(overlayColor))
                     graphics.FillRectangle(brush, new Rectangle(0, 0, newImage.Width, newImage.Height));
 
                 return ImageFactory.FromBitmap(newImage);
-
-            }
-            catch (Exception) {
-
-                if (newImage is object)
-                    newImage.Dispose();
-
-                throw;
 
             }
 

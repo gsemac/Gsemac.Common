@@ -34,7 +34,8 @@ namespace Gsemac.Drawing.Imaging {
         }
         public IImage Decode(Stream stream) {
 
-            return ImageFactory.FromBitmap(DecodeWebPBitmap(stream), GetSupportedFileFormats().First(), this);
+            using (Image decodedWebPBitmap = DecodeWebPBitmap(stream))
+                return ImageFactory.FromBitmap(decodedWebPBitmap, GetSupportedFileFormats().First(), this);
 
         }
 
