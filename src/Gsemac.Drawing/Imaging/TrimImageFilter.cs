@@ -50,7 +50,7 @@ namespace Gsemac.Drawing.Imaging {
 
             try {
 
-                using (Bitmap sourceBitmap = (Bitmap)ImageUtilities.ConvertImageToNonIndexedPixelFormat(image)) {
+                using (Bitmap sourceBitmap = (Bitmap)ImageUtilities.ConvertToNonIndexedPixelFormat(image)) {
 
                     if (sourceBitmap.Width > 0 && sourceBitmap.Height > 0) {
 
@@ -108,7 +108,7 @@ namespace Gsemac.Drawing.Imaging {
 
                             graphics.DrawImage(sourceBitmap, new Rectangle(0, 0, width, height), new Rectangle(x, y, width, height), GraphicsUnit.Pixel);
 
-                            return ImageUtilities.CreateImageFromBitmap(newImage);
+                            return ImageFactory.FromBitmap(newImage);
 
                         }
 

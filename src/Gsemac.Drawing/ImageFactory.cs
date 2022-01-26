@@ -1,5 +1,10 @@
 ﻿using Gsemac.Drawing.Imaging;
 
+#if NETFRAMEWORK
+using Gsemac.IO;
+using System.Drawing;
+#endif
+
 namespace Gsemac.Drawing {
 
     public class ImageFactory :
@@ -15,6 +20,24 @@ namespace Gsemac.Drawing {
         public ImageFactory(IImageCodecFactory imageCodecFactory) :
             base(imageCodecFactory) {
         }
+
+#if NETFRAMEWORK
+        public static IImage FromBitmap(Bitmap bitmap) {
+
+            return FromBitmap((Image)bitmap);
+
+        }
+        public static IImage FromBitmap(Image bitmap) {
+
+            return FromBitmap(bitmap, null, null);
+
+        }
+        public static IImage FromBitmap(Image bitmap, IFileFormat imageFormat, IImageCodec imageCodec) {
+
+            return new GdiImage(bitmap, imageFormat, imageCodec);
+
+        }
+#endif
 
     }
 

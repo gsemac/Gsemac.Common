@@ -22,13 +22,13 @@ namespace Gsemac.Drawing.Imaging {
 
             try {
 
-                newImage = ImageUtilities.ConvertImageToNonIndexedPixelFormat(image);
+                newImage = ImageUtilities.ConvertToNonIndexedPixelFormat(image);
 
                 using (Graphics graphics = Graphics.FromImage(newImage))
                 using (Brush brush = new SolidBrush(overlayColor))
                     graphics.FillRectangle(brush, new Rectangle(0, 0, newImage.Width, newImage.Height));
 
-                return ImageUtilities.CreateImageFromBitmap(newImage);
+                return ImageFactory.FromBitmap(newImage);
 
             }
             catch (Exception) {

@@ -95,7 +95,7 @@ namespace Gsemac.Drawing.Extensions {
             if (imageFormat is null)
                 throw new ArgumentNullException(nameof(imageFormat));
 
-            encoder.Encode(ImageUtilities.CreateImageFromBitmap(bitmap), stream, encoderOptions);
+            encoder.Encode(ImageFactory.FromBitmap(bitmap), stream, encoderOptions);
 
         }
         public static void Save(this Image bitmap, Stream stream, IFileFormat imageFormat, IImageEncoderOptions encoderOptions) {

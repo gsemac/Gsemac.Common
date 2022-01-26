@@ -31,7 +31,7 @@ namespace Gsemac.Drawing.Imaging {
 
                     newImage = new Bitmap(image.Width, image.Height, PixelFormat.Format32bppArgb);
 
-                    using (Image sourceBitmap = ImageUtilities.ConvertImageToNonIndexedPixelFormat(image))
+                    using (Image sourceBitmap = ImageUtilities.ConvertToNonIndexedPixelFormat(image))
                     using (Graphics graphics = Graphics.FromImage(newImage)) {
 
                         graphics.Clear(Color.Transparent);
@@ -40,7 +40,7 @@ namespace Gsemac.Drawing.Imaging {
 
                     }
 
-                    return ImageUtilities.CreateImageFromBitmap(newImage);
+                    return ImageFactory.FromBitmap(newImage);
 
                 }
 

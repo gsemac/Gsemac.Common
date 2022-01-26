@@ -22,7 +22,7 @@ namespace Gsemac.Drawing.Imaging {
 
             try {
 
-                newImage = ImageUtilities.ConvertImageToNonIndexedPixelFormat(image);
+                newImage = ImageUtilities.ConvertToNonIndexedPixelFormat(image);
 
                 using (Graphics graphics = Graphics.FromImage(newImage)) {
 
@@ -35,7 +35,7 @@ namespace Gsemac.Drawing.Imaging {
 
                 }
 
-                return ImageUtilities.CreateImageFromBitmap(newImage);
+                return ImageFactory.FromBitmap(newImage);
 
             }
             catch (Exception) {

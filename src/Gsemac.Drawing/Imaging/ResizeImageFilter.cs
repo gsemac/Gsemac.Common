@@ -57,7 +57,7 @@ namespace Gsemac.Drawing.Imaging {
                 return image.Clone();
 
             using (Bitmap sourceBitmap = image.ToBitmap())
-                return ImageUtilities.CreateImageFromBitmap(ImageUtilities.ResizeImage(sourceBitmap, newWidth, newHeight));
+                return ImageFactory.FromBitmap(ImageUtilities.ResizeImage(sourceBitmap, newWidth, newHeight));
 
         }
 
