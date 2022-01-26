@@ -4,7 +4,7 @@ namespace Gsemac.Core.Extensions {
 
     public static class CmdArgumentsBuilderExtensions {
 
-        public static TBuilder WithArguments<TBuilder>(this ICmdArgumentsBuilder<TBuilder> argumentsBuilder, params string[] arguments)
+        public static TBuilder WithArguments<TBuilder>(this ICommandLineArgumentsBuilder<TBuilder> argumentsBuilder, params string[] arguments)
             where TBuilder : class {
 
             foreach (string argument in arguments)

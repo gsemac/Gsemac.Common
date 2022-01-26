@@ -104,7 +104,7 @@ namespace Gsemac.IO.Compression.SevenZip {
 
                 ProcessStartInfo processStartInfo = CreateProcessStartInfo();
 
-                ICmdArgumentsBuilder argumentsBuilder = new CmdArgumentsBuilder()
+                ICommandLineArgumentsBuilder argumentsBuilder = new CmdArgumentsBuilder()
                     .WithArgument("e")
                     .WithArgument(filePath)
                     .WithArgument("-so")
@@ -131,7 +131,7 @@ namespace Gsemac.IO.Compression.SevenZip {
 
                 ProcessStartInfo processStartInfo = CreateProcessStartInfo();
 
-                ICmdArgumentsBuilder argumentsBuilder = new CmdArgumentsBuilder()
+                ICommandLineArgumentsBuilder argumentsBuilder = new CmdArgumentsBuilder()
                     .WithArgument("l")
                     .WithArgument(filePath)
                     .WithArgument("-sccUTF-8"); // output filenames in UTF-8 instead of Windows' default charset
@@ -230,7 +230,7 @@ namespace Gsemac.IO.Compression.SevenZip {
 
         }
 
-        private void AddTypeArgument(ICmdArgumentsBuilder argumentsBuilder) {
+        private void AddTypeArgument(ICommandLineArgumentsBuilder argumentsBuilder) {
 
             if (archiveFormat.Equals(ArchiveFormat.Zip)) {
 
@@ -244,7 +244,7 @@ namespace Gsemac.IO.Compression.SevenZip {
             }
 
         }
-        private void AddCompressionLevelArguments(ICmdArgumentsBuilder argumentsBuilder) {
+        private void AddCompressionLevelArguments(ICommandLineArgumentsBuilder argumentsBuilder) {
 
             switch (compressionLevel) {
 
@@ -286,7 +286,7 @@ namespace Gsemac.IO.Compression.SevenZip {
             }
 
         }
-        private void AddPasswordArguments(ICmdArgumentsBuilder argumentsBuilder, bool includeEmptyPassword = false) {
+        private void AddPasswordArguments(ICommandLineArgumentsBuilder argumentsBuilder, bool includeEmptyPassword = false) {
 
             // A default password can optionally be included to prevent 7-Zip from prompting for one.
             // This should only be enabled for non-constructive operations like reading files from the archive.
@@ -318,7 +318,7 @@ namespace Gsemac.IO.Compression.SevenZip {
 
                     File.WriteAllText(tempFilePath, string.Join(Environment.NewLine, deletedEntries.Select(entry => entry.Name)));
 
-                    ICmdArgumentsBuilder argumentsBuilder = new CmdArgumentsBuilder()
+                    ICommandLineArgumentsBuilder argumentsBuilder = new CmdArgumentsBuilder()
                         .WithArgument("d")
                         .WithArgument(filePath)
                         .WithArgument($"@{tempFilePath}");
@@ -348,7 +348,7 @@ namespace Gsemac.IO.Compression.SevenZip {
             if (newEntries.Any()) {
 
                 string tempFilePath = null;
-                ICmdArgumentsBuilder argumentsBuilder;
+                ICommandLineArgumentsBuilder argumentsBuilder;
 
                 try {
 

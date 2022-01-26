@@ -283,7 +283,7 @@ namespace Gsemac.IO.Compression.Winrar {
 
         }
 
-        private void AddCompressionLevelArguments(ICmdArgumentsBuilder argumentsBuilder) {
+        private void AddCompressionLevelArguments(ICommandLineArgumentsBuilder argumentsBuilder) {
 
             switch (compressionLevel) {
 
@@ -302,7 +302,7 @@ namespace Gsemac.IO.Compression.Winrar {
             }
 
         }
-        private void AddTypeArgument(ICmdArgumentsBuilder argumentsBuilder) {
+        private void AddTypeArgument(ICommandLineArgumentsBuilder argumentsBuilder) {
 
             if (archiveFormat.Equals(ArchiveFormat.Zip)) {
 
@@ -429,7 +429,7 @@ namespace Gsemac.IO.Compression.Winrar {
             if (newEntries.Any()) {
 
                 string tempFilePath = null;
-                ICmdArgumentsBuilder argumentsBuilder;
+                ICommandLineArgumentsBuilder argumentsBuilder;
 
                 try {
 

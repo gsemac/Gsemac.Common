@@ -6,7 +6,7 @@ using System.Text.RegularExpressions;
 namespace Gsemac.Core {
 
     public abstract class CmdArgumentsBuilderBase<TBuilder> :
-        ICmdArgumentsBuilder<TBuilder> where TBuilder : class {
+        ICommandLineArgumentsBuilder<TBuilder> where TBuilder : class {
 
         // Public members
 
@@ -58,14 +58,14 @@ namespace Gsemac.Core {
 
         }
 
-        ICmdArgumentsBuilder ICmdArgumentsBuilder.WithArgument(string value) {
+        ICommandLineArgumentsBuilder ICommandLineArgumentsBuilder.WithArgument(string value) {
 
             WithArgument(value);
 
             return this;
 
         }
-        ICmdArgumentsBuilder ICmdArgumentsBuilder.WithArgument(string name, string value) {
+        ICommandLineArgumentsBuilder ICommandLineArgumentsBuilder.WithArgument(string name, string value) {
 
             WithArgument(name, value);
 
