@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Gsemac.Collections.Extensions;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -64,6 +65,11 @@ namespace Gsemac.Collections {
                 throw new ArgumentNullException(nameof(baseCollection));
 
             items = baseCollection;
+
+        }
+        protected CollectionBase(IEnumerable<T> items) {
+
+            this.items.AddRange(items);
 
         }
 
