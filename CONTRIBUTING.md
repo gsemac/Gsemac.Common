@@ -12,6 +12,7 @@ The following style guide is mostly to help keep myself consistent.
 * If the class provides optional configuration details, use the `Options` suffix.
 * Options classes should have a static `Default` property that returns an instance configured with default options.
 * Options classes should always appear last in the parameter list.
+* Prefer options classes over enums.
 
 #### Factory Classes
 
