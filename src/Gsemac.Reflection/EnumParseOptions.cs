@@ -1,12 +1,14 @@
-﻿using System;
+﻿namespace Gsemac.Reflection {
 
-namespace Gsemac.Reflection {
+    public class EnumParseOptions :
+        IEnumParseOptions {
 
-    [Flags]
-    public enum EnumParseOptions {
-        None = 0,
-        IgnoreCase = 1,
-        Default = None,
+        // Public members
+
+        public bool IgnoreCase { get; set; } = false;
+
+        public static EnumParseOptions Default => new EnumParseOptions();
+
     }
 
 }

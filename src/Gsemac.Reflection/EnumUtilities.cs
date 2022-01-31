@@ -24,7 +24,7 @@ namespace Gsemac.Reflection {
                 if (int.TryParse(inputAsString, NumberStyles.Integer, CultureInfo.InvariantCulture, out int inputStringAsInt))
                     return Enum.ToObject(enumType, inputStringAsInt);
                 else
-                    return Enum.Parse(enumType, inputAsString, options.HasFlag(EnumParseOptions.IgnoreCase));
+                    return Enum.Parse(enumType, inputAsString, options.IgnoreCase);
 
             }
             else {

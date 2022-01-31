@@ -74,7 +74,7 @@ namespace Gsemac.Reflection {
 
                     if (newType.IsEnum) {
 
-                        success = EnumUtilities.TryParse(obj, newType, EnumParseOptions.IgnoreCase, out result);
+                        success = EnumUtilities.TryParse(obj, newType, new EnumParseOptions() { IgnoreCase = true, }, out result);
 
                     }
                     else {
