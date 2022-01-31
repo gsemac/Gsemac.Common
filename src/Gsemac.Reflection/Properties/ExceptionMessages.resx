@@ -117,8 +117,14 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="NoSuitableInterfaceImplementationCouldBeDeterminedWithInterfaceName" xml:space="preserve">
+    <value>No suitable '{0}' implementation could be found.</value>
+  </data>
   <data name="RequestedEnumValueNotFoundWithValue" xml:space="preserve">
     <value>Requested value '{0}' was not found.</value>
+  </data>
+  <data name="TypeDoesNotImplementInterfaceWithTypeNameAndInterfaceName" xml:space="preserve">
+    <value>Type '{0}' does not implement interface '{1}'.</value>
   </data>
   <data name="TypeMustBeAnEnum" xml:space="preserve">
     <value>Type provided must be an Enum.</value>

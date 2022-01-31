@@ -61,11 +61,29 @@ namespace Gsemac.Reflection.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to No suitable &apos;{0}&apos; implementation could be found..
+        /// </summary>
+        internal static string NoSuitableInterfaceImplementationCouldBeDeterminedWithInterfaceName {
+            get {
+                return ResourceManager.GetString("NoSuitableInterfaceImplementationCouldBeDeterminedWithInterfaceName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Requested value &apos;{0}&apos; was not found..
         /// </summary>
         internal static string RequestedEnumValueNotFoundWithValue {
             get {
                 return ResourceManager.GetString("RequestedEnumValueNotFoundWithValue", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Type &apos;{0}&apos; does not implement interface &apos;{1}&apos;..
+        /// </summary>
+        internal static string TypeDoesNotImplementInterfaceWithTypeNameAndInterfaceName {
+            get {
+                return ResourceManager.GetString("TypeDoesNotImplementInterfaceWithTypeNameAndInterfaceName", resourceCulture);
             }
         }
         

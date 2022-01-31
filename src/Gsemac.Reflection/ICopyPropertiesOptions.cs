@@ -2,8 +2,9 @@
 
     public interface ICopyPropertiesOptions {
 
+        bool CopyCollectionItems { get; }
         bool CopyNonPublicProperties { get; }
-        bool CopyNullProperties { get; }
+        bool CopyNullValues { get; }
         bool IgnoreExceptions { get; }
 
     }
