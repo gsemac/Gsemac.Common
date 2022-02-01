@@ -51,6 +51,12 @@ namespace Gsemac.Collections {
                 Add(pair);
 
         }
+        public NameValueCollection(IEnumerable<KeyValuePair<string, string>> items) {
+
+            foreach (var item in items)
+                Add(item);
+
+        }
 
         public void Add(string key, string value) {
 
