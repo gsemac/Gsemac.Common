@@ -308,7 +308,7 @@ namespace Gsemac.Net.WebDrivers {
 
                     IWebDriver webDriver = webBrowserInfo is null ? baseFactory.Create() : baseFactory.Create(webBrowserInfo);
 
-                    webDriverItem = new PoolItem(currentWebDriverId++, webBrowserInfo?.Id ?? WebBrowserId.Unknown, webDriver);
+                    webDriverItem = new PoolItem(currentWebDriverId++, webBrowserInfo?.Id ?? WebBrowserId.Unidentified, webDriver);
 
                     spawnedDrivers.Add(webDriverItem);
 
@@ -332,7 +332,7 @@ namespace Gsemac.Net.WebDrivers {
 
                     if (pool.Count() > 0) {
 
-                        PoolItem webDriverItem = pool.FirstOrDefault(item => (webBrowserInfo?.Id ?? WebBrowserId.Unknown) == item.WebBrowserId);
+                        PoolItem webDriverItem = pool.FirstOrDefault(item => (webBrowserInfo?.Id ?? WebBrowserId.Unidentified) == item.WebBrowserId);
 
                         if (webDriverItem is object) {
 

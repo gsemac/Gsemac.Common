@@ -5,10 +5,10 @@ namespace Gsemac.Net.WebBrowsers {
     public interface IWebBrowserInfoFactory {
 
         IWebBrowserInfo GetInfo(string webBrowserExecutablePath);
-        IWebBrowserInfo GetInfo(WebBrowserId webBrowserId, bool useCachedResult = true);
+        IWebBrowserInfo GetInfo(WebBrowserId webBrowserId, IWebBrowserInfoOptions options = null);
 
         IWebBrowserInfo GetDefaultWebBrowser();
-        IEnumerable<IWebBrowserInfo> GetInstalledWebBrowsers(bool useCachedResult = true);
+        IEnumerable<IWebBrowserInfo> GetInstalledWebBrowsers(IWebBrowserInfoOptions options = null);
 
     }
 

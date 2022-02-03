@@ -19,7 +19,7 @@ namespace Gsemac.Net.WebDrivers {
         public IWebDriver Create() {
 
             IWebBrowserInfo webBrowserInfo = webDriverFactoryOptions.DefaultWebBrowser ??
-                (webBrowserId != WebBrowserId.Unknown ? WebBrowserInfoFactory.Default.GetInfo(webBrowserId) : WebBrowserInfoFactory.Default.GetDefaultWebBrowser());
+                (webBrowserId != WebBrowserId.Unidentified ? WebBrowserInfoFactory.Default.GetInfo(webBrowserId) : WebBrowserInfoFactory.Default.GetDefaultWebBrowser());
 
             return Create(webBrowserInfo);
 
@@ -29,7 +29,7 @@ namespace Gsemac.Net.WebDrivers {
             if (webBrowserInfo is null)
                 throw new ArgumentNullException(nameof(webBrowserInfo));
 
-            if (webBrowserId != WebBrowserId.Unknown && webBrowserInfo.Id != webBrowserId)
+            if (webBrowserId != WebBrowserId.Unidentified && webBrowserInfo.Id != webBrowserId)
                 throw new ArgumentException(string.Format(Properties.ExceptionMessages.UnsupportedWebBrowser, webBrowserInfo.Name), nameof(webBrowserInfo));
 
             // Get the web driver executable path.

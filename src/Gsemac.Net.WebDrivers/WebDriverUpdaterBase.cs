@@ -130,7 +130,7 @@ namespace Gsemac.Net.WebDrivers {
 
         protected bool IsSupportedWebBrowser(IWebBrowserInfo webBrowserInfo) {
 
-            return webBrowserId == WebBrowserId.Unknown ||
+            return webBrowserId == WebBrowserId.Unidentified ||
                 webBrowserId.Equals(webBrowserInfo.Id);
 
         }

@@ -29,11 +29,14 @@ namespace Gsemac.Net.WebBrowsers {
             };
 
         }
-        public IWebBrowserInfo GetInfo(WebBrowserId webBrowserId, bool useCachedResult = true) {
+        public IWebBrowserInfo GetInfo(WebBrowserId webBrowserId, IWebBrowserInfoOptions options = null) {
+
+            if (options is null)
+                options = WebBrowserInfoOptions.Default;
 
             // Prefer newer, 64-bit executables.
 
-            return GetInstalledWebBrowsers(useCachedResult).Where(info => info.Id == webBrowserId)
+            return GetInstalledWebBrowsers(options).Where(info => info.Id == webBrowserId)
                 .OrderByDescending(info => info.Version)
                 .ThenByDescending(info => info.Is64Bit)
                 .FirstOrDefault();
@@ -60,9 +63,12 @@ namespace Gsemac.Net.WebBrowsers {
             return webBrowserInfo;
 
         }
-        public IEnumerable<IWebBrowserInfo> GetInstalledWebBrowsers(bool useCachedResult = true) {
+        public IEnumerable<IWebBrowserInfo> GetInstalledWebBrowsers(IWebBrowserInfoOptions options = null) {
 
-            if (!useCachedResult)
+            if (options is null)
+                options = WebBrowserInfoOptions.Default;
+
+            if (options.BypassCache)
                 webBrowserInfoCache.Reset();
 
             return webBrowserInfoCache.Value;
@@ -139,7 +145,7 @@ namespace Gsemac.Net.WebBrowsers {
             if (productName.Equals("vivaldi", StringComparison.OrdinalIgnoreCase))
                 return WebBrowserId.Vivaldi;
 
-            return WebBrowserId.Unknown;
+            return WebBrowserId.Unidentified;
 
         }
         private static System.Version GetBrowserVersion(FileVersionInfo versionInfo) {
@@ -158,7 +164,7 @@ namespace Gsemac.Net.WebBrowsers {
 
         private IWebBrowserInfo GetWebBrowserInfoFromUserChoiceKey() {
 
-            WebBrowserId id = WebBrowserId.Unknown;
+            WebBrowserId id = WebBrowserId.Unidentified;
 
             using (RegistryKey userChoiceKey = Registry.CurrentUser.OpenSubKey(@"Software\Microsoft\Windows\Shell\Associations\UrlAssociations\http\UserChoice", writable: false)) {
 
@@ -195,7 +201,7 @@ namespace Gsemac.Net.WebBrowsers {
                                 break;
 
                             default:
-                                id = WebBrowserId.Unknown;
+                                id = WebBrowserId.Unidentified;
                                 break;
 
                         }
@@ -206,7 +212,7 @@ namespace Gsemac.Net.WebBrowsers {
 
             }
 
-            return id == WebBrowserId.Unknown ? null : GetInfo(id);
+            return id == WebBrowserId.Unidentified ? null : GetInfo(id);
 
         }
         private IWebBrowserInfo GetWebBrowserInfoFromClassesRootCommandKey() {
