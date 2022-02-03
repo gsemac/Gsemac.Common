@@ -117,7 +117,13 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="UnsupportedWebBrowser" xml:space="preserve">
+  <data name="MaximumNumberOfWebDriversReachedWithCount" xml:space="preserve">
+    <value>The maximum number of simultaneous web drivers has been reached ({0}).</value>
+  </data>
+  <data name="PoolSizeMustBeAtLeast1" xml:space="preserve">
+    <value>The pool size must be at least 1.</value>
+  </data>
+  <data name="UnsupportedWebBrowserWithBrowserName" xml:space="preserve">
     <value>`{0}` is not a supported web browser.</value>
   </data>
 </root>

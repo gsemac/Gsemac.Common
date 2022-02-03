@@ -1,6 +1,7 @@
 ﻿using Gsemac.IO.Logging;
 using Gsemac.Net.WebBrowsers;
 using Gsemac.Net.WebDrivers.Extensions;
+using Gsemac.Net.WebDrivers.Properties;
 using OpenQA.Selenium;
 using System;
 using System.Collections.Generic;
@@ -210,7 +211,7 @@ namespace Gsemac.Net.WebDrivers {
             this.disposeFactory = disposeFactory;
 
             if (options.PoolSize < 1)
-                throw new ArgumentOutOfRangeException(nameof(options), "The pool size must be at least 1.");
+                throw new ArgumentOutOfRangeException(nameof(options), ExceptionMessages.PoolSizeMustBeAtLeast1);
 
             // A lambda is used instead of adding OnLog.Log directly so event handlers added after this point are still invoked.
 
@@ -302,7 +303,7 @@ namespace Gsemac.Net.WebDrivers {
             lock (poolLock) {
 
                 if (spawnedDrivers.Count() >= options.PoolSize)
-                    throw new InvalidOperationException("The web driver pool has already reached its max capacity.");
+                    throw new InvalidOperationException(string.Format(ExceptionMessages.MaximumNumberOfWebDriversReachedWithCount, spawnedDrivers.Count()));
 
                 if (!isDisposed) {
 

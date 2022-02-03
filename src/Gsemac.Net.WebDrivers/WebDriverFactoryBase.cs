@@ -30,7 +30,7 @@ namespace Gsemac.Net.WebDrivers {
                 throw new ArgumentNullException(nameof(webBrowserInfo));
 
             if (webBrowserId != WebBrowserId.Unidentified && webBrowserInfo.Id != webBrowserId)
-                throw new ArgumentException(string.Format(Properties.ExceptionMessages.UnsupportedWebBrowser, webBrowserInfo.Name), nameof(webBrowserInfo));
+                throw new ArgumentException(string.Format(Properties.ExceptionMessages.UnsupportedWebBrowserWithBrowserName, webBrowserInfo.Name), nameof(webBrowserInfo));
 
             // Get the web driver executable path.
 

@@ -107,7 +107,7 @@ namespace Gsemac.Net.WebDrivers {
                             break;
 
                         default:
-                            throw new ArgumentException(string.Format(Properties.ExceptionMessages.UnsupportedWebBrowser, webBrowserInfo.Name), nameof(webBrowserInfo));
+                            throw new ArgumentException(string.Format(Properties.ExceptionMessages.UnsupportedWebBrowserWithBrowserName, webBrowserInfo.Name), nameof(webBrowserInfo));
 
                     }
 

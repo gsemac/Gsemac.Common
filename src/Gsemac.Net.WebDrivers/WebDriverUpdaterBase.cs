@@ -26,7 +26,7 @@ namespace Gsemac.Net.WebDrivers {
                 throw new ArgumentNullException(nameof(webBrowserInfo));
 
             if (!IsSupportedWebBrowser(webBrowserInfo))
-                throw new ArgumentException(string.Format(Properties.ExceptionMessages.UnsupportedWebBrowser, webBrowserInfo.Name), nameof(webBrowserInfo));
+                throw new ArgumentException(string.Format(Properties.ExceptionMessages.UnsupportedWebBrowserWithBrowserName, webBrowserInfo.Name), nameof(webBrowserInfo));
 
             OnLog.Info($"Checking for web driver updates");
 

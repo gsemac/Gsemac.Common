@@ -61,11 +61,29 @@ namespace Gsemac.Net.WebDrivers.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The maximum number of simultaneous web drivers has been reached ({0})..
+        /// </summary>
+        internal static string MaximumNumberOfWebDriversReachedWithCount {
+            get {
+                return ResourceManager.GetString("MaximumNumberOfWebDriversReachedWithCount", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The pool size must be at least 1..
+        /// </summary>
+        internal static string PoolSizeMustBeAtLeast1 {
+            get {
+                return ResourceManager.GetString("PoolSizeMustBeAtLeast1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to `{0}` is not a supported web browser..
         /// </summary>
-        internal static string UnsupportedWebBrowser {
+        internal static string UnsupportedWebBrowserWithBrowserName {
             get {
-                return ResourceManager.GetString("UnsupportedWebBrowser", resourceCulture);
+                return ResourceManager.GetString("UnsupportedWebBrowserWithBrowserName", resourceCulture);
             }
         }
     }
