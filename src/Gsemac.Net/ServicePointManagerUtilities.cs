@@ -36,10 +36,10 @@ namespace Gsemac.Net {
 
         public static void SetSecurityProtocolEnabled(SecurityProtocolType securityProtocol, bool enabled = true) {
 
-            SetSecurityProtocolsEnabled((System.Net.SecurityProtocolType)securityProtocol, enabled);
+            SetSecurityProtocolEnabled((System.Net.SecurityProtocolType)securityProtocol, enabled);
 
         }
-        public static void SetSecurityProtocolsEnabled(System.Net.SecurityProtocolType securityProtocol, bool enabled = true) {
+        public static void SetSecurityProtocolEnabled(System.Net.SecurityProtocolType securityProtocol, bool enabled = true) {
 
             if (enabled)
                 System.Net.ServicePointManager.SecurityProtocol |= securityProtocol;
@@ -56,7 +56,7 @@ namespace Gsemac.Net {
 
             try {
 
-                SetSecurityProtocolsEnabled(securityProtocol, enabled);
+                SetSecurityProtocolEnabled(securityProtocol, enabled);
 
                 return true;
 
