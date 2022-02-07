@@ -72,6 +72,13 @@ namespace Gsemac.Net {
                                     request.AllowAutoRedirect = false;
                                     request.CookieContainer = originatingRequest.CookieContainer;
 
+                                    // Do not forward the referer when redirecting to less-secure destinations (HTTPS → HTTP).
+                                    // https://smerity.com/articles/2013/where_did_all_the_http_referrers_go.html
+                                    // https://serverfault.com/q/883750
+
+                                    if (ForwardRefererHeader(originatingRequest.RequestUri, locationUri))
+                                        request.Referer = originatingRequest.Referer;
+
                                     // Set the verb for the new request.
 
                                     // While the standard specifies that the verb is maintained for 302 redirects, browsers have made it a de facto standard that a GET request is used.
@@ -82,21 +89,6 @@ namespace Gsemac.Net {
                                         request.Method = originatingRequest.Method;
                                     else
                                         request.Method = "GET";
-
-                                    // Set the referer for new request.
-                                    // The referer is omitted when redirecting to a different scheme (e.g. HTTP to HTTPS).
-
-                                    if (locationUri.Scheme == originatingRequest.RequestUri.Scheme) {
-
-                                        // If the hosts are the same, use the full path as the referer.
-                                        // However, if the hosts are different, we'll just use the root path as the referer (this is how Chrome handles it).
-
-                                        if (Uri.Compare(originatingRequest.RequestUri, locationUri, UriComponents.Host, UriFormat.Unescaped, StringComparison.OrdinalIgnoreCase) == 0)
-                                            request.Referer = originatingRequest.RequestUri.AbsoluteUri;
-                                        else
-                                            request.Referer = originatingRequest.RequestUri.GetLeftPart(UriPartial.Authority) + "/";
-
-                                    }
 
                                 }
                                 else {
@@ -199,6 +191,24 @@ namespace Gsemac.Net {
             return response is object &&
                 response.Headers.TryGetHeader("refresh", out string refreshHeaderValue) &&
                 !string.IsNullOrWhiteSpace(refreshHeaderValue);
+
+        }
+
+        private static bool ForwardRefererHeader(Uri sourceUri, Uri destinationUri) {
+
+            // Note that schemes are not case-sensitive.
+
+            // If we're redirecting to the same scheme, it cannot be less secure.
+
+            if (sourceUri.Scheme.Equals(destinationUri.Scheme, StringComparison.OrdinalIgnoreCase))
+                return true;
+
+            // If we're redirecting from HTTP → HTTPS, we have a security upgrade.
+
+            if (sourceUri.Scheme.Equals("http", StringComparison.OrdinalIgnoreCase) && destinationUri.Scheme.Equals("https", StringComparison.OrdinalIgnoreCase))
+                return true;
+
+            return false;
 
         }
 
