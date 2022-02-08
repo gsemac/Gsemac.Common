@@ -254,6 +254,26 @@ namespace Gsemac.Text.Tests {
             CollectionAssert.AreEqual(expected, actual.ToArray());
 
         }
+        [TestMethod]
+        public void TestSplitWithRespectEnclosingPunctuationOptionWithUnmatchedEnclosingPunctuation() {
+
+            string str = "1,(2,3";
+            string[] expected = { "1", "(2", "3" };
+            IEnumerable<string> actual = StringUtilities.Split(str, ',', StringSplitOptions.RespectEnclosingPunctuation);
+
+            CollectionAssert.AreEqual(expected, actual.ToArray());
+
+        }
+        [TestMethod]
+        public void TestSplitWithRespectEnclosingPunctuationOptionWithPartiallyUnmatchedEnclosingPunctuation() {
+
+            string str = "1,(2,((3,4)";
+            string[] expected = { "1", "(2", "((3,4)" };
+            IEnumerable<string> actual = StringUtilities.Split(str, ',', StringSplitOptions.RespectEnclosingPunctuation);
+
+            CollectionAssert.AreEqual(expected, actual.ToArray());
+
+        }
 
         // ReplaceFirst
 

@@ -723,7 +723,6 @@ namespace Gsemac.Text {
 
             int startIndex = 0;
             int itemCount = 0;
-            IDictionary<char, int> enclosingPunctuationCounts = new Dictionary<char, int>();
 
             for (int i = 0; i < value.Length && itemCount < count; ++i) {
 
@@ -733,25 +732,14 @@ namespace Gsemac.Text {
 
                     if (CharUtilities.IsLeftEnclosingPunctuation(currentChar)) {
 
-                        char key = currentChar;
+                        // We found a left enclosing character, so move forward to its partner before checking for delimiters.
 
-                        if (enclosingPunctuationCounts.ContainsKey(key))
-                            enclosingPunctuationCounts[key] += 1;
-                        else
-                            enclosingPunctuationCounts[key] = 1;
+                        int partnerIndex = TryFindRightEnclosingPunctuationIndex(value, i + 1, currentChar);
 
-                    }
-                    else if (CharUtilities.IsRightEnclosingPunctuation(currentChar)) {
-
-                        char key = CharUtilities.GetOppositeEnclosingPunctuation(currentChar);
-
-                        if (enclosingPunctuationCounts.ContainsKey(key))
-                            enclosingPunctuationCounts[key] -= 1;
+                        if (partnerIndex >= 0)
+                            i = partnerIndex + 1;
 
                     }
-
-                    if (enclosingPunctuationCounts.Values.Any(c => c > 0))
-                        continue;
 
                 }
 
@@ -806,6 +794,27 @@ namespace Gsemac.Text {
             }
 
             return -1;
+
+        }
+        private static int TryFindRightEnclosingPunctuationIndex(string value, int startIndex, char leftEnclosingPunctuation) {
+
+            char rightEnclosingPunctuation = CharUtilities.GetOppositeEnclosingPunctuation(leftEnclosingPunctuation);
+            int openCount = 1;
+
+            for (int i = startIndex; i < value.Length; ++i) {
+
+                if (value[i] == rightEnclosingPunctuation)
+                    --openCount;
+                else if (value[i] == leftEnclosingPunctuation)
+                    ++openCount;
+
+                if (openCount <= 0)
+                    return i;
+
+            }
+
+            return -1;
+
 
         }
 
