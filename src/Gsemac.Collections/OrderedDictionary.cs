@@ -105,8 +105,7 @@ namespace Gsemac.Collections {
 
         private void SetValue(TKey key, TValue value) {
 
-            if (ContainsKey(key))
-                Remove(key);
+            Remove(key);
 
             orderedKeys.Add(key);
 

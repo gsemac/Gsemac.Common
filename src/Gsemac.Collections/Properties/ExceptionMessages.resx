@@ -123,6 +123,12 @@
   <data name="BufferIsNotExpandable" xml:space="preserve">
     <value>Buffer is not expandable.</value>
   </data>
+  <data name="CollectionIsReadOnly" xml:space="preserve">
+    <value>Collection is read-only.</value>
+  </data>
+  <data name="IndexOutOfRange" xml:space="preserve">
+    <value>Index was out of range. Must be non-negative and less than the size of the collection.</value>
+  </data>
   <data name="KeyAlreadyExists" xml:space="preserve">
     <value>An item with the same key has already been added.</value>
   </data>

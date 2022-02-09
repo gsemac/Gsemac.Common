@@ -79,6 +79,24 @@ namespace Gsemac.Collections.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Collection is read-only..
+        /// </summary>
+        internal static string CollectionIsReadOnly {
+            get {
+                return ResourceManager.GetString("CollectionIsReadOnly", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Index was out of range. Must be non-negative and less than the size of the collection..
+        /// </summary>
+        internal static string IndexOutOfRange {
+            get {
+                return ResourceManager.GetString("IndexOutOfRange", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to An item with the same key has already been added..
         /// </summary>
         internal static string KeyAlreadyExists {
