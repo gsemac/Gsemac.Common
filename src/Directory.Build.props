@@ -21,4 +21,8 @@
 		<DefineConstants>$(DefineConstants);NET45_OR_GREATER</DefineConstants>
 	</PropertyGroup>
 
+	<PropertyGroup Condition="!$(DefineConstants.Contains('NET45_OR_GREATER'))">
+		<DefineConstants>$(DefineConstants);NET40_OR_LESSER</DefineConstants>
+	</PropertyGroup>
+
 </Project>
