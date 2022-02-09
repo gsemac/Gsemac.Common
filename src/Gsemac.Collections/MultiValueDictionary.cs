@@ -1,6 +1,5 @@
 ﻿using Gsemac.Collections.Extensions;
 using Gsemac.Collections.Properties;
-using Gsemac.Polyfills.System.Collections.ObjectModel;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -116,7 +115,7 @@ namespace Gsemac.Collections {
 
         public IEnumerator<KeyValuePair<TKey, IReadOnlyCollection<TValue>>> GetEnumerator() {
 
-            return underlyingDict.Select(pair => new KeyValuePair<TKey, IReadOnlyCollection<TValue>>(pair.Key, new ReadOnlyCollection<TValue>(pair.Value)))
+            return underlyingDict.Select(pair => new KeyValuePair<TKey, IReadOnlyCollection<TValue>>(pair.Key, CreateReadOnlyCollection(pair.Value)))
                 .GetEnumerator();
 
         }
@@ -125,7 +124,7 @@ namespace Gsemac.Collections {
 
             if (underlyingDict.TryGetValue(key, out IList<TValue> list)) {
 
-                value = new ReadOnlyCollection<TValue>(list);
+                value = CreateReadOnlyCollection(list);
 
                 return true;
 
@@ -153,7 +152,7 @@ namespace Gsemac.Collections {
         private IReadOnlyCollection<TValue> GetValue(TKey key) {
 
             if (underlyingDict.TryGetValue(key, out IList<TValue> value))
-                return new ReadOnlyCollection<TValue>(value);
+                return CreateReadOnlyCollection(value);
 
             throw new KeyNotFoundException(ExceptionMessages.KeyNotFound);
 
@@ -166,9 +165,17 @@ namespace Gsemac.Collections {
         private ICollection<IReadOnlyCollection<TValue>> GetValues() {
 
             return underlyingDict.Values
-                .Select(list => new ReadOnlyCollection<TValue>(list))
-                .Cast<IReadOnlyCollection<TValue>>()
+                .Select(list => CreateReadOnlyCollection(list))
                 .ToList();
+
+        }
+        private IReadOnlyCollection<TValue> CreateReadOnlyCollection(IList<TValue> list) {
+
+#if NET40_OR_LESSER
+            return new Polyfills.System.Collections.ObjectModel.ReadOnlyCollection<TValue>(list);
+#else
+            return new System.Collections.ObjectModel.ReadOnlyCollection<TValue>(list);
+#endif
 
         }
 
