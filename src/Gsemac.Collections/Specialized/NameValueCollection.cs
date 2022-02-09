@@ -17,7 +17,7 @@ namespace Gsemac.Collections.Specialized {
 
         public ICollection<string> Keys => new LazyReadOnlyCollection<string>(underlyingDict.Keys);
         public ICollection<string> Values => new LazyReadOnlyCollection<string>(underlyingDict.Keys.SelectMany(key => underlyingDict[key]));
-        public int Count => underlyingDict.Keys.Sum(key => underlyingDict[key].Count);
+        public int Count => underlyingDict.Keys.Count();
         public bool IsReadOnly => underlyingDict.IsReadOnly;
 
         public NameValueCollection() {
