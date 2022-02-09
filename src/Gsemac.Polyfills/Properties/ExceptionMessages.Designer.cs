@@ -61,6 +61,24 @@ namespace Gsemac.Polyfills.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Collection is read-only..
+        /// </summary>
+        internal static string CollectionIsReadOnly {
+            get {
+                return ResourceManager.GetString("CollectionIsReadOnly", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Index was out of range. Must be non-negative and less than the size of the collection..
+        /// </summary>
+        internal static string IndexOutOfRange {
+            get {
+                return ResourceManager.GetString("IndexOutOfRange", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to A suitable constructor for type &apos;{0}&apos; could not be located. Ensure the type is concrete and services are registered for all parameters of a public constructor..
         /// </summary>
         internal static string NoSuitableConstructorWithTypeName {
