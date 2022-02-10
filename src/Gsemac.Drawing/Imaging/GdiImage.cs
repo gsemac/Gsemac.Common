@@ -28,8 +28,8 @@ namespace Gsemac.Drawing.Imaging {
                 imageFormat = GetImageFormatFromImageFormat(image.RawFormat);
 
             this.image = (Image)image.Clone();
-            this.Format = imageFormat;
-            this.Codec = imageCodec ?? (imageFormat is null ? new GdiImageCodec() : new GdiImageCodec(imageFormat));
+            Format = imageFormat;
+            Codec = imageCodec ?? (imageFormat is null ? new GdiImageCodec() : new GdiImageCodec(imageFormat));
 
         }
         public GdiImage(Image image, System.Drawing.Imaging.ImageFormat imageFormat, IImageCodec imageCodec) :
@@ -83,17 +83,17 @@ namespace Gsemac.Drawing.Imaging {
         private static IFileFormat GetImageFormatFromImageFormat(System.Drawing.Imaging.ImageFormat imageFormat) {
 
             if (imageFormat.Equals(System.Drawing.Imaging.ImageFormat.Bmp))
-                return FileFormatFactory.Default.FromFileExtension(".bmp");
+                return ImageFormat.Bmp;
             else if (imageFormat.Equals(System.Drawing.Imaging.ImageFormat.Gif))
-                return FileFormatFactory.Default.FromFileExtension(".gif");
-            else if (imageFormat.Equals(System.Drawing.Imaging.ImageFormat.Exif))
-                return FileFormatFactory.Default.FromFileExtension(".exif");
+                return ImageFormat.Gif;
             else if (imageFormat.Equals(System.Drawing.Imaging.ImageFormat.Jpeg))
                 return ImageFormat.Jpeg;
             else if (imageFormat.Equals(System.Drawing.Imaging.ImageFormat.Png))
                 return ImageFormat.Png;
             else if (imageFormat.Equals(System.Drawing.Imaging.ImageFormat.Tiff))
-                return FileFormatFactory.Default.FromFileExtension(".tiff");
+                return ImageFormat.Tiff;
+            else if (imageFormat.Equals(System.Drawing.Imaging.ImageFormat.Icon))
+                return ImageFormat.Ico;
             else
                 return null;
 

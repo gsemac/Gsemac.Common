@@ -70,11 +70,16 @@ namespace Gsemac.Drawing.Imaging {
             // When we create a new Bitmap from the Image, we lose information about its original format (it just becomes a memory Bitmap).
             // This GdiImage constructor allows us to preserve the original format information.
 
+            // After creating an image from the source stream, we construct another bitmap from it.
+            // The stream is normally lazy-loaded when the image data is requested, and this causes it to be loaded immediately so the stream doesn't have to stay open.
+            // https://stackoverflow.com/a/13935966/5383169 (Anlo)
+
             // Note that despite the fact the ICO image format is supported, decoding may still fail if the icon is of the newer format added in Windows Vista (which contains an appended PNG).
             // https://social.msdn.microsoft.com/Forums/vstudio/en-US/a4125122-63de-439a-bc33-cee2c65ec0ae/imagefromstream-and-imagefromfile-and-different-icon-files?forum=winforms
 
             using (Image imageFromStream = Image.FromStream(stream))
-                return new GdiImage(imageFromStream, imageFromStream.RawFormat, this);
+            using (Image nonDeferredImage = new Bitmap(imageFromStream))
+                return new GdiImage(nonDeferredImage, imageFromStream.RawFormat, this);
 
         }
 

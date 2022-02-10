@@ -69,6 +69,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Gsemac.Net.JavaScript", "sr
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Gsemac.Net.JavaScript.Tests", "tests\Gsemac.Net.JavaScript.Tests\Gsemac.Net.JavaScript.Tests.csproj", "{BD268136-7729-40F7-9995-4F0D9F529C87}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Gsemac.UI", "src\Gsemac.UI\Gsemac.UI.csproj", "{565FA9A3-9C28-4021-97B3-3B50E2342FB9}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Gsemac.Drawing.Tests", "tests\Gsemac.Drawing.Tests\Gsemac.Drawing.Tests.csproj", "{0E124569-2CC3-47F2-9C6C-2DC004A0E5A5}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -199,6 +203,14 @@ Global
 		{BD268136-7729-40F7-9995-4F0D9F529C87}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BD268136-7729-40F7-9995-4F0D9F529C87}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BD268136-7729-40F7-9995-4F0D9F529C87}.Release|Any CPU.Build.0 = Release|Any CPU
+		{565FA9A3-9C28-4021-97B3-3B50E2342FB9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{565FA9A3-9C28-4021-97B3-3B50E2342FB9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{565FA9A3-9C28-4021-97B3-3B50E2342FB9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{565FA9A3-9C28-4021-97B3-3B50E2342FB9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0E124569-2CC3-47F2-9C6C-2DC004A0E5A5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0E124569-2CC3-47F2-9C6C-2DC004A0E5A5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0E124569-2CC3-47F2-9C6C-2DC004A0E5A5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0E124569-2CC3-47F2-9C6C-2DC004A0E5A5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -235,6 +247,8 @@ Global
 		{78A83842-EF67-4D41-A202-2FB0E625C5DB} = {559AE943-A0A6-43B1-ACF0-BE305C5B4FCE}
 		{B87D8E0D-2FC5-495C-B11E-EAC16D59FD70} = {559AE943-A0A6-43B1-ACF0-BE305C5B4FCE}
 		{BD268136-7729-40F7-9995-4F0D9F529C87} = {742EDB7B-BAAD-43E2-82B6-2ECAA2D28338}
+		{565FA9A3-9C28-4021-97B3-3B50E2342FB9} = {559AE943-A0A6-43B1-ACF0-BE305C5B4FCE}
+		{0E124569-2CC3-47F2-9C6C-2DC004A0E5A5} = {742EDB7B-BAAD-43E2-82B6-2ECAA2D28338}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {D040AD76-9C92-4D4E-99AD-45B26C068360}
