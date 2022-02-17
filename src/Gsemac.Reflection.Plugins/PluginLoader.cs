@@ -111,10 +111,10 @@ namespace Gsemac.Reflection.Plugins {
             catch (Exception) {
 #if DEBUG
                 throw;
+#else
+                return null;
 #endif
             }
-
-            return null;
 
         }
 
