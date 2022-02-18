@@ -205,7 +205,7 @@ namespace Gsemac.Text {
         }
         public static IEnumerable<string> Split(string value, char[] separators, int count, StringSplitOptions options = StringSplitOptions.None) {
 
-            return Split(value, separators is null ? null : separators.Select(c => c.ToString()).ToArray(), count, options);
+            return Split(value, separators?.Select(c => c.ToString()).ToArray(), count, options);
 
         }
         public static IEnumerable<string> Split(string value, string[] separators, StringSplitOptions options = StringSplitOptions.None) {
@@ -220,7 +220,7 @@ namespace Gsemac.Text {
         }
         public static IEnumerable<string> Split(string value, char[] separators, StringSplitOptions options = StringSplitOptions.None) {
 
-            return Split(value, separators is null ? null : separators.Select(c => c.ToString()).ToArray(), int.MaxValue, options);
+            return Split(value, separators?.Select(c => c.ToString()).ToArray(), int.MaxValue, options);
 
         }
         public static IEnumerable<string> Split(string value, char separator, StringSplitOptions options = StringSplitOptions.None) {
@@ -468,7 +468,7 @@ namespace Gsemac.Text {
         public static double ComputeSimilarity(string first, string second, IStringDistanceStrategy strategy = null) {
 
             if (strategy is null)
-                strategy = new LevenshteinStringDistanceStrategy();
+                strategy = new LevenshteinDistanceStrategy();
 
             return strategy.ComputeSimilarity(first, second);
 

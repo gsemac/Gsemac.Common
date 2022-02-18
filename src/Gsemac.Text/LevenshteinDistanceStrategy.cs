@@ -2,7 +2,7 @@
 
 namespace Gsemac.Text {
 
-    public class LevenshteinStringDistanceStrategy :
+    public class LevenshteinDistanceStrategy :
         IStringDistanceStrategy {
 
         // Public members
