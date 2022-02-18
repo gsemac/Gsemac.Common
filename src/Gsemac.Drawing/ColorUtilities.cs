@@ -11,7 +11,7 @@ namespace Gsemac.Drawing {
             if (strategy is null)
                 strategy = new DeltaEColorDistanceStrategy();
 
-            return strategy.ComputeDistance(first, second, normalize: true);
+            return strategy.ComputeDistance(first, second, normalizeResult: true);
 
         }
 
