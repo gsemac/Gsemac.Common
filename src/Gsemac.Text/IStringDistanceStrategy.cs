@@ -1,9 +1,9 @@
-﻿namespace Gsemac.Text {
+﻿using Gsemac.Core;
 
-    public interface IStringDistanceStrategy {
+namespace Gsemac.Text {
 
-        double ComputeDistance(string first, string second, bool normalizeResult = true);
-
+    public interface IStringDistanceStrategy :
+        IDistanceStrategy<string> {
     }
 
 }

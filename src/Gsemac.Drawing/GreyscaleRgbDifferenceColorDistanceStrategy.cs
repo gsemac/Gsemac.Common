@@ -6,7 +6,7 @@ namespace Gsemac.Drawing {
     public class GreyscaleRgbDifferenceColorDistanceStrategy :
         IColorDistanceStrategy {
 
-        public double ComputeDistance(Color first, Color second, bool normalizeResult = true) {
+        public double ComputeDistance(Color first, Color second, bool normalizeResult = false) {
 
             int grayscaleFirst = ColorUtilities.ToGreyscale(first).R;
             int grayscaleSecond = ColorUtilities.ToGreyscale(second).R;

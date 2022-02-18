@@ -46,7 +46,7 @@ namespace Gsemac.Drawing.Extensions {
 
         public static double DistanceTo(this Color color, Color other) {
 
-            return ColorUtilities.ComputeDistance(color, other);
+            return ColorUtilities.ComputeSimilarity(color, other);
 
         }
 

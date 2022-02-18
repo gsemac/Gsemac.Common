@@ -1,4 +1,5 @@
-﻿using Gsemac.Text.Properties;
+﻿using Gsemac.Core.Extensions;
+using Gsemac.Text.Properties;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -464,12 +465,12 @@ namespace Gsemac.Text {
 
         }
 
-        public static double ComputeDistance(string first, string second, IStringDistanceStrategy strategy = null) {
+        public static double ComputeSimilarity(string first, string second, IStringDistanceStrategy strategy = null) {
 
             if (strategy is null)
                 strategy = new LevenshteinStringDistanceStrategy();
 
-            return strategy.ComputeDistance(first, second, normalizeResult: true);
+            return strategy.ComputeSimilarity(first, second);
 
         }
         public static string ComputeMD5Hash(string input, Encoding encoding = null) {

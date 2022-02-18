@@ -123,15 +123,17 @@ namespace Gsemac.Drawing.Imaging {
         private readonly IColorDistanceStrategy distanceAlgorithm = new DeltaEColorDistanceStrategy();
         private readonly int tolerance = defaultTolerance;
 
-        private bool CompareColors(Color first, Color second) {
+        private bool ColorIsMatch(Color first, Color second) {
 
-            return ColorUtilities.ComputeDistance(first, second, distanceAlgorithm) <= tolerance / 100.0;
+            double requiredSimilarity = 1.0 - (tolerance / 100.0);
+
+            return ColorUtilities.ComputeSimilarity(first, second, distanceAlgorithm) >= requiredSimilarity;
 
         }
         private bool RowIsColor(Bitmap bitmap, int row, Color trimColor) {
 
             for (int x = 0; x < bitmap.Width; ++x)
-                if (!CompareColors(bitmap.GetPixel(x, row), trimColor))
+                if (!ColorIsMatch(bitmap.GetPixel(x, row), trimColor))
                     return false;
 
             return true;
@@ -140,7 +142,7 @@ namespace Gsemac.Drawing.Imaging {
         private bool ColumnIsColor(Bitmap bitmap, int column, Color trimColor) {
 
             for (int y = 0; y < bitmap.Height; ++y)
-                if (!CompareColors(bitmap.GetPixel(column, y), trimColor))
+                if (!ColorIsMatch(bitmap.GetPixel(column, y), trimColor))
                     return false;
 
             return true;

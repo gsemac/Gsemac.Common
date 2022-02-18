@@ -7,7 +7,7 @@ namespace Gsemac.Drawing {
     public class DeltaEColorDistanceStrategy :
         IColorDistanceStrategy {
 
-        public double ComputeDistance(Color first, Color second, bool normalizeResult = true) {
+        public double ComputeDistance(Color first, Color second, bool normalizeResult = false) {
 
             // Algorithm from https://www.easyrgb.com/en/math.php
 

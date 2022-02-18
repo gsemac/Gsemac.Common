@@ -7,7 +7,7 @@ namespace Gsemac.Text {
 
         // Public members
 
-        public double ComputeDistance(string first, string second, bool normalizeResult = true) {
+        public double ComputeDistance(string first, string second, bool normalizeResult = false) {
 
             if (first is null)
                 throw new ArgumentNullException(nameof(first));
@@ -22,7 +22,7 @@ namespace Gsemac.Text {
             int maxLength = Math.Max(first.Length, second.Length);
 
             return normalizeResult ?
-                1.0 - (distance / (double)maxLength) :
+                distance / (double)maxLength :
                 distance;
 
         }

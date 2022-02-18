@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using Gsemac.Core.Extensions;
+using System.Drawing;
 
 namespace Gsemac.Drawing {
 
@@ -6,12 +7,12 @@ namespace Gsemac.Drawing {
 
         // Public members
 
-        public static double ComputeDistance(Color first, Color second, IColorDistanceStrategy strategy = null) {
+        public static double ComputeSimilarity(Color first, Color second, IColorDistanceStrategy strategy = null) {
 
             if (strategy is null)
                 strategy = new DeltaEColorDistanceStrategy();
 
-            return strategy.ComputeDistance(first, second, normalizeResult: true);
+            return strategy.ComputeSimilarity(first, second);
 
         }
 

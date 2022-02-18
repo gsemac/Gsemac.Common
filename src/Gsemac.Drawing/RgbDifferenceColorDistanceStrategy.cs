@@ -6,7 +6,7 @@ namespace Gsemac.Drawing {
     public class RgbDifferenceColorDistanceStrategy :
         IColorDistanceStrategy {
 
-        public double ComputeDistance(Color first, Color second, bool normalizeResult = true) {
+        public double ComputeDistance(Color first, Color second, bool normalizeResult = false) {
 
             int rDiff = Math.Abs(first.R - second.R);
             int gDiff = Math.Abs(first.G - second.G);
