@@ -40,7 +40,7 @@ namespace Gsemac.Drawing.Tests {
       ColorDistanceStrategyTestsBase {
 
         public RgbDifferenceColorDistanceStrategyTests() :
-            base(new RgbDifferenceColorDistanceStrategy()) {
+            base(new RgbDifferenceStrategy()) {
         }
 
     }
@@ -50,7 +50,7 @@ namespace Gsemac.Drawing.Tests {
       ColorDistanceStrategyTestsBase {
 
         public GreyscaleRgbDifferenceColorDistanceStrategyTests() :
-            base(new GreyscaleRgbDifferenceColorDistanceStrategy()) {
+            base(new GreyscaleRgbDifferenceStrategy()) {
         }
 
     }
@@ -60,7 +60,7 @@ namespace Gsemac.Drawing.Tests {
       ColorDistanceStrategyTestsBase {
 
         public DeltaEColorDistanceStrategyTests() :
-            base(new DeltaEColorDistanceStrategy()) {
+            base(new DeltaEStrategy()) {
         }
 
     }

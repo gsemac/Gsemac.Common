@@ -120,7 +120,7 @@ namespace Gsemac.Drawing.Imaging {
         private const int defaultTolerance = 10;
 
         private Color? trimColor;
-        private readonly IColorDistanceStrategy distanceAlgorithm = new DeltaEColorDistanceStrategy();
+        private readonly IColorDistanceStrategy distanceAlgorithm = new DeltaEStrategy();
         private readonly int tolerance = defaultTolerance;
 
         private bool ColorIsMatch(Color first, Color second) {

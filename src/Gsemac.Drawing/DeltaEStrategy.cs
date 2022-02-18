@@ -4,7 +4,7 @@ using System.Drawing;
 
 namespace Gsemac.Drawing {
 
-    public class DeltaEColorDistanceStrategy :
+    public class DeltaEStrategy :
         IColorDistanceStrategy {
 
         public double ComputeDistance(Color first, Color second, bool normalizeResult = false) {

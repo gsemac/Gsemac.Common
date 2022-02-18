@@ -10,7 +10,7 @@ namespace Gsemac.Drawing {
         public static double ComputeSimilarity(Color first, Color second, IColorDistanceStrategy strategy = null) {
 
             if (strategy is null)
-                strategy = new DeltaEColorDistanceStrategy();
+                strategy = new DeltaEStrategy();
 
             return strategy.ComputeSimilarity(first, second);
 
