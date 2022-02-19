@@ -1,6 +1,6 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Gsemac.Net.JavaScript.Tests.Properties;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.IO;
-using Gsemac.Net.JavaScript.Tests.Properties;
 
 namespace Gsemac.Net.JavaScript.Obfuscation.Tests {
 
@@ -10,7 +10,7 @@ namespace Gsemac.Net.JavaScript.Obfuscation.Tests {
         [TestMethod]
         public void TestDeobfuscateWithPackedJs() {
 
-            string sampleFilePath = Path.Combine(SamplePaths.DeanEdwardsPackerSamplesDirectoryPath, "Packed.js");
+            string sampleFilePath = Path.Combine(SamplePaths.JavaScriptSamplesDirectoryPath, "PackedWithDeanEdwardsPacker.js");
 
             Assert.AreEqual("alert(\"hello, world!\");",
                 new DeanEdwardsPackerDeobfuscator().Deobfuscate(File.ReadAllText(sampleFilePath)));
@@ -19,7 +19,7 @@ namespace Gsemac.Net.JavaScript.Obfuscation.Tests {
         [TestMethod]
         public void TestDeobfuscateWithPackedJsWithAlternativeArgumentNames() {
 
-            string sampleFilePath = Path.Combine(SamplePaths.DeanEdwardsPackerSamplesDirectoryPath, "PackedWithAlternativeArgumentNames.js");
+            string sampleFilePath = Path.Combine(SamplePaths.JavaScriptSamplesDirectoryPath, "PackedWithDeanEdwardsPackerWithAlternativeArgumentNames.js");
 
             Assert.AreEqual("alert(\"hello, world!\");",
                 new DeanEdwardsPackerDeobfuscator().Deobfuscate(File.ReadAllText(sampleFilePath)));
@@ -28,7 +28,7 @@ namespace Gsemac.Net.JavaScript.Obfuscation.Tests {
         [TestMethod]
         public void TestDeobfuscateWithPackedJsWithExtraWhiteSpace() {
 
-            string sampleFilePath = Path.Combine(SamplePaths.DeanEdwardsPackerSamplesDirectoryPath, "PackedWithExtraWhiteSpace.js");
+            string sampleFilePath = Path.Combine(SamplePaths.JavaScriptSamplesDirectoryPath, "PackedWithDeanEdwardsPackerWithExtraWhiteSpace.js");
 
             Assert.AreEqual("alert(\"hello, world!\");",
                 new DeanEdwardsPackerDeobfuscator().Deobfuscate(File.ReadAllText(sampleFilePath)));
@@ -37,7 +37,7 @@ namespace Gsemac.Net.JavaScript.Obfuscation.Tests {
         [TestMethod]
         public void TestDeobfuscateWithPackedJsWithFormatting() {
 
-            string sampleFilePath = Path.Combine(SamplePaths.DeanEdwardsPackerSamplesDirectoryPath, "PackedWithFormatting.js");
+            string sampleFilePath = Path.Combine(SamplePaths.JavaScriptSamplesDirectoryPath, "PackedWithDeanEdwardsPackerWithFormatting.js");
 
             Assert.AreEqual("alert(\"hello, world!\");",
                 new DeanEdwardsPackerDeobfuscator().Deobfuscate(File.ReadAllText(sampleFilePath)));

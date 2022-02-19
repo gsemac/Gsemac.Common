@@ -43,7 +43,7 @@ namespace Gsemac.IO.Tests {
         FileFormatFactoryFromFileTestsBase {
 
         public SvgFileFormatFactoryFromFileTests() :
-            base(ImageFormat.Svg, "test.svg") {
+            base(ImageFormat.Svg, "static.svg") {
         }
 
     }

@@ -25,7 +25,7 @@ namespace Gsemac.Drawing.Imaging.Tests {
             Bitmap bitmap;
             IImageCodec codec = new GdiImageCodec();
 
-            using (Stream stream = File.OpenRead(Path.Combine(SamplePaths.ImagesSamplesDirectoryPath, "test.ico")))
+            using (Stream stream = File.OpenRead(Path.Combine(SamplePaths.ImagesSamplesDirectoryPath, "static.ico")))
             using (IImage image = codec.Decode(stream))
                 bitmap = image.ToBitmap();
 

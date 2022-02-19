@@ -21,10 +21,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Folder Include="Samples\Images\" />
-	</ItemGroup>
-
-	<ItemGroup>
 	  <Compile Update="Properties\SamplePaths.Designer.cs">
 	    <DesignTime>True</DesignTime>
 	    <AutoGen>True</AutoGen>
