@@ -11,13 +11,13 @@ namespace Gsemac.Drawing.Tests {
         [TestMethod]
         public void TestComputeDistanceReturnsMaximumDistanceForBlackAndWhite() {
 
-            Assert.AreEqual(1.0, colorDistanceStrategy.ComputeDistance(Color.Black, Color.White));
+            Assert.AreEqual(1.0, colorDistanceStrategy.ComputeDistance(Color.Black, Color.White, normalizeResult: true));
 
         }
         [TestMethod]
         public void TestComputeDistanceReturnsMinimumDistanceForSameColors() {
 
-            Assert.AreEqual(0.0, colorDistanceStrategy.ComputeDistance(Color.Red, Color.Red));
+            Assert.AreEqual(0.0, colorDistanceStrategy.ComputeDistance(Color.Red, Color.Red, normalizeResult: true));
 
         }
 
