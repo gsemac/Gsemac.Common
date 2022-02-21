@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.29905.134
+# Visual Studio Version 17
+VisualStudioVersion = 17.1.32210.238
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Gsemac.Collections", "src\Gsemac.Collections\Gsemac.Collections.csproj", "{636CC27A-FC0F-4B62-9F5D-E97BEA8D585D}"
 EndProject
@@ -72,6 +72,8 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Gsemac.UI", "src\Gsemac.UI\Gsemac.UI.csproj", "{565FA9A3-9C28-4021-97B3-3B50E2342FB9}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Gsemac.Drawing.Tests", "tests\Gsemac.Drawing.Tests\Gsemac.Drawing.Tests.csproj", "{0E124569-2CC3-47F2-9C6C-2DC004A0E5A5}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Gsemac.Drawing.Imaging.ImageMagick.Tests", "tests\Gsemac.Drawing.Imaging.ImageMagick.Tests\Gsemac.Drawing.Imaging.ImageMagick.Tests.csproj", "{95E5DD83-EAB3-4D48-8D3E-89AA8D19466F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -211,6 +213,18 @@ Global
 		{0E124569-2CC3-47F2-9C6C-2DC004A0E5A5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0E124569-2CC3-47F2-9C6C-2DC004A0E5A5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0E124569-2CC3-47F2-9C6C-2DC004A0E5A5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B3851D86-1EDF-450F-9111-AE17B1469E19}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B3851D86-1EDF-450F-9111-AE17B1469E19}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B3851D86-1EDF-450F-9111-AE17B1469E19}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B3851D86-1EDF-450F-9111-AE17B1469E19}.Release|Any CPU.Build.0 = Release|Any CPU
+		{70BF865C-BCBB-4DDB-9D52-477A49192BB5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{70BF865C-BCBB-4DDB-9D52-477A49192BB5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{70BF865C-BCBB-4DDB-9D52-477A49192BB5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{70BF865C-BCBB-4DDB-9D52-477A49192BB5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{95E5DD83-EAB3-4D48-8D3E-89AA8D19466F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{95E5DD83-EAB3-4D48-8D3E-89AA8D19466F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{95E5DD83-EAB3-4D48-8D3E-89AA8D19466F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{95E5DD83-EAB3-4D48-8D3E-89AA8D19466F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -249,6 +263,9 @@ Global
 		{BD268136-7729-40F7-9995-4F0D9F529C87} = {742EDB7B-BAAD-43E2-82B6-2ECAA2D28338}
 		{565FA9A3-9C28-4021-97B3-3B50E2342FB9} = {559AE943-A0A6-43B1-ACF0-BE305C5B4FCE}
 		{0E124569-2CC3-47F2-9C6C-2DC004A0E5A5} = {742EDB7B-BAAD-43E2-82B6-2ECAA2D28338}
+		{B3851D86-1EDF-450F-9111-AE17B1469E19} = {559AE943-A0A6-43B1-ACF0-BE305C5B4FCE}
+		{70BF865C-BCBB-4DDB-9D52-477A49192BB5} = {559AE943-A0A6-43B1-ACF0-BE305C5B4FCE}
+		{95E5DD83-EAB3-4D48-8D3E-89AA8D19466F} = {742EDB7B-BAAD-43E2-82B6-2ECAA2D28338}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {D040AD76-9C92-4D4E-99AD-45B26C068360}

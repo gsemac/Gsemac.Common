@@ -11,6 +11,15 @@ namespace Gsemac.Drawing.Extensions {
 
         // Public members
 
+        public static bool IsAnimated(this IImage image) {
+
+            if (image is null)
+                throw new ArgumentNullException(nameof(image));
+
+            return image.Animation?.FrameCount > 1;
+
+        }
+
         public static void Save(this IImage image, Stream stream) {
 
             image.Codec.Encode(image, stream, ImageEncoderOptions.Default);

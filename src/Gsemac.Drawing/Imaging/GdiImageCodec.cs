@@ -56,7 +56,7 @@ namespace Gsemac.Drawing.Imaging {
                 // If the image is not a GdiImage, convert it to a bitmap and load it.
 
                 using (Bitmap intermediateBitmap = image.ToBitmap())
-                using (gdiImage = new GdiImage(intermediateBitmap, intermediateBitmap.RawFormat, this))
+                using (gdiImage = new GdiImage(intermediateBitmap, this))
                     EncodeBitmap(gdiImage.BaseImage, stream, encoderOptions);
 
             }
@@ -77,9 +77,9 @@ namespace Gsemac.Drawing.Imaging {
             // Note that despite the fact the ICO image format is supported, decoding may still fail if the icon is of the newer format added in Windows Vista (which contains an appended PNG).
             // https://social.msdn.microsoft.com/Forums/vstudio/en-US/a4125122-63de-439a-bc33-cee2c65ec0ae/imagefromstream-and-imagefromfile-and-different-icon-files?forum=winforms
 
-            using (Image imageFromStream = Image.FromStream(stream))
-            using (Image nonDeferredImage = new Bitmap(imageFromStream))
-                return new GdiImage(nonDeferredImage, imageFromStream.RawFormat, this);
+            using (Image originalImage = Image.FromStream(stream))
+            using (Image nonDeferredImage = new Bitmap(originalImage))
+                return new GdiImage(originalImage, nonDeferredImage, this);
 
         }
 

@@ -7,6 +7,7 @@ namespace Gsemac.Drawing {
     public static class ImageUtilities {
 
         // Public members
+
         public static Image ResizeImage(Image image, int? width = null, int? height = null, bool disposeSourceImage = false) {
 
             if ((width ?? 0) <= 0)

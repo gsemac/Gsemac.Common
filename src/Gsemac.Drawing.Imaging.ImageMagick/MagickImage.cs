@@ -10,6 +10,7 @@ namespace Gsemac.Drawing.Imaging {
 
         // Public members
 
+        public IAnimationInfo Animation => GetAnimationInfo();
         public int Width => image.Width;
         public int Height => image.Height;
         public Size Size => new Size(Width, Height);
@@ -81,6 +82,19 @@ namespace Gsemac.Drawing.Imaging {
 
         private readonly ImageMagick.MagickImage image;
         private bool disposedValue = false;
+
+        private IAnimationInfo GetAnimationInfo() {
+
+            int frameCount = 0;
+            TimeSpan frameDelay = TimeSpan.FromMilliseconds(image.AnimationDelay * 10);
+            int loopCount = image.AnimationIterations;
+
+            // TODO: Get the frame count using MagickImageCollection's Ping method.
+            // This requires access to the stream that the image was created from.
+
+            return new AnimationInfo(frameCount, loopCount, frameDelay);
+
+        }
 
         private static IFileFormat GetImageFormatFromMagickFormat(MagickFormat magickFormat) {
 
