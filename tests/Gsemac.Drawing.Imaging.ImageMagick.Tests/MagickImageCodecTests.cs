@@ -19,6 +19,7 @@ namespace Gsemac.Drawing.Imaging.ImageMagick.Tests {
                 animationInfo = image.Animation;
 
             Assert.IsNotNull(animationInfo);
+
             Assert.AreEqual(TimeSpan.FromMilliseconds(200), animationInfo.Delay);
             Assert.AreEqual(3, animationInfo.FrameCount);
             Assert.AreEqual(0, animationInfo.Iterations);
@@ -33,8 +34,10 @@ namespace Gsemac.Drawing.Imaging.ImageMagick.Tests {
                 animationInfo = image.Animation;
 
             Assert.IsNotNull(animationInfo);
+
             Assert.AreEqual(TimeSpan.Zero, animationInfo.Delay);
             Assert.AreEqual(1, animationInfo.FrameCount);
+            Assert.IsTrue(animationInfo.Iterations <= 1);
 
         }
 
@@ -50,4 +53,5 @@ namespace Gsemac.Drawing.Imaging.ImageMagick.Tests {
         }
 
     }
+
 }

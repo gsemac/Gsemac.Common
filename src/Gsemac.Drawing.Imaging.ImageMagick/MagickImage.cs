@@ -85,7 +85,7 @@ namespace Gsemac.Drawing.Imaging {
 
         private IAnimationInfo GetAnimationInfo() {
 
-            int frameCount = 0;
+            int frameCount = 1;
             TimeSpan frameDelay = TimeSpan.FromMilliseconds(image.AnimationDelay * 10);
             int loopCount = image.AnimationIterations;
 
