@@ -9,7 +9,7 @@ namespace Gsemac.Drawing.Imaging {
 
         // Public members
 
-        public virtual IAnimationInfo Animation => AnimationInfo.None;
+        public virtual IAnimationInfo Animation => AnimationInfo.Static;
 
         public abstract int Width { get; }
         public abstract int Height { get; }

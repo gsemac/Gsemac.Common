@@ -113,7 +113,7 @@ namespace Gsemac.Drawing.Imaging {
                 .FirstOrDefault();
 
             if (frameDimension is null)
-                return AnimationInfo.None;
+                return AnimationInfo.Static;
 
             int frameCount = image.GetFrameCount(frameDimension);
 

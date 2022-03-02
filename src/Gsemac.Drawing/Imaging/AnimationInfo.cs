@@ -11,7 +11,7 @@ namespace Gsemac.Drawing.Imaging {
         public int Iterations { get; }
         public int FrameCount { get; }
 
-        public static AnimationInfo None => new AnimationInfo(1, 0, TimeSpan.Zero);
+        public static AnimationInfo Static => new AnimationInfo(1, 0, TimeSpan.Zero);
 
         public AnimationInfo(int frameCount, int iterations, TimeSpan delay) {
 

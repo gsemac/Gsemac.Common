@@ -78,7 +78,7 @@ namespace Gsemac.Drawing.Imaging {
             decoder.GetInfo(webPData, out _, out _, out _, out bool hasAnimation, out string _);
 
             if (!hasAnimation)
-                return AnimationInfo.None;
+                return AnimationInfo.Static;
 
             // Get the animation info.
 
