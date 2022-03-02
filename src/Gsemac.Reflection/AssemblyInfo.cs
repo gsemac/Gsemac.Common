@@ -20,10 +20,13 @@ namespace Gsemac.Reflection {
         public Version Version => GetVersion();
 
         public static AssemblyInfo CallingAssembly => new AssemblyInfo(Assembly.GetCallingAssembly());
-        public static AssemblyInfo EntryAssembly => new AssemblyInfo(Assembly.GetEntryAssembly());
+        public static AssemblyInfo EntryAssembly => Assembly.GetEntryAssembly() is null ? null : new AssemblyInfo(Assembly.GetEntryAssembly()); // GetEntryAssembly() returns null in some contexts (e.g. from unit testing frameworks)
         public static AssemblyInfo ExecutingAssembly => new AssemblyInfo(Assembly.GetExecutingAssembly());
 
         public AssemblyInfo(Assembly assembly) {
+
+            if (assembly is null)
+                throw new ArgumentNullException(nameof(assembly));
 
             this.assembly = assembly;
             this.fileVersionInfo = new Lazy<FileVersionInfo>(GetFileVersionInfo);

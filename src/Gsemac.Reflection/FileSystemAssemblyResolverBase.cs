@@ -97,9 +97,12 @@ namespace Gsemac.Reflection {
 
         protected virtual IEnumerable<string> GetProbingPaths() {
 
+            // EntryAssembly can return null in certain contexts (e.g. if we're running under a unit testing framework).
+            // In that case, CallingAssembly is equivalent (https://stackoverflow.com/a/53228317).
+
             return ProbingPaths.Concat(new[] {
                 Directory.GetCurrentDirectory(),
-                AssemblyInfo.EntryAssembly.Directory,
+                (AssemblyInfo.EntryAssembly ?? AssemblyInfo.CallingAssembly).Directory,
             }).Distinct().Select(path => Path.GetFullPath(path));
 
         }
