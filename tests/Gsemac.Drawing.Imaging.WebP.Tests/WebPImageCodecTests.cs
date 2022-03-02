@@ -1,4 +1,8 @@
+using Gsemac.Drawing.Extensions;
 using Gsemac.Drawing.Imaging.WebP.Tests.Properties;
+using Gsemac.IO;
+using Gsemac.IO.Extensions;
+using Gsemac.IO.FileFormats;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.IO;
@@ -38,6 +42,19 @@ namespace Gsemac.Drawing.Imaging.WebP.Tests {
             Assert.AreEqual(TimeSpan.Zero, animationInfo.Delay);
             Assert.AreEqual(1, animationInfo.FrameCount);
             Assert.IsTrue(animationInfo.Iterations <= 1);
+
+        }
+        [TestMethod]
+        public void TestConvertWebPToDifferentImageFormat() {
+
+            using (IImage image = ImageFromFile("static.webp"))
+            using (Stream outputStream = new MemoryStream()) {
+
+                image.Save(outputStream, ImageFormat.Png);
+
+                Assert.AreEqual(ImageFormat.Png, FileFormatFactory.Default.FromStream(outputStream));
+
+            }
 
         }
 

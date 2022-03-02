@@ -87,7 +87,8 @@ namespace Gsemac.Drawing.Imaging {
 
                     demuxerHandle.Dispose();
 
-                    webpDataHandle.Free();
+                    if (webpDataHandle.IsAllocated)
+                        webpDataHandle.Free();
 
                 }
 

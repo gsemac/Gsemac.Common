@@ -13,10 +13,6 @@ namespace Gsemac.Drawing.Imaging {
         /// </summary>
         public int Index => iterator.frame_num - 1; // WebP frame indices are 1-based
         /// <summary>
-        /// The total number of frames.
-        /// </summary>
-        public int FrameCount => iterator.num_frames;
-        /// <summary>
         /// The horizontal offset relative to the canvas.
         /// </summary>
         public int XOffset => iterator.x_offset;

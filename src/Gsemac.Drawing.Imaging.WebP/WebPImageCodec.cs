@@ -11,8 +11,7 @@ using WebPWrapper;
 
 namespace Gsemac.Drawing.Imaging {
 
-    [RequiresAssemblies("libwebp_x86", X86 = true)]
-    [RequiresAssemblies("libwebp_x64", X64 = true)]
+    [RequiresAssemblies("libwebp")]
     [RequiresAssemblyOrTypes("WebPWrapper", "WebPWrapper.WebP")]
     public class WebPImageCodec :
         PluginBase,
@@ -34,8 +33,17 @@ namespace Gsemac.Drawing.Imaging {
         }
         public IImage Decode(Stream stream) {
 
-            using (Image decodedWebPBitmap = DecodeWebPBitmap(stream))
-                return ImageFactory.FromBitmap(decodedWebPBitmap, GetSupportedFileFormats().First(), this);
+            byte[] webPData = stream.ToArray();
+
+            using (WebP decoder = new WebP())
+            using (Image decodedWebPBitmap = DecodeWebPBitmap(decoder, webPData)) {
+
+                IImage image = ImageFactory.FromBitmap(decodedWebPBitmap, GetSupportedFileFormats().First(), this);
+                IAnimationInfo animationInfo = GetAnimationInfo(decoder, webPData);
+
+                return new WebPImage(image, animationInfo);
+
+            }
 
         }
 
@@ -59,10 +67,31 @@ namespace Gsemac.Drawing.Imaging {
                 webPStream.CopyTo(stream);
 
         }
-        private Image DecodeWebPBitmap(Stream stream) {
+        private Image DecodeWebPBitmap(WebP decoder, byte[] webPData) {
 
-            using (WebP decoder = new WebP())
-                return decoder.Decode(stream.ToArray());
+            return decoder.Decode(webPData);
+
+        }
+
+        private static IAnimationInfo GetAnimationInfo(WebP decoder, byte[] webPData) {
+
+            decoder.GetInfo(webPData, out _, out _, out _, out bool hasAnimation, out string _);
+
+            if (!hasAnimation)
+                return AnimationInfo.None;
+
+            // Get the animation info.
+
+            using (IWebPDemuxer demuxer = new WebPDemuxer(webPData)) {
+
+                int frameCount = demuxer.GetI(WebPFormatFeature.FrameCount);
+                int loopCount = demuxer.GetI(WebPFormatFeature.LoopCount);
+
+                IWebPFrame frame = demuxer.GetFrame(1); // WebP frame indices are 1-based
+
+                return new AnimationInfo(frameCount, loopCount, frame.Duration);
+
+            }
 
         }
 

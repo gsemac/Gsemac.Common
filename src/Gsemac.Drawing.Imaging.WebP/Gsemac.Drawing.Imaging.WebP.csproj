@@ -1,7 +1,7 @@
 ﻿<Project Sdk="MSBuild.Sdk.Extras/3.0.44">
 
 	<PropertyGroup>
-		<TargetFrameworks>net40-client</TargetFrameworks>
+		<TargetFrameworks>net40-client;netstandard2.0</TargetFrameworks>
 		<RootNamespace>Gsemac.Drawing.Imaging</RootNamespace>
 		<Company />
 		<Authors>gsemac</Authors>
@@ -48,9 +48,13 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Compile Update="Properties\ExceptionMessages.Designer.cs">
-	    <DesignTime>True</DesignTime>
-	  </Compile>
+		<Reference Include="System.Windows.Forms" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Compile Update="Properties\ExceptionMessages.Designer.cs">
+			<DesignTime>True</DesignTime>
+		</Compile>
 	</ItemGroup>
 
 </Project>
