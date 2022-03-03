@@ -28,12 +28,21 @@
 		<ProjectReference Include="..\Gsemac.Reflection.Plugins\Gsemac.Reflection.Plugins.csproj" />
 	</ItemGroup>
 
-	<ItemGroup>
-		<PackageReference Include="Magick.NET-Q16-AnyCPU" Version="8.6.1" />
-	</ItemGroup>
+	<Choose>
+		<When Condition="$(DefineConstants.Contains('NET45_OR_GREATER'))">
+			<ItemGroup>
+				<PackageReference Include="Magick.NET-Q16-AnyCPU" Version="10.0.0" />
+			</ItemGroup>
+		</When>
+		<Otherwise>
+			<ItemGroup>
+				<PackageReference Include="Magick.NET-Q16-AnyCPU" Version="8.6.1" />
+			</ItemGroup>
+		</Otherwise>
+	</Choose>
 
 	<ItemGroup Condition="$(DefineConstants.Contains('NETFRAMEWORK'))">
-    <PackageReference Include="Magick.NET.SystemDrawing" Version="4.0.16" />
+		<PackageReference Include="Magick.NET.SystemDrawing" Version="4.0.17" />
 	</ItemGroup>
 
 	<ItemGroup>

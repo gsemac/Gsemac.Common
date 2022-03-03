@@ -31,11 +31,24 @@
 		<ProjectReference Include="..\Gsemac.Net\Gsemac.Net.csproj" />
 	</ItemGroup>
 
+	<Choose>
+		<When Condition="$(DefineConstants.Contains('NET45_OR_GREATER'))">
+			<ItemGroup>
+				<PackageReference Include="Selenium.WebDriver" Version="4.1.0" />
+			</ItemGroup>
+		</When>
+		<Otherwise>
+			<ItemGroup>
+				<PackageReference Include="Selenium.WebDriver" Version="3.141.0" />
+			</ItemGroup>
+		</Otherwise>
+	</Choose>
+
 	<ItemGroup>
 		<Compile Update="Properties\ExceptionMessages.Designer.cs">
-		  <DesignTime>True</DesignTime>
-		  <AutoGen>True</AutoGen>
-		  <DependentUpon>ExceptionMessages.resx</DependentUpon>
+			<DesignTime>True</DesignTime>
+			<AutoGen>True</AutoGen>
+			<DependentUpon>ExceptionMessages.resx</DependentUpon>
 		</Compile>
 		<Compile Update="Properties\Resources.Designer.cs">
 			<DesignTime>True</DesignTime>
@@ -46,17 +59,13 @@
 
 	<ItemGroup>
 		<EmbeddedResource Update="Properties\ExceptionMessages.resx">
-		  <Generator>ResXFileCodeGenerator</Generator>
-		  <LastGenOutput>ExceptionMessages.Designer.cs</LastGenOutput>
+			<Generator>ResXFileCodeGenerator</Generator>
+			<LastGenOutput>ExceptionMessages.Designer.cs</LastGenOutput>
 		</EmbeddedResource>
 		<EmbeddedResource Update="Properties\Resources.resx">
 			<Generator>ResXFileCodeGenerator</Generator>
 			<LastGenOutput>Resources.Designer.cs</LastGenOutput>
 		</EmbeddedResource>
-	</ItemGroup>
-
-	<ItemGroup>
-		<PackageReference Include="Selenium.WebDriver" Version="3.141.0" />
 	</ItemGroup>
 
 </Project>

@@ -7,11 +7,16 @@ namespace Gsemac.Net.WebDrivers.Extensions {
 
         public static void AddScriptToEvaluateOnNewDocument(this ChromeDriver webDriver, string script) {
 
+            string commandName = "Page.addScriptToEvaluateOnNewDocument";
             var parameters = new Dictionary<string, object> {
                 ["source"] = script
             };
 
-            webDriver.ExecuteChromeCommand("Page.addScriptToEvaluateOnNewDocument", parameters);
+#if NET45_OR_GREATER
+            webDriver.ExecuteCdpCommand(commandName, parameters);
+#else
+            webDriver.ExecuteChromeCommand(commandName, parameters);
+#endif
 
         }
 
