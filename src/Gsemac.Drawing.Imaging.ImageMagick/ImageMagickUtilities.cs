@@ -1,4 +1,5 @@
-﻿using ImageMagick;
+﻿using Gsemac.IO;
+using ImageMagick;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,19 +10,30 @@ namespace Gsemac.Drawing.Imaging {
 
         // Public members
 
-        public static MagickFormat? GetMagickFormatFromFileExtension(string value) {
+        public static MagickFormat GetMagickFormatFromFileExtension(string value) {
 
-            var formats = dict.Value.Where(pair => pair.Value == value);
+            if (!string.IsNullOrEmpty(value)) {
 
-            if (formats.Any())
-                return formats.First().Key;
+                IEnumerable<MagickFormat> formats = dict.Value
+                    .Where(pair => pair.Value == value)
+                    .Select(pair => pair.Key);
 
-            return null;
+                if (formats.Any())
+                    return formats.First();
+
+            }
+
+            return MagickFormat.Unknown;
 
         }
-        public static IEnumerable<MagickFormat> GetMagickFormats() {
+        public static MagickFormat GetMagickFormatFromFileFormat(IFileFormat fileFormat) {
 
-            return dict.Value.Keys;
+            string fileExtension = fileFormat?.Extensions?.FirstOrDefault();
+
+            if (!string.IsNullOrWhiteSpace(fileExtension))
+                return GetMagickFormatFromFileExtension(fileExtension);
+
+            return MagickFormat.Unknown;
 
         }
         public static string GetFileExtensionFromMagickFormat(MagickFormat magickFormat) {
@@ -30,6 +42,12 @@ namespace Gsemac.Drawing.Imaging {
                 return value;
 
             return string.Empty;
+
+        }
+
+        public static IEnumerable<MagickFormat> GetMagickFormats() {
+
+            return dict.Value.Keys;
 
         }
         public static IEnumerable<string> GetFileExtensions() {

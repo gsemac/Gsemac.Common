@@ -3,6 +3,7 @@ using Gsemac.IO;
 using Gsemac.IO.Extensions;
 using Gsemac.Reflection.Plugins;
 using ImageMagick;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -26,6 +27,9 @@ namespace Gsemac.Drawing.Imaging {
         public MagickImageCodec(IFileFormat imageFormat) :
             base(1) {
 
+            if (imageFormat is null)
+                throw new ArgumentNullException(nameof(imageFormat));
+
             if (!this.IsSupportedFileFormat(imageFormat))
                 throw new FileFormatException(IO.Properties.ExceptionMessages.UnsupportedFileFormat);
 
@@ -41,25 +45,7 @@ namespace Gsemac.Drawing.Imaging {
 
         public IImage Decode(Stream stream) {
 
-            MagickFormat? magickFormat = null;
-            string fileExtension = imageFormat?.Extensions?.FirstOrDefault();
-
-            if (!string.IsNullOrWhiteSpace(fileExtension))
-                magickFormat = ImageMagickUtilities.GetMagickFormatFromFileExtension(fileExtension);
-
-            // If we were able to determine the desired file format, decode the image using that format explicitly.
-            // Otherwise, allow ImageMagick to determine the file format on its own.
-
-            // This is important because ImageMagick isn't able to automatically determine the file format for all formats due to signature conflicts (e.g. ICO).
-            // https://github.com/dlemstra/Magick.NET/issues/368
-
-            ImageMagick.MagickImage magickImage = magickFormat.HasValue ?
-                new ImageMagick.MagickImage(stream, magickFormat.Value) :
-                new ImageMagick.MagickImage(stream);
-
-            return imageFormat is null ?
-                new MagickImage(magickImage, this) :
-                new MagickImage(magickImage, imageFormat, this);
+            return new MagickImage(stream, imageFormat, this);
 
         }
         public void Encode(IImage image, Stream stream, IImageEncoderOptions encoderOptions) {
@@ -87,7 +73,7 @@ namespace Gsemac.Drawing.Imaging {
 
                     ms.Seek(0, SeekOrigin.Begin);
 
-                    using (magickImage = new MagickImage(new ImageMagick.MagickImage(ms), this))
+                    using (magickImage = new MagickImage(ms, imageFormat, this))
                         Save(magickImage.BaseImage, stream, encoderOptions);
 
                 }
@@ -131,7 +117,7 @@ namespace Gsemac.Drawing.Imaging {
 
         }
 
-        private void Save(ImageMagick.MagickImage magickImage, Stream stream, IImageEncoderOptions encoderOptions) {
+        private void Save(IMagickImage magickImage, Stream stream, IImageEncoderOptions encoderOptions) {
 
             if (imageFormat is object)
                 magickImage.Format = GetMagickFormatForFileExtension(imageFormat.Extensions.FirstOrDefault());
