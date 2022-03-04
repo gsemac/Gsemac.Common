@@ -71,7 +71,7 @@ namespace Gsemac.Polyfills.Microsoft.Extensions.DependencyInjection.Tests {
                 .AddTransient<MyServiceWithNoDependencies>()
                 .BuildServiceProvider();
 
-            Assert.IsTrue(serviceProvider.GetService<MyServiceWithNoDependencies>() is MyServiceWithNoDependencies);
+            Assert.IsTrue(serviceProvider.GetService<MyServiceWithNoDependencies>().GetType().Equals(typeof(MyServiceWithNoDependencies)));
 
         }
         [TestMethod]
@@ -82,7 +82,7 @@ namespace Gsemac.Polyfills.Microsoft.Extensions.DependencyInjection.Tests {
                 .AddTransient<MyServiceWithNoDependencies>()
                 .BuildServiceProvider();
 
-            Assert.IsTrue(serviceProvider.GetService<MyServiceWithDependencies>() is MyServiceWithDependencies);
+            Assert.IsTrue(serviceProvider.GetService<MyServiceWithDependencies>().GetType().Equals(typeof(MyServiceWithDependencies)));
 
         }
         [TestMethod]
@@ -102,7 +102,7 @@ namespace Gsemac.Polyfills.Microsoft.Extensions.DependencyInjection.Tests {
                 .AddTransient<MyServiceWithOptionalDependencies>()
                 .BuildServiceProvider();
 
-            Assert.IsTrue(serviceProvider.GetService<MyServiceWithOptionalDependencies>() is MyServiceWithOptionalDependencies);
+            Assert.IsTrue(serviceProvider.GetService<MyServiceWithOptionalDependencies>().GetType().Equals(typeof(MyServiceWithOptionalDependencies)));
 
         }
         [TestMethod]
@@ -148,7 +148,7 @@ namespace Gsemac.Polyfills.Microsoft.Extensions.DependencyInjection.Tests {
         [TestMethod]
         public void TestGetSingletonWithManualInstantiation() {
 
-            MyServiceWithNoDependencies myService = new MyServiceWithNoDependencies();
+            MyServiceWithNoDependencies myService = new();
 
             IServiceProvider serviceProvider = new ServiceCollection()
                 .AddSingleton<IMyService>(myService)
@@ -198,14 +198,12 @@ namespace Gsemac.Polyfills.Microsoft.Extensions.DependencyInjection.Tests {
 
             IMyService rootScopedService = serviceProvider.GetService<IMyService>();
 
-            using (IServiceScope scope = serviceProvider.CreateScope()) {
+            using IServiceScope scope = serviceProvider.CreateScope();
 
-                IMyService scopedService = scope.ServiceProvider.GetService<IMyService>();
+            IMyService scopedService = scope.ServiceProvider.GetService<IMyService>();
 
-                Assert.IsTrue(scopedService.Equals(scope.ServiceProvider.GetService<IMyService>()));
-                Assert.IsFalse(rootScopedService.Equals(scopedService));
-
-            }
+            Assert.IsTrue(scopedService.Equals(scope.ServiceProvider.GetService<IMyService>()));
+            Assert.IsFalse(rootScopedService.Equals(scopedService));
 
         }
         [TestMethod]
@@ -259,7 +257,50 @@ namespace Gsemac.Polyfills.Microsoft.Extensions.DependencyInjection.Tests {
         // GetServices
 
         [TestMethod]
-        public void TestGetServicesWithSecondServiceProvider() {
+        public void TestGetServicesReturnsAllRequestedServices() {
+
+            // GetServices should return all services that were explicitly registered as the given type.
+
+            IServiceProvider serviceProvider = new ServiceCollection()
+                .AddSingleton<IMyService, MyServiceWithNoDependencies>()
+                .AddSingleton<MyServiceWithNoDependencies>()
+                .AddSingleton<IMyService>(provider => provider.GetRequiredService<MyServiceWithNoDependencies>()) // Required to instantiate MyServiceWithDependencies
+                .BuildServiceProvider();
+
+            IEnumerable<IMyService> services = serviceProvider.GetServices<IMyService>();
+
+            Assert.AreEqual(2, services.Count());
+
+        }
+        [TestMethod]
+        public void TestGetServicesReturnsServicesInRegistrationOrder() {
+
+            // Services should be returned in the same order that they were registered.
+            // https://stackoverflow.com/q/67940999
+
+            MyServiceWithNoDependencies myService1 = new();
+            MyServiceWithDependencies myService2 = new(myService1);
+
+            IServiceProvider serviceProvider = new ServiceCollection()
+                .AddSingleton<IMyService>(myService1)
+                .AddSingleton<IMyService>(myService2)
+                .BuildServiceProvider();
+
+            IEnumerable<IMyService> expectedObjects = new IMyService[] {
+                myService1,
+                myService2,
+            };
+
+            IEnumerable<IMyService> actualObjects = serviceProvider.GetServices<IMyService>();
+
+            Assert.AreEqual(expectedObjects.Count(), actualObjects.Count());
+
+            Assert.IsTrue(expectedObjects.Zip(serviceProvider.GetServices<IMyService>())
+                .All(pair => ReferenceEquals(pair.First, pair.Second)));
+
+        }
+        [TestMethod]
+        public void TestGetServicesWithRegisteredServiceProviderDoesNotReturnRootServiceProvider() {
 
             // Even though we have the IServiceProvider instance itself and the second one we registered, GetServices should only return the second one.
 
@@ -285,7 +326,7 @@ namespace Gsemac.Polyfills.Microsoft.Extensions.DependencyInjection.Tests {
             IServiceProvider serviceProvider = new ServiceCollection()
                 .BuildServiceProvider();
 
-            Assert.ThrowsException<InvalidOperationException>(() => serviceProvider.GetRequiredService<MyServiceWithDependencies>() is MyServiceWithDependencies);
+            Assert.ThrowsException<InvalidOperationException>(() => serviceProvider.GetRequiredService<MyServiceWithDependencies>());
 
         }
 

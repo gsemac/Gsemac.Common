@@ -65,7 +65,7 @@ namespace Gsemac.Polyfills.Microsoft.Extensions.DependencyInjection.Tests {
                 .AddSingleton<MyServiceWithNoDependencies>()
                 .BuildServiceProvider();
 
-            MyServiceWithDependencies dependency = new MyServiceWithDependencies(new MyServiceWithNoDependencies());
+            MyServiceWithDependencies dependency = new(new MyServiceWithNoDependencies());
 
             Assert.AreEqual(2, ActivatorUtilities.CreateInstance<MyServiceWithMultipleConstructorsAndDependencies>(s, new[] { dependency }).InvokedConstructorId);
 

@@ -16,10 +16,7 @@ namespace Gsemac.Polyfills.Microsoft.Extensions.DependencyInjection {
                 new ServiceDescriptor(typeof(IServiceScopeFactory), new ServiceScopeFactory(this))
             })) {
 
-                if (!servicesDict.ContainsKey(serviceDescriptor.ServiceType))
-                    servicesDict.Add(serviceDescriptor.ServiceType, new List<ServiceDescriptor>());
-
-                servicesDict[serviceDescriptor.ServiceType].Add(serviceDescriptor);
+                AddServiceToDictionary(serviceDescriptor);
 
             }
 
@@ -61,26 +58,7 @@ namespace Gsemac.Polyfills.Microsoft.Extensions.DependencyInjection {
 
             ServiceDescriptor serviceDescriptor = GetServiceDescriptor(serviceType);
 
-            if (serviceDescriptor is object && serviceDescriptor.Lifetime == ServiceLifetime.Scoped) {
-
-                if (validateScopes) {
-
-                    // Scoped services must be accessed from within a scope.
-
-                    throw new InvalidOperationException($"Cannot resolve scoped service '{serviceType}' from root provider.");
-
-                }
-                else {
-
-                    // Scoped services are treated as singletons under the root scope.
-
-                    return rootScope.ServiceProvider.GetService(serviceType);
-
-                }
-
-            }
-
-            return serviceDescriptor?.ImplementationFactory(this);
+            return GetServiceFromServiceDescriptor(serviceDescriptor);
 
         }
 
@@ -126,6 +104,58 @@ namespace Gsemac.Polyfills.Microsoft.Extensions.DependencyInjection {
         private readonly IServiceScope rootScope;
         private readonly IDictionary<Type, IList<ServiceDescriptor>> servicesDict = new Dictionary<Type, IList<ServiceDescriptor>>();
 
+        private void AddServiceToDictionary(ServiceDescriptor serviceDescriptor) {
+
+            if (!servicesDict.ContainsKey(serviceDescriptor.ServiceType)) {
+
+                // Add the initial services list to the dictionary.
+
+                IList<ServiceDescriptor> servicesList = new List<ServiceDescriptor>();
+
+                servicesDict.Add(serviceDescriptor.ServiceType, servicesList);
+
+                // Register the service list as an IEnumerable<T> to support the GetServices method.
+
+                Type enumerableType = typeof(IEnumerable<>).MakeGenericType(serviceDescriptor.ServiceType);
+
+                ServiceDescriptor enumerableServiceDescriptor = new ServiceDescriptor(enumerableType,
+                    services => servicesList.Select(descriptor => GetServiceFromServiceDescriptor(descriptor)),
+                    ServiceLifetime.Transient);
+
+                if (!servicesDict.TryGetValue(enumerableType, out IList<ServiceDescriptor> serviceCollection))
+                    servicesDict.Add(enumerableType, new List<ServiceDescriptor>());
+
+                servicesDict[enumerableType].Add(enumerableServiceDescriptor);
+
+            }
+
+            servicesDict[serviceDescriptor.ServiceType].Add(serviceDescriptor);
+
+        }
+        private object GetServiceFromServiceDescriptor(ServiceDescriptor serviceDescriptor) {
+
+            if (serviceDescriptor is object && serviceDescriptor.Lifetime == ServiceLifetime.Scoped) {
+
+                if (validateScopes) {
+
+                    // Scoped services must be accessed from within a scope.
+
+                    throw new InvalidOperationException($"Cannot resolve scoped service '{serviceDescriptor.ServiceType}' from root provider.");
+
+                }
+                else {
+
+                    // Scoped services are treated as singletons under the root scope.
+
+                    return rootScope.ServiceProvider.GetService(serviceDescriptor.ServiceType);
+
+                }
+
+            }
+
+            return serviceDescriptor?.ImplementationFactory(this);
+
+        }
         private void ValidateServices() {
 
             // Validate services by making sure all of them can be instantiated.

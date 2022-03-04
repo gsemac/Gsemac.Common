@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Gsemac.Polyfills.Properties;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -25,7 +26,7 @@ namespace Gsemac.Polyfills.Microsoft.Extensions.DependencyInjection {
             object serviceObject = provider.GetService(serviceType);
 
             if (serviceObject is null)
-                throw new InvalidOperationException($"There is no service of type {serviceType?.ToString() ?? "null"}.");
+                throw new InvalidOperationException(string.Format(ExceptionMessages.CannotResolveScopedServiceFromRootProviderWithTypeName, serviceType?.ToString() ?? "null"));
 
             return serviceObject;
 
@@ -48,14 +49,11 @@ namespace Gsemac.Polyfills.Microsoft.Extensions.DependencyInjection {
             if (serviceType is null)
                 throw new ArgumentNullException(nameof(serviceType));
 
-            List<object> services = new List<object>();
+            Type enumerableType = typeof(IEnumerable<>).MakeGenericType(serviceType);
 
-            object serviceObject = provider.GetService(serviceType);
+            // Return the services as an array (this is in line with Microsoft's implementation).
 
-            if (serviceObject is object)
-                services.Add(serviceObject);
-
-            return services;
+            return ((IEnumerable<object>)provider.GetService(enumerableType)).ToArray();
 
         }
         public static IEnumerable<T> GetServices<T>(this IServiceProvider provider) {
