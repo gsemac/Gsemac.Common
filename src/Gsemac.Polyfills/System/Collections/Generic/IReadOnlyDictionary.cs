@@ -30,14 +30,14 @@ namespace System.Collections.Generic {
         /// Determines whether the read-only dictionary contains an element that has the specified key.
         /// </summary>
         /// <param name="key">The key to locate.</param>
-        /// <returns><see cref="true"/> if the read-only dictionary contains an element that has the specified key; otherwise, <see cref="false"/>.</returns>
+        /// <returns><see langword="true"/> if the read-only dictionary contains an element that has the specified key; otherwise, <see langword="false"/>.</returns>
         bool ContainsKey(TKey key);
         /// <summary>
         /// Gets the value that is associated with the specified key.
         /// </summary>
         /// <param name="key">The key to locate.</param>
         /// <param name="value">When this method returns, the value associated with the specified key, if the key is found; otherwise, the default value for the type of the value parameter. This parameter is passed uninitialized.</param>
-        /// <returns><see cref="true"/> if the object that implements the <see cref="IReadOnlyDictionary{TKey, TValue}"/> interface contains an element that has the specified key; otherwise, <see cref="false"/>.</returns>
+        /// <returns><see langword="true"/> if the object that implements the <see cref="IReadOnlyDictionary{TKey, TValue}"/> interface contains an element that has the specified key; otherwise, <see langword="false"/>.</returns>
         bool TryGetValue(TKey key, out TValue value);
 
     }

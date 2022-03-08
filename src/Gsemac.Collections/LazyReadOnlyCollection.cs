@@ -41,7 +41,7 @@ namespace Gsemac.Collections {
         /// <summary>
         /// Initializes a new instance of the <see cref="LazyReadOnlyCollection{T}"/> class that is a read-only wrapper around the specified <see cref="IEnumerable{T}"/>.
         /// </summary>
-        /// <param name="list">The list to wrap.</param>
+        /// <param name="items">The list to wrap.</param>
         public LazyReadOnlyCollection(IEnumerable<T> items) {
 
             if (items is null)
@@ -52,10 +52,10 @@ namespace Gsemac.Collections {
         }
 
         /// <summary>
-        /// Determines whether an element is in the <see cref="LazyReadOnlyCollection{T}"./>
+        /// Determines whether an element is in the <see cref="LazyReadOnlyCollection{T}"/>.
         /// </summary>
-        /// <param name="item">The object to locate in the <see cref="LazyReadOnlyCollection{T}"/>. The value can be <see cref="null"/> for reference types.</param>
-        /// <returns><see cref="true"/> if value is found in the <see cref="LazyReadOnlyCollection{T}"/> otherwise, <see cref="false"/>.</returns>
+        /// <param name="item">The object to locate in the <see cref="LazyReadOnlyCollection{T}"/>. The value can be <see langword="null"/> for reference types.</param>
+        /// <returns><see langword="true"/> if value is found in the <see cref="LazyReadOnlyCollection{T}"/> otherwise, <see langword="false"/>.</returns>
         public bool Contains(T item) {
 
             return items.Any(i => i.Equals(item));

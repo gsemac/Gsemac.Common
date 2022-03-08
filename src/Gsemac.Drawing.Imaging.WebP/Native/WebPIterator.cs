@@ -36,7 +36,7 @@ namespace Gsemac.Drawing.Imaging.Native {
         /// </summary>
         public WebPMuxAnimDispose dispose_method;
         /// <summary>
-        ///  <see cref="true"/> if 'fragment' contains a full frame. partial images may still be decoded with the WebP incremental decoder.
+        ///  <see langword="true"/> if 'fragment' contains a full frame. partial images may still be decoded with the WebP incremental decoder.
         /// </summary>
         public int complete;
         /// <summary>
@@ -44,17 +44,17 @@ namespace Gsemac.Drawing.Imaging.Native {
         /// </summary>
         public WebPData fragment;
         /// <summary>
-        /// <see cref="true"/> if the frame contains transparency.
+        /// <see langword="true"/> if the frame contains transparency.
         /// </summary>
         public int has_alpha;
         /// <summary>
         /// Blend operation for the frame.
         /// </summary>
         public WebPMuxAnimBlend blend_method;
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2, ArraySubType = UnmanagedType.U4)]
         /// <summary>
         /// Padding for later use.
         /// </summary>
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2, ArraySubType = UnmanagedType.U4)]
         public readonly uint[] pad;
         /// <summary>
         /// For internal use only.

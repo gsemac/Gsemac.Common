@@ -46,7 +46,7 @@ namespace Gsemac.Polyfills.System.Collections.ObjectModel {
         bool ICollection<T>.IsReadOnly => true;
 
         /// <summary>
-        /// Initializes a new instance of the ReadOnlyCollection<T> class that is a read-only wrapper around the specified list.
+        /// Initializes a new instance of the <see cref="ReadOnlyCollection{T}"/> class that is a read-only wrapper around the specified list.
         /// </summary>
         /// <param name="list">The list to wrap.</param>
         public ReadOnlyCollection(IList<T> list) {
@@ -59,10 +59,10 @@ namespace Gsemac.Polyfills.System.Collections.ObjectModel {
         }
 
         /// <summary>
-        /// Determines whether an element is in the <see cref="ReadOnlyCollection{T}"./>
+        /// Determines whether an element is in the <see cref="ReadOnlyCollection{T}"/>.
         /// </summary>
-        /// <param name="item">The object to locate in the <see cref="ReadOnlyCollection{T}"/>. The value can be <see cref="null"/> for reference types.</param>
-        /// <returns><see cref="true"/> if value is found in the <see cref="ReadOnlyCollection{T}"/> otherwise, <see cref="false"/>.</returns>
+        /// <param name="item">The object to locate in the <see cref="ReadOnlyCollection{T}"/>. The value can be <see langword="null"/> for reference types.</param>
+        /// <returns><see langword="true"/> if value is found in the <see cref="ReadOnlyCollection{T}"/> otherwise, <see langword="false"/>.</returns>
         public bool Contains(T item) {
 
             return list.Contains(item);
@@ -81,7 +81,7 @@ namespace Gsemac.Polyfills.System.Collections.ObjectModel {
 
         /// <summary>
         /// Returns an enumerator that iterates through the <see cref="ReadOnlyCollection{T}"/>.
-        /// </summaryReadOnlyCollection
+        /// </summary>
         /// <returns>An <see cref="IEnumerator{T}"/> for the <see cref="ReadOnlyCollection{T}"/>.</returns>
         public IEnumerator<T> GetEnumerator() {
 

@@ -147,16 +147,14 @@ namespace Gsemac.Net {
         /// <summary>
         /// Adds a range header to a request for a specified range.
         /// </summary>
-        /// <param name="rangeSpecifier"></param>
-        /// <param name="from">The position at which to start sending data.</param>
-        /// <param name="to">The position at which to stop sending data.</param>
+        /// <param name="rangeSpecifier">The description of the range.</param>
+        /// <param name="range">The starting or ending point of the range.</param>
         void AddRange(string rangeSpecifier, int range);
         /// <summary>
         /// Adds a range header to a request for a specified range.
         /// </summary>
-        /// <param name="rangeSpecifier"></param>
-        /// <param name="from">The position at which to start sending data.</param>
-        /// <param name="to">The position at which to stop sending data.</param>
+        /// <param name="rangeSpecifier">The description of the range.</param>
+        /// <param name="range">The starting or ending point of the range.</param>
         void AddRange(string rangeSpecifier, long range);
         /// <summary>
         /// Adds a range header to a request for a specified range.

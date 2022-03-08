@@ -33,7 +33,7 @@ namespace Gsemac.Drawing.Imaging {
         /// </summary>
         public TimeSpan Duration => TimeSpan.FromMilliseconds(iterator.duration);
         /// <summary>
-        /// Returns <see cref="true"/> if the frame contains transparency.
+        /// Returns <see langword="true"/> if the frame contains transparency.
         /// </summary>
         public bool HasAlpha { get; }
 
