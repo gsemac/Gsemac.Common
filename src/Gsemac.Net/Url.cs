@@ -17,12 +17,13 @@ namespace Gsemac.Net {
         // Public members
 
         public const char DirectorySeparatorChar = '/';
+        public const string SchemeSeparator = "://";
 
         public string Scheme {
             get => scheme;
             set => SetScheme(value);
         }
-        public string Username { get; set; }
+        public string UserName { get; set; }
         public string Password { get; set; }
         public string Host {
             get => GetHost();
@@ -34,9 +35,12 @@ namespace Gsemac.Net {
         public string Fragment { get; set; }
         public IDictionary<string, string> QueryParameters { get; private set; }
 
+        public Url() :
+            this(string.Empty) {
+        }
         public Url(string url) {
 
-            Match match = Regex.Match(url, @"^(?<scheme>.+?:)?(?:\/\/)?(?<credentials>.+?:.+?@)?(?<host>.+?)?(?<path>\/.*?)?(?<query>\?.+?)?(?<fragment>#.+?)?$");
+            Match match = Regex.Match(url ?? "", @"^(?<scheme>.+?:)?(?:\/\/)?(?<credentials>.+?:.+?@)?(?<host>.+?)?(?<path>\/.*?)?(?<query>\?.+?)?(?<fragment>#.+?)?$");
 
             if (!match.Success)
                 throw new FormatException(Properties.ExceptionMessages.MalformedUrl);
@@ -55,6 +59,9 @@ namespace Gsemac.Net {
 
             SetCredentials(match.Groups["credentials"].Value);
 
+        }
+        public Url(IUrl url) :
+            this(url.ToString()) {
         }
 
         public override string ToString() {
@@ -336,10 +343,8 @@ namespace Gsemac.Net {
 
             if (!string.IsNullOrWhiteSpace(Scheme)) {
 
-                sb.Append(Scheme);
-
-                if (!Scheme.EndsWith(":"))
-                    sb.Append(":");
+                sb.Append(Scheme.TrimEnd(':'));
+                sb.Append(":");
 
             }
 
@@ -347,9 +352,9 @@ namespace Gsemac.Net {
 
             // Add username/password.
 
-            if (!string.IsNullOrWhiteSpace(Username)) {
+            if (!string.IsNullOrWhiteSpace(UserName)) {
 
-                sb.Append(Username);
+                sb.Append(UserName);
 
                 // If the user doesn't set a password, don't include one.
                 // However, if the password is the empty string, include an empty password (this is what cURL does). 
@@ -369,7 +374,12 @@ namespace Gsemac.Net {
 
             sb.Append(Host);
 
-            return sb.ToString();
+            string rootString = sb.ToString();
+
+            if (rootString.Equals("//"))
+                rootString = string.Empty;
+
+            return rootString;
 
         }
 
@@ -381,7 +391,7 @@ namespace Gsemac.Net {
                     throw new ArgumentException(Properties.ExceptionMessages.SchemeContainsInvalidCharacters, nameof(scheme));
 
                 if (scheme.EndsWith(":"))
-                    scheme = scheme.Substring(0, scheme.Length - 1);
+                    scheme = scheme.TrimEnd(':');
 
             }
 
@@ -421,7 +431,7 @@ namespace Gsemac.Net {
 
                 if (usernamePassword.Count() == 2) {
 
-                    this.Username = usernamePassword[0];
+                    this.UserName = usernamePassword[0];
                     this.Password = usernamePassword[1];
 
                 }

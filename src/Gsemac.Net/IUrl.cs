@@ -5,7 +5,7 @@ namespace Gsemac.Net {
     public interface IUrl {
 
         string Scheme { get; }
-        string Username { get; }
+        string UserName { get; }
         string Password { get; }
         string Host { get; }
         string Hostname { get; }

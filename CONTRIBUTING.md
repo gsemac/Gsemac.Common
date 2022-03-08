@@ -28,4 +28,5 @@ The following style guide is mostly to help keep myself consistent.
 Naming conventions are chosen to be consistent with those [already present in .NET](https://docs.microsoft.com/en-us/dotnet/standard/design-guidelines/capitalization-conventions).
 
 * Prefer `FileName` over `Filename`.
+* Prefer `UserName` over `Username`.
 * Prefer `WhiteSpace` over `Whitespace`.

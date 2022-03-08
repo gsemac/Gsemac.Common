@@ -64,14 +64,14 @@ namespace Gsemac.Net.Tests {
         [TestMethod]
         public void TestGetUsername() {
 
-            Assert.AreEqual("username", new Url("https://username:password@stackoverflow.com/").Username);
+            Assert.AreEqual("username", new Url("https://username:password@stackoverflow.com/").UserName);
 
         }
         [TestMethod]
         public void TestToStringAfterSetUsernameWithoutPassword() {
 
             IUrl url = new Url("https://stackoverflow.com/") {
-                Username = "username",
+                UserName = "username",
             };
 
             Assert.AreEqual("https://username@stackoverflow.com/", url.ToString());
@@ -81,7 +81,7 @@ namespace Gsemac.Net.Tests {
         public void TestToStringAfterSetUsernameWithPassword() {
 
             IUrl url = new Url("https://stackoverflow.com/") {
-                Username = "username",
+                UserName = "username",
                 Password = "password",
             };
 
@@ -115,7 +115,7 @@ namespace Gsemac.Net.Tests {
             // A username is required.
 
             IUrl url = new Url("https://stackoverflow.com/") {
-                Username = "username",
+                UserName = "username",
                 Password = "",
             };
 
@@ -128,7 +128,7 @@ namespace Gsemac.Net.Tests {
             // A username is required.
 
             IUrl url = new Url("https://stackoverflow.com/") {
-                Username = "username",
+                UserName = "username",
                 Password = null,
             };
 
@@ -332,6 +332,12 @@ namespace Gsemac.Net.Tests {
 
             Assert.AreEqual("https://example.com/?a&b&c&d&e&f&g&h&i&j&k&l&m&n&o&p&q&r&s&t&u&v&w&x&y&z",
                 new Url("https://example.com/?a&b&c&d&e&f&g&h&i&j&k&l&m&n&o&p&q&r&s&t&u&v&w&x&y&z").ToString());
+
+        }
+        [TestMethod]
+        public void TestToStringReturnsEmptyStringForEmptyUrl() {
+
+            Assert.AreEqual(string.Empty, new Url().ToString());
 
         }
 
