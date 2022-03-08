@@ -1,54 +1,56 @@
 ﻿<Project Sdk="MSBuild.Sdk.Extras/3.0.44">
 
-  <PropertyGroup>
-    <TargetFrameworks>net40-client;netstandard2.0</TargetFrameworks>
-    <Company />
-    <Authors>gsemac</Authors>
-    <Version>0.21.2</Version>
-    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
-    <PackageProjectUrl>https://github.com/gsemac/Gsemac.Common</PackageProjectUrl>
-    <RepositoryUrl>https://github.com/gsemac/Gsemac.Common</RepositoryUrl>
-    <RepositoryType>git</RepositoryType>
-    <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <Copyright></Copyright>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFrameworks>net40-client;netstandard2.0</TargetFrameworks>
+		<Company />
+		<Authors>gsemac</Authors>
+		<Version>0.21.2</Version>
+		<GenerateDocumentationFile>true</GenerateDocumentationFile>
+		<GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+		<PackageProjectUrl>https://github.com/gsemac/Gsemac.Common</PackageProjectUrl>
+		<RepositoryUrl>https://github.com/gsemac/Gsemac.Common</RepositoryUrl>
+		<RepositoryType>git</RepositoryType>
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+		<Copyright></Copyright>
+		<NoWarn>1701;1702;1591</NoWarn>
+	</PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)' == 'Release'">
-    <DebugType>none</DebugType>
-    <DebugSymbols>false</DebugSymbols>
-  </PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)' == 'Release'">
+		<DebugType>none</DebugType>
+		<DebugSymbols>false</DebugSymbols>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <Content Include="Gsemac.IO.targets" PackagePath="build/Gsemac.IO.targets" />
-  </ItemGroup>
+	<ItemGroup>
+		<Content Include="Gsemac.IO.targets" PackagePath="build/Gsemac.IO.targets" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\Gsemac.Collections\Gsemac.Collections.csproj" />
-    <ProjectReference Include="..\Gsemac.Core\Gsemac.Core.csproj" />
-    <ProjectReference Include="..\Gsemac.Reflection\Gsemac.Reflection.csproj" />
-    <ProjectReference Include="..\Gsemac.Text\Gsemac.Text.csproj" />
-  </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\Gsemac.Collections\Gsemac.Collections.csproj" />
+		<ProjectReference Include="..\Gsemac.Core\Gsemac.Core.csproj" />
+		<ProjectReference Include="..\Gsemac.Reflection\Gsemac.Reflection.csproj" />
+		<ProjectReference Include="..\Gsemac.Text\Gsemac.Text.csproj" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <Compile Update="Properties\ExceptionMessages.Designer.cs">
-      <DesignTime>True</DesignTime>
-      <DependentUpon>ExceptionMessages.resx</DependentUpon>
-    </Compile>
-  </ItemGroup>
+	<ItemGroup>
+		<Compile Update="Properties\ExceptionMessages.Designer.cs">
+			<DesignTime>True</DesignTime>
+			<DependentUpon>ExceptionMessages.resx</DependentUpon>
+		</Compile>
+	</ItemGroup>
 
-  <ItemGroup>
-    <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
-      <_Parameter1>Gsemac.IO.Compression</_Parameter1>
-    </AssemblyAttribute>
-    <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
-      <_Parameter1>Gsemac.Drawing</_Parameter1>
-    </AssemblyAttribute>
-    <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
-      <_Parameter1>Gsemac.Drawing.Imaging.ImageMagick</_Parameter1>
-    </AssemblyAttribute>
-    <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
-      <_Parameter1>Gsemac.IO.Compression.SharpCompress</_Parameter1>
-    </AssemblyAttribute>
-  </ItemGroup>
+	<ItemGroup>
+		<AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
+			<_Parameter1>Gsemac.IO.Compression</_Parameter1>
+		</AssemblyAttribute>
+		<AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
+			<_Parameter1>Gsemac.Drawing</_Parameter1>
+		</AssemblyAttribute>
+		<AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
+			<_Parameter1>Gsemac.Drawing.Imaging.ImageMagick</_Parameter1>
+		</AssemblyAttribute>
+		<AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
+			<_Parameter1>Gsemac.IO.Compression.SharpCompress</_Parameter1>
+		</AssemblyAttribute>
+	</ItemGroup>
 
 </Project>

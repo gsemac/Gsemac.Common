@@ -2,15 +2,17 @@
 
 	<PropertyGroup>
 		<TargetFrameworks>net40-client;netstandard2.0</TargetFrameworks>
-    <Company />
-    <Authors>gsemac</Authors>
-    <Version>0.2.7</Version>
-    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
-    <PackageProjectUrl>https://github.com/gsemac/Gsemac.Common</PackageProjectUrl>
-    <RepositoryUrl>https://github.com/gsemac/Gsemac.Common</RepositoryUrl>
-    <RepositoryType>git</RepositoryType>
-    <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <Copyright></Copyright>
+		<Company />
+		<Authors>gsemac</Authors>
+		<Version>0.2.7</Version>
+		<GenerateDocumentationFile>true</GenerateDocumentationFile>
+		<GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+		<PackageProjectUrl>https://github.com/gsemac/Gsemac.Common</PackageProjectUrl>
+		<RepositoryUrl>https://github.com/gsemac/Gsemac.Common</RepositoryUrl>
+		<RepositoryType>git</RepositoryType>
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+		<Copyright></Copyright>
+		<NoWarn>1701;1702;1591</NoWarn>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)' == 'Release'">
@@ -19,9 +21,9 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-	  <Compile Update="Properties\ExceptionMessages.Designer.cs">
-	    <DesignTime>True</DesignTime>
-	  </Compile>
+		<Compile Update="Properties\ExceptionMessages.Designer.cs">
+			<DesignTime>True</DesignTime>
+		</Compile>
 	</ItemGroup>
 
 </Project>

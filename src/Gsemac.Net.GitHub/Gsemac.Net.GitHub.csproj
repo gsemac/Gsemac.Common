@@ -1,39 +1,41 @@
 ﻿<Project Sdk="MSBuild.Sdk.Extras/3.0.44">
 
-  <PropertyGroup>
-    <TargetFrameworks>net40-client;netstandard2.0</TargetFrameworks>
-    <Company />
-    <Authors>gsemac</Authors>
-    <Version>0.4.6</Version>
-    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
-    <PackageProjectUrl>https://github.com/gsemac/Gsemac.Common</PackageProjectUrl>
-    <RepositoryUrl>https://github.com/gsemac/Gsemac.Common</RepositoryUrl>
-    <RepositoryType>git</RepositoryType>
-    <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <Copyright></Copyright>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFrameworks>net40-client;netstandard2.0</TargetFrameworks>
+		<Company />
+		<Authors>gsemac</Authors>
+		<Version>0.4.6</Version>
+		<GenerateDocumentationFile>true</GenerateDocumentationFile>
+		<GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+		<PackageProjectUrl>https://github.com/gsemac/Gsemac.Common</PackageProjectUrl>
+		<RepositoryUrl>https://github.com/gsemac/Gsemac.Common</RepositoryUrl>
+		<RepositoryType>git</RepositoryType>
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+		<Copyright></Copyright>
+		<NoWarn>1701;1702;1591</NoWarn>
+	</PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)' == 'Release'">
-    <DebugType>none</DebugType>
-    <DebugSymbols>false</DebugSymbols>
-  </PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)' == 'Release'">
+		<DebugType>none</DebugType>
+		<DebugSymbols>false</DebugSymbols>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="HtmlAgilityPack" Version="1.11.42" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="HtmlAgilityPack" Version="1.11.42" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\Gsemac.Net\Gsemac.Net.csproj" />
-  </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\Gsemac.Net\Gsemac.Net.csproj" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <Compile Update="Properties\GitHub.Designer.cs">
-      <DesignTime>True</DesignTime>
-      <DependentUpon>GitHub.resx</DependentUpon>
-    </Compile>
-    <Compile Update="Properties\QueryStrings.Designer.cs">
-      <DesignTime>True</DesignTime>
-    </Compile>
-  </ItemGroup>
+	<ItemGroup>
+		<Compile Update="Properties\GitHub.Designer.cs">
+			<DesignTime>True</DesignTime>
+			<DependentUpon>GitHub.resx</DependentUpon>
+		</Compile>
+		<Compile Update="Properties\QueryStrings.Designer.cs">
+			<DesignTime>True</DesignTime>
+		</Compile>
+	</ItemGroup>
 
 </Project>
