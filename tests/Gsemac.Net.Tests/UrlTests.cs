@@ -288,7 +288,7 @@ namespace Gsemac.Net.Tests {
         [TestMethod]
         public void TestSetExistingQueryParameter() {
 
-            Url url = new Url("https://example.com/?name1=value1&name2=value2");
+            Url url = new("https://example.com/?name1=value1&name2=value2");
 
             url.QueryParameters["name1"] = "newValue";
 
@@ -298,7 +298,7 @@ namespace Gsemac.Net.Tests {
         [TestMethod]
         public void TestSetNewQueryParameter() {
 
-            Url url = new Url("https://example.com/?name1=value1&name2=value2");
+            Url url = new("https://example.com/?name1=value1&name2=value2");
 
             url.QueryParameters["name3"] = "value3";
 
@@ -314,7 +314,7 @@ namespace Gsemac.Net.Tests {
         [TestMethod]
         public void TestUrlEncodesQueryParameters() {
 
-            Url url = new Url("https://example.com/");
+            Url url = new("https://example.com/");
 
             url.QueryParameters["test"] = "!@#$%^&";
 
@@ -346,7 +346,7 @@ namespace Gsemac.Net.Tests {
         [TestMethod]
         public void TestGetDomainNameWithSubdomain() {
 
-            Url url = new Url("https://www.stackoverflow.com/");
+            Url url = new("https://www.stackoverflow.com/");
 
             Assert.AreEqual("stackoverflow.com", Url.GetDomainName(url.ToString()));
 
@@ -354,7 +354,7 @@ namespace Gsemac.Net.Tests {
         [TestMethod]
         public void TestGetDomainNameWithoutScheme() {
 
-            Url url = new Url("www.stackoverflow.com");
+            Url url = new("www.stackoverflow.com");
 
             Assert.AreEqual("stackoverflow.com", Url.GetDomainName(url.ToString()));
 
@@ -362,7 +362,7 @@ namespace Gsemac.Net.Tests {
         [TestMethod]
         public void TestGetDomainNameWithPath() {
 
-            Url url = new Url("https://codegolf.stackexchange.com/questions/198550/simple-circular-words");
+            Url url = new("https://codegolf.stackexchange.com/questions/198550/simple-circular-words");
 
             Assert.AreEqual("stackexchange.com", Url.GetDomainName(url.ToString()));
 
@@ -370,7 +370,7 @@ namespace Gsemac.Net.Tests {
         [TestMethod]
         public void TestGetDomainNameWithoutSubdomain() {
 
-            Url url = new Url("https://stackoverflow.com/");
+            Url url = new("https://stackoverflow.com/");
 
             Assert.AreEqual("stackoverflow.com", Url.GetDomainName(url.ToString()));
 
@@ -378,7 +378,7 @@ namespace Gsemac.Net.Tests {
         [TestMethod]
         public void TestGetDomainNameWithMultipartTld() {
 
-            Url url = new Url("https://website.co.jp/");
+            Url url = new("https://website.co.jp/");
 
             Assert.AreEqual("website.co.jp", Url.GetDomainName(url.ToString()));
 
@@ -388,7 +388,7 @@ namespace Gsemac.Net.Tests {
 
             // "websiteco.jp" ends with a multipart TLD ("co.jp"), but this should not be detected as such (because there is no dot separator).
 
-            Url url = new Url("https://websiteco.jp/");
+            Url url = new("https://websiteco.jp/");
 
             Assert.AreEqual("websiteco.jp", Url.GetDomainName(url.ToString()));
 
@@ -396,7 +396,7 @@ namespace Gsemac.Net.Tests {
         [TestMethod]
         public void TestGetDomainNameWithSubdomainAndMultipartTld() {
 
-            Url url = new Url("https://subdomain.website.co.jp/");
+            Url url = new("https://subdomain.website.co.jp/");
 
             Assert.AreEqual("website.co.jp", Url.GetDomainName(url.ToString()));
 
@@ -404,15 +404,23 @@ namespace Gsemac.Net.Tests {
         [TestMethod]
         public void TestGetDomainNameWithIpAddress() {
 
-            Url url = new Url("https://192.168.1.1/");
+            Url url = new("https://192.168.1.1/");
 
             Assert.AreEqual("192.168.1.1", Url.GetDomainName(url.ToString()));
 
         }
         [TestMethod]
+        public void TestGetDomainNameWithLocalhost() {
+
+            Url url = new("http://localhost");
+
+            Assert.AreEqual("localhost", Url.GetDomainName(url.ToString()));
+
+        }
+        [TestMethod]
         public void TestGetDomainNameWithFullyQualifiedDomainName() {
 
-            Url url = new Url("https://stackoverflow.com./");
+            Url url = new("https://stackoverflow.com./");
 
             Assert.AreEqual("stackoverflow.com", Url.GetDomainName(url.ToString()));
 
@@ -420,7 +428,7 @@ namespace Gsemac.Net.Tests {
         [TestMethod]
         public void TestGetDomainNameDomainName() {
 
-            Url url = new Url("stackoverflow.com");
+            Url url = new("stackoverflow.com");
 
             Assert.AreEqual("stackoverflow.com", Url.GetDomainName(url.ToString()));
 
