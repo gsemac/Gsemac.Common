@@ -58,7 +58,7 @@ namespace Gsemac.Drawing.Imaging {
 
             using (Bitmap sourceBitmap = image.ToBitmap())
             using (Image resizedBitmap = ImageUtilities.ResizeImage(sourceBitmap, newWidth, newHeight))
-                return ImageFactory.FromBitmap(resizedBitmap);
+                return ImageFactory.Default.FromBitmap(resizedBitmap);
 
         }
 

@@ -1,7 +1,9 @@
 ﻿using Gsemac.Drawing.Imaging;
 using Gsemac.IO;
 using Gsemac.IO.Extensions;
+using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 
 namespace Gsemac.Drawing {
@@ -19,6 +21,9 @@ namespace Gsemac.Drawing {
 
         public IImage FromStream(Stream stream, IFileFormat imageFormat = null) {
 
+            if (stream is null)
+                throw new ArgumentNullException(nameof(stream));
+
             if (imageFormat is null)
                 stream = FileFormatFactory.Default.FromStream(stream, out imageFormat);
 
@@ -31,9 +36,28 @@ namespace Gsemac.Drawing {
 
         }
 
+#if NETFRAMEWORK
+
+        public IImage FromBitmap(Image bitmap, IFromBitmapOptions options = null) {
+
+            if (bitmap is null)
+                throw new ArgumentNullException(nameof(bitmap));
+
+            if (options is null)
+                options = FromBitmapOptions.Default;
+
+            return new GdiImage(bitmap, options.Format, options.Codec);
+
+        }
+
+#endif
+
         // Protected members
 
         protected ImageFactoryBase(IImageCodecFactory imageCodecFactory) {
+
+            if (imageCodecFactory is null)
+                throw new ArgumentNullException(nameof(imageCodecFactory));
 
             this.imageCodecFactory = imageCodecFactory;
 

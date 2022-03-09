@@ -36,7 +36,7 @@ namespace Gsemac.Drawing.Imaging {
 
                     }
 
-                    return ImageFactory.FromBitmap(newImage);
+                    return ImageFactory.Default.FromBitmap(newImage);
 
                 }
 

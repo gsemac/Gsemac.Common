@@ -111,19 +111,24 @@ namespace Gsemac.Drawing.Extensions {
         }
 
 #if NETFRAMEWORK
-        public static Bitmap ToBitmap(this IImage image, bool disposeSourceImage) {
+
+        public static Image ToBitmap(this IImage image, IToBitmapOptions options) {
 
             if (image is null)
                 throw new ArgumentNullException(nameof(image));
 
+            if (options is null)
+                throw new ArgumentNullException(nameof(options));
+
             Bitmap bitmap = image.ToBitmap();
 
-            if (disposeSourceImage)
+            if (options.DisposeSourceImage)
                 image.Dispose();
 
             return bitmap;
 
         }
+
 #endif
 
     }

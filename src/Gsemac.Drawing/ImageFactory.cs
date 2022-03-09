@@ -21,19 +21,6 @@ namespace Gsemac.Drawing {
             base(imageCodecFactory) {
         }
 
-#if NETFRAMEWORK
-        public static IImage FromBitmap(Image bitmap) {
-
-            return FromBitmap(bitmap, null, null);
-
-        }
-        public static IImage FromBitmap(Image bitmap, IFileFormat imageFormat, IImageCodec imageCodec) {
-
-            return new GdiImage(bitmap, imageFormat, imageCodec);
-
-        }
-#endif
-
     }
 
 }

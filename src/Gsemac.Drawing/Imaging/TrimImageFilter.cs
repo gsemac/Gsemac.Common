@@ -103,7 +103,7 @@ namespace Gsemac.Drawing.Imaging {
 
                         graphics.DrawImage(sourceBitmap, new Rectangle(0, 0, width, height), new Rectangle(x, y, width, height), GraphicsUnit.Pixel);
 
-                        return ImageFactory.FromBitmap(newImage);
+                        return ImageFactory.Default.FromBitmap(newImage);
 
                     }
 

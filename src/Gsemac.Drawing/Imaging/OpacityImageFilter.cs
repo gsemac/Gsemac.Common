@@ -37,7 +37,7 @@ namespace Gsemac.Drawing.Imaging {
                     graphics.Clear(Color.Transparent);
                     graphics.DrawImage(sourceBitmap, new Rectangle(0, 0, sourceBitmap.Width, sourceBitmap.Height), 0, 0, sourceBitmap.Width, sourceBitmap.Height, GraphicsUnit.Pixel, attributes);
 
-                    return ImageFactory.FromBitmap(newImage);
+                    return ImageFactory.Default.FromBitmap(newImage);
 
                 }
 

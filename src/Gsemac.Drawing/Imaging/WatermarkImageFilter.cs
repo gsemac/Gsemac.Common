@@ -28,7 +28,7 @@ namespace Gsemac.Drawing.Imaging {
                     new Rectangle(0, 0, overlayImage.Width, overlayImage.Height),
                     GraphicsUnit.Pixel);
 
-                return ImageFactory.FromBitmap(newImage);
+                return ImageFactory.Default.FromBitmap(newImage);
 
             }
 
