@@ -8,56 +8,6 @@ namespace Gsemac.Drawing {
 
         // Public members
 
-        public static Image ResizeImage(Image image, int? width = null, int? height = null, bool disposeSourceImage = false) {
-
-            if ((width ?? 0) <= 0)
-                width = null;
-
-            if ((height ?? 0) <= 0)
-                height = null;
-
-            int newWidth;
-            int newHeight;
-
-            if (width.HasValue && height.HasValue) {
-
-                newWidth = width.Value;
-                newHeight = height.Value;
-
-            }
-            else if (width.HasValue) {
-
-                float scaleFactor = (float)width.Value / image.Width;
-
-                newWidth = width.Value;
-                newHeight = (int)(image.Height * scaleFactor);
-
-            }
-            else if (height.HasValue) {
-
-                float scaleFactor = (float)height.Value / image.Height;
-
-                newWidth = (int)(image.Width * scaleFactor);
-                newHeight = height.Value;
-
-            }
-            else {
-
-                // If no dimensions have been specified, simply return the original image.
-
-                return image;
-
-            }
-
-            Bitmap resultImage = new Bitmap(image, new Size(newWidth, newHeight));
-
-            if (disposeSourceImage)
-                image.Dispose();
-
-            return resultImage;
-
-        }
-
         public static bool HasIndexedPixelFormat(Image image) {
 
             switch (image.PixelFormat) {
