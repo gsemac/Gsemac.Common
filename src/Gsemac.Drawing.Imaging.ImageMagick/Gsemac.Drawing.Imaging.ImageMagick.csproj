@@ -5,7 +5,7 @@
 		<RootNamespace>Gsemac.Drawing.Imaging</RootNamespace>
 		<Company />
 		<Authors>gsemac</Authors>
-		<Version>0.7.6</Version>
+		<Version>0.7.7</Version>
 		<GenerateDocumentationFile>true</GenerateDocumentationFile>
 		<GeneratePackageOnBuild>false</GeneratePackageOnBuild>
 		<PackageProjectUrl>https://github.com/gsemac/Gsemac.Common</PackageProjectUrl>
