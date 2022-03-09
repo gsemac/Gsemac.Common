@@ -38,7 +38,11 @@ namespace Gsemac.Drawing.Imaging {
             using (WebP decoder = new WebP())
             using (Image decodedWebPBitmap = DecodeWebPBitmap(decoder, webPData)) {
 
-                IImage image = ImageFactory.FromBitmap(decodedWebPBitmap, GetSupportedFileFormats().First(), this);
+                IImage image = ImageFactory.Default.FromBitmap(decodedWebPBitmap, new FromBitmapOptions() {
+                    Format = GetSupportedFileFormats().First(),
+                    Codec = this,
+                });
+
                 IAnimationInfo animationInfo = GetAnimationInfo(decoder, webPData);
 
                 return new WebPImage(image, animationInfo);
