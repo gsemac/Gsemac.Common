@@ -25,6 +25,14 @@ namespace Gsemac.Net {
             this.url = new Url(url);
 
         }
+        public UrlBuilder(Uri uri) {
+
+            if (uri is null)
+                throw new ArgumentNullException(nameof(uri));
+
+            url = new Url(uri);
+
+        }
 
         public IUrlBuilder WithFragment(string fragment) {
 
