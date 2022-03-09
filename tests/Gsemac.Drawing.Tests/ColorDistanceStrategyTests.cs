@@ -48,11 +48,11 @@ namespace Gsemac.Drawing.Tests {
     }
 
     [TestClass]
-    public class GreyscaleRgbDifferenceColorDistanceStrategyTests :
+    public class GrayscaleRgbDifferenceColorDistanceStrategyTests :
       ColorDistanceStrategyTestsBase {
 
-        public GreyscaleRgbDifferenceColorDistanceStrategyTests() :
-            base(new GreyscaleRgbDifferenceStrategy()) {
+        public GrayscaleRgbDifferenceColorDistanceStrategyTests() :
+            base(new GrayscaleRgbDifferenceStrategy()) {
         }
 
     }
