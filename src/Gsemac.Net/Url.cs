@@ -61,7 +61,10 @@ namespace Gsemac.Net {
 
         }
         public Url(IUrl url) :
-            this(url.ToString()) {
+            this(UrlToString(url)) {
+        }
+        public Url(Uri uri) :
+            this(UriToString(uri)) {
         }
 
         public override string ToString() {
@@ -483,6 +486,22 @@ namespace Gsemac.Net {
                    .OrderByDescending(x => x.Length);
 
             return suffixes;
+
+        }
+        private static string UriToString(Uri uri) {
+
+            if (uri is null)
+                throw new ArgumentNullException(nameof(uri));
+
+            return uri.AbsoluteUri;
+
+        }
+        private static string UrlToString(IUrl url) {
+
+            if (url is null)
+                throw new ArgumentNullException(nameof(url));
+
+            return url.ToString();
 
         }
 
