@@ -23,6 +23,10 @@ The following style guide is mostly to help keep myself consistent.
 
 * Treat `null` strings the same as empty strings where possible rather than throwing an exception.
 
+### Extension Methods
+
+* If an extension method does more than just remapping arguments, consider adding it to a utility class (with the `Utilities` suffix). This enhances discoverability and allows the method to be used without importing other extension methods into the current scope.
+
 ### Naming Conventions
 
 Naming conventions are chosen to be consistent with those [already present in .NET](https://docs.microsoft.com/en-us/dotnet/standard/design-guidelines/capitalization-conventions).
