@@ -1,9 +1,10 @@
-﻿using Gsemac.Net.Extensions;
+﻿using Gsemac.IO;
+using Gsemac.Net.Extensions;
+using Gsemac.Net.WebBrowsers.Properties;
 using System;
 using System.Diagnostics;
 using System.IO;
 using System.Net;
-using System.Reflection;
 using System.Text;
 
 namespace Gsemac.Net.WebBrowsers {
@@ -102,6 +103,26 @@ namespace Gsemac.Net.WebBrowsers {
             }
 
             return requestHeaders;
+
+        }
+
+        public static bool OpenUrl(Uri uri) {
+
+            if (uri is null)
+                throw new ArgumentNullException(nameof(uri));
+
+            return OpenUrl(uri.AbsoluteUri);
+
+        }
+        public static bool OpenUrl(string url) {
+
+            // Based on the answer given here: https://stackoverflow.com/a/62678021/5383169 (EstevaoLuis)
+
+            if (!PathUtilities.IsUrl(url))
+                throw new ArgumentException(ExceptionMessages.StringIsNotAValidUrl, nameof(url));
+
+            using (Process process = Process.Start("explorer.exe", url))
+                return process.Responding;
 
         }
 

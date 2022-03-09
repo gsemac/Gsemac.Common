@@ -46,4 +46,10 @@
 		<ProjectReference Include="..\Gsemac.Net\Gsemac.Net.csproj" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <Compile Update="Properties\ExceptionMessages.Designer.cs">
+	    <DesignTime>True</DesignTime>
+	  </Compile>
+	</ItemGroup>
+
 </Project>
