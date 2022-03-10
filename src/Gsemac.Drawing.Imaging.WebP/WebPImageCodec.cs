@@ -11,7 +11,7 @@ using WebPWrapper;
 
 namespace Gsemac.Drawing.Imaging {
 
-    [RequiresAssemblies("libwebp")]
+    [RequiresAssemblies("libwebp", "libwebpdemux", "libwebpdecoder")]
     [RequiresAssemblyOrTypes("WebPWrapper", "WebPWrapper.WebP")]
     public class WebPImageCodec :
         PluginBase,
