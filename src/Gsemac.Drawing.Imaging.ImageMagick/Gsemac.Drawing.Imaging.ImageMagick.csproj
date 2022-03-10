@@ -21,13 +21,13 @@
 		<DebugSymbols>false</DebugSymbols>
 	</PropertyGroup>
 
-	<ItemGroup Condition="$(DefineConstants.Contains('NETFRAMEWORK'))">
-		<Reference Include="System.Drawing" />
-	</ItemGroup>
-
 	<ItemGroup>
 		<ProjectReference Include="..\Gsemac.Drawing\Gsemac.Drawing.csproj" />
 		<ProjectReference Include="..\Gsemac.Reflection.Plugins\Gsemac.Reflection.Plugins.csproj" />
+	</ItemGroup>
+
+	<ItemGroup Condition="$(DefineConstants.Contains('NETFRAMEWORK'))">
+		<Reference Include="System.Drawing" />
 	</ItemGroup>
 
 	<Choose>
@@ -35,17 +35,20 @@
 			<ItemGroup>
 				<PackageReference Include="Magick.NET-Q16-AnyCPU" Version="10.1.0" />
 			</ItemGroup>
+			<ItemGroup Condition="$(DefineConstants.Contains('NETFRAMEWORK'))">
+				<PackageReference Include="Magick.NET.SystemDrawing" Version="4.0.18" />
+			</ItemGroup>
 		</When>
 		<Otherwise>
 			<ItemGroup>
 				<PackageReference Include="Magick.NET-Q16-AnyCPU" Version="8.6.1" />
 			</ItemGroup>
+			<!-- Magick.NET.SystemDrawing > 4.0.16 is not compatible .NET Framework 4.0 due to the dependency on Magick.NET >= 10.1.0, which only targets .NET Standard.  -->
+			<ItemGroup Condition="$(DefineConstants.Contains('NETFRAMEWORK'))">
+				<PackageReference Include="Magick.NET.SystemDrawing" Version="4.0.16" />
+			</ItemGroup>
 		</Otherwise>
 	</Choose>
-
-	<ItemGroup Condition="$(DefineConstants.Contains('NETFRAMEWORK'))">
-		<PackageReference Include="Magick.NET.SystemDrawing" Version="4.0.18" />
-	</ItemGroup>
 
 	<ItemGroup>
 		<Content Include="Gsemac.Drawing.Imaging.ImageMagick.targets" PackagePath="build/Gsemac.Drawing.Imaging.ImageMagick.targets" />
