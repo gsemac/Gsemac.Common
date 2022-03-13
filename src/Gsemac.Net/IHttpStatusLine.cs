@@ -1,11 +1,10 @@
-﻿using System;
-using System.Net;
+﻿using System.Net;
 
 namespace Gsemac.Net {
 
-    public interface IHttpStatusLine {
+    public interface IHttpStatusLine :
+        IHttpStartLine {
 
-        Version ProtocolVersion { get; }
         HttpStatusCode StatusCode { get; }
         string StatusDescription { get; }
 

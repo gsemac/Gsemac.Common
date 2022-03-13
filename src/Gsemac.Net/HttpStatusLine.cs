@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Gsemac.Net.Properties;
+using System;
 using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -14,21 +15,24 @@ namespace Gsemac.Net {
 
         public HttpStatusLine(Version protocolVersion, HttpStatusCode statusCode, string statusDescription) {
 
+            if (protocolVersion is null)
+                throw new ArgumentNullException(nameof(protocolVersion));
+
             ProtocolVersion = protocolVersion;
             StatusCode = statusCode;
             StatusDescription = statusDescription;
 
         }
 
-        public static IHttpStatusLine Parse(string statusLine) {
+        public static HttpStatusLine Parse(string statusLine) {
 
-            if (TryParse(statusLine, out IHttpStatusLine httpResponseStatus))
+            if (TryParse(statusLine, out HttpStatusLine httpResponseStatus))
                 return httpResponseStatus;
             else
-                throw new ArgumentException("The given string was not a valid HTTP status line.", nameof(statusLine));
+                throw new ArgumentException(ExceptionMessages.InvalidHttpStatusLine, nameof(statusLine));
 
         }
-        public static bool TryParse(string statusLine, out IHttpStatusLine result) {
+        public static bool TryParse(string statusLine, out HttpStatusLine result) {
 
             Match statusLineMatch = Regex.Match(statusLine, @"^HTTP\/(\d+(?:\.\d+)?)\s*(\d+)\s*(.+?)$");
 

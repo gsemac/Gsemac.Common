@@ -117,40 +117,7 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="CannotRedirectToDissimilarProtocols" xml:space="preserve">
-    <value>Cannot handle redirect from HTTP/HTTPS protocols to other dissimilar ones.</value>
-  </data>
-  <data name="InnerHandlerHasNotBeenSet" xml:space="preserve">
-    <value>The inner handler has not been set.</value>
-  </data>
-  <data name="InvalidCookieDomainPattern" xml:space="preserve">
-    <value>The given cookie domain pattern is invalid.</value>
-  </data>
-  <data name="InvalidHttpHeader" xml:space="preserve">
-    <value>The given string was not a valid HTTP header.</value>
-  </data>
-  <data name="InvalidHttpRequestLine" xml:space="preserve">
-    <value>The given string was not a valid HTTP request line.</value>
-  </data>
-  <data name="InvalidHttpStatusLine" xml:space="preserve">
-    <value>The given string was not a valid HTTP status line.</value>
-  </data>
-  <data name="MalformedDataUrl" xml:space="preserve">
-    <value>The data URL was malformed.</value>
-  </data>
-  <data name="MalformedUrl" xml:space="preserve">
-    <value>The URL was malformed.</value>
-  </data>
-  <data name="RequestCanceled" xml:space="preserve">
-    <value>The request was aborted: The request was canceled.</value>
-  </data>
-  <data name="SchemeContainsInvalidCharacters" xml:space="preserve">
-    <value>The scheme contains invalid characters.</value>
-  </data>
-  <data name="TheRemoteServerReturnedAnErrorWithStatusCode" xml:space="preserve">
-    <value>The remote server returned an error: {0}.</value>
-  </data>
-  <data name="TooManyAutomaticRedirections" xml:space="preserve">
-    <value>Too many automatic redirections were attempted.</value>
+  <data name="HttpSamplesDirectoryPath" xml:space="preserve">
+    <value>Samples/Http/</value>
   </data>
 </root>

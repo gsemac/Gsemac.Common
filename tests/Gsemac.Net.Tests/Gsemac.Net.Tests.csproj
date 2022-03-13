@@ -20,4 +20,14 @@
 		<ProjectReference Include="..\..\src\Gsemac.Net\Gsemac.Net.csproj" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <Compile Update="Properties\SamplePaths.Designer.cs">
+	    <DesignTime>True</DesignTime>
+	  </Compile>
+	</ItemGroup>
+
+	<Target Name="PreBuild" BeforeTargets="PreBuildEvent">
+		<Exec Command="xcopy &quot;$(ProjectDir)Samples\*.*&quot; &quot;$(OutDir)Samples&quot; /Y /I /E&#xD;&#xA;" />
+	</Target>
+
 </Project>

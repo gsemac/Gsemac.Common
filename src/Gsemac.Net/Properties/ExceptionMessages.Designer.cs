@@ -19,7 +19,7 @@ namespace Gsemac.Net.Properties {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class ExceptionMessages {
@@ -93,6 +93,24 @@ namespace Gsemac.Net.Properties {
         internal static string InvalidHttpHeader {
             get {
                 return ResourceManager.GetString("InvalidHttpHeader", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The given string was not a valid HTTP request line..
+        /// </summary>
+        internal static string InvalidHttpRequestLine {
+            get {
+                return ResourceManager.GetString("InvalidHttpRequestLine", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The given string was not a valid HTTP status line..
+        /// </summary>
+        internal static string InvalidHttpStatusLine {
+            get {
+                return ResourceManager.GetString("InvalidHttpStatusLine", resourceCulture);
             }
         }
         
