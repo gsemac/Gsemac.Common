@@ -1,4 +1,5 @@
-﻿using Gsemac.IO;
+﻿using Gsemac.Core;
+using Gsemac.IO;
 using Gsemac.Net.Extensions;
 using Gsemac.Net.WebBrowsers.Properties;
 using System;
@@ -121,7 +122,7 @@ namespace Gsemac.Net.WebBrowsers {
             if (!PathUtilities.IsUrl(url))
                 throw new ArgumentException(ExceptionMessages.StringIsNotAValidUrl, nameof(url));
 
-            using (Process process = Process.Start("explorer.exe", url))
+            using (Process process = Process.Start("explorer.exe", $"\"{url}\""))
                 return process.Responding;
 
         }
