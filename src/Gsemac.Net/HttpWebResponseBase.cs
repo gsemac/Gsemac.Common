@@ -36,27 +36,27 @@ namespace Gsemac.Net {
 
         // Properties inherited from IHttpWebResponse
 
-        public string CharacterSet { get; protected set; }
+        public string CharacterSet { get; protected set; } = DefaultCharacterSet;
         public virtual CookieCollection Cookies {
             get => cookies.GetCookies(ResponseUri);
             set => cookies.Add(value);
         }
         public string ContentEncoding {
-            get => Headers[HttpResponseHeader.ContentEncoding];
+            get => Headers[HttpResponseHeader.ContentEncoding] ?? "";
             set => Headers[HttpResponseHeader.ContentEncoding] = value;
         }
         public Version ProtocolVersion { get; protected set; }
         public DateTime LastModified {
-            get => DateTime.Parse(Headers[HttpResponseHeader.LastModified]);
+            get => GetLastModified();
             set => Headers[HttpResponseHeader.LastModified] = string.Format("{0:ddd,' 'dd' 'MMM' 'yyyy' 'HH':'mm':'ss' 'K}", value);
         }
         public string Method { get; protected set; }
         public string Server {
-            get => Headers[HttpResponseHeader.Server];
+            get => Headers[HttpResponseHeader.Server] ?? "";
             set => Headers[HttpResponseHeader.Server] = value;
         }
         public HttpStatusCode StatusCode { get; protected set; } = 0;
-        public string StatusDescription { get; protected set; }
+        public string StatusDescription { get; protected set; } = "";
 
         public override Stream GetResponseStream() {
 
@@ -107,11 +107,25 @@ namespace Gsemac.Net {
 
         // Private members
 
+        private const string DefaultCharacterSet = "ISO-8859-1"; // HttpWebRequest's default charset
+
         private readonly Uri responseUri;
         private readonly WebHeaderCollection headers = new WebHeaderCollection();
         private readonly CookieContainer cookies = new CookieContainer();
         private readonly Stream responseStream;
         private bool streamClosed = false;
+
+        private DateTime GetLastModified() {
+
+            if (DateTime.TryParse(Headers[HttpResponseHeader.LastModified], out DateTime result))
+                return result;
+
+            // HttpWebRequest returns the current date when no Last-Modified header has been set.
+            // https://stackoverflow.com/a/42577845/5383169 (Ralf Bönning)
+
+            return DateTime.Now;
+
+        }
 
     }
 
