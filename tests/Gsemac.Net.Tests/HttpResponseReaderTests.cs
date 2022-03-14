@@ -11,10 +11,10 @@ namespace Gsemac.Net.Tests {
     [TestClass]
     public class HttpResponseReaderTests {
 
-        // StatusLine
+        // StartLine
 
         [TestMethod]
-        public void TestStatusLineReturnsMatchingProperties() {
+        public void TestStartLineReturnsMatchingProperties() {
 
             using Stream stream = GetHttpResponseStream();
             using IHttpResponseReader reader = new HttpResponseReader(stream);
@@ -26,7 +26,7 @@ namespace Gsemac.Net.Tests {
 
         }
         [TestMethod]
-        public void TestStatusLineBeforeHeadersReturnsValidStatusLine() {
+        public void TestStartLineBeforeHeadersReturnsValidStatusLine() {
 
             using Stream stream = GetHttpResponseStream();
             using IHttpResponseReader reader = new HttpResponseReader(stream);
@@ -35,7 +35,7 @@ namespace Gsemac.Net.Tests {
 
         }
         [TestMethod]
-        public void TestStatusLineAfterHeadersReturnsValidStatusLine() {
+        public void TestStartLineAfterHeadersReturnsValidStatusLine() {
 
             using Stream stream = GetHttpResponseStream();
             using IHttpResponseReader reader = new HttpResponseReader(stream);
@@ -48,7 +48,7 @@ namespace Gsemac.Net.Tests {
         // Headers
 
         [TestMethod]
-        public void TestHeadersBeforeStatusLineReturnsValidHeaders() {
+        public void TestHeadersBeforeStartLineReturnsValidHeaders() {
 
             using Stream stream = GetHttpResponseStream();
             using IHttpResponseReader reader = new HttpResponseReader(stream);
@@ -58,7 +58,7 @@ namespace Gsemac.Net.Tests {
 
         }
         [TestMethod]
-        public void TestHeadersAfterStatusLineReturnsValidHeaders() {
+        public void TestHeadersAfterStartLineReturnsValidHeaders() {
 
             using Stream stream = GetHttpResponseStream();
             using IHttpResponseReader reader = new HttpResponseReader(stream);
