@@ -19,10 +19,15 @@ namespace Gsemac.Drawing {
 
         }
 
-        public IImage FromStream(Stream stream, IFileFormat imageFormat = null) {
+        public IImage FromStream(Stream stream, IImageDecoderOptions options) {
 
             if (stream is null)
                 throw new ArgumentNullException(nameof(stream));
+
+            if (options is null)
+                throw new ArgumentNullException(nameof(options));
+
+            IFileFormat imageFormat = options.Format;
 
             if (imageFormat is null)
                 stream = FileFormatFactory.Default.FromStream(stream, out imageFormat);
@@ -32,19 +37,19 @@ namespace Gsemac.Drawing {
             if (imageCodec is null)
                 throw new FileFormatException(IO.Properties.ExceptionMessages.UnsupportedFileFormat);
 
-            return imageCodec.Decode(stream);
+            return imageCodec.Decode(stream, options);
 
         }
 
 #if NETFRAMEWORK
 
-        public IImage FromBitmap(Image bitmap, IBitmapToImageOptions options = null) {
+        public IImage FromBitmap(Image bitmap, IBitmapToImageOptions options) {
 
             if (bitmap is null)
                 throw new ArgumentNullException(nameof(bitmap));
 
             if (options is null)
-                options = BitmapToImageOptions.Default;
+                throw new ArgumentNullException(nameof(options));
 
             return new GdiImage(bitmap, options.Format, options.Codec);
 

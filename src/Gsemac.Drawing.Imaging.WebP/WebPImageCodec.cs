@@ -31,7 +31,7 @@ namespace Gsemac.Drawing.Imaging {
                 EncodeWebPBitmap(bitmap, stream, encoderOptions);
 
         }
-        public IImage Decode(Stream stream) {
+        public IImage Decode(Stream stream, IImageDecoderOptions options) {
 
             byte[] webPData = stream.ToArray();
 

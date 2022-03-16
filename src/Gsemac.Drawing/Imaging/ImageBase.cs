@@ -1,5 +1,6 @@
 ﻿using Gsemac.IO;
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 
 namespace Gsemac.Drawing.Imaging {
@@ -18,6 +19,12 @@ namespace Gsemac.Drawing.Imaging {
 
         public Size Size => new Size(Width, Height);
 
+        public virtual IEnumerable<IImage> GetFrames() {
+
+            yield return this;
+
+        }
+
         public abstract IImage Clone();
 
 #if NETFRAMEWORK
@@ -34,8 +41,7 @@ namespace Gsemac.Drawing.Imaging {
 
         // Protected members
 
-        protected virtual void Dispose(bool disposing) {
-        }
+        protected virtual void Dispose(bool disposing) { }
 
     }
 

@@ -62,7 +62,7 @@ namespace Gsemac.Drawing.Imaging {
             }
 
         }
-        public IImage Decode(Stream stream) {
+        public IImage Decode(Stream stream, IImageDecoderOptions options) {
 
             if (stream is null)
                 throw new ArgumentNullException(nameof(stream));

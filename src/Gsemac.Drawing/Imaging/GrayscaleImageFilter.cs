@@ -1,5 +1,6 @@
 ﻿#if NETFRAMEWORK
 
+using Gsemac.Drawing.Extensions;
 using System;
 using System.Drawing;
 using System.Drawing.Imaging;

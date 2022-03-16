@@ -8,17 +8,15 @@ using System.Linq;
 namespace Gsemac.Drawing.Imaging {
 
     internal class MagickImage :
-        IImage {
+        ImageBase {
 
         // Public members
 
-        public IAnimationInfo Animation => GetAnimationInfo();
-        public int Width => GetWidth();
-        public int Height => GetHeight();
-        public Size Size => new Size(Width, Height);
-        public IFileFormat Format { get; }
-        public IImageCodec Codec { get; }
-        internal IMagickImage BaseImage => images.First();
+        public override IAnimationInfo Animation => GetAnimationInfo();
+        public override int Width => GetWidth();
+        public override int Height => GetHeight();
+        public override IFileFormat Format { get; }
+        public override IImageCodec Codec { get; }
 
         public MagickImage(Stream stream, IFileFormat imageFormat, IImageCodec codec) {
 
@@ -70,7 +68,7 @@ namespace Gsemac.Drawing.Imaging {
 
         }
 
-        public IImage Clone() {
+        public override IImage Clone() {
 
             return new MagickImage((MagickImageCollection)images.Clone(), Format, Codec);
 
@@ -78,7 +76,7 @@ namespace Gsemac.Drawing.Imaging {
 
 #if NETFRAMEWORK
 
-        public Bitmap ToBitmap() {
+        public override Bitmap ToBitmap() {
 
             return images.FirstOrDefault()?.ToBitmap();
 
@@ -86,17 +84,13 @@ namespace Gsemac.Drawing.Imaging {
 
 #endif
 
-        public void Dispose() {
+        // Internal members
 
-            Dispose(disposing: true);
-
-            GC.SuppressFinalize(this);
-
-        }
+        internal IMagickImage BaseImage => images.First();
 
         // Protected members
 
-        protected virtual void Dispose(bool disposing) {
+        protected override void Dispose(bool disposing) {
 
             if (!disposedValue) {
 

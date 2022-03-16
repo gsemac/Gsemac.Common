@@ -11,17 +11,15 @@ using FrameDimension = System.Drawing.Imaging.FrameDimension;
 namespace Gsemac.Drawing.Imaging {
 
     internal class GdiImage :
-        IImage {
+        ImageBase {
 
         // Public members
 
-        public IAnimationInfo Animation { get; }
-        public int Width => image.Width;
-        public int Height => image.Height;
-        public Size Size => image.Size;
-        public IFileFormat Format { get; }
-        public IImageCodec Codec { get; }
-        internal Image BaseImage => image;
+        public override IAnimationInfo Animation { get; }
+        public override int Width => image.Width;
+        public override int Height => image.Height;
+        public override IFileFormat Format { get; }
+        public override IImageCodec Codec { get; }
 
         public GdiImage(Image originalImage, Image nonDeferredImage, IFileFormat imageFormat, IImageCodec imageCodec) {
 
@@ -51,12 +49,12 @@ namespace Gsemac.Drawing.Imaging {
             this(image, image, imageFormat, imageCodec) {
         }
 
-        public IImage Clone() {
+        public override IImage Clone() {
 
             return new GdiImage((Bitmap)image.Clone(), Format, Codec);
 
         }
-        public Bitmap ToBitmap() {
+        public override Bitmap ToBitmap() {
 
             // The cloned bitmap will share image data with the source bitmap.
             // This allows us to avoid copying the bitmap while allowing the user to call Dispose() on either Bitmap without affecting the other.
@@ -65,17 +63,13 @@ namespace Gsemac.Drawing.Imaging {
 
         }
 
-        public void Dispose() {
+        // Internal members
 
-            Dispose(disposing: true);
-
-            GC.SuppressFinalize(this);
-
-        }
+        internal Image BaseImage => image;
 
         // Protected members
 
-        protected virtual void Dispose(bool disposing) {
+        protected override void Dispose(bool disposing) {
 
             if (!disposedValue) {
 

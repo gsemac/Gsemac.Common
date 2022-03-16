@@ -1,6 +1,7 @@
 #if NETFRAMEWORK
 
 using Gsemac.Drawing.Extensions;
+using Gsemac.Drawing.Imaging.Extensions;
 using Gsemac.Drawing.Tests.Properties;
 using Gsemac.Win32;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
