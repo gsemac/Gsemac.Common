@@ -2,7 +2,7 @@
 
 namespace Gsemac.Drawing.Imaging {
 
-    public interface IToBitmapOptions {
+    public interface IImageToBitmapOptions {
 
         bool DisposeSourceImage { get; }
 

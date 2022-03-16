@@ -14,7 +14,7 @@ namespace Gsemac.Drawing {
         IImage FromStream(Stream stream, IFileFormat imageFormat = null);
 
 #if NETFRAMEWORK
-        IImage FromBitmap(Image image, IFromBitmapOptions options = null);
+        IImage FromBitmap(Image image, IBitmapToImageOptions options = null);
 #endif
 
     }

@@ -112,7 +112,7 @@ namespace Gsemac.Drawing.Extensions {
 
 #if NETFRAMEWORK
 
-        public static Image ToBitmap(this IImage image, IToBitmapOptions options) {
+        public static Image ToBitmap(this IImage image, IImageToBitmapOptions options) {
 
             if (image is null)
                 throw new ArgumentNullException(nameof(image));

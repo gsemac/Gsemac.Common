@@ -38,13 +38,13 @@ namespace Gsemac.Drawing {
 
 #if NETFRAMEWORK
 
-        public IImage FromBitmap(Image bitmap, IFromBitmapOptions options = null) {
+        public IImage FromBitmap(Image bitmap, IBitmapToImageOptions options = null) {
 
             if (bitmap is null)
                 throw new ArgumentNullException(nameof(bitmap));
 
             if (options is null)
-                options = FromBitmapOptions.Default;
+                options = BitmapToImageOptions.Default;
 
             return new GdiImage(bitmap, options.Format, options.Codec);
 
