@@ -28,9 +28,6 @@ namespace Gsemac.Drawing.Imaging {
             if (codec is null)
                 throw new ArgumentNullException(nameof(codec));
 
-            // We'll read all image data from the first frame, and then just the metadata for the remaining frames.
-            // This allows us to read the image quickly without using too much memory while being able to access animation data.
-
             // If we were able to determine the desired file format, decode the image using that format explicitly.
             // Otherwise, allow ImageMagick to determine the file format on its own.
             // This is important because ImageMagick isn't able to automatically determine the file format for all formats due to signature conflicts (e.g. ICO).
@@ -38,35 +35,33 @@ namespace Gsemac.Drawing.Imaging {
 
             MagickFormat magickFormat = ImageMagickUtilities.GetMagickFormatFromFileFormat(imageFormat);
 
-            MagickImageCollection images = new MagickImageCollection();
+            // Read the initial image, and let ImageMagick figure out how to read it most efficiently.
+            // Attempting to use MagickImageCollection to just read the first frame works for some files,
+            // but only when the first frame contains complete image data (i.e. no diff information).
 
-            MagickReadSettings imageReadSettings = new MagickReadSettings() {
-                Format = magickFormat,
-                FrameCount = 1,
-                FrameIndex = 0,
-            };
-
-            MagickReadSettings metadataReadSettings = new MagickReadSettings() {
-                Format = magickFormat,
-            };
+            ImageMagick.MagickImage initialImage = new ImageMagick.MagickImage(stream, magickFormat);
 
             // We have to reset the stream to do the ping after the read, or else ImageMagick complains about invalid image headers.
             // Therefore we either need to read the entire image, or seek backwards (for seekable streams).
 
+            MagickImageCollection images = new MagickImageCollection();
+
             if (stream.CanSeek) {
 
-                images.Read(stream, imageReadSettings);
+                MagickReadSettings metadataReadSettings = new MagickReadSettings() {
+                    Format = magickFormat,
+                };
 
                 stream.Seek(0, SeekOrigin.Begin);
 
                 images.Ping(stream, metadataReadSettings);
 
             }
-            else {
 
-                images.Read(stream);
+            // The initial image is inserted after the call to Ping so that it is not replaced.
+            // We don't have to worry about calling Dispose because MagickImageCollection's Dispose method calls Dispose on all images.
 
-            }
+            images.Insert(0, initialImage);
 
             this.images = images;
 
@@ -80,12 +75,15 @@ namespace Gsemac.Drawing.Imaging {
             return new MagickImage((MagickImageCollection)images.Clone(), Format, Codec);
 
         }
+
 #if NETFRAMEWORK
+
         public Bitmap ToBitmap() {
 
             return images.FirstOrDefault()?.ToBitmap();
 
         }
+
 #endif
 
         public void Dispose() {
