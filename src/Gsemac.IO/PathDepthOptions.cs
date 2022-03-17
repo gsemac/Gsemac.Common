@@ -1,12 +1,14 @@
-﻿using System;
+﻿namespace Gsemac.IO {
 
-namespace Gsemac.IO {
+    public class PathDepthOptions :
+          IPathDepthOptions {
 
-    [Flags]
-    public enum PathDepthOptions {
-        None = 0,
-        IgnoreTrailingDirectorySeparators = 1,
-        Default = IgnoreTrailingDirectorySeparators,
+        // Public members
+
+        public bool IgnoreTrailingDirectorySeparators { get; set; } = true;
+
+        public static PathDepthOptions Default => new PathDepthOptions();
+
     }
 
 }

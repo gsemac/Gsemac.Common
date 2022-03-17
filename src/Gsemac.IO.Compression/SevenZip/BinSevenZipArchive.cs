@@ -314,7 +314,7 @@ namespace Gsemac.IO.Compression.SevenZip {
 
                     // Save the names of the deleted entries to a text file.
 
-                    tempFilePath = PathUtilities.GetUniqueTemporaryFilePath();
+                    tempFilePath = PathUtilities.GetTemporaryFilePath(new TemporaryPathOptions() { EnsureUnique = true, });
 
                     File.WriteAllText(tempFilePath, string.Join(Environment.NewLine, deletedEntries.Select(entry => entry.Name)));
 
@@ -352,7 +352,7 @@ namespace Gsemac.IO.Compression.SevenZip {
 
                 try {
 
-                    tempFilePath = PathUtilities.GetUniqueTemporaryFilePath();
+                    tempFilePath = PathUtilities.GetTemporaryFilePath(new TemporaryPathOptions() { EnsureUnique = true, });
 
                     // Add the entries to the archive.
                     // 7-Zip does not allow us to add a file to the archive and rename it in one action.

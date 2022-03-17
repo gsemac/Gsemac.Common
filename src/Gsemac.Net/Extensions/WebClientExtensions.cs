@@ -200,7 +200,9 @@ namespace Gsemac.Net.Extensions {
 
         private static string GetFilenameFromUri(Uri address) {
 
-            return PathUtilities.SanitizePath(PathUtilities.GetFilename(address.AbsoluteUri), SanitizePathOptions.StripInvalidFilenameChars);
+            return PathUtilities.SanitizePath(PathUtilities.GetFilename(address.AbsoluteUri), new SanitizePathOptions(SanitizePathOptions.None) {
+                StripInvalidFilenameChars = true,
+            });
 
         }
 

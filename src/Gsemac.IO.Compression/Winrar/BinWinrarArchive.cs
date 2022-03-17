@@ -359,7 +359,7 @@ namespace Gsemac.IO.Compression.Winrar {
                 // WinRAR will read the new comment from stdin, but I need to get that working properly with ProcessStream first.
                 // For now, save the comment to a temporary file and add the comment from there.
 
-                string tempFilePath = PathUtilities.GetUniqueTemporaryFilePath();
+                string tempFilePath = PathUtilities.GetTemporaryFilePath(new TemporaryPathOptions() { EnsureUnique = true, });
 
                 try {
 
@@ -396,7 +396,7 @@ namespace Gsemac.IO.Compression.Winrar {
 
                     // Save the names of the deleted entries to a text file.
 
-                    tempFilePath = PathUtilities.GetUniqueTemporaryFilePath();
+                    tempFilePath = PathUtilities.GetTemporaryFilePath(new TemporaryPathOptions() { EnsureUnique = true, });
 
                     File.WriteAllText(tempFilePath, string.Join(Environment.NewLine, deletedEntries.Select(entry => entry.Name)));
 
@@ -433,7 +433,7 @@ namespace Gsemac.IO.Compression.Winrar {
 
                 try {
 
-                    tempFilePath = PathUtilities.GetUniqueTemporaryFilePath();
+                    tempFilePath = PathUtilities.GetTemporaryFilePath(new TemporaryPathOptions() { EnsureUnique = true, });
 
                     // Add the entries to the archive.
                     // WinRAR does not allow us to add a file to the archive and rename it in one action.

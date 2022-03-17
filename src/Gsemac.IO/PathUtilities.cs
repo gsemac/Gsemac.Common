@@ -32,25 +32,61 @@ namespace Gsemac.IO {
             return relativePath;
 
         }
-        public static string GetRelativePath(string fullPath, string relativeToPath) {
 
-            if (string.IsNullOrEmpty(fullPath))
-                throw new ArgumentNullException(nameof(fullPath));
+        public static IEnumerable<string> GetPathSegments(string path) {
 
-            if (string.IsNullOrEmpty(relativeToPath))
-                return fullPath;
+            // Get the root of the path first, as it might contain multiple directory separators.
 
-            string fullInputPath = Path.GetFullPath(fullPath);
-            string fullRelativeToPath = TrimDirectorySeparators(Path.GetFullPath(relativeToPath)) + Path.DirectorySeparatorChar;
+            string pathRoot = GetRootPath(path);
+
+            if (!string.IsNullOrEmpty(pathRoot)) {
+
+                path = path.Substring(pathRoot.Length);
+
+                // On Windows, GetPathRoot can return just a drive letter (e.g. "C:"). To signify that this is a path, append a directory separator.
+                // The separator is not always appended, because it might be a single separator (e.g. "/") on Unix systems.
+
+                if (StartsWithDirectorySeparatorChar(path) && !EndsWithDirectorySeparatorChar(pathRoot)) {
+
+                    pathRoot += path.First();
+                    path = path.Substring(1);
+
+                }
+
+                yield return pathRoot;
+
+            }
+
+            // Return the remaining segments.
+
+            IEnumerable<string> remainingSegments = StringUtilities.Split(path, new[] { Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar }, Text.StringSplitOptions.AppendDelimiter)
+                .Where(segment => !string.IsNullOrEmpty(segment));
+
+            foreach (string segment in remainingSegments)
+                yield return segment;
+
+        }
+
+        public static string GetRelativePath(string path, string basePath) {
+
+            if (string.IsNullOrEmpty(path))
+                throw new ArgumentNullException(nameof(path));
+
+            if (string.IsNullOrEmpty(basePath))
+                return path;
+
+            string fullInputPath = Path.GetFullPath(path);
+            string fullRelativeToPath = TrimDirectorySeparators(Path.GetFullPath(basePath)) + Path.DirectorySeparatorChar;
 
             int index = fullInputPath.IndexOf(fullRelativeToPath);
 
             if (index >= 0)
                 return fullInputPath.Substring(index + fullRelativeToPath.Length, fullInputPath.Length - (index + fullRelativeToPath.Length));
             else
-                return fullPath;
+                return path;
 
         }
+
         public static string GetRootPath(string path) {
 
             return GetRootPath(path, new PathInfo());
@@ -96,6 +132,7 @@ namespace Gsemac.IO {
             return rootPath;
 
         }
+
         public static string GetParentPath(string path) {
 
             return GetParentPath(path, new PathInfo());
@@ -118,47 +155,23 @@ namespace Gsemac.IO {
             return path.Substring(0, separatorIndex);
 
         }
-        public static IEnumerable<string> GetPathSegments(string path) {
 
-            // Get the root of the path first, as it might contain multiple directory separators.
+        public static int GetPathDepth(string path) {
 
-            string pathRoot = GetRootPath(path);
-
-            if (!string.IsNullOrEmpty(pathRoot)) {
-
-                path = path.Substring(pathRoot.Length);
-
-                // On Windows, GetPathRoot can return just a drive letter (e.g. "C:"). To signify that this is a path, append a directory separator.
-                // The separator is not always appended, because it might be a single separator (e.g. "/") on Unix systems.
-
-                if (StartsWithDirectorySeparatorChar(path) && !EndsWithDirectorySeparatorChar(pathRoot)) {
-
-                    pathRoot += path.First();
-                    path = path.Substring(1);
-
-                }
-
-                yield return pathRoot;
-
-            }
-
-            // Return the remaining segments.
-
-            IEnumerable<string> remainingSegments = StringUtilities.Split(path, new[] { Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar }, Text.StringSplitOptions.AppendDelimiter)
-                .Where(segment => !string.IsNullOrEmpty(segment));
-
-            foreach (string segment in remainingSegments)
-                yield return segment;
+            return GetPathDepth(path, PathDepthOptions.Default);
 
         }
-        public static int GetPathDepth(string path, PathDepthOptions options = PathDepthOptions.Default) {
+        public static int GetPathDepth(string path, IPathDepthOptions options) {
+
+            if (options is null)
+                throw new ArgumentNullException(nameof(options));
 
             if (string.IsNullOrWhiteSpace(path))
                 return 0;
 
             path = NormalizeDirectorySeparators(TrimLeftDirectorySeparators(GetPath(path)));
 
-            if (options.HasFlag(PathDepthOptions.IgnoreTrailingDirectorySeparators))
+            if (options.IgnoreTrailingDirectorySeparators)
                 path = TrimRightDirectorySeparators(path);
 
             if (string.IsNullOrWhiteSpace(path))
@@ -167,6 +180,7 @@ namespace Gsemac.IO {
             return path.Split(new[] { Path.DirectorySeparatorChar }).Count();
 
         }
+
         public static string GetScheme(string path) {
 
             Match match = Regex.Match(path, @"^([\w][\w+-.]+):");
@@ -208,6 +222,7 @@ namespace Gsemac.IO {
             return StringUtilities.BeforeLast(fileName, ".");
 
         }
+
         public static string GetFileExtension(string path) {
 
             string filename = GetFilename(path);
@@ -217,7 +232,7 @@ namespace Gsemac.IO {
             else if (string.IsNullOrEmpty(filename))
                 return "";
             else
-                return Path.GetExtension(ReplaceInvalidPathChars(filename));
+                return Path.GetExtension(ReplaceInvalidPathChars(filename, SanitizePathOptions.Default));
 
         }
         public static string SetFileExtension(string path, string extension) {
@@ -274,17 +289,18 @@ namespace Gsemac.IO {
 
         }
 
-        public static string GetRandomTemporaryDirectoryPath() {
+        public static string GetTemporaryDirectoryPath() {
 
-            return Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
-
-        }
-        public static string GetRandomTemporaryFilePath() {
-
-            return Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
+            return GetTemporaryDirectoryPath(TemporaryPathOptions.Default);
 
         }
-        public static string GetUniqueTemporaryDirectoryPath() {
+        public static string GetTemporaryDirectoryPath(ITemporaryPathOptions options) {
+
+            if (options is null)
+                throw new ArgumentNullException(nameof(options));
+
+            if (!options.EnsureUnique)
+                return GetTemporaryFilePath(options);
 
             lock (uniquePathMutex) {
 
@@ -294,7 +310,7 @@ namespace Gsemac.IO {
 
                 do {
 
-                    result = GetRandomTemporaryDirectoryPath();
+                    result = GetTemporaryFilePath(options);
 
                 } while (Directory.Exists(result));
 
@@ -305,9 +321,19 @@ namespace Gsemac.IO {
             }
 
         }
-        public static string GetUniqueTemporaryFilePath() {
+        public static string GetTemporaryFilePath() {
 
-            return Path.GetTempFileName();
+            return GetTemporaryFilePath(TemporaryPathOptions.Default);
+
+        }
+        public static string GetTemporaryFilePath(ITemporaryPathOptions options) {
+
+            if (options is null)
+                throw new ArgumentNullException(nameof(options));
+
+            return options.EnsureUnique ?
+                 Path.GetTempFileName() :
+                 Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
 
         }
         public static bool IsTemporaryFilePath(string path) {
@@ -330,6 +356,7 @@ namespace Gsemac.IO {
             return isTemporaryFilePath;
 
         }
+
         public static bool IsUrl(string path) {
 
             if (string.IsNullOrWhiteSpace(path))
@@ -376,9 +403,18 @@ namespace Gsemac.IO {
             return path;
 
         }
-        public static string SanitizePath(string path, SanitizePathOptions options = SanitizePathOptions.Default) {
 
-            if (options.HasFlag(SanitizePathOptions.UseEquivalentValidPathChars)) {
+        public static string SanitizePath(string path) {
+
+            return SanitizePath(path, SanitizePathOptions.Default);
+
+        }
+        public static string SanitizePath(string path, ISanitizePathOptions options) {
+
+            if (options is null)
+                throw new ArgumentNullException(nameof(options));
+
+            if (options.UseEquivalentValidPathChars) {
 
                 bool inQuotes = false;
 
@@ -392,12 +428,34 @@ namespace Gsemac.IO {
             }
 
         }
-        public static string SanitizePath(string path, string replacement, SanitizePathOptions options = SanitizePathOptions.Default) {
+        public static string SanitizePath(string path, string replacement) {
+
+            return SanitizePath(path, replacement, SanitizePathOptions.Default);
+
+        }
+        public static string SanitizePath(string path, string replacement, ISanitizePathOptions options) {
+
+            if (options is null)
+                throw new ArgumentNullException(nameof(options));
 
             return SanitizePath(path, c => replacement, options);
 
         }
-        public static string SanitizePath(string path, CharReplacementEvaluatorDelegate replacementEvaluator, SanitizePathOptions options = SanitizePathOptions.Default) {
+        public static string SanitizePath(string path, CharReplacementEvaluatorDelegate replacementEvaluator) {
+
+            if (replacementEvaluator is null)
+                throw new ArgumentNullException(nameof(replacementEvaluator));
+
+            return SanitizePath(path, replacementEvaluator, SanitizePathOptions.Default);
+
+        }
+        public static string SanitizePath(string path, CharReplacementEvaluatorDelegate replacementEvaluator, ISanitizePathOptions options) {
+
+            if (replacementEvaluator is null)
+                throw new ArgumentNullException(nameof(replacementEvaluator));
+
+            if (options is null)
+                throw new ArgumentNullException(nameof(options));
 
             return ReplaceInvalidPathChars(path, replacementEvaluator, options);
 
@@ -418,6 +476,7 @@ namespace Gsemac.IO {
             return path?.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
 
         }
+
         public static string NormalizeDirectorySeparators(string path) {
 
             return NormalizeDirectorySeparators(path, new PathInfo());
@@ -504,6 +563,7 @@ namespace Gsemac.IO {
             return isLocalPath;
 
         }
+
         public static bool IsPathRooted(string path) {
 
             return IsPathRooted(path, new PathInfo());
@@ -527,12 +587,15 @@ namespace Gsemac.IO {
             return Regex.IsMatch(path, pattern, RegexOptions.IgnoreCase);
 
         }
+
         public static bool IsPathTooLong(string path) {
 
             // For the purpose of checking the length, replace all illegal characters in the path.
             // This will ensure Path methods don't throw.
 
-            path = ReplaceInvalidPathChars(path, " ", SanitizePathOptions.PreserveDirectoryStructure);
+            path = ReplaceInvalidPathChars(path, " ", new SanitizePathOptions(SanitizePathOptions.None) {
+                PreserveDirectoryStructure = true,
+            });
 
             path = Path.GetFullPath(path);
 
@@ -561,6 +624,7 @@ namespace Gsemac.IO {
             return false;
 
         }
+
         public static bool IsSubpathOf(string parentPath, string childPath) {
 
             if (string.IsNullOrWhiteSpace(parentPath) || string.IsNullOrWhiteSpace(childPath))
@@ -579,11 +643,13 @@ namespace Gsemac.IO {
                 childPath.StartsWith(parentPath);
 
         }
+
         public static bool PathExists(string path) {
 
             return Directory.Exists(path) || File.Exists(path);
 
         }
+
         public static bool PathContainsSegment(string path, string pathSegment) {
 
             pathSegment = TrimDirectorySeparators(pathSegment);
@@ -593,6 +659,7 @@ namespace Gsemac.IO {
                 .Any(segment => segment.Equals(pathSegment, StringComparison.OrdinalIgnoreCase));
 
         }
+
         public static bool AreEqual(string path1, string path2, StringComparison stringComparison = StringComparison.OrdinalIgnoreCase) {
 
             // Consider the paths equal if they are both null.
@@ -625,17 +692,29 @@ namespace Gsemac.IO {
                 path.EndsWith(Path.AltDirectorySeparatorChar.ToString()));
 
         }
-        private static string ReplaceInvalidPathChars(string path, SanitizePathOptions options = SanitizePathOptions.Default) {
+        private static string ReplaceInvalidPathChars(string path, ISanitizePathOptions options) {
+
+            if (options is null)
+                throw new ArgumentNullException(nameof(options));
 
             return ReplaceInvalidPathChars(path, string.Empty, options);
 
         }
-        private static string ReplaceInvalidPathChars(string path, string replacement, SanitizePathOptions options = SanitizePathOptions.Default) {
+        private static string ReplaceInvalidPathChars(string path, string replacement, ISanitizePathOptions options) {
+
+            if (options is null)
+                throw new ArgumentNullException(nameof(options));
 
             return ReplaceInvalidPathChars(path, c => replacement, options);
 
         }
-        private static string ReplaceInvalidPathChars(string path, CharReplacementEvaluatorDelegate replacementEvaluator, SanitizePathOptions options = SanitizePathOptions.Default) {
+        private static string ReplaceInvalidPathChars(string path, CharReplacementEvaluatorDelegate replacementEvaluator, ISanitizePathOptions options) {
+
+            if (replacementEvaluator is null)
+                throw new ArgumentNullException(nameof(replacementEvaluator));
+
+            if (options is null)
+                throw new ArgumentNullException(nameof(options));
 
             string rootOrScheme = string.Empty;
             IEnumerable<char> invalidCharacters = Enumerable.Empty<char>();
@@ -644,21 +723,21 @@ namespace Gsemac.IO {
             // https://github.com/whatwg/url/issues/118
             // This is only done when the "PreserveDirectoryStructure" flag is toggled, because otherwise the slashes are replaced anyway (as may be desired).
 
-            if (options.HasFlag(SanitizePathOptions.PreserveDirectoryStructure))
+            if (options.PreserveDirectoryStructure)
                 StripRepeatedForwardSlashesAfterScheme(path);
 
             // Normalize directory separators.
 
-            if (options.HasFlag(SanitizePathOptions.NormalizeDirectorySeparators))
+            if (options.NormalizeDirectorySeparators)
                 path = NormalizeDirectorySeparators(path);
 
-            if (options.HasFlag(SanitizePathOptions.StripInvalidPathChars))
+            if (options.StripInvalidPathChars)
                 invalidCharacters = invalidCharacters.Concat(Path.GetInvalidPathChars());
 
-            if (options.HasFlag(SanitizePathOptions.StripInvalidFilenameChars))
+            if (options.StripInvalidFilenameChars)
                 invalidCharacters = invalidCharacters.Concat(Path.GetInvalidFileNameChars());
 
-            if (options.HasFlag(SanitizePathOptions.PreserveDirectoryStructure)) {
+            if (options.PreserveDirectoryStructure) {
 
                 // The root of the path might contain characters that would be invalid file name characters (e.g. ':' in "C:\").
                 // In order to preserve the root path information, we'll remove it for now and add it back later.
@@ -674,7 +753,7 @@ namespace Gsemac.IO {
 
             // Strip repeated directory separators.
 
-            if (options.HasFlag(SanitizePathOptions.StripRepeatedDirectorySeparators))
+            if (options.StripRepeatedDirectorySeparators)
                 StripRepeatedDirectorySeparators(path);
 
             HashSet<char> invalidCharacterLookup = new HashSet<char>(invalidCharacters);

@@ -259,7 +259,7 @@ namespace Gsemac.IO.Compression.ZipStorer {
 
                 archiveIsClosed = true;
 
-                string tempDirectory = PathUtilities.GetUniqueTemporaryDirectoryPath();
+                string tempDirectory = PathUtilities.GetTemporaryDirectoryPath(new TemporaryPathOptions() { EnsureUnique = true, });
 
                 try {
 

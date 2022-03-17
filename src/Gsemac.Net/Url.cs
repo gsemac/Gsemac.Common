@@ -2,6 +2,7 @@
 using Gsemac.Collections.Extensions;
 using Gsemac.IO;
 using Gsemac.Text;
+using Gsemac.Text.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -232,10 +233,18 @@ namespace Gsemac.Net {
             if (parts is null)
                 throw new ArgumentNullException(nameof(parts));
 
+            return Combine((IEnumerable<string>)parts);
+
+        }
+        public static string Combine(IEnumerable<string> parts) {
+
+            if (parts is null)
+                throw new ArgumentNullException(nameof(parts));
+
             if (!parts.Any())
                 return string.Empty;
 
-            if (parts.Length < 2)
+            if (parts.Count() < 2)
                 return parts.First();
 
             string leftPart = parts.First();
@@ -249,6 +258,12 @@ namespace Gsemac.Net {
 
             }
             else if (!string.IsNullOrWhiteSpace(rightPart)) {
+
+                // If the path we're combining is a relative path beginning with a dot, trim the dot part.
+                // The path will still be treated as a relative path.
+
+                if (rightPart.StartsWith("./"))
+                    rightPart = rightPart.TrimStart("./");
 
                 string scheme = PathUtilities.GetScheme(leftPart);
 
@@ -308,7 +323,7 @@ namespace Gsemac.Net {
 
             }
 
-            return Combine(new[] { (result ?? "").Trim() }.Concat(parts.Skip(2)).ToArray());
+            return Combine(new[] { (result ?? "").Trim() }.Concat(parts.Skip(2)));
 
         }
 

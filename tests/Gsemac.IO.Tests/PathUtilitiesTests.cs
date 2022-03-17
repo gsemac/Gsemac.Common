@@ -511,7 +511,9 @@ namespace Gsemac.IO.Tests {
         public void TestSanitizePathWithEquivalentValidPathChars() {
 
             Assert.AreEqual(@"“C∶＼Users＼Admin＼Documents”",
-                PathUtilities.SanitizePath(@"""C:\Users\Admin\Documents""", SanitizePathOptions.UseEquivalentValidPathChars));
+                PathUtilities.SanitizePath(@"""C:\Users\Admin\Documents""", new SanitizePathOptions(SanitizePathOptions.None) {
+                    UseEquivalentValidPathChars = true,
+                }));
 
         }
         [TestMethod]

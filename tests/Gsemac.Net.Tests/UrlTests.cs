@@ -538,7 +538,7 @@ namespace Gsemac.Net.Tests {
         }
 
         [TestMethod]
-        public void TestCombineWithUrlndingWithDirectorySeparatorAndRelativePath() {
+        public void TestCombineWithUrlEndingWithDirectorySeparatorAndRelativePath() {
 
             // When the base path ends in a directory separator, the relative path should be appended to the existing path.
 
