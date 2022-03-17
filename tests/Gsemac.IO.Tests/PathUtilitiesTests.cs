@@ -556,6 +556,47 @@ namespace Gsemac.IO.Tests {
 
         }
 
+        // NormalizeDotSegments
+
+        [TestMethod]
+        public void TestNormalizeDotSegmentsWithRootedPathWithCurrentPathSegments() {
+
+            // "./" segments can essentially just be stripped to get the actual path.
+            // Under normal circumstances, they would appear at the beginning of relative paths.
+
+            Assert.AreEqual(@"https://example.com/test1/test2/", PathUtilities.NormalizeDotSegments(@"https://example.com/./test1/././test2/./"));
+
+        }
+        [TestMethod]
+        public void TestNormalizeDotSegmentsWithRelativePathWithCurrentPathSegments() {
+
+            Assert.AreEqual(@"test1/test2/", PathUtilities.NormalizeDotSegments(@"./test1/./test2/"));
+
+        }
+        [TestMethod]
+        public void TestNormalizeDotSegmentsWithRootedPathWithParentPathSegments() {
+
+            // Note that using "../" multiple times on a rooted path just brings us back to the root, never "above" it.
+
+            Assert.AreEqual(@"https://example.com/test2/", PathUtilities.NormalizeDotSegments(@"https://example.com/../../test1/../test2/"));
+
+        }
+        [TestMethod]
+        public void TestNormalizeDotSegmentsWithRelativePathWithParentPathSegments() {
+
+            // For relative paths with no root, allow moving "up" indefinitely (basically, the root is the empty string).
+            // NormalizeDotSegments should ideally be called only on complete paths.
+
+            Assert.AreEqual(@"test2/", PathUtilities.NormalizeDotSegments(@"../test1/../../test2/"));
+
+        }
+        [TestMethod]
+        public void TestNormalizeDotSegmentsWithUncPathRetainsRootPath() {
+
+            Assert.AreEqual(@"\\user\documents\test2\", PathUtilities.NormalizeDotSegments(@"\\user\documents\..\..\test1\..\..\..\..\..\test2\"));
+
+        }
+
         // IsLocalPath
 
         [TestMethod]

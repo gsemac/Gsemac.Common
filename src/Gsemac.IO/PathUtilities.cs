@@ -1,6 +1,7 @@
 ﻿using Gsemac.Text;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -321,6 +322,7 @@ namespace Gsemac.IO {
             }
 
         }
+
         public static string GetTemporaryFilePath() {
 
             return GetTemporaryFilePath(TemporaryPathOptions.Default);
@@ -336,6 +338,7 @@ namespace Gsemac.IO {
                  Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
 
         }
+
         public static bool IsTemporaryFilePath(string path) {
 
             bool isTemporaryFilePath = false;
@@ -505,6 +508,67 @@ namespace Gsemac.IO {
                 directorySeparatorChar = '/';
 
             return NormalizeDirectorySeparators(path, directorySeparatorChar);
+
+        }
+
+        public static bool IsDirectorySeparator(char value) {
+
+            return IsDirectorySeparator(value.ToString(CultureInfo.InvariantCulture));
+
+        }
+        public static bool IsDirectorySeparator(string value) {
+
+            return value.Equals(Path.DirectorySeparatorChar) ||
+                value.Equals(Path.AltDirectorySeparatorChar);
+
+        }
+
+        public static string NormalizeDotSegments(string path) {
+
+            return NormalizeDotSegments(path, new PathInfo());
+
+        }
+        public static string NormalizeDotSegments(string path, IPathInfo pathInfo) {
+
+            if (pathInfo is null)
+                throw new ArgumentNullException(nameof(pathInfo));
+
+            if (string.IsNullOrWhiteSpace(path))
+                return path;
+
+            string currentPathSegmentStr1 = "." + Path.DirectorySeparatorChar;
+            string currentPathSegmentStr2 = "." + Path.AltDirectorySeparatorChar;
+            string parentPathSegmentStr1 = ".." + Path.DirectorySeparatorChar;
+            string parentPathSegmentStr2 = ".." + Path.AltDirectorySeparatorChar;
+
+            bool isPathRooted = IsPathRooted(path, pathInfo);
+
+            Stack<string> segments = new Stack<string>();
+
+            foreach (string segment in GetPathSegments(path)) {
+
+                if (segment.Equals(currentPathSegmentStr1) || segment.Equals(currentPathSegmentStr2))
+                    continue;
+
+                if (segment.Equals(parentPathSegmentStr1) || segment.Equals(parentPathSegmentStr2)) {
+
+                    // Don't allow the root of the path to be popped off.
+
+                    if (segments.Count > 0 && (segments.Count > 1 || !isPathRooted))
+                        segments.Pop();
+
+                }
+                else {
+
+                    segments.Push(segment);
+
+                }
+
+            }
+
+            // Reverse the segments before joining, because iterating through a stack takes us from top to bottom.
+
+            return string.Join(string.Empty, segments.Reverse());
 
         }
 
