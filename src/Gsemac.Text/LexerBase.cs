@@ -7,8 +7,8 @@ namespace Gsemac.Text {
 
         public bool EndOfStream => Reader.EndOfStream;
 
-        public abstract bool ReadNextToken(out T token);
-        public abstract T PeekNextToken();
+        public abstract bool ReadToken(out T token);
+        public abstract T Peek();
 
         public void Dispose() {
 

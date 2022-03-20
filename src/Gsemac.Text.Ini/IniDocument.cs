@@ -154,7 +154,7 @@ namespace Gsemac.Text.Ini {
 
             using (IIniLexer lexer = new IniLexer(stream)) {
 
-                while (lexer.ReadNextToken(out IIniLexerToken token)) {
+                while (lexer.ReadToken(out IIniLexerToken token)) {
 
                     switch (token.Type) {
 

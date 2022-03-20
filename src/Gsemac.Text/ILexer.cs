@@ -7,8 +7,8 @@ namespace Gsemac.Text {
 
         bool EndOfStream { get; }
 
-        bool ReadNextToken(out T token);
-        T PeekNextToken();
+        bool ReadToken(out T token);
+        T Peek();
 
     }
 

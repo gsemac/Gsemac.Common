@@ -21,7 +21,7 @@ namespace Gsemac.Text.Ini {
 
         }
 
-        public override IIniLexerToken PeekNextToken() {
+        public override IIniLexerToken Peek() {
 
             if (!tokens.Any())
                 ReadNextTokens();
@@ -29,7 +29,7 @@ namespace Gsemac.Text.Ini {
             return tokens.Any() ? tokens.Peek() : null;
 
         }
-        public override bool ReadNextToken(out IIniLexerToken token) {
+        public override bool ReadToken(out IIniLexerToken token) {
 
             if (!tokens.Any())
                 ReadNextTokens();
