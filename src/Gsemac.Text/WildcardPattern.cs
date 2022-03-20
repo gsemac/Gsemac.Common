@@ -4,7 +4,8 @@ using System.Text.RegularExpressions;
 
 namespace Gsemac.Text {
 
-    public class WildcardPattern {
+    public class WildcardPattern :
+        IPatternMatcher {
 
         // Public members
 
