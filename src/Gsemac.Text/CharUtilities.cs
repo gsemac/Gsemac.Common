@@ -57,7 +57,7 @@ namespace Gsemac.Text {
             }
 
         }
-        public static bool IsWordCharacter(char value) {
+        public static bool IsWordChar(char value) {
 
             // Returns true if the character is a word character as defined by the regex metacharacter "\w".
             // Solution adapted from the one given here: https://stackoverflow.com/a/33809007/5383169 (thargy)
