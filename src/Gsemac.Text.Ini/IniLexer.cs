@@ -58,11 +58,9 @@ namespace Gsemac.Text.Ini {
 
         private void ReadNextTokens() {
 
-            SkipWhitespace();
+            Reader.SkipWhiteSpace();
 
-            if (!EndOfStream) {
-
-                char? nextChar = PeekCharacter();
+            if (Reader.TryPeek(out char nextChar)) {
 
                 if (nextChar == '[') {
 
@@ -89,14 +87,14 @@ namespace Gsemac.Text.Ini {
             if (EndOfStream)
                 return false;
 
-            tokens.Enqueue(new IniLexerToken(IniLexerTokenType.SectionStart, ReadCharacter().Value.ToString()));
+            tokens.Enqueue(new IniLexerToken(IniLexerTokenType.SectionStart, ((char)Reader.Read()).ToString()));
 
             return true;
 
         }
         private bool ReadSectionName() {
 
-            string value = ReadUntilAny(new char[] { ']', '\r', '\n' }, allowEscapeSequences: true);
+            string value = Reader.ReadLine(new char[] { ']', '\r', '\n' }, allowEscapeSequences: true);
 
             if (options.Unescape)
                 value = IniDocument.Unescape(value);
@@ -107,7 +105,7 @@ namespace Gsemac.Text.Ini {
 
             // If we reached the end of the line rather than the end of the section, the section was not closed.
 
-            if (PeekCharacter()?.IsNewLine() ?? false)
+            if (Reader.TryPeek(out char nextChar) && nextChar.IsNewLine())
                 return false;
 
             return true;
@@ -120,10 +118,10 @@ namespace Gsemac.Text.Ini {
 
             // If we reached the end of the line rather than the end of the section, the section was not closed.
 
-            if (PeekCharacter()?.IsNewLine() ?? false)
+            if (Reader.TryPeek(out char nextChar) && nextChar.IsNewLine())
                 return false;
 
-            tokens.Enqueue(new IniLexerToken(IniLexerTokenType.SectionEnd, ReadCharacter().Value.ToString()));
+            tokens.Enqueue(new IniLexerToken(IniLexerTokenType.SectionEnd, ((char)Reader.Read()).ToString()));
 
             return true;
 
@@ -133,9 +131,9 @@ namespace Gsemac.Text.Ini {
             if (EndOfStream)
                 return;
 
-            SkipWhitespace();
+            Reader.SkipWhiteSpace();
 
-            tokens.Enqueue(new IniLexerToken(IniLexerTokenType.CommentStart, ReadCharacter().Value.ToString()));
+            tokens.Enqueue(new IniLexerToken(IniLexerTokenType.CommentStart, ((char)Reader.Read()).ToString()));
 
         }
         private void ReadCommentContent() {
@@ -150,7 +148,7 @@ namespace Gsemac.Text.Ini {
         private bool ReadPropertyName() {
 
             char[] delimiters = options.AllowComments ? new char[] { '=', ';', '\r', '\n' } : new char[] { '=', '\r', '\n' };
-            string value = ReadUntilAny(delimiters, allowEscapeSequences: true);
+            string value = Reader.ReadLine(delimiters, allowEscapeSequences: true);
 
             if (options.Unescape)
                 value = IniDocument.Unescape(value);
@@ -161,7 +159,7 @@ namespace Gsemac.Text.Ini {
 
             // If we reached the end of the line rather than the end of the property, the property does not have a value.
 
-            if (PeekCharacter()?.IsNewLine() ?? false)
+            if (Reader.TryPeek(out char nextChar) && nextChar.IsNewLine())
                 return false;
 
             return true;
@@ -174,13 +172,14 @@ namespace Gsemac.Text.Ini {
 
             // If we reached the end of the line rather than a property value separator, the property does not have a value.
 
-            if (PeekCharacter()?.IsNewLine() ?? false)
-                return false;
+            if (Reader.TryPeek(out char nextChar)) {
 
-            if (PeekCharacter() != '=')
-                return false;
+                if (nextChar.IsNewLine() || nextChar != '=')
+                    return false;
 
-            tokens.Enqueue(new IniLexerToken(IniLexerTokenType.PropertyValueSeparator, ReadCharacter().Value.ToString()));
+            }
+
+            tokens.Enqueue(new IniLexerToken(IniLexerTokenType.PropertyValueSeparator, ((char)Reader.Read()).ToString()));
 
             return true;
 
@@ -188,7 +187,7 @@ namespace Gsemac.Text.Ini {
         private bool ReadPropertyValue() {
 
             char[] delimiters = options.AllowComments ? new char[] { ';', '\r', '\n' } : new char[] { '\r', '\n' };
-            string value = ReadUntilAny(delimiters, allowEscapeSequences: true);
+            string value = Reader.ReadLine(delimiters, allowEscapeSequences: true);
 
             if (options.Unescape)
                 value = IniDocument.Unescape(value);
