@@ -7,28 +7,20 @@ namespace Gsemac.IO {
 
         // Public members
 
-        public bool StripInvalidPathChars { get; set; } = true;
-        public bool StripInvalidFilenameChars { get; set; } = true;
-        public bool PreserveDirectoryStructure { get; set; } = true;
-        public bool StripRepeatedDirectorySeparators { get; set; } = false;
-        public bool NormalizeDirectorySeparators { get; set; } = true;
+        public bool StripInvalidPathChars { get; set; }
+        public bool StripInvalidFilenameChars { get; set; }
+        public bool PreserveDirectoryStructure { get; set; }
+        public bool StripRepeatedDirectorySeparators { get; set; }
+        public bool NormalizeDirectorySeparators { get; set; }
         public bool UseEquivalentValidPathChars {
             get => GetUseEquivalentValidPathChars();
             set => SetUseEquivalentValidPathChars(value);
         }
 
-        public static SanitizePathOptions Default => new SanitizePathOptions();
-        public static SanitizePathOptions StripInvalidChars => new SanitizePathOptions(None) {
+        public static SanitizePathOptions Default => CreateDefault();
+        public static SanitizePathOptions StripInvalidChars => new SanitizePathOptions() {
             StripInvalidPathChars = true,
             StripInvalidFilenameChars = true,
-        };
-        public static SanitizePathOptions None => new SanitizePathOptions() {
-            StripInvalidPathChars = false,
-            StripInvalidFilenameChars = false,
-            PreserveDirectoryStructure = false,
-            StripRepeatedDirectorySeparators = false,
-            NormalizeDirectorySeparators = false,
-            UseEquivalentValidPathChars = false,
         };
 
         public SanitizePathOptions() { }
@@ -65,6 +57,17 @@ namespace Gsemac.IO {
                 StripInvalidFilenameChars = true;
 
             }
+
+        }
+
+        private static SanitizePathOptions CreateDefault() {
+
+            return new SanitizePathOptions() {
+                StripInvalidPathChars = true,
+                StripInvalidFilenameChars = true,
+                PreserveDirectoryStructure = true,
+                NormalizeDirectorySeparators = true,
+            };
 
         }
 

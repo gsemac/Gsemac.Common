@@ -657,7 +657,7 @@ namespace Gsemac.IO {
             // For the purpose of checking the length, replace all illegal characters in the path.
             // This will ensure Path methods don't throw.
 
-            path = ReplaceInvalidPathChars(path, " ", new SanitizePathOptions(SanitizePathOptions.None) {
+            path = ReplaceInvalidPathChars(path, " ", new SanitizePathOptions() {
                 PreserveDirectoryStructure = true,
             });
 
