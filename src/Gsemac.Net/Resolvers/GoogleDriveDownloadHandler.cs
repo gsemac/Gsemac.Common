@@ -1,6 +1,6 @@
-﻿using Gsemac.IO;
-using Gsemac.Net.Extensions;
+﻿using Gsemac.Net.Extensions;
 using Gsemac.Polyfills.Extensions;
+using Gsemac.Text;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -101,7 +101,7 @@ namespace Gsemac.Net.Resolvers {
                     string responseBody;
 
                     using (Stream responseStream = downloadResponse.GetResponseStream())
-                        responseBody = StreamUtilities.StreamToString(responseStream);
+                        responseBody = StringUtilities.StreamToString(responseStream);
 
                     Match confirmationCodeMatch = Regex.Match(responseBody, @"\bconfirm=(.+?)&");
 

@@ -491,6 +491,28 @@ namespace Gsemac.Text {
 
         }
 
+        public static string StreamToString(Stream stream) {
+
+            return StreamToString(stream, Encoding.UTF8);
+
+        }
+        public static string StreamToString(Stream stream, Encoding encoding) {
+
+            using (StreamReader sr = new StreamReader(stream, encoding))
+                return sr.ReadToEnd();
+
+        }
+        public static Stream StringToStream(string value) {
+
+            return StringToStream(value, Encoding.UTF8);
+
+        }
+        public static Stream StringToStream(string value, Encoding encoding) {
+
+            return new MemoryStream(encoding.GetBytes(value));
+
+        }
+
         // Private members
 
         private static string UnescapeEscapeSequence(string input) {

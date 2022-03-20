@@ -1,4 +1,4 @@
-﻿using Gsemac.IO;
+﻿using Gsemac.Text;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.IO;
 
@@ -17,7 +17,7 @@ namespace Gsemac.Net.Tests {
             using Stream dataStream = dataUrl.GetDataStream();
 
             Assert.IsTrue(dataUrl.Base64Encoded);
-            Assert.AreEqual("Hello, World!", StreamUtilities.StreamToString(dataStream));
+            Assert.AreEqual("Hello, World!", StringUtilities.StreamToString(dataStream));
             Assert.AreEqual("text/plain", dataUrl.MimeType.ToString());
 
         }
@@ -29,7 +29,7 @@ namespace Gsemac.Net.Tests {
             using Stream dataStream = dataUrl.GetDataStream();
 
             Assert.IsFalse(dataUrl.Base64Encoded);
-            Assert.AreEqual("Hello, World!", StreamUtilities.StreamToString(dataStream));
+            Assert.AreEqual("Hello, World!", StringUtilities.StreamToString(dataStream));
             Assert.AreEqual("text/plain;charset=US-ASCII", dataUrl.MimeType.ToString());
 
         }
@@ -41,7 +41,7 @@ namespace Gsemac.Net.Tests {
             using Stream dataStream = dataUrl.GetDataStream();
 
             Assert.IsFalse(dataUrl.Base64Encoded);
-            Assert.AreEqual("<h1>Hello, World!</h1>", StreamUtilities.StreamToString(dataStream));
+            Assert.AreEqual("<h1>Hello, World!</h1>", StringUtilities.StreamToString(dataStream));
             Assert.AreEqual("text/html", dataUrl.MimeType.ToString());
 
         }
@@ -53,7 +53,7 @@ namespace Gsemac.Net.Tests {
             using Stream dataStream = dataUrl.GetDataStream();
 
             Assert.IsFalse(dataUrl.Base64Encoded);
-            Assert.AreEqual("<script>alert('hi');</script>", StreamUtilities.StreamToString(dataStream));
+            Assert.AreEqual("<script>alert('hi');</script>", StringUtilities.StreamToString(dataStream));
             Assert.AreEqual("text/html", dataUrl.MimeType.ToString());
 
         }

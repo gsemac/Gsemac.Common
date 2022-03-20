@@ -1,7 +1,6 @@
-﻿using Gsemac.IO.FileFormats;
+﻿using Gsemac.Text;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.IO;
-using System.Linq;
 
 namespace Gsemac.IO.Tests {
 
@@ -13,46 +12,51 @@ namespace Gsemac.IO.Tests {
         [TestMethod]
         public void TestIsMatchWithFullMatch() {
 
-            TextFileSignature signature = new TextFileSignature("<html ");
+            TextFileSignature signature = new("<html ");
 
-            using (Stream stream = StreamUtilities.StringToStream("<html "))
-                Assert.IsTrue(signature.IsMatch(stream));
+            using Stream stream = StringUtilities.StringToStream("<html ");
+
+            Assert.IsTrue(signature.IsMatch(stream));
 
         }
         [TestMethod]
         public void TestIsMatchWithPartialMatch() {
 
-            TextFileSignature signature = new TextFileSignature("<html ");
+            TextFileSignature signature = new("<html ");
 
-            using (Stream stream = StreamUtilities.StringToStream("<ht"))
-                Assert.IsFalse(signature.IsMatch(stream));
+            using Stream stream = StringUtilities.StringToStream("<ht");
+
+            Assert.IsFalse(signature.IsMatch(stream));
 
         }
         [TestMethod]
         public void TestIsMatchWithFullMatchAndLeadingWhiteSpace() {
 
-            TextFileSignature signature = new TextFileSignature("<html ", FileSignatureOptions.IgnoreLeadingWhiteSpace);
+            TextFileSignature signature = new("<html ", FileSignatureOptions.IgnoreLeadingWhiteSpace);
 
-            using (Stream stream = StreamUtilities.StringToStream("              <html "))
-                Assert.IsTrue(signature.IsMatch(stream));
+            using Stream stream = StringUtilities.StringToStream("              <html ");
+
+            Assert.IsTrue(signature.IsMatch(stream));
 
         }
         [TestMethod]
         public void TestIsMatchWithFullMatchAndCaseSensitivity() {
 
-            TextFileSignature signature = new TextFileSignature("<html ");
+            TextFileSignature signature = new("<html ");
 
-            using (Stream stream = StreamUtilities.StringToStream("<HTML "))
-                Assert.IsFalse(signature.IsMatch(stream));
+            using Stream stream = StringUtilities.StringToStream("<HTML ");
+
+            Assert.IsFalse(signature.IsMatch(stream));
 
         }
         [TestMethod]
         public void TestIsMatchWithFullMatchAndCaseIsensitivity() {
 
-            TextFileSignature signature = new TextFileSignature("<html ", FileSignatureOptions.CaseInsensitive);
+            TextFileSignature signature = new("<html ", FileSignatureOptions.CaseInsensitive);
 
-            using (Stream stream = StreamUtilities.StringToStream("<HTML "))
-                Assert.IsTrue(signature.IsMatch(stream));
+            using Stream stream = StringUtilities.StringToStream("<HTML ");
+
+            Assert.IsTrue(signature.IsMatch(stream));
 
         }
 
