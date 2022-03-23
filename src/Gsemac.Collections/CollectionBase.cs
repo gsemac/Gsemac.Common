@@ -10,53 +10,55 @@ namespace Gsemac.Collections {
 
         // Public members
 
-        public int Count => items.Count;
-        public bool IsReadOnly => items.IsReadOnly;
+        public int Count => Items.Count;
+        public bool IsReadOnly => Items.IsReadOnly;
 
-        public void Add(T item) {
+        public virtual void Add(T item) {
 
-            items.Add(item);
-
-        }
-        public bool Remove(T item) {
-
-            return items.Remove(item);
+            Items.Add(item);
 
         }
-        public void Clear() {
+        public virtual bool Remove(T item) {
 
-            items.Clear();
+            return Items.Remove(item);
+
+        }
+        public virtual void Clear() {
+
+            Items.Clear();
 
         }
 
         public bool Contains(T item) {
 
-            return items.Contains(item);
+            return Items.Contains(item);
 
         }
 
         public void CopyTo(T[] array, int arrayIndex) {
 
-            items.CopyTo(array, arrayIndex);
+            Items.CopyTo(array, arrayIndex);
 
         }
 
         public IEnumerator<T> GetEnumerator() {
 
-            return items.GetEnumerator();
+            return Items.GetEnumerator();
 
         }
         IEnumerator IEnumerable.GetEnumerator() {
 
-            return items.GetEnumerator();
+            return Items.GetEnumerator();
 
         }
 
         // Protected members
 
+        protected ICollection<T> Items { get; }
+
         protected CollectionBase() {
 
-            items = new List<T>();
+            Items = new List<T>();
 
         }
         protected CollectionBase(ICollection<T> baseCollection) {
@@ -64,18 +66,18 @@ namespace Gsemac.Collections {
             if (baseCollection is null)
                 throw new ArgumentNullException(nameof(baseCollection));
 
-            items = baseCollection;
+            Items = baseCollection;
 
         }
-        protected CollectionBase(IEnumerable<T> items) {
+        protected CollectionBase(IEnumerable<T> items) :
+            this() {
 
-            this.items.AddRange(items);
+            if (items is null)
+                throw new ArgumentNullException(nameof(items));
+
+            Items.AddRange(items);
 
         }
-
-        // Private members
-
-        private readonly ICollection<T> items;
 
     }
 
