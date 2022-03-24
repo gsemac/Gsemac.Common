@@ -9,90 +9,48 @@ namespace Gsemac.Net {
 
     public interface IWebRequest {
 
-        /// <summary>
-        /// When overridden in a descendant class, gets or sets the protocol method to use in this request.
-        /// </summary>
+        /// <inheritdoc cref="WebRequest.Method"/>
         string Method { get; set; }
-        /// <summary>
-        /// Gets or sets values indicating the level of authentication and impersonation used for this request.
-        /// </summary>
+        /// <inheritdoc cref="WebRequest.AuthenticationLevel"/>
         AuthenticationLevel AuthenticationLevel { get; set; }
-        /// <summary>
-        /// Gets or sets the length of time, in milliseconds, before the request times out.
-        /// </summary>
+        /// <inheritdoc cref="WebRequest.Timeout"/>
         int Timeout { get; set; }
-        /// <summary>
-        ///  When overridden in a descendant class, indicates whether to pre-authenticate the request.
-        /// </summary>
+        /// <inheritdoc cref="WebRequest.PreAuthenticate"/>
         bool PreAuthenticate { get; set; }
-        /// <summary>
-        /// When overridden in a descendant class, gets or sets the network proxy to use to access this Internet resource.
-        /// </summary>
+        /// <inheritdoc cref="WebRequest.Proxy"/>
         IWebProxy Proxy { get; set; }
-        /// <summary>
-        /// When overridden in a descendant class, gets or sets a System.Boolean value that controls whether <see cref="CredentialCache.DefaultCredentials"></see> are sent with requests.
-        /// </summary>
+        /// <inheritdoc cref="WebRequest.UseDefaultCredentials"/>
         bool UseDefaultCredentials { get; set; }
-        /// <summary>
-        /// When overridden in a descendant class, gets or sets the network credentials used for authenticating the request with the Internet resource.
-        /// </summary>
+        /// <inheritdoc cref="WebRequest.Credentials"/>
         ICredentials Credentials { get; set; }
-        /// <summary>
-        ///  When overridden in a descendant class, gets or sets the content type of the request data being sent.
-        /// </summary>
+        /// <inheritdoc cref="WebRequest.ContentType"/>
         string ContentType { get; set; }
-        /// <summary>
-        /// When overridden in a descendant class, gets or sets the content length of the request data being sent.
-        /// </summary>
+        /// <inheritdoc cref="WebRequest.ContentLength"/>
         long ContentLength { get; set; }
-        /// <summary>
-        /// When overridden in a descendant class, gets or sets the collection of header name/value pairs associated with the request.
-        /// </summary>
+        /// <inheritdoc cref="WebRequest.Headers"/>
         WebHeaderCollection Headers { get; set; }
-        /// <summary>
-        /// When overridden in a descendant class, gets or sets the name of the connection group for the request.
-        /// </summary>
+        /// <inheritdoc cref="WebRequest.ConnectionGroupName"/>
         string ConnectionGroupName { get; set; }
-        /// <summary>
-        /// Gets or sets the impersonation level for the current request.
-        /// </summary>
+        /// <inheritdoc cref="WebRequest.ImpersonationLevel"/>
         TokenImpersonationLevel ImpersonationLevel { get; set; }
-        /// <summary>
-        ///  Gets or sets the cache policy for this request.
-        /// </summary>
+        /// <inheritdoc cref="WebRequest.CachePolicy"/>
         RequestCachePolicy CachePolicy { get; set; }
-        /// <summary>
-        /// When overridden in a descendant class, gets the URI of the Internet resource associated with the request.
-        /// </summary>
+        /// <inheritdoc cref="WebRequest.RequestUri"/>
         Uri RequestUri { get; }
 
-        /// <summary>
-        /// Aborts the request.
-        /// </summary>
+        /// <inheritdoc cref="WebRequest.Abort"/>
         void Abort();
-        /// <summary>
-        ///  When overridden in a descendant class, provides an asynchronous version of the System.Net.WebRequest.GetRequestStream method.
-        /// </summary>
+        /// <inheritdoc cref="WebRequest.BeginGetRequestStream"/>
         IAsyncResult BeginGetRequestStream(AsyncCallback callback, object state);
-        /// <summary>
-        ///  When overridden in a descendant class, begins an asynchronous request for an Internet resource.
-        /// </summary>
+        /// <inheritdoc cref="WebRequest.BeginGetResponse"/>
         IAsyncResult BeginGetResponse(AsyncCallback callback, object state);
-        /// <summary>
-        /// When overridden in a descendant class, returns a System.IO.Stream for writing data to the Internet resource.
-        /// </summary>
+        /// <inheritdoc cref="WebRequest.EndGetRequestStream"/>
         Stream EndGetRequestStream(IAsyncResult asyncResult);
-        /// <summary>
-        /// When overridden in a descendant class, returns a System.Net.WebResponse.
-        /// </summary>
+        /// <inheritdoc cref="WebRequest.EndGetResponse"/>
         WebResponse EndGetResponse(IAsyncResult asyncResult);
-        /// <summary>
-        /// When overridden in a descendant class, returns a System.IO.Stream for writing data to the Internet resource.
-        /// </summary>
+        /// <inheritdoc cref="WebRequest.GetRequestStream"/>
         Stream GetRequestStream();
-        /// <summary>
-        /// When overridden in a descendant class, returns a response to an Internet request.
-        /// </summary>
+        /// <inheritdoc cref="WebRequest.GetResponse"/>
         WebResponse GetResponse();
 
     }
