@@ -2,6 +2,7 @@
 using Gsemac.Collections.Properties;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 
 namespace Gsemac.Collections {
@@ -172,9 +173,9 @@ namespace Gsemac.Collections {
         private IReadOnlyCollection<TValue> CreateReadOnlyCollection(IList<TValue> list) {
 
 #if NET40_OR_LESSER
-            return new Polyfills.System.Collections.ObjectModel.ReadOnlyCollection<TValue>(list);
+            return new ReadOnlyCollectionEx<TValue>(list);
 #else
-            return new System.Collections.ObjectModel.ReadOnlyCollection<TValue>(list);
+            return new ReadOnlyCollection<TValue>(list);
 #endif
 
         }

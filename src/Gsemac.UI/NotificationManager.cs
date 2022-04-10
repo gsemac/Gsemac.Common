@@ -81,7 +81,7 @@ namespace Gsemac.UI {
             public int? Id { get; }
             public INotification Notification { get; }
             public CancellationTokenSource CancellationTokenSource { get; }
-            public Task ExpirationTask { get; set; } = Polyfills.System.Threading.Tasks.Task.CompletedTask;
+            public Task ExpirationTask { get; set; } = TaskEx.CompletedTask;
 
             public NotificationInfo(INotification notification, CancellationToken cancellationToken) {
 
@@ -169,7 +169,7 @@ namespace Gsemac.UI {
 
                     CancellationToken cancellationToken = notificationInfo.CancellationTokenSource.Token;
 
-                    notificationInfo.ExpirationTask = Polyfills.System.Threading.Tasks.Task.Delay((int)notificationInfo.Notification.Duration.Value.TotalMilliseconds, cancellationToken)
+                    notificationInfo.ExpirationTask = TaskEx.Delay((int)notificationInfo.Notification.Duration.Value.TotalMilliseconds, cancellationToken)
                         .ContinueWith(t => {
 
                             Cancel(notificationInfo, cancellationToken.IsCancellationRequested ?

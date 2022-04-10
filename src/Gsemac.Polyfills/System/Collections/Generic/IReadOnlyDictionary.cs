@@ -1,5 +1,7 @@
 ﻿#if NET40_OR_LESSER
 
+// IReadOnlyDictionary<TKey, TValue> was added in .NET Framework 4.5
+
 namespace System.Collections.Generic {
 
     /// <summary>

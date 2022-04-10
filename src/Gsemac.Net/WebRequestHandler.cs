@@ -30,7 +30,7 @@ namespace Gsemac.Net {
         }
         protected internal virtual Task<WebResponse> SendAsync(WebRequest request, CancellationToken cancellationToken) {
 
-            return Polyfills.System.Threading.Tasks.Task.Run(() => Send(request, cancellationToken));
+            return TaskEx.Run(() => Send(request, cancellationToken));
 
         }
 

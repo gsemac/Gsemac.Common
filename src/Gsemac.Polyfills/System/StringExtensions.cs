@@ -1,6 +1,6 @@
-﻿using System;
+﻿#if NETFRAMEWORK || NETSTANDARD2_0_OR_LESSER || NETCOREAPP2_0_OR_LESSER
 
-namespace Gsemac.Polyfills.Extensions {
+namespace System {
 
     public static class StringExtensions {
 
@@ -8,13 +8,15 @@ namespace Gsemac.Polyfills.Extensions {
 
             return str.Contains(value.ToString(), comparisonType);
 
-        }
+        } // .NET Core 2.1 and later
         public static bool Contains(this string str, string value, StringComparison comparisonType) {
 
             return str.IndexOf(value, comparisonType) >= 0;
 
-        }
+        } // .NET Core 2.1 and later
 
     }
 
 }
+
+#endif

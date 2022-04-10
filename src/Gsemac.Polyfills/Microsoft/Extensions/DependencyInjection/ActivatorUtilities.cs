@@ -17,7 +17,7 @@ namespace Gsemac.Polyfills.Microsoft.Extensions.DependencyInjection {
                 throw new ArgumentNullException(nameof(instanceType));
 
             if (argumentTypes is null)
-                argumentTypes = System.Array.Empty<Type>();
+                argumentTypes = ArrayEx.Empty<Type>();
 
             // Properly implemented, this method should create an optimized factory method by selecting a constructor with parameters of the given types.
 
@@ -33,7 +33,7 @@ namespace Gsemac.Polyfills.Microsoft.Extensions.DependencyInjection {
                 throw new ArgumentNullException(nameof(instanceType));
 
             if (parameters is null)
-                parameters = System.Array.Empty<object>();
+                parameters = ArrayEx.Empty<object>();
 
             return CreateInstanceInternal(provider, instanceType, parameters);
 
@@ -41,7 +41,7 @@ namespace Gsemac.Polyfills.Microsoft.Extensions.DependencyInjection {
         public static T CreateInstance<T>(IServiceProvider provider, params object[] parameters) {
 
             if (parameters is null)
-                parameters = System.Array.Empty<object>();
+                parameters = ArrayEx.Empty<object>();
 
             return (T)CreateInstance(provider, typeof(T), parameters);
 
@@ -79,7 +79,7 @@ namespace Gsemac.Polyfills.Microsoft.Extensions.DependencyInjection {
             // Any types that cannot be resolved will taken from parameters.
 
             ConstructorInfo selectedConstructor = null;
-            object[] constructorArguments = System.Array.Empty<object>();
+            object[] constructorArguments = ArrayEx.Empty<object>();
             IEnumerable<ConstructorInfo> constructors = instanceType.GetConstructors(BindingFlags.Public | BindingFlags.Instance);
 
             // We need to find a suitable constructor for which we have all the necessary arguments, or the one flagged with the ActivatorUtilitiesConstructorAttribute.
@@ -137,7 +137,7 @@ namespace Gsemac.Polyfills.Microsoft.Extensions.DependencyInjection {
             // I don't appreciate this behavior, personally, so we'll treat a null parameter array as if it was an empty one.
 
             if (parameters is null)
-                parameters = System.Array.Empty<Type>();
+                parameters = ArrayEx.Empty<Type>();
 
             IEnumerable<Type> parameterTypes = constructorInfo.GetParameters().Select(parameter => parameter.ParameterType);
             IDictionary<Type, object> argumentsDict = new Dictionary<Type, object>();

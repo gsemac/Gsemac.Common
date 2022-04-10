@@ -1,5 +1,7 @@
 ﻿#if NET40_OR_LESSER
 
+// IReadOnlyList<T> was added in .NET Framework 4.5
+
 namespace System.Collections.Generic {
 
     /// <summary>
@@ -16,7 +18,7 @@ namespace System.Collections.Generic {
         /// <returns>The element at the specified index in the read-only list.</returns>
         T this[int index] { get; }
 
-    }
+    } // .NET Framework 4.5 or later
 
 }
 

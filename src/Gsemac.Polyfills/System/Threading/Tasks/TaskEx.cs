@@ -1,16 +1,11 @@
-﻿using System;
-using System.Threading;
-using System.Threading.Tasks;
+﻿namespace System.Threading.Tasks {
 
-namespace Gsemac.Polyfills.System.Threading.Tasks {
+    /// <inheritdoc cref="Task"/>
+    public static class TaskEx {
 
-    public static class Task {
+        public static Task CompletedTask => FromResult(0);
 
-        // For .NET Framework 4.0 and earlier
-
-        public static global::System.Threading.Tasks.Task CompletedTask => FromResult(0);
-
-        public static global::System.Threading.Tasks.Task Delay(int millisecondsDelay, CancellationToken cancellationToken) {
+        public static Task Delay(int millisecondsDelay, CancellationToken cancellationToken) {
 
             TaskCompletionSource<bool> taskCompletionSource = new TaskCompletionSource<bool>();
 
@@ -59,17 +54,17 @@ namespace Gsemac.Polyfills.System.Threading.Tasks {
             return taskCompletionSource.Task;
 
         }
-        public static global::System.Threading.Tasks.Task Delay(TimeSpan delay, CancellationToken cancellationToken) {
+        public static Task Delay(TimeSpan delay, CancellationToken cancellationToken) {
 
             return Delay((int)delay.TotalMilliseconds, cancellationToken);
 
         }
-        public static global::System.Threading.Tasks.Task Delay(int millisecondsDelay) {
+        public static Task Delay(int millisecondsDelay) {
 
             return Delay(millisecondsDelay, CancellationToken.None);
 
         }
-        public static global::System.Threading.Tasks.Task Delay(TimeSpan delay) {
+        public static Task Delay(TimeSpan delay) {
 
             return Delay(delay, CancellationToken.None);
 
@@ -85,17 +80,17 @@ namespace Gsemac.Polyfills.System.Threading.Tasks {
 
         }
 
-        public static global::System.Threading.Tasks.Task Run(Action action) {
+        public static Task Run(Action action) {
 
             return Run(action, CancellationToken.None);
 
         }
-        public static global::System.Threading.Tasks.Task Run(Func<global::System.Threading.Tasks.Task> function) {
+        public static Task Run(Func<Task> function) {
 
             return Run(function, CancellationToken.None);
 
         }
-        public static global::System.Threading.Tasks.Task Run(Action action, CancellationToken cancellationToken) {
+        public static Task Run(Action action, CancellationToken cancellationToken) {
 
             // Task.Run has some subtle differences compared to Task.Factory.StartNew.
             // https://stackoverflow.com/a/55949173 (Mykhailo Seniutovych)
@@ -106,7 +101,7 @@ namespace Gsemac.Polyfills.System.Threading.Tasks {
             return global::System.Threading.Tasks.Task.Factory.StartNew(action, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
 
         }
-        public static global::System.Threading.Tasks.Task Run(Func<global::System.Threading.Tasks.Task> function, CancellationToken cancellationToken) {
+        public static Task Run(Func<Task> function, CancellationToken cancellationToken) {
 
             return global::System.Threading.Tasks.Task.Factory.StartNew(function, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
 

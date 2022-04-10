@@ -12,7 +12,7 @@ namespace Gsemac.Net.WebDrivers.Extensions {
                 ["source"] = script
             };
 
-#if NET45_OR_GREATER
+#if EXECUTE_CDP_COMMAND_AVAILABLE
             webDriver.ExecuteCdpCommand(commandName, parameters);
 #else
             webDriver.ExecuteChromeCommand(commandName, parameters);

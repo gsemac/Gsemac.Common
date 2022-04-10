@@ -26,6 +26,10 @@
 		</Compile>
 	</ItemGroup>
 
+	<PropertyGroup Condition="$(DefineConstants.Contains('NET45_OR_GREATER')) Or $(DefineConstants.Contains('NETCOREAPP')) Or $(DefineConstants.Contains('NETSTANDARD'))">
+		<DefineConstants>$(DefineConstants);ASYNC_AVAILABLE</DefineConstants>
+	</PropertyGroup>
+	
 	<ItemGroup>
 		<AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
 			<_Parameter1>Gsemac.IO</_Parameter1>

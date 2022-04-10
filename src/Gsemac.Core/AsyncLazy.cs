@@ -1,4 +1,4 @@
-﻿#if NET45_OR_GREATER
+﻿#if ASYNC_AVAILABLE
 
 using System;
 using System.Runtime.CompilerServices;

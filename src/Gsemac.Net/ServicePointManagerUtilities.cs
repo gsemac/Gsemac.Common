@@ -1,5 +1,5 @@
-﻿using Gsemac.Polyfills.System.Net;
-using System;
+﻿using System;
+using System.Net;
 using System.Net.Security;
 using System.Security.Cryptography.X509Certificates;
 
@@ -9,50 +9,50 @@ namespace Gsemac.Net {
 
         // Public members
 
-        public const SecurityProtocolType Net40SecurityProtocols = SecurityProtocolType.Ssl3 | SecurityProtocolType.Tls;
-        public const SecurityProtocolType Net45SecurityProtocols = SecurityProtocolType.Tls11 | SecurityProtocolType.Tls12;
-        public const SecurityProtocolType Net48SecurityProtocols = SecurityProtocolType.Tls13;
+        public const SecurityProtocolTypeEx Net40SecurityProtocols = SecurityProtocolTypeEx.Ssl3 | SecurityProtocolTypeEx.Tls;
+        public const SecurityProtocolTypeEx Net45SecurityProtocols = SecurityProtocolTypeEx.Tls11 | SecurityProtocolTypeEx.Tls12;
+        public const SecurityProtocolTypeEx Net48SecurityProtocols = SecurityProtocolTypeEx.Tls13;
 
         public static bool IsCertificateValidationEnabled() {
 
-            return System.Net.ServicePointManager.ServerCertificateValidationCallback != ServerCertificateValidationCallback;
+            return ServicePointManager.ServerCertificateValidationCallback != ServerCertificateValidationCallback;
 
         }
         public static void SetCertificateValidationEnabled(bool enabled) {
 
             if (enabled) {
 
-                System.Net.ServicePointManager.ServerCertificateValidationCallback = null;
+                ServicePointManager.ServerCertificateValidationCallback = null;
 
             }
             else {
 
-                System.Net.ServicePointManager.ServerCertificateValidationCallback = ServerCertificateValidationCallback;
-                System.Net.ServicePointManager.Expect100Continue = true;
+                ServicePointManager.ServerCertificateValidationCallback = ServerCertificateValidationCallback;
+                ServicePointManager.Expect100Continue = true;
 
             }
 
         }
 
-        public static void SetSecurityProtocolEnabled(SecurityProtocolType securityProtocol, bool enabled = true) {
+        public static void SetSecurityProtocolEnabled(SecurityProtocolTypeEx securityProtocol, bool enabled = true) {
 
-            SetSecurityProtocolEnabled((System.Net.SecurityProtocolType)securityProtocol, enabled);
+            SetSecurityProtocolEnabled((SecurityProtocolType)securityProtocol, enabled);
 
         }
-        public static void SetSecurityProtocolEnabled(System.Net.SecurityProtocolType securityProtocol, bool enabled = true) {
+        public static void SetSecurityProtocolEnabled(SecurityProtocolType securityProtocol, bool enabled = true) {
 
             if (enabled)
-                System.Net.ServicePointManager.SecurityProtocol |= securityProtocol;
+                ServicePointManager.SecurityProtocol |= securityProtocol;
             else
-                System.Net.ServicePointManager.SecurityProtocol &= ~securityProtocol;
+                ServicePointManager.SecurityProtocol &= ~securityProtocol;
+
+        }
+        public static bool TrySetSecurityProtocolEnabled(SecurityProtocolTypeEx securityProtocol, bool enabled = true) {
+
+            return TrySetSecurityProtocolEnabled((SecurityProtocolType)securityProtocol, enabled);
 
         }
         public static bool TrySetSecurityProtocolEnabled(SecurityProtocolType securityProtocol, bool enabled = true) {
-
-            return TrySetSecurityProtocolEnabled((System.Net.SecurityProtocolType)securityProtocol, enabled);
-
-        }
-        public static bool TrySetSecurityProtocolEnabled(System.Net.SecurityProtocolType securityProtocol, bool enabled = true) {
 
             try {
 
@@ -61,7 +61,6 @@ namespace Gsemac.Net {
                 return true;
 
             }
-#pragma warning disable CA1031 // Do not catch general exception types
             catch (NotSupportedException) {
 
                 // A NotSupportedException will be thrown when the enum values are outside the range of System.Net.SecurityProtocolType.
@@ -70,17 +69,16 @@ namespace Gsemac.Net {
                 return false;
 
             }
-#pragma warning restore CA1031 // Do not catch general exception types
+
+        }
+        public static bool IsSecurityProtocolEnabled(SecurityProtocolTypeEx securityProtocol) {
+
+            return IsSecurityProtocolEnabled((SecurityProtocolType)securityProtocol);
 
         }
         public static bool IsSecurityProtocolEnabled(SecurityProtocolType securityProtocol) {
 
-            return IsSecurityProtocolEnabled((System.Net.SecurityProtocolType)securityProtocol);
-
-        }
-        public static bool IsSecurityProtocolEnabled(System.Net.SecurityProtocolType securityProtocol) {
-
-            return System.Net.ServicePointManager.SecurityProtocol.HasFlag(securityProtocol);
+            return ServicePointManager.SecurityProtocol.HasFlag(securityProtocol);
 
         }
 
