@@ -125,9 +125,24 @@ namespace Gsemac.Forms {
 
         public static bool GetStyle(Control control, ControlStyles styles) {
 
-            return (bool)control.GetType()
-                .GetMethod("GetStyle", BindingFlags.Instance | BindingFlags.NonPublic)
-                .Invoke(control, new object[] { styles });
+            MethodInfo getStyleMethod = control.GetType()
+                .GetMethod("GetStyle", BindingFlags.Instance | BindingFlags.NonPublic);
+
+            if (getStyleMethod is null)
+                return false;
+
+            return (bool)getStyleMethod.Invoke(control, new object[] { styles });
+
+        }
+        public static void SetStyle(Control control, ControlStyles styles, bool value) {
+
+            MethodInfo setStyleMethod = control.GetType()
+                .GetMethod("SetStyle", BindingFlags.Instance | BindingFlags.NonPublic);
+
+            if (setStyleMethod is null)
+                return;
+
+            setStyleMethod.Invoke(control, new object[] { styles, value });
 
         }
         public static ControlStyles GetStyles(Control control) {
@@ -139,13 +154,6 @@ namespace Gsemac.Forms {
                     result |= style;
 
             return result;
-
-        }
-        public static void SetStyle(Control control, ControlStyles styles, bool value) {
-
-            control.GetType()
-                .GetMethod("SetStyle", BindingFlags.Instance | BindingFlags.NonPublic)
-                .Invoke(control, new object[] { styles, value });
 
         }
         public static void SetStyles(Control control, ControlStyles styles) {
@@ -165,6 +173,18 @@ namespace Gsemac.Forms {
                 .SetValue(control, value, null);
 
         }
+        public static void SetResizeRedraw(Control control, bool value) {
+
+            // ResizeRedraw needs to be set to true to prevent smearing when custom-painting controls.
+            // https://stackoverflow.com/a/39419274/5383169
+
+            PropertyInfo drawModeProperty = control.GetType()
+                .GetProperty("ResizeRedraw", BindingFlags.NonPublic | BindingFlags.Instance);
+
+            if (drawModeProperty is object)
+                drawModeProperty.SetValue(control, value, null);
+
+        }
 
         public static IEnumerable<IComponent> GetComponents(Control control) {
 
@@ -173,7 +193,7 @@ namespace Gsemac.Forms {
             FieldInfo fieldInfo = control.GetType()
                 .GetField("components", BindingFlags.Instance | BindingFlags.NonPublic);
 
-            if (fieldInfo != null && fieldInfo.GetValue(control) is IContainer container) {
+            if (fieldInfo is object && fieldInfo.GetValue(control) is IContainer container) {
 
                 return container.Components.OfType<IComponent>();
 
@@ -183,6 +203,11 @@ namespace Gsemac.Forms {
                 return Enumerable.Empty<IComponent>();
 
             }
+
+        }
+        public static IEnumerable<ToolTip> GetToolTips(Control control) {
+
+            return GetComponents(control).OfType<ToolTip>();
 
         }
 
