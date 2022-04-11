@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -10,30 +11,48 @@ namespace Gsemac.Collections {
         // Public members
 
         public TValue this[TKey key] {
-            get => underlyingDict[key];
+            get => baseDictionary[key];
             set => SetValue(key, value);
         }
 
         public ICollection<TKey> Keys => new LazyReadOnlyCollection<TKey>(orderedKeys);
-        public ICollection<TValue> Values => new LazyReadOnlyCollection<TValue>(orderedKeys.Select(key => underlyingDict[key]));
-        public int Count => underlyingDict.Count;
-        public bool IsReadOnly => false;
+        public ICollection<TValue> Values => new LazyReadOnlyCollection<TValue>(orderedKeys.Select(key => baseDictionary[key]));
+        public int Count => baseDictionary.Count;
+        public bool IsReadOnly => baseDictionary.IsReadOnly;
 
-        public OrderedDictionary() {
+        public OrderedDictionary() :
+            this(EqualityComparer<TKey>.Default) {
+        }
+        public OrderedDictionary(IDictionary<TKey, TValue> baseDictionary) {
 
-            underlyingDict = new Dictionary<TKey, TValue>();
+            if (baseDictionary is null)
+                throw new ArgumentNullException(nameof(baseDictionary));
+
+            this.baseDictionary = baseDictionary;
 
         }
         public OrderedDictionary(IEnumerable<KeyValuePair<TKey, TValue>> collection) :
-            this() {
+            this(collection, EqualityComparer<TKey>.Default) {
+        }
+        public OrderedDictionary(IEnumerable<KeyValuePair<TKey, TValue>> collection, IEqualityComparer<TKey> comparer) :
+            this(comparer) {
 
-            foreach (var pair in collection)
-                Add(pair);
+            AddRange(collection);
 
         }
-        public OrderedDictionary(IDictionary<TKey, TValue> underlyingDictionary) {
+        public OrderedDictionary(IEqualityComparer<TKey> comparer) {
 
-            this.underlyingDict = underlyingDictionary;
+            baseDictionary = new Dictionary<TKey, TValue>(comparer);
+
+        }
+        public OrderedDictionary(int capacity) {
+
+            baseDictionary = new Dictionary<TKey, TValue>(capacity);
+
+        }
+        public OrderedDictionary(int capacity, IEqualityComparer<TKey> comparer) {
+
+            baseDictionary = new Dictionary<TKey, TValue>(capacity, comparer);
 
         }
 
@@ -51,29 +70,29 @@ namespace Gsemac.Collections {
 
             orderedKeys.Clear();
 
-            underlyingDict.Clear();
+            baseDictionary.Clear();
 
         }
         public bool Contains(KeyValuePair<TKey, TValue> item) {
 
-            return underlyingDict.Contains(item);
+            return baseDictionary.Contains(item);
 
         }
         public bool ContainsKey(TKey key) {
 
-            return underlyingDict.ContainsKey(key);
+            return baseDictionary.ContainsKey(key);
 
         }
         public void CopyTo(KeyValuePair<TKey, TValue>[] array, int arrayIndex) {
 
-            underlyingDict.ToArray().CopyTo(array, arrayIndex);
+            baseDictionary.ToArray().CopyTo(array, arrayIndex);
 
         }
         public bool Remove(TKey key) {
 
             orderedKeys.Remove(key);
 
-            return underlyingDict.Remove(key);
+            return baseDictionary.Remove(key);
 
         }
         public bool Remove(KeyValuePair<TKey, TValue> item) {
@@ -83,13 +102,13 @@ namespace Gsemac.Collections {
         }
         public bool TryGetValue(TKey key, out TValue value) {
 
-            return underlyingDict.TryGetValue(key, out value);
+            return baseDictionary.TryGetValue(key, out value);
 
         }
 
         public IEnumerator<KeyValuePair<TKey, TValue>> GetEnumerator() {
 
-            return underlyingDict.GetEnumerator();
+            return baseDictionary.GetEnumerator();
 
         }
         IEnumerator IEnumerable.GetEnumerator() {
@@ -101,15 +120,21 @@ namespace Gsemac.Collections {
         // Private members
 
         private readonly IList<TKey> orderedKeys = new List<TKey>();
-        private readonly IDictionary<TKey, TValue> underlyingDict;
+        private readonly IDictionary<TKey, TValue> baseDictionary;
 
+        private void AddRange(IEnumerable<KeyValuePair<TKey, TValue>> collection) {
+
+            foreach (var pair in collection)
+                Add(pair);
+
+        }
         private void SetValue(TKey key, TValue value) {
 
             Remove(key);
 
             orderedKeys.Add(key);
 
-            underlyingDict.Add(key, value);
+            baseDictionary.Add(key, value);
 
         }
 
