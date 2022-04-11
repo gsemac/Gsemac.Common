@@ -1,6 +1,8 @@
 ﻿#if NETFRAMEWORK || NETSTANDARD2_0_OR_LESSER || NETCOREAPP2_0_OR_LESSER
 
-namespace System {
+using System;
+
+namespace Gsemac.Polyfills.System {
 
     public static class StringExtensions {
 

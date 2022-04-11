@@ -1,4 +1,7 @@
-﻿namespace System.Net {
+﻿using System;
+using System.Net;
+
+namespace Gsemac.Polyfills.System.Net {
 
     // Tls11 and Tls12 were added in .NET Framework 4.5 (but are backwards-compatible .NET Framework 4.0).
     // SystemDefault was added in .NET Framework 4.7.

@@ -1,9 +1,11 @@
-﻿// .NET 4.0's ReadOnlyCollection<T> implementation doesn't implement IReadOnlyList<T> because the interface didn't exist until .NET 4.5.
-
-using Gsemac.Polyfills.Properties;
+﻿using Gsemac.Polyfills.Properties;
+using System;
+using System.Collections;
 using System.Collections.Generic;
 
-namespace System.Collections.ObjectModel {
+namespace Gsemac.Polyfills.System.Collections.ObjectModel {
+
+    // .NET 4.0's ReadOnlyCollection<T> implementation doesn't implement IReadOnlyList<T> because the interface didn't exist until .NET 4.5.
 
     /// <summary>
     /// Provides the base class for a generic read-only collection.
@@ -11,7 +13,7 @@ namespace System.Collections.ObjectModel {
     /// <typeparam name="T">The type of elements in the collection.</typeparam>
     public class ReadOnlyCollectionEx<T> :
         IList<T>,
-        IReadOnlyList<T> {
+        Generic.IReadOnlyList<T> {
 
         // Public members
 

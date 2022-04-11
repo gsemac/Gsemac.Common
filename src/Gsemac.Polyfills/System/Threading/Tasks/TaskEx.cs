@@ -1,4 +1,8 @@
-﻿namespace System.Threading.Tasks {
+﻿using System;
+using System.Threading;
+using System.Threading.Tasks;
+
+namespace Gsemac.Polyfills.System.Threading.Tasks {
 
     /// <inheritdoc cref="Task"/>
     public static class TaskEx {
@@ -98,17 +102,17 @@
             // TaskCreationOptions.DenyChildAttach is replaced with TaskCreationOptions.None because TaskCreationOptions.DenyChildAttach is not available in .NET Framework 4.0.
             // https://stackoverflow.com/a/26027328 (i3arnon)
 
-            return global::System.Threading.Tasks.Task.Factory.StartNew(action, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
+            return Task.Factory.StartNew(action, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
 
         }
         public static Task Run(Func<Task> function, CancellationToken cancellationToken) {
 
-            return global::System.Threading.Tasks.Task.Factory.StartNew(function, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
+            return Task.Factory.StartNew(function, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
 
         }
         public static Task<TResult> Run<TResult>(Func<TResult> function, CancellationToken cancellationToken) {
 
-            return global::System.Threading.Tasks.Task.Factory.StartNew(function, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
+            return Task.Factory.StartNew(function, cancellationToken, TaskCreationOptions.None, TaskScheduler.Default);
 
         }
         public static Task<TResult> Run<TResult>(Func<TResult> function) {

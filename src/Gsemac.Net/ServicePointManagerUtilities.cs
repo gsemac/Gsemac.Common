@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Gsemac.Polyfills.System.Net;
+using System;
 using System.Net;
 using System.Net.Security;
 using System.Security.Cryptography.X509Certificates;

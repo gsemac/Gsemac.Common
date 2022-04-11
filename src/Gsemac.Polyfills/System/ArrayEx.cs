@@ -1,6 +1,7 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 
-namespace System {
+namespace Gsemac.Polyfills.System {
 
     /// <inheritdoc cref="Array"/>
     public static class ArrayEx {

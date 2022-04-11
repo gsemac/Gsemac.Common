@@ -1,8 +1,6 @@
-﻿#if NET40_OR_LESSER
+﻿namespace Gsemac.Polyfills.System.Collections.Generic {
 
-// IReadOnlyList<T> was added in .NET Framework 4.5
-
-namespace System.Collections.Generic {
+    // IReadOnlyList<T> was added in .NET Framework 4.5
 
     /// <summary>
     /// Represents a read-only collection of elements that can be accessed by index.
@@ -21,5 +19,3 @@ namespace System.Collections.Generic {
     } // .NET Framework 4.5 or later
 
 }
-
-#endif

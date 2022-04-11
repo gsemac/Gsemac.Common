@@ -22,7 +22,12 @@
 
 	<ItemGroup Condition="$(DefineConstants.Contains('NET40_OR_LESSER'))">
 		<ProjectReference Include="..\Gsemac.Polyfills\Gsemac.Polyfills.csproj" />
+
 	</ItemGroup>
+
+	<PropertyGroup Condition="$(DefineConstants.Contains('NET40_OR_LESSER'))">
+		<DefineConstants>$(DefineConstants);POLYFILLS_AVAILABLE</DefineConstants>
+	</PropertyGroup>
 
 	<ItemGroup>
 		<Compile Update="Properties\ExceptionMessages.Designer.cs">

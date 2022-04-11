@@ -1,10 +1,8 @@
-﻿#if NET47_OR_LESSER || NETSTANDARD1_0_OR_LESSER
-
-// The "Architecture" enum was added in .NET Framework 4.7.1.
+﻿// The "Architecture" enum was added in .NET Framework 4.7.1.
 // The "Wasm" value was added in .NET 5.
 // The "S390x" value was added in .NET 6.
 
-namespace System.Runtime.InteropServices {
+namespace Gsemac.Polyfills.System.Runtime.InteropServices {
 
     public enum Architecture {
         /// <summary>
@@ -34,5 +32,3 @@ namespace System.Runtime.InteropServices {
     }
 
 }
-
-#endif

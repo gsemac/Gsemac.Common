@@ -2,8 +2,14 @@
 using Gsemac.Collections.Properties;
 using System.Collections;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
+
+#if POLYFILLS_AVAILABLE
+using Gsemac.Polyfills.System.Collections.Generic;
+using Gsemac.Polyfills.System.Collections.ObjectModel;
+#else
+using System.Collections.ObjectModel;
+#endif
 
 namespace Gsemac.Collections {
 
@@ -172,7 +178,7 @@ namespace Gsemac.Collections {
         }
         private IReadOnlyCollection<TValue> CreateReadOnlyCollection(IList<TValue> list) {
 
-#if NET40_OR_LESSER
+#if POLYFILLS_AVAILABLE
             return new ReadOnlyCollectionEx<TValue>(list);
 #else
             return new ReadOnlyCollection<TValue>(list);

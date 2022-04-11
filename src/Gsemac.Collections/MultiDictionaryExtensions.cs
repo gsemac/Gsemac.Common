@@ -1,6 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
+#if POLYFILLS_AVAILABLE
+using Gsemac.Polyfills.System.Collections.Generic;
+#endif
+
 namespace Gsemac.Collections {
 
     public static class MultiDictionaryExtensions {

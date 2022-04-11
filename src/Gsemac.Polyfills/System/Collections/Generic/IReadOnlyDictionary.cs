@@ -1,8 +1,8 @@
-﻿#if NET40_OR_LESSER
+﻿using System.Collections.Generic;
 
-// IReadOnlyDictionary<TKey, TValue> was added in .NET Framework 4.5
+namespace Gsemac.Polyfills.System.Collections.Generic {
 
-namespace System.Collections.Generic {
+    // IReadOnlyDictionary<TKey, TValue> was added in .NET Framework 4.5
 
     /// <summary>
     /// Represents a generic read-only collection of key/value pairs.
@@ -45,5 +45,3 @@ namespace System.Collections.Generic {
     }
 
 }
-
-#endif

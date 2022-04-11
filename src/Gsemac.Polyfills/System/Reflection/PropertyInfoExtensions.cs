@@ -1,10 +1,10 @@
-﻿#if NET40_OR_LESSER
+﻿using System.Reflection;
 
-// GetValue and SetValue were added in .NET Framework 4.5.
-
-namespace System.Reflection {
+namespace Gsemac.Polyfills.System.Reflection {
 
     public static class PropertyInfoExtensions {
+
+        // GetValue and SetValue were added in .NET Framework 4.5.
 
         /// <summary>
         /// Returns the property value of a specified object.
@@ -32,5 +32,3 @@ namespace System.Reflection {
     }
 
 }
-
-#endif

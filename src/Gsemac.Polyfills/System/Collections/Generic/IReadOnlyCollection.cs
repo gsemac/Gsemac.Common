@@ -1,8 +1,8 @@
-﻿#if NET40_OR_LESSER
+﻿using System.Collections.Generic;
 
-// IReadOnlyCollection<T> was added in .NET Framework 4.5
+namespace Gsemac.Polyfills.System.Collections.Generic {
 
-namespace System.Collections.Generic {
+    // IReadOnlyCollection<T> was added in .NET Framework 4.5
 
     /// <summary>
     ///  Represents a strongly-typed, read-only collection of elements.
@@ -19,5 +19,3 @@ namespace System.Collections.Generic {
     }
 
 }
-
-#endif

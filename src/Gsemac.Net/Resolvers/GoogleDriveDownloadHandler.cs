@@ -1,4 +1,5 @@
 ﻿using Gsemac.Net.Extensions;
+using Gsemac.Polyfills.System;
 using Gsemac.Text;
 using System;
 using System.Collections.Generic;
