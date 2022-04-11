@@ -82,6 +82,24 @@ namespace Gsemac.Collections.Extensions {
 
         }
 
+        public static bool IsSorted<T>(this IEnumerable<T> source) {
+
+            return IsSorted(source, Comparer<T>.Default);
+
+        }
+        public static bool IsSorted<T>(this IEnumerable<T> source, IComparer<T> comparer) {
+
+            if (source is null)
+                throw new ArgumentNullException(nameof(source));
+
+            if (comparer is null)
+                throw new ArgumentNullException(nameof(comparer));
+
+            return source.Zip(source.Skip(1), (curr, next) => comparer.Compare(curr, next) <= 0)
+                .All(isSorted => isSorted);
+
+        }
+
         // Private members
 
         private static readonly Random random = new Random();
