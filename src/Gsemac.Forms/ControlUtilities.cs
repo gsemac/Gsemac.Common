@@ -134,15 +134,17 @@ namespace Gsemac.Forms {
             return (bool)getStyleMethod.Invoke(control, new object[] { styles });
 
         }
-        public static void SetStyle(Control control, ControlStyles styles, bool value) {
+        public static bool SetStyle(Control control, ControlStyles styles, bool value) {
 
             MethodInfo setStyleMethod = control.GetType()
                 .GetMethod("SetStyle", BindingFlags.Instance | BindingFlags.NonPublic);
 
             if (setStyleMethod is null)
-                return;
+                return false;
 
             setStyleMethod.Invoke(control, new object[] { styles, value });
+
+            return true;
 
         }
         public static ControlStyles GetStyles(Control control) {
@@ -156,24 +158,34 @@ namespace Gsemac.Forms {
             return result;
 
         }
-        public static void SetStyles(Control control, ControlStyles styles) {
+        public static bool SetStyles(Control control, ControlStyles styles) {
 
             ClearStyles(control);
 
+            bool success = true;
+
             foreach (ControlStyles style in Enum.GetValues(typeof(ControlStyles)))
                 if (styles.HasFlag(style))
-                    SetStyle(control, style, true);
+                    success &= SetStyle(control, style, true);
+
+            return success;
 
         }
 
-        public static void SetDoubleBuffered(Control control, bool value) {
+        public static bool SetDoubleBuffered(Control control, bool value) {
 
-            control.GetType()
-                .GetProperty("DoubleBuffered", BindingFlags.Instance | BindingFlags.NonPublic)
-                .SetValue(control, value, null);
+            PropertyInfo doubleBufferedProperty = control.GetType()
+                .GetProperty("DoubleBuffered", BindingFlags.Instance | BindingFlags.NonPublic);
+
+            if (doubleBufferedProperty is null)
+                return false;
+
+            doubleBufferedProperty.SetValue(control, value, null);
+
+            return true;
 
         }
-        public static void SetResizeRedraw(Control control, bool value) {
+        public static bool SetResizeRedraw(Control control, bool value) {
 
             // ResizeRedraw needs to be set to true to prevent smearing when custom-painting controls.
             // https://stackoverflow.com/a/39419274/5383169
@@ -181,8 +193,12 @@ namespace Gsemac.Forms {
             PropertyInfo drawModeProperty = control.GetType()
                 .GetProperty("ResizeRedraw", BindingFlags.NonPublic | BindingFlags.Instance);
 
-            if (drawModeProperty is object)
-                drawModeProperty.SetValue(control, value, null);
+            if (drawModeProperty is null)
+                return false;
+
+            drawModeProperty.SetValue(control, value, null);
+
+            return true;
 
         }
 
