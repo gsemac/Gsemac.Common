@@ -6,15 +6,14 @@ using System.IO;
 
 namespace Gsemac.IO.Compression.ZipStorer {
 
+    [PluginPriority(Priority.High)]
     public sealed class ZipStorerArchiveFactory :
         PluginBase,
         IArchiveFactory {
 
         // Public members
 
-        public ZipStorerArchiveFactory() :
-            base(1) {
-        }
+        public ZipStorerArchiveFactory() { }
 
         public IEnumerable<IFileFormat> GetSupportedFileFormats() {
 

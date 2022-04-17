@@ -10,6 +10,7 @@ using System.Linq;
 
 namespace Gsemac.Drawing.Imaging {
 
+    [PluginPriority(Priority.High)]
     [RequiresAssemblyOrTypes("Magick.NET.Core", "ImageMagick.IMagickImage")]
     [RequiresAssemblyOrTypes("Magick.NET-Q16-AnyCPU", "ImageMagick.MagickImage")]
 #if NETFRAMEWORK
@@ -21,11 +22,8 @@ namespace Gsemac.Drawing.Imaging {
 
         // Public members
 
-        public MagickImageCodec() :
-            base(1) {
-        }
-        public MagickImageCodec(IFileFormat imageFormat) :
-            base(1) {
+        public MagickImageCodec() { }
+        public MagickImageCodec(IFileFormat imageFormat) {
 
             if (imageFormat is null)
                 throw new ArgumentNullException(nameof(imageFormat));
