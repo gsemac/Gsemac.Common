@@ -57,8 +57,8 @@ namespace Gsemac.Reflection.Plugins {
             // Instantiate all of the relevant plugins.
             // All plugins that cannot be loaded successfully will be silently ignored.
 
-            return pluginTypes.Where(type => serviceProvider is object || type.IsDefaultConstructable())
-                .Where(type => !GetPluginIgnored(type))
+            return pluginTypes.Where(type => CanConstructObjectOfType(type))
+                .Where(type => !IsPluginIgnored(type))
                 .OrderByDescending(type => GetPluginPriority(type))
                 .Select(type => TryCreateInstance(type))
                 .Where(obj => obj is object)
@@ -118,11 +118,9 @@ namespace Gsemac.Reflection.Plugins {
 
         }
 
-        private bool GetPluginIgnored(Type type) {
+        private bool IsPluginIgnored(Type type) {
 
-            return type.GetCustomAttributes(inherit: false)
-                .OfType<IgnorePluginAttribute>()
-                .Any();
+            return type.HasAttribute<IgnorePluginAttribute>(inherit: false);
 
         }
         private int GetPluginPriority(Type type) {
@@ -130,6 +128,11 @@ namespace Gsemac.Reflection.Plugins {
             return type.GetCustomAttributes(inherit: false)
                 .OfType<PluginPriorityAttribute>()
                 .FirstOrDefault()?.Priority ?? 0;
+
+        }
+        private bool CanConstructObjectOfType(Type type) {
+
+            return serviceProvider is object || type.IsDefaultConstructable();
 
         }
 

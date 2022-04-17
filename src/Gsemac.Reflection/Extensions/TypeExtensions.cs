@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Gsemac.Reflection.Extensions {
 
@@ -8,62 +7,45 @@ namespace Gsemac.Reflection.Extensions {
 
         public static bool IsDefaultConstructable(this Type type) {
 
-            return type.GetConstructor(Type.EmptyTypes) != null;
+            return TypeUtilities.IsDefaultConstructable(type);
 
         }
         public static bool IsConstructableFrom(this Type type, IEnumerable<Type> types) {
 
-            return type.GetConstructor(types.ToArray()) is object;
+            return TypeUtilities.IsConstructableFrom(type, types);
 
         }
         public static bool IsConstructableFrom(this Type type, IEnumerable<object> args) {
 
-            return IsConstructableFrom(type, args.Select(arg => arg.GetType()));
+            return TypeUtilities.IsConstructableFrom(type, args);
 
         }
 
-        public static bool ImplementsInterface<T>(this Type type) {
+        public static bool ImplementsInterface<InterfaceT>(this Type type) {
 
-            Type interfaceType = typeof(T);
+            return TypeUtilities.ImplementsInterface<InterfaceT>(type);
 
-            return interfaceType.IsAssignableFrom(type) && !type.IsAbstract;
+        }
+        public static bool HasAttribute<AttributeT>(this Type type, bool inherit) {
+
+            return TypeUtilities.HasAttribute<AttributeT>(type, inherit);
 
         }
 
         public static bool IsNullableType(this Type type) {
 
-            return type != null &&
-                type.IsGenericType &&
-                !type.IsGenericTypeDefinition &&
-                type.GetGenericTypeDefinition() == typeof(Nullable<>);
+            return TypeUtilities.IsNullableType(type);
 
         }
         public static Type GetNullableType(this Type type) {
 
-            // https://stackoverflow.com/a/108122 (Alex Lyman)
-
-            type = Nullable.GetUnderlyingType(type) ?? type;
-
-            if (type.IsValueType)
-                return typeof(Nullable<>).MakeGenericType(type);
-            else
-                return type;
+            return TypeUtilities.GetNullableType(type);
 
         }
 
         public static bool IsBuiltInType(this Type type) {
 
-            // Returns true for built-in types as defined here:
-            // https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/builtin-types/built-in-types
-
-            if (type == typeof(object))
-                return true;
-
-            TypeCode typeCode = Type.GetTypeCode(type);
-
-            return typeCode != TypeCode.Object &&
-                typeCode != TypeCode.DateTime &&
-                typeCode != TypeCode.Empty;
+            return TypeUtilities.IsBuiltInType(type);
 
         }
 

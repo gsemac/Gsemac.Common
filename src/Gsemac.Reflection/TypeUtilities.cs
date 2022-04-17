@@ -23,14 +23,91 @@ namespace Gsemac.Reflection {
             return AppDomain.CurrentDomain.GetAssemblies().SelectMany(assembly => assembly.GetLoadableTypes());
 
         }
-        public static IEnumerable<Type> GetTypesImplementingInterface<T>() {
+        public static IEnumerable<Type> GetTypesImplementingInterface<InterfaceT>() {
 
-            return GetTypes().Where(type => type.ImplementsInterface<T>());
+            return GetTypes().Where(type => type.ImplementsInterface<InterfaceT>());
+
+        }
+        public static IEnumerable<Type> GetTypesWithAttribute<AttributeT>(bool inherit)
+            where AttributeT : Attribute {
+
+            return GetTypes().Where(type => HasAttribute<AttributeT>(type, inherit));
 
         }
         public static bool TypeExists(string typeName) {
 
             return GetType(typeName) != null;
+
+        }
+
+        public static bool IsDefaultConstructable(Type type) {
+
+            return type.GetConstructor(Type.EmptyTypes) != null;
+
+        }
+        public static bool IsConstructableFrom(Type type, IEnumerable<Type> types) {
+
+            return type.GetConstructor(types.ToArray()) is object;
+
+        }
+        public static bool IsConstructableFrom(Type type, IEnumerable<object> args) {
+
+            return IsConstructableFrom(type, args.Select(arg => arg.GetType()));
+
+        }
+
+        public static bool ImplementsInterface<InterfaceT>(Type type) {
+
+            if (type is null)
+                throw new ArgumentNullException(nameof(type));
+
+            Type interfaceType = typeof(InterfaceT);
+
+            return interfaceType.IsAssignableFrom(type) && !type.IsAbstract;
+
+        }
+        public static bool HasAttribute<AttributeT>(Type type, bool inherit) {
+
+            if (type is null)
+                throw new ArgumentNullException(nameof(type));
+
+            return type.GetCustomAttributes(inherit).OfType<AttributeT>().Any();
+
+        }
+
+        public static bool IsNullableType(Type type) {
+
+            return type is object &&
+                type.IsGenericType &&
+                !type.IsGenericTypeDefinition &&
+                type.GetGenericTypeDefinition() == typeof(Nullable<>);
+
+        }
+        public static Type GetNullableType(Type type) {
+
+            // https://stackoverflow.com/a/108122 (Alex Lyman)
+
+            type = Nullable.GetUnderlyingType(type) ?? type;
+
+            if (type.IsValueType)
+                return typeof(Nullable<>).MakeGenericType(type);
+            else
+                return type;
+
+        }
+        public static bool IsBuiltInType(Type type) {
+
+            // Returns true for built-in types as defined here:
+            // https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/builtin-types/built-in-types
+
+            if (type == typeof(object))
+                return true;
+
+            TypeCode typeCode = Type.GetTypeCode(type);
+
+            return typeCode != TypeCode.Object &&
+                typeCode != TypeCode.DateTime &&
+                typeCode != TypeCode.Empty;
 
         }
 
