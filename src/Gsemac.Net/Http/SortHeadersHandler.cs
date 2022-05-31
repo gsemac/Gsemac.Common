@@ -120,7 +120,7 @@ namespace Gsemac.Net.Http {
 
         private void SetWebHeaderCollection(WebRequest webRequest) {
 
-            webRequest = WebRequestUtilities.GetInnermostWebRequest(webRequest);
+            webRequest = HttpWebRequestUtilities.GetInnermostWebRequest(webRequest);
 
             if (webRequest is HttpWebRequest httpWebRequest) {
 

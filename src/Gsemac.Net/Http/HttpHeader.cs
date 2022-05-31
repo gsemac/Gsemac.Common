@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Net;
 using System.Text.RegularExpressions;
 
 namespace Gsemac.Net.Http {
@@ -11,9 +12,21 @@ namespace Gsemac.Net.Http {
 
         public HttpHeader(string name, string value) {
 
-            Name = name;
-            Value = value;
+            if (name is null)
+                throw new ArgumentNullException(nameof(name));
 
+            Name = name;
+
+            // An empty header value is valid according to the HTTP spec.
+
+            Value = value ?? "";
+
+        }
+        public HttpHeader(HttpRequestHeader header, string value) :
+            this(HttpUtilities.GetHeaderName(header), value) {
+        }
+        public HttpHeader(HttpResponseHeader header, string value) :
+            this(HttpUtilities.GetHeaderName(header), value) {
         }
 
         public static HttpHeader Parse(string httpHeader) {

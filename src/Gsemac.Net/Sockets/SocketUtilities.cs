@@ -1,9 +1,11 @@
 ﻿using System.Net;
 using System.Net.Sockets;
 
-namespace Gsemac.Net {
+namespace Gsemac.Net.Sockets {
 
     public static class SocketUtilities {
+
+        // Public members
 
         public static int GetAvailablePort() {
 
@@ -45,6 +47,8 @@ namespace Gsemac.Net {
 
 
         }
+
+
 
     }
 

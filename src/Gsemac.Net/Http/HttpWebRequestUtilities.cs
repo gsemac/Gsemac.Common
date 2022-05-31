@@ -1,13 +1,12 @@
 ﻿using Gsemac.Core;
 using Gsemac.Net.Extensions;
-using Gsemac.Net.Http;
 using System;
 using System.Globalization;
 using System.Net;
 
-namespace Gsemac.Net {
+namespace Gsemac.Net.Http {
 
-    public static class WebRequestUtilities {
+    public static class HttpWebRequestUtilities {
 
         // Public members
 

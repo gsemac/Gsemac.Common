@@ -5,7 +5,7 @@ using System.Text.RegularExpressions;
 
 namespace Gsemac.Net.Http {
 
-    internal class HttpRequestLine :
+    public class HttpRequestLine :
         IHttpRequestLine {
 
         // Public members

@@ -9,10 +9,18 @@ namespace Gsemac.Net.Http {
     public class HttpStatusLine :
         IHttpStatusLine {
 
+        // Public members
+
         public Version ProtocolVersion { get; }
         public HttpStatusCode StatusCode { get; }
         public string StatusDescription { get; }
 
+        public HttpStatusLine(HttpStatusCode statusCode) :
+           this(DefaultProtocolVersion, statusCode, HttpUtilities.GetStatusDescription(statusCode)) {
+        }
+        public HttpStatusLine(HttpStatusCode statusCode, string statusDescription) :
+            this(DefaultProtocolVersion, statusCode, statusDescription) {
+        }
         public HttpStatusLine(Version protocolVersion, HttpStatusCode statusCode, string statusDescription) {
 
             if (protocolVersion is null)
@@ -94,6 +102,10 @@ namespace Gsemac.Net.Http {
             return sb.ToString();
 
         }
+
+        // Private members
+
+        private static Version DefaultProtocolVersion => new Version(1, 1);
 
     }
 

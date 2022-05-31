@@ -7,6 +7,8 @@ namespace Gsemac.Net.Http.Extensions {
 
     public static class HttpListenerExtensions {
 
+        // Public members
+
         public static HttpListenerContext GetContext(this HttpListener httpListener, TimeSpan timeout) {
 
             HttpListenerContext context = null;

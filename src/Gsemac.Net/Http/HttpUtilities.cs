@@ -1,8 +1,11 @@
-﻿using System.Net;
+﻿using System.Linq;
+using System.Net;
 
 namespace Gsemac.Net.Http {
 
     public static class HttpUtilities {
+
+        // Public members
 
         public static char[] GetInvalidCookieChars() {
 
@@ -44,6 +47,241 @@ namespace Gsemac.Net.Http {
         public static bool IsSuccessStatusCode(HttpStatusCode statusCode) {
 
             return !((int)statusCode >= 400 && (int)statusCode < 600);
+
+        }
+
+        public static string GetHeaderName(HttpRequestHeader header) {
+
+            return GetFirstHeaderName(new WebHeaderCollection {
+                { header, "x" }
+            });
+
+        }
+        public static string GetHeaderName(HttpResponseHeader header) {
+
+            return GetFirstHeaderName(new WebHeaderCollection {
+                { header, "x" }
+            });
+
+        }
+
+        public static string GetStatusDescription(HttpStatusCode statusCode) {
+
+            // https://developer.mozilla.org/en-US/docs/Web/HTTP/Status
+
+            switch (statusCode) {
+
+                // Informational responses (100–199)
+
+                case HttpStatusCode.Continue:
+                    return "Continue";
+
+                case HttpStatusCode.SwitchingProtocols:
+                    return "Switching Protocols";
+
+                case (HttpStatusCode)102:
+                    return "Processing";
+
+                case (HttpStatusCode)103:
+                    return "Early Hints";
+
+                // Successful responses (200–299)
+
+                case HttpStatusCode.OK:
+                    return "OK";
+
+                case HttpStatusCode.Created:
+                    return "Created";
+
+                case HttpStatusCode.Accepted:
+                    return "Accepted";
+
+                case HttpStatusCode.NonAuthoritativeInformation:
+                    return "Non-Authoritative Information";
+
+                case HttpStatusCode.NoContent:
+                    return "No Content";
+
+                case HttpStatusCode.ResetContent:
+                    return "Reset Content";
+
+                case HttpStatusCode.PartialContent:
+                    return "Partial Content";
+
+                case (HttpStatusCode)207:
+                    return "Multi-Status";
+
+                case (HttpStatusCode)208:
+                    return "Already Reported";
+
+                case (HttpStatusCode)226:
+                    return "IM Used";
+
+                // Redirection messages (300–399)
+
+                case HttpStatusCode.MultipleChoices:
+                    return "Multiple Choices";
+
+                case HttpStatusCode.MovedPermanently:
+                    return "Moved Permanently";
+
+                case HttpStatusCode.Found:
+                    return "Found";
+
+                case HttpStatusCode.SeeOther:
+                    return "See Other";
+
+                case HttpStatusCode.NotModified:
+                    return "Not Modified";
+
+                case HttpStatusCode.UseProxy:
+                    return "Use Proxy";
+
+                case HttpStatusCode.Unused:
+                    return "unused";
+
+                case HttpStatusCode.TemporaryRedirect:
+                    return "Temporary Redirect";
+
+                case (HttpStatusCode)308:
+                    return "Permanent Redirect";
+
+                // Client error responses (400–499)
+
+                case HttpStatusCode.BadRequest:
+                    return "Bad Request";
+
+                case HttpStatusCode.Unauthorized:
+                    return "Unauthorized";
+
+                case HttpStatusCode.PaymentRequired:
+                    return "Payment Required";
+
+                case HttpStatusCode.Forbidden:
+                    return "Forbidden";
+
+                case HttpStatusCode.NotFound:
+                    return "Not Found";
+
+                case HttpStatusCode.MethodNotAllowed:
+                    return "Method Not Allowed";
+
+                case HttpStatusCode.NotAcceptable:
+                    return "Not Acceptable";
+
+                case HttpStatusCode.ProxyAuthenticationRequired:
+                    return "Proxy Authentication Required";
+
+                case HttpStatusCode.RequestTimeout:
+                    return "Request Timeout";
+
+                case HttpStatusCode.Conflict:
+                    return "Conflict";
+
+                case HttpStatusCode.Gone:
+                    return "Gone";
+
+                case HttpStatusCode.LengthRequired:
+                    return "Length Required";
+
+                case HttpStatusCode.PreconditionFailed:
+                    return "Precondition Failed";
+
+                case HttpStatusCode.RequestEntityTooLarge:
+                    return "Payload Too Large";
+
+                case HttpStatusCode.RequestUriTooLong:
+                    return "URI Too Long";
+
+                case HttpStatusCode.UnsupportedMediaType:
+                    return "Unsupported Media Type";
+
+                case HttpStatusCode.RequestedRangeNotSatisfiable:
+                    return "Range Not Satisfiable";
+
+                case HttpStatusCode.ExpectationFailed:
+                    return "Expectation Failed";
+
+                case (HttpStatusCode)418:
+                    return "I'm a teapot";
+
+                case (HttpStatusCode)421:
+                    return "Misdirected Request";
+
+                case (HttpStatusCode)422:
+                    return "Unprocessable Entity";
+
+                case (HttpStatusCode)423:
+                    return "Locked";
+
+                case (HttpStatusCode)424:
+                    return "Failed Dependency";
+
+                case (HttpStatusCode)425:
+                    return "Too Early";
+
+                case (HttpStatusCode)426:
+                    return "Upgrade Required";
+
+                case (HttpStatusCode)428:
+                    return "Precondition Required";
+
+                case (HttpStatusCode)429:
+                    return "Too Many Requests";
+
+                case (HttpStatusCode)431:
+                    return "Request Header Fields Too Large";
+
+                case (HttpStatusCode)451:
+                    return "Unavailable For Legal Reasons";
+
+                // Server error responses (500–599)
+
+                case HttpStatusCode.InternalServerError:
+                    return "Internal Server Error";
+
+                case HttpStatusCode.NotImplemented:
+                    return "Not Implemented";
+
+                case HttpStatusCode.BadGateway:
+                    return "Bad Gateway";
+
+                case HttpStatusCode.ServiceUnavailable:
+                    return "Service Unavailable";
+
+                case HttpStatusCode.GatewayTimeout:
+                    return "Gateway Timeout";
+
+                case HttpStatusCode.HttpVersionNotSupported:
+                    return "HTTP Version Not Supported";
+
+                case (HttpStatusCode)506:
+                    return "Variant Also Negotiates";
+
+                case (HttpStatusCode)507:
+                    return "Insufficient Storage";
+
+                case (HttpStatusCode)508:
+                    return "Loop Detected";
+
+                case (HttpStatusCode)510:
+                    return "Not Extended";
+
+                case (HttpStatusCode)511:
+                    return "Network Authentication Required";
+
+                default:
+                    return string.Empty;
+
+            }
+
+        }
+
+        // Private members
+
+        private static string GetFirstHeaderName(WebHeaderCollection headers) {
+
+            return headers.AllKeys.Single();
 
         }
 
