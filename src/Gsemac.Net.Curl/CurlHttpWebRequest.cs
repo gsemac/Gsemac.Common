@@ -1,6 +1,7 @@
 ﻿using Gsemac.IO;
 using Gsemac.IO.Extensions;
 using Gsemac.Net.Extensions;
+using Gsemac.Net.Http;
 using System;
 using System.Collections.Generic;
 using System.IO;

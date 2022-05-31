@@ -1,4 +1,5 @@
 ﻿using Gsemac.Net.Extensions;
+using Gsemac.Net.Http;
 using Gsemac.Net.WebBrowsers;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Edge;

@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using Gsemac.Net.Http;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;

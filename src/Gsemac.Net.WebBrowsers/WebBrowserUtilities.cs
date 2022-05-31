@@ -1,6 +1,7 @@
 ﻿using Gsemac.Core;
 using Gsemac.IO;
 using Gsemac.Net.Extensions;
+using Gsemac.Net.Http.Extensions;
 using Gsemac.Net.WebBrowsers.Properties;
 using System;
 using System.Diagnostics;

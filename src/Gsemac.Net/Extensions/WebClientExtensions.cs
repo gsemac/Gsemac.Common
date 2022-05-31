@@ -1,4 +1,5 @@
 ﻿using Gsemac.IO;
+using Gsemac.Net.Http;
 using System;
 using System.ComponentModel;
 using System.IO;

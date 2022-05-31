@@ -1,4 +1,6 @@
-﻿namespace Gsemac.Net.Curl {
+﻿using Gsemac.Net.Http;
+
+namespace Gsemac.Net.Curl {
 
     internal class BinCurlHttpWebResponse :
         CurlHttpWebResponseBase {

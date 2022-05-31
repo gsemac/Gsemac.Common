@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using Gsemac.Net.Http;
+using System.Net;
 
 namespace Gsemac.Net.Extensions {
 

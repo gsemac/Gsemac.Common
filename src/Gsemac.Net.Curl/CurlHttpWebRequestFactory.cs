@@ -1,4 +1,6 @@
 ﻿using Gsemac.Net.Extensions;
+using Gsemac.Net.Http;
+using Gsemac.Net.Http.Extensions;
 using System;
 
 namespace Gsemac.Net.Curl {

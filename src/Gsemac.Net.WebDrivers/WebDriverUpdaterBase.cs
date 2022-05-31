@@ -2,6 +2,8 @@
 using Gsemac.IO.Compression;
 using Gsemac.IO.Logging;
 using Gsemac.Net.Extensions;
+using Gsemac.Net.Http;
+using Gsemac.Net.Http.Extensions;
 using Gsemac.Net.WebBrowsers;
 using Newtonsoft.Json;
 using System;

@@ -1,4 +1,5 @@
-﻿using Gsemac.Net.Extensions;
+﻿using Gsemac.Net.Http;
+using Gsemac.Net.Http.Extensions;
 using Gsemac.Text;
 using HtmlAgilityPack;
 using System;

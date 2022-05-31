@@ -1,4 +1,5 @@
-﻿using Gsemac.Net.WebBrowsers;
+﻿using Gsemac.Net.Http;
+using Gsemac.Net.WebBrowsers;
 using System;
 
 namespace Gsemac.Net.WebDrivers {

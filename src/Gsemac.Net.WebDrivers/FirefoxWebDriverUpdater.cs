@@ -1,5 +1,6 @@
 ﻿using Gsemac.Net.GitHub;
 using Gsemac.Net.GitHub.Extensions;
+using Gsemac.Net.Http;
 using Gsemac.Net.WebBrowsers;
 using System;
 using System.Linq;
