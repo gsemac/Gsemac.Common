@@ -5,7 +5,8 @@ using System.Text;
 
 namespace Gsemac.Net.Http {
 
-    public class UrlEncodedFormDataBuilder {
+    public class UrlEncodedFormDataBuilder :
+        IUrlEncodedFormDataBuilder {
 
         // Public members
 
