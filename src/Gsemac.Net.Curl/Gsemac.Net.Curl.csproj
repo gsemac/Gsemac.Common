@@ -41,6 +41,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<Compile Update="Properties\CurlCodeDescriptions.Designer.cs">
+		  <DesignTime>True</DesignTime>
+		</Compile>
 		<Compile Update="Properties\ExceptionMessages.Designer.cs">
 			<DesignTime>True</DesignTime>
 		</Compile>

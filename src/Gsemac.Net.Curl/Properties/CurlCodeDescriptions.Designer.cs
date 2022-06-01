@@ -22,14 +22,14 @@ namespace Gsemac.Net.Curl.Properties {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    internal class ExceptionMessages {
+    internal class CurlCodeDescriptions {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
         private static global::System.Globalization.CultureInfo resourceCulture;
         
         [global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        internal ExceptionMessages() {
+        internal CurlCodeDescriptions() {
         }
         
         /// <summary>
@@ -39,7 +39,7 @@ namespace Gsemac.Net.Curl.Properties {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Gsemac.Net.Curl.Properties.ExceptionMessages", typeof(ExceptionMessages).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Gsemac.Net.Curl.Properties.CurlCodeDescriptions", typeof(CurlCodeDescriptions).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -61,29 +61,41 @@ namespace Gsemac.Net.Curl.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Cannot handle redirect from HTTP/HTTPS protocols to other dissimilar ones..
+        ///   Looks up a localized string similar to Could not resolve host..
         /// </summary>
-        internal static string CannotHandleRedirectFromProtocolToDissimilarOnes {
+        internal static string CouldntResolveHost {
             get {
-                return ResourceManager.GetString("CannotHandleRedirectFromProtocolToDissimilarOnes", resourceCulture);
+                return ResourceManager.GetString("CouldntResolveHost", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to A connection attempt failed because the connected party did not properly respond after a period of time, or established connection failed because connected host has failed to respond. A connection attempt failed because the connected party did not properly respond after a period of time, or established connection failed because connected host has failed to respond..
+        ///   Looks up a localized string similar to All fine. Proceed as usual..
         /// </summary>
-        internal static string ConnectedPartyDidNotRespond {
+        internal static string Ok {
             get {
-                return ResourceManager.GetString("ConnectedPartyDidNotRespond", resourceCulture);
+                return ResourceManager.GetString("Ok", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The remote server returned an error: ({0}) {1}..
+        ///   Looks up a localized string similar to SSL: no alternative certificate subject name matches target host name
+        ///More details here: https://curl.se/docs/sslcerts.html
+        ///
+        ///curl failed to verify the legitimacy of the server and therefore could not establish a secure connection to it. To learn more about this situation and how to fix it, please visit the web page mentioned above..
         /// </summary>
-        internal static string RemoteServerReturnedAnError {
+        internal static string PeerFailedVerification {
             get {
-                return ResourceManager.GetString("RemoteServerReturnedAnError", resourceCulture);
+                return ResourceManager.GetString("PeerFailedVerification", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to When doing a send operation curl had to rewind the data to retransmit, but the rewinding operation failed..
+        /// </summary>
+        internal static string SendFailRewind {
+            get {
+                return ResourceManager.GetString("SendFailRewind", resourceCulture);
             }
         }
     }

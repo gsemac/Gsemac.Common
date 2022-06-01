@@ -117,13 +117,19 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="CannotHandleRedirectFromProtocolToDissimilarOnes" xml:space="preserve">
-    <value>Cannot handle redirect from HTTP/HTTPS protocols to other dissimilar ones.</value>
+  <data name="CouldntResolveHost" xml:space="preserve">
+    <value>Could not resolve host.</value>
   </data>
-  <data name="ConnectedPartyDidNotRespond" xml:space="preserve">
-    <value>A connection attempt failed because the connected party did not properly respond after a period of time, or established connection failed because connected host has failed to respond. A connection attempt failed because the connected party did not properly respond after a period of time, or established connection failed because connected host has failed to respond.</value>
+  <data name="Ok" xml:space="preserve">
+    <value>All fine. Proceed as usual.</value>
   </data>
-  <data name="RemoteServerReturnedAnError" xml:space="preserve">
-    <value>The remote server returned an error: ({0}) {1}.</value>
+  <data name="PeerFailedVerification" xml:space="preserve">
+    <value>SSL: no alternative certificate subject name matches target host name
+More details here: https://curl.se/docs/sslcerts.html
+
+curl failed to verify the legitimacy of the server and therefore could not establish a secure connection to it. To learn more about this situation and how to fix it, please visit the web page mentioned above.</value>
+  </data>
+  <data name="SendFailRewind" xml:space="preserve">
+    <value>When doing a send operation curl had to rewind the data to retransmit, but the rewinding operation failed.</value>
   </data>
 </root>
