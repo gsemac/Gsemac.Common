@@ -1,6 +1,4 @@
-﻿#if NETFRAMEWORK
-
-using Gsemac.IO;
+﻿using Gsemac.IO;
 using Gsemac.IO.Extensions;
 using Gsemac.Reflection.Plugins;
 using Gsemac.Win32;
@@ -263,5 +261,3 @@ namespace Gsemac.Drawing.Imaging {
     }
 
 }
-
-#endif

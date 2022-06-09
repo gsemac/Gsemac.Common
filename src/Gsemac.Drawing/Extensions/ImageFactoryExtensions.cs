@@ -1,12 +1,9 @@
-﻿using Gsemac.IO;
+﻿using Gsemac.Drawing.Imaging;
+using Gsemac.IO;
 using Gsemac.IO.Extensions;
-using System.IO;
-using Gsemac.Drawing.Imaging;
 using System;
-
-#if NETFRAMEWORK
 using System.Drawing;
-#endif
+using System.IO;
 
 namespace Gsemac.Drawing.Extensions {
 
@@ -51,8 +48,6 @@ namespace Gsemac.Drawing.Extensions {
 
         }
 
-#if NETFRAMEWORK
-
         public static IImage FromBitmap(this IImageFactory imageFactory, Image image) {
 
             if (imageFactory is null)
@@ -61,11 +56,22 @@ namespace Gsemac.Drawing.Extensions {
             if (image is null)
                 throw new ArgumentNullException(nameof(image));
 
-            return imageFactory.FromBitmap(image, BitmapToImageOptions.Default);
+            return imageFactory.FromBitmap(image, null, null);
 
         }
+        public static IImage FromBitmap(this IImageFactory imageFactory, Image image, IFileFormat format, IImageCodec codec) {
 
-#endif
+            // The "format" and "codec" arguments are allowed to be null, and will be set to defaults by GdiImage's constructor.
+
+            if (imageFactory is null)
+                throw new ArgumentNullException(nameof(imageFactory));
+
+            if (image is null)
+                throw new ArgumentNullException(nameof(image));
+
+            return new GdiImage(image, format, codec);
+
+        }
 
     }
 

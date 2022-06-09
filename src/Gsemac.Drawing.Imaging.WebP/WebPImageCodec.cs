@@ -1,7 +1,9 @@
 ﻿#if NETFRAMEWORK
 
+using Gsemac.Drawing.Extensions;
 using Gsemac.IO;
 using Gsemac.IO.Extensions;
+using Gsemac.IO.FileFormats;
 using Gsemac.Reflection.Plugins;
 using System.Collections.Generic;
 using System.Drawing;
@@ -38,10 +40,7 @@ namespace Gsemac.Drawing.Imaging {
             using (WebP decoder = new WebP())
             using (Image decodedWebPBitmap = DecodeWebPBitmap(decoder, webPData)) {
 
-                IImage image = ImageFactory.Default.FromBitmap(decodedWebPBitmap, new BitmapToImageOptions() {
-                    Format = GetSupportedFileFormats().First(),
-                    Codec = this,
-                });
+                IImage image = ImageFactory.Default.FromBitmap(decodedWebPBitmap, format: ImageFormat.WebP, codec: this);
 
                 IAnimationInfo animationInfo = GetAnimationInfo(decoder, webPData);
 
@@ -55,9 +54,9 @@ namespace Gsemac.Drawing.Imaging {
 
         private IEnumerable<IFileFormat> GetSupportedImageFormats() {
 
-            return new[]{
-                ".webp"
-            }.Select(ext => FileFormatFactory.Default.FromFileExtension(ext));
+            return new[] {
+                ImageFormat.WebP,
+            };
 
         }
 

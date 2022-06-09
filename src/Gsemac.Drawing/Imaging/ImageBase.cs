@@ -1,4 +1,5 @@
-﻿using Gsemac.IO;
+﻿using Gsemac.Drawing.Properties;
+using Gsemac.IO;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -27,9 +28,11 @@ namespace Gsemac.Drawing.Imaging {
 
         public abstract IImage Clone();
 
-#if NETFRAMEWORK
-        public abstract Bitmap ToBitmap();
-#endif
+        public virtual Bitmap ToBitmap() {
+
+            throw new NotSupportedException(string.Format(ExceptionMessages.TypeCannotBeConvertedToBitmap, GetType().Name));
+
+        }
 
         public void Dispose() {
 

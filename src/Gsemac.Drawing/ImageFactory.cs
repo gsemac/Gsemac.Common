@@ -1,10 +1,5 @@
 ﻿using Gsemac.Drawing.Imaging;
 
-#if NETFRAMEWORK
-using Gsemac.IO;
-using System.Drawing;
-#endif
-
 namespace Gsemac.Drawing {
 
     public class ImageFactory :

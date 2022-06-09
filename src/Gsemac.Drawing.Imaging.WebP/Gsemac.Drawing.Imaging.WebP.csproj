@@ -26,12 +26,24 @@
 		<ProjectReference Include="..\Gsemac.Reflection.Plugins\Gsemac.Reflection.Plugins.csproj" />
 	</ItemGroup>
 
-	<ItemGroup Condition="$(DefineConstants.Contains('NETFRAMEWORK'))">
-		<Reference Include="System.Drawing" />
-		<Reference Include="WebPWrapper">
-			<HintPath>lib\managed\WebPWrapper.dll</HintPath>
-		</Reference>
-	</ItemGroup>
+	<Choose>
+		<When Condition="$(DefineConstants.Contains('NETFRAMEWORK'))">
+			<ItemGroup>
+				<Reference Include="System.Drawing" />
+				<Reference Include="System.Windows.Forms" />
+				<Reference Include="WebPWrapper">
+					<HintPath>lib\managed\WebPWrapper.dll</HintPath>
+				</Reference>
+			</ItemGroup>
+		</When>
+		<Otherwise>
+			<ItemGroup>
+				<PackageReference Include="System.Drawing.Common">
+					<Version>6.0.0</Version>
+				</PackageReference>
+			</ItemGroup>
+		</Otherwise>
+	</Choose>
 
 	<ItemGroup>
 		<Content Include="Gsemac.Drawing.Imaging.WebP.targets" PackagePath="build/Gsemac.Drawing.Imaging.WebP.targets" />
@@ -47,10 +59,6 @@
 		</Content>
 		<Content Include="lib\managed\*" Pack="true" PackagePath="contentFiles\" />
 		<Content Include="licenses\*" Pack="true" PackagePath="contentFiles\licenses" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<Reference Include="System.Windows.Forms" />
 	</ItemGroup>
 
 	<ItemGroup>

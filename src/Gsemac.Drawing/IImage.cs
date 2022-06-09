@@ -20,9 +20,7 @@ namespace Gsemac.Drawing {
 
         IImage Clone();
 
-#if NETFRAMEWORK
         Bitmap ToBitmap();
-#endif
 
     }
 

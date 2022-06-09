@@ -3,7 +3,6 @@ using Gsemac.IO;
 using Gsemac.IO.Extensions;
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.IO;
 
 namespace Gsemac.Drawing {
@@ -40,22 +39,6 @@ namespace Gsemac.Drawing {
             return imageCodec.Decode(stream, options);
 
         }
-
-#if NETFRAMEWORK
-
-        public IImage FromBitmap(Image bitmap, IBitmapToImageOptions options) {
-
-            if (bitmap is null)
-                throw new ArgumentNullException(nameof(bitmap));
-
-            if (options is null)
-                throw new ArgumentNullException(nameof(options));
-
-            return new GdiImage(bitmap, options.Format, options.Codec);
-
-        }
-
-#endif
 
         // Protected members
 

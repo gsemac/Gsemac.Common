@@ -21,10 +21,10 @@
 		<DebugSymbols>false</DebugSymbols>
 	</PropertyGroup>
 
-	<ItemGroup Condition="$(DefineConstants.Contains('NETFRAMEWORK'))">
+	<ItemGroup>
 		<PackageReference Include="nQuant" Version="1.0.3" />
 	</ItemGroup>
-
+	
 	<ItemGroup>
 		<ProjectReference Include="..\Gsemac.Drawing\Gsemac.Drawing.csproj" />
 		<ProjectReference Include="..\Gsemac.Reflection.Plugins\Gsemac.Reflection.Plugins.csproj" />

@@ -110,9 +110,7 @@ namespace Gsemac.Drawing.Extensions {
 
         }
 
-#if NETFRAMEWORK
-
-        public static Image ToBitmap(this IImage image, IImageToBitmapOptions options) {
+        public static Image ToBitmap(this IImage image, IBitmapOptions options) {
 
             if (image is null)
                 throw new ArgumentNullException(nameof(image));
@@ -128,8 +126,6 @@ namespace Gsemac.Drawing.Extensions {
             return bitmap;
 
         }
-
-#endif
 
     }
 

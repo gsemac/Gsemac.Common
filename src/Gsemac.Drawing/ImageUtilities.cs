@@ -1,6 +1,4 @@
-﻿#if NETFRAMEWORK
-
-using Gsemac.Drawing.Imaging;
+﻿using Gsemac.Drawing.Imaging;
 using System;
 using System.Drawing;
 
@@ -163,5 +161,3 @@ namespace Gsemac.Drawing {
     }
 
 }
-
-#endif

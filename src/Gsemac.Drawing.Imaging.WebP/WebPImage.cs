@@ -1,11 +1,5 @@
-﻿#if NETFRAMEWORK
-
-using Gsemac.IO;
-using System;
-using System.Collections.Generic;
+﻿using Gsemac.IO;
 using System.Drawing;
-using System.Linq;
-using System.Text;
 
 namespace Gsemac.Drawing.Imaging {
 
@@ -59,5 +53,3 @@ namespace Gsemac.Drawing.Imaging {
     }
 
 }
-
-#endif

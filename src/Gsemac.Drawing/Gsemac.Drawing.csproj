@@ -20,16 +20,30 @@
 		<DebugSymbols>false</DebugSymbols>
 	</PropertyGroup>
 
-	<ItemGroup Condition="$(DefineConstants.Contains('NETFRAMEWORK'))">
-		<Reference Include="System.Drawing" />
-		<ProjectReference Include="..\Gsemac.Win32\Gsemac.Win32.csproj" />
-	</ItemGroup>
-
 	<ItemGroup>
 		<ProjectReference Include="..\Gsemac.Core\Gsemac.Core.csproj" />
 		<ProjectReference Include="..\Gsemac.IO\Gsemac.IO.csproj" />
 		<ProjectReference Include="..\Gsemac.Reflection.Plugins\Gsemac.Reflection.Plugins.csproj" />
+		<ProjectReference Include="..\Gsemac.Win32\Gsemac.Win32.csproj" />
 	</ItemGroup>
+
+	<Choose>
+		<When Condition="$(DefineConstants.Contains('NETFRAMEWORK'))">
+			<ItemGroup>
+				<!-- .NET Framework has GDI-related classes in System.Drawing. -->
+				<Reference Include="System.Drawing" />
+			</ItemGroup>
+		</When>
+		<Otherwise>
+			<ItemGroup>
+				<!-- 
+					For other targets, GDI-related classes are provided by System.Drawing.Common.
+					Note that the facilities provided are still only supported on Windows.
+				-->
+				<PackageReference Include="System.Drawing.Common" Version="6.0.0" />
+			</ItemGroup>
+		</Otherwise>
+	</Choose>
 
 	<ItemGroup>
 		<Compile Update="Properties\ExceptionMessages.Designer.cs">

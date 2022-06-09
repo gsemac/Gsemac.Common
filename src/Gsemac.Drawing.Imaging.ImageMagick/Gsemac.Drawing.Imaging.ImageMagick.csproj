@@ -33,19 +33,20 @@
 	<Choose>
 		<When Condition="$(DefineConstants.Contains('NET45_OR_GREATER')) Or $(DefineConstants.Contains('NETCOREAPP')) Or $(DefineConstants.Contains('NETSTANDARD'))">
 			<ItemGroup>
-				<PackageReference Include="Magick.NET-Q16-AnyCPU" Version="10.1.0" />
-			</ItemGroup>
-			<ItemGroup Condition="$(DefineConstants.Contains('NETFRAMEWORK'))">
-				<PackageReference Include="Magick.NET.SystemDrawing" Version="4.0.18" />
+				<PackageReference Include="Magick.NET-Q16-AnyCPU" Version="11.1.2" />
+				<PackageReference Include="Magick.NET.SystemDrawing" Version="5.0.2" />
 			</ItemGroup>
 		</When>
 		<Otherwise>
+			<!--
+				Magick.NET-Q16-AnyCPU <= 8.6.1 must be used for compatibility with .NET Framework (later versions target .NET Standard).
+				The library depends on Magick.NET.Core >= 8.6.1, meaning the latest version of Magick.NET.SystemDrawing we can use is 4.0.12.
+				Later versions of Magick.NET.SystemDrawing require Magick.NET.Core >= 9.0.0, so trying to use a later version will make VS 
+				complain that we're referencing two different versions of Magick.NET.Core.
+			-->
 			<ItemGroup>
 				<PackageReference Include="Magick.NET-Q16-AnyCPU" Version="8.6.1" />
-			</ItemGroup>
-			<!-- Magick.NET.SystemDrawing > 4.0.16 is not compatible .NET Framework 4.0 due to the dependency on Magick.NET >= 10.1.0, which only targets .NET Standard.  -->
-			<ItemGroup Condition="$(DefineConstants.Contains('NETFRAMEWORK'))">
-				<PackageReference Include="Magick.NET.SystemDrawing" Version="4.0.16" />
+				<PackageReference Include="Magick.NET.SystemDrawing" Version="4.0.12" />
 			</ItemGroup>
 		</Otherwise>
 	</Choose>

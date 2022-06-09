@@ -1,12 +1,10 @@
-﻿#if NETFRAMEWORK
-
-using Gsemac.IO;
+﻿using Gsemac.IO;
+using Gsemac.IO.FileFormats;
 using Gsemac.Reflection.Plugins;
 using nQuant;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
-using System.Linq;
 
 namespace Gsemac.Drawing.Imaging {
 
@@ -57,14 +55,12 @@ namespace Gsemac.Drawing.Imaging {
 
         private IEnumerable<IFileFormat> GetSupportedImageFormats() {
 
-            return new[]{
-                ".png"
-            }.Select(ext => FileFormatFactory.Default.FromFileExtension(ext));
+            return new[] {
+                ImageFormat.Png,
+            };
 
         }
 
     }
 
 }
-
-#endif
