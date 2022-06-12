@@ -16,7 +16,7 @@ namespace Gsemac.Drawing.Extensions {
             if (image is null)
                 throw new ArgumentNullException(nameof(image));
 
-            return image.Animation?.FrameCount > 1;
+            return image.FrameCount > 1;
 
         }
 

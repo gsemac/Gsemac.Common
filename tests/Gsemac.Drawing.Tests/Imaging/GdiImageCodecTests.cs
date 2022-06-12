@@ -1,5 +1,3 @@
-#if NETFRAMEWORK
-
 using Gsemac.Drawing.Extensions;
 using Gsemac.Drawing.Imaging.Extensions;
 using Gsemac.Drawing.Tests.Properties;
@@ -54,28 +52,26 @@ namespace Gsemac.Drawing.Imaging.Tests {
         [TestMethod]
         public void TestAnimationInfoIsValidWithAnimatedGif() {
 
-            IAnimationInfo animationInfo;
+            using (IImage image = ImageFromFile("animated.gif")) {
 
-            using (IImage image = ImageFromFile("animated.gif"))
-                animationInfo = image.Animation;
+                Assert.IsNotNull(image);
+                Assert.AreEqual(TimeSpan.FromMilliseconds(200), image.AnimationDelay);
+                Assert.AreEqual(3, image.FrameCount);
+                Assert.AreEqual(0, image.AnimationIterations);
 
-            Assert.IsNotNull(animationInfo);
-            Assert.AreEqual(TimeSpan.FromMilliseconds(200), animationInfo.Delay);
-            Assert.AreEqual(3, animationInfo.FrameCount);
-            Assert.AreEqual(0, animationInfo.Iterations);
+            }
 
         }
         [TestMethod]
         public void TestAnimationInfoIsValidWithStaticGif() {
 
-            IAnimationInfo animationInfo;
+            using (IImage image = ImageFromFile("static.gif")) {
 
-            using (IImage image = ImageFromFile("static.gif"))
-                animationInfo = image.Animation;
+                Assert.IsNotNull(image);
+                Assert.AreEqual(TimeSpan.Zero, image.AnimationDelay);
+                Assert.AreEqual(1, image.FrameCount);
 
-            Assert.IsNotNull(animationInfo);
-            Assert.AreEqual(TimeSpan.Zero, animationInfo.Delay);
-            Assert.AreEqual(1, animationInfo.FrameCount);
+            }
 
         }
         [TestMethod]
@@ -84,15 +80,14 @@ namespace Gsemac.Drawing.Imaging.Tests {
             // Some file formats can have multiple "frames" that do not pertain to animation (e.g. resolutions in an ICO image).
             // This should not be reflected in the animation info.
 
-            IAnimationInfo animationInfo;
+            using (IImage image = ImageFromFile("static.ico")) {
 
-            using (IImage image = ImageFromFile("static.ico"))
-                animationInfo = image.Animation;
+                Assert.IsNotNull(image);
+                Assert.AreEqual(TimeSpan.Zero, image.AnimationDelay);
+                Assert.AreEqual(1, image.FrameCount);
+                Assert.AreEqual(0, image.AnimationIterations);
 
-            Assert.IsNotNull(animationInfo);
-            Assert.AreEqual(TimeSpan.Zero, animationInfo.Delay);
-            Assert.AreEqual(1, animationInfo.FrameCount);
-            Assert.AreEqual(0, animationInfo.Iterations);
+            }
 
         }
 
@@ -131,5 +126,3 @@ namespace Gsemac.Drawing.Imaging.Tests {
     }
 
 }
-
-#endif

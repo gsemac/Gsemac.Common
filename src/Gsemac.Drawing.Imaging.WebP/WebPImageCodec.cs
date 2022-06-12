@@ -42,9 +42,7 @@ namespace Gsemac.Drawing.Imaging {
 
                 IImage image = ImageFactory.Default.FromBitmap(decodedWebPBitmap, format: ImageFormat.WebP, codec: this);
 
-                IAnimationInfo animationInfo = GetAnimationInfo(decoder, webPData);
-
-                return new WebPImage(image, animationInfo);
+                return new WebPImage(image, decoder, webPData);
 
             }
 
@@ -73,28 +71,6 @@ namespace Gsemac.Drawing.Imaging {
         private Image DecodeWebPBitmap(WebP decoder, byte[] webPData) {
 
             return decoder.Decode(webPData);
-
-        }
-
-        private static IAnimationInfo GetAnimationInfo(WebP decoder, byte[] webPData) {
-
-            decoder.GetInfo(webPData, out _, out _, out _, out bool hasAnimation, out string _);
-
-            if (!hasAnimation)
-                return AnimationInfo.Static;
-
-            // Get the animation info.
-
-            using (IWebPDemuxer demuxer = new WebPDemuxer(webPData)) {
-
-                int frameCount = demuxer.GetI(WebPFormatFeature.FrameCount);
-                int loopCount = demuxer.GetI(WebPFormatFeature.LoopCount);
-
-                IWebPFrame frame = demuxer.GetFrame(1); // WebP frame indices are 1-based
-
-                return new AnimationInfo(frameCount, loopCount, frame.Duration);
-
-            }
 
         }
 

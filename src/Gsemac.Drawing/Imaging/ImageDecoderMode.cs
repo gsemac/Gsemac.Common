@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿namespace Gsemac.Drawing.Imaging {
 
-namespace Gsemac.Drawing.Imaging {
-
-    internal class ImageDecoderMode {
-
+    public enum ImageDecoderMode {
+        Metadata,
+        Static,
+        Full,
     }
 
 }

@@ -1,5 +1,9 @@
-﻿using Gsemac.IO;
+﻿#if NETFRAMEWORK
+
+using Gsemac.IO;
+using System;
 using System.Drawing;
+using WebPWrapper;
 
 namespace Gsemac.Drawing.Imaging {
 
@@ -8,11 +12,14 @@ namespace Gsemac.Drawing.Imaging {
 
         // Public members
 
-        public override IAnimationInfo Animation { get; }
         public override int Width => image.Width;
         public override int Height => image.Height;
         public override IFileFormat Format => image.Format;
         public override IImageCodec Codec => image.Codec;
+
+        public override TimeSpan AnimationDelay { get; } = TimeSpan.Zero;
+        public override int AnimationIterations { get; } = 0;
+        public override int FrameCount { get; } = 1;
 
         public override IImage Clone() {
 
@@ -25,10 +32,28 @@ namespace Gsemac.Drawing.Imaging {
 
         }
 
-        public WebPImage(IImage image, IAnimationInfo animationInfo) {
+        public WebPImage(IImage image, WebP decoder, byte[] webPData) {
 
-            Animation = animationInfo;
             this.image = image;
+
+            // Get the animation info.
+
+            decoder.GetInfo(webPData, out _, out _, out _, out bool hasAnimation, out string _);
+
+            if (hasAnimation) {
+
+                using (IWebPDemuxer demuxer = new WebPDemuxer(webPData)) {
+
+                    FrameCount = demuxer.GetI(WebPFormatFeature.FrameCount);
+                    AnimationIterations = demuxer.GetI(WebPFormatFeature.LoopCount);
+
+                    IWebPFrame frame = demuxer.GetFrame(1); // WebP frame indices are 1-based
+
+                    AnimationDelay = frame.Duration;
+
+                }
+
+            }
 
         }
 
@@ -53,3 +78,5 @@ namespace Gsemac.Drawing.Imaging {
     }
 
 }
+
+#endif

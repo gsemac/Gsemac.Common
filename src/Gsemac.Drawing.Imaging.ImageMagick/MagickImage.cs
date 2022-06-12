@@ -12,19 +12,28 @@ namespace Gsemac.Drawing.Imaging {
 
         // Public members
 
-        public override IAnimationInfo Animation => GetAnimationInfo();
         public override int Width => GetWidth();
         public override int Height => GetHeight();
         public override IFileFormat Format { get; }
         public override IImageCodec Codec { get; }
 
-        public MagickImage(Stream stream, IFileFormat imageFormat, IImageCodec codec) {
+        public override TimeSpan AnimationDelay => GetAnimationDelay();
+        public override int AnimationIterations => GetAnimationIterations();
+        public override int FrameCount => GetFrameCount();
+
+        public MagickImage(Stream stream, IFileFormat imageFormat, IImageCodec codec) :
+            this(stream, imageFormat, codec, ImageDecoderOptions.Default) {
+        }
+        public MagickImage(Stream stream, IFileFormat imageFormat, IImageCodec codec, IImageDecoderOptions options) {
 
             if (stream is null)
                 throw new ArgumentNullException(nameof(stream));
 
             if (codec is null)
                 throw new ArgumentNullException(nameof(codec));
+
+            if (options is null)
+                throw new ArgumentNullException(nameof(options));
 
             // If we were able to determine the desired file format, decode the image using that format explicitly.
             // Otherwise, allow ImageMagick to determine the file format on its own.
@@ -127,23 +136,6 @@ namespace Gsemac.Drawing.Imaging {
 
         }
 
-        private IAnimationInfo GetAnimationInfo() {
-
-            IMagickImage initialImage = images.FirstOrDefault();
-
-            int frameCount = images.Count;
-            TimeSpan frameDelay = TimeSpan.FromMilliseconds(initialImage.AnimationDelay * 10);
-            int loopCount = initialImage.AnimationIterations;
-
-            // If we have multiple frames but no animation, set the frame count to 1.
-            // The idea is that images containing multiple resolutions should not have this information reflected in their animation info.
-
-            if (images.All(image => image.AnimationDelay <= 0))
-                frameCount = Math.Min(frameCount, 1);
-
-            return new AnimationInfo(frameCount, loopCount, frameDelay);
-
-        }
         private int GetWidth() {
 
             return images.FirstOrDefault()?.Width ?? 0;
@@ -152,6 +144,30 @@ namespace Gsemac.Drawing.Imaging {
         private int GetHeight() {
 
             return images.FirstOrDefault()?.Height ?? 0;
+
+        }
+
+        private TimeSpan GetAnimationDelay() {
+
+            return TimeSpan.FromMilliseconds(BaseImage.AnimationDelay * 10);
+
+        }
+        private int GetAnimationIterations() {
+
+            return BaseImage.AnimationIterations;
+
+        }
+        private int GetFrameCount() {
+
+            int frameCount = images.Count;
+
+            // If we have multiple frames but no animation, set the frame count to 1.
+            // The idea is that images containing multiple resolutions should not have this information reflected in their animation info.
+
+            if (images.All(image => image.AnimationDelay <= 0))
+                frameCount = Math.Min(frameCount, 1);
+
+            return frameCount;
 
         }
 

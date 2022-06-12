@@ -3,12 +3,10 @@
     public class ImageEncoderOptions :
         IImageEncoderOptions {
 
-        public const int BestQuality = 100;
-
         public static ImageEncoderOptions Default => new ImageEncoderOptions();
 
         public ImageOptimizationMode OptimizationMode { get; set; } = ImageOptimizationMode.None;
-        public int Quality { get; set; } = BestQuality;
+        public int Quality { get; set; } = ImageQuality.Best;
 
         public override bool Equals(object obj) {
 

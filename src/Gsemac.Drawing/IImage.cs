@@ -9,12 +9,15 @@ namespace Gsemac.Drawing {
     public interface IImage :
         IDisposable {
 
-        IAnimationInfo Animation { get; }
         int Width { get; }
         int Height { get; }
         Size Size { get; }
         IFileFormat Format { get; }
         IImageCodec Codec { get; }
+
+        TimeSpan AnimationDelay { get; }
+        int AnimationIterations { get; }
+        int FrameCount { get; }
 
         IEnumerable<IImage> GetFrames();
 

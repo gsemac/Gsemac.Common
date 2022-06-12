@@ -1,6 +1,4 @@
-﻿#if !NETFRAMEWORK
-
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Drawing;
 
 namespace Gsemac.Drawing.Tests {
@@ -68,5 +66,3 @@ namespace Gsemac.Drawing.Tests {
     }
 
 }
-
-#endif

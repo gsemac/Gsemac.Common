@@ -13,11 +13,14 @@ namespace Gsemac.Drawing.Imaging {
 
         // Public members
 
-        public override IAnimationInfo Animation { get; }
         public override int Width => image.Width;
         public override int Height => image.Height;
         public override IFileFormat Format { get; }
         public override IImageCodec Codec { get; }
+
+        public override TimeSpan AnimationDelay { get; } = TimeSpan.Zero;
+        public override int AnimationIterations { get; } = 0;
+        public override int FrameCount { get; } = 1;
 
         public GdiImage(Image originalImage, Image nonDeferredImage, IFileFormat imageFormat, IImageCodec imageCodec) {
 
@@ -32,9 +35,20 @@ namespace Gsemac.Drawing.Imaging {
 
             image = (Image)nonDeferredImage.Clone();
 
-            Animation = GetAnimationInfo(originalImage);
             Format = imageFormat;
             Codec = imageCodec ?? GetImageCodec(imageFormat);
+
+            FrameCount = GetFrameCount(originalImage);
+
+            if (FrameCount > 1) {
+
+                // These methods can throw due to GetPropertyItem, which throws if a given property item isn't found.
+                // However, by ensuring we have frames first, we should be guaranteed that they don't throw.
+
+                AnimationDelay = GetAnimationDelay(originalImage);
+                AnimationIterations = GetAnimationIterations(originalImage);
+
+            }
 
         }
         public GdiImage(Image originalImage, Image nonDeferredImage, IImageCodec imageCodec) :
@@ -92,35 +106,6 @@ namespace Gsemac.Drawing.Imaging {
         private readonly Image image;
         private bool disposedValue = false;
 
-        private static IAnimationInfo GetAnimationInfo(Image image) {
-
-            if (image is null)
-                throw new ArgumentNullException(nameof(image));
-
-            // Get the Time dimension specifically, as the other dimensions are not applicable to animation.
-
-            FrameDimension frameDimension = image.FrameDimensionsList
-                .Where(guid => guid == FrameDimension.Time.Guid)
-                .Select(guid => new FrameDimension(guid))
-                .FirstOrDefault();
-
-            if (frameDimension is null)
-                return AnimationInfo.Static;
-
-            int frameCount = image.GetFrameCount(frameDimension);
-
-            // Get the frame delay from the image properties.
-            // https://stackoverflow.com/a/3785231/5383169 (Denis Palnitsky)
-            // https://web.archive.org/web/20130820015012/http://madskristensen.net/post/Examine-animated-Gife28099s-in-C.aspx
-            // We can get the delay for each individual frame, but we'll only get the delay for the first frame (index 0).
-            // The delay will be in milliseconds.
-
-            int frameDelay = BitConverter.ToInt32(image.GetPropertyItem(PropertyTagFrameDelay).Value, 0) * 10;
-            int loopCount = BitConverter.ToInt16(image.GetPropertyItem(PropertyTagLoopCount).Value, 0);
-
-            return new AnimationInfo(frameCount, loopCount, TimeSpan.FromMilliseconds(frameDelay));
-
-        }
         private static IImageCodec GetImageCodec(IFileFormat imageFormat) {
 
             if (imageFormat is null)
@@ -148,6 +133,43 @@ namespace Gsemac.Drawing.Imaging {
                 return ImageFormat.Ico;
             else
                 return null;
+
+        }
+
+        private static TimeSpan GetAnimationDelay(Image image) {
+
+            // Get the frame delay from the image properties.
+            // https://stackoverflow.com/a/3785231/5383169 (Denis Palnitsky)
+            // https://web.archive.org/web/20130820015012/http://madskristensen.net/post/Examine-animated-Gife28099s-in-C.aspx
+            // We can get the delay for each individual frame, but we'll only get the delay for the first frame (index 0).
+            // The delay will be in milliseconds.
+
+            int frameDelay = BitConverter.ToInt32(image.GetPropertyItem(PropertyTagFrameDelay).Value, 0);
+
+            return TimeSpan.FromMilliseconds(frameDelay * 10);
+
+        }
+        private static int GetAnimationIterations(Image image) {
+
+            return BitConverter.ToInt16(image.GetPropertyItem(PropertyTagLoopCount).Value, 0);
+
+        }
+        private static int GetFrameCount(Image image) {
+
+            if (image is null)
+                throw new ArgumentNullException(nameof(image));
+
+            // Get the Time dimension specifically, as the other dimensions are not applicable to animation.
+
+            FrameDimension frameDimension = image.FrameDimensionsList
+                .Where(guid => guid == FrameDimension.Time.Guid)
+                .Select(guid => new FrameDimension(guid))
+                .FirstOrDefault();
+
+            if (frameDimension is null)
+                return 1;
+
+            return image.GetFrameCount(frameDimension);
 
         }
 

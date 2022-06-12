@@ -8,8 +8,7 @@ namespace Gsemac.Drawing.Imaging {
         // Public members
 
         public IFileFormat Format { get; set; }
-        public int? FrameIndex { get; set; }
-        public int? FrameCount { get; set; }
+        public ImageDecoderMode Mode { get; set; } = ImageDecoderMode.Full;
 
         public static ImageDecoderOptions Default => new ImageDecoderOptions();
 
@@ -17,8 +16,7 @@ namespace Gsemac.Drawing.Imaging {
         public ImageDecoderOptions(IImageDecoderOptions options) {
 
             Format = options.Format;
-            FrameIndex = options.FrameIndex;
-            FrameCount = options.FrameCount;
+            Mode = options.Mode;
 
         }
 

@@ -43,7 +43,7 @@ namespace Gsemac.Drawing.Imaging {
 
         public IImage Decode(Stream stream, IImageDecoderOptions options) {
 
-            return new MagickImage(stream, imageFormat, this);
+            return new MagickImage(stream, imageFormat, this, options);
 
         }
         public void Encode(IImage image, Stream stream, IImageEncoderOptions encoderOptions) {

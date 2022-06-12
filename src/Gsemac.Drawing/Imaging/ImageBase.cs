@@ -11,14 +11,15 @@ namespace Gsemac.Drawing.Imaging {
 
         // Public members
 
-        public virtual IAnimationInfo Animation => AnimationInfo.Static;
-
         public abstract int Width { get; }
         public abstract int Height { get; }
+        public Size Size => new Size(Width, Height);
         public abstract IFileFormat Format { get; }
         public abstract IImageCodec Codec { get; }
 
-        public Size Size => new Size(Width, Height);
+        public virtual TimeSpan AnimationDelay { get; } = TimeSpan.Zero;
+        public virtual int AnimationIterations { get; } = 0;
+        public virtual int FrameCount { get; } = 1;
 
         public virtual IEnumerable<IImage> GetFrames() {
 
