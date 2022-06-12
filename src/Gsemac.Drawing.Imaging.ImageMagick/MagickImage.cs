@@ -42,33 +42,51 @@ namespace Gsemac.Drawing.Imaging {
 
             MagickFormat magickFormat = ImageMagickUtilities.GetMagickFormatFromFileFormat(imageFormat);
 
-            // Read the initial image, and let ImageMagick figure out how to read it most efficiently.
-            // Attempting to use MagickImageCollection to just read the first frame works for some files,
-            // but only when the first frame contains complete image data (i.e. no diff information).
-
-            ImageMagick.MagickImage initialImage = new ImageMagick.MagickImage(stream, magickFormat);
-
-            // We have to reset the stream to do the ping after the read, or else ImageMagick complains about invalid image headers.
-            // Therefore we either need to read the entire image, or seek backwards (for seekable streams).
-
             MagickImageCollection images = new MagickImageCollection();
 
-            if (stream.CanSeek) {
+            MagickReadSettings readSettings = new MagickReadSettings() {
+                Format = magickFormat,
+            };
 
-                MagickReadSettings metadataReadSettings = new MagickReadSettings() {
-                    Format = magickFormat,
-                };
+            if (options.Mode == ImageDecoderMode.Metadata) {
 
-                stream.Seek(0, SeekOrigin.Begin);
+                // Just load the metadata from the image.
 
-                images.Ping(stream, metadataReadSettings);
+                images.Ping(stream, readSettings);
 
             }
+            else if (options.Mode == ImageDecoderMode.Static) {
 
-            // The initial image is inserted after the call to Ping so that it is not replaced.
-            // We don't have to worry about calling Dispose because MagickImageCollection's Dispose method calls Dispose on all images.
+                // Read the initial image, and let ImageMagick figure out how to read it most efficiently.
+                // Attempting to use MagickImageCollection to just read the first frame works for some files,
+                // but only when the first frame contains complete image data (i.e. no diff information).
 
-            images.Insert(0, initialImage);
+                ImageMagick.MagickImage initialImage = new ImageMagick.MagickImage(stream, magickFormat);
+
+                // We have to reset the stream to do the ping after the read, or else ImageMagick complains about invalid image headers.
+                // Therefore we either need to read the entire image, or seek backwards (for seekable streams). 
+
+                if (stream.CanSeek) {
+
+                    stream.Seek(0, SeekOrigin.Begin);
+
+                    images.Ping(stream, readSettings);
+
+                }
+
+                // The initial image is inserted after the call to Ping so that it is not replaced.
+                // We don't have to worry about calling Dispose because MagickImageCollection's Dispose method calls Dispose on all images.
+
+                images.Insert(0, initialImage);
+
+            }
+            else {
+
+                // Simply read the image fully, including all frames and metadata.
+
+                images.Read(stream, readSettings);
+
+            }
 
             this.images = images;
 
