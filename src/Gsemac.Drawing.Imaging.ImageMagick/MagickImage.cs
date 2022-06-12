@@ -17,9 +17,9 @@ namespace Gsemac.Drawing.Imaging {
         public override IFileFormat Format { get; }
         public override IImageCodec Codec { get; }
 
-        public override TimeSpan AnimationDelay => GetAnimationDelay();
-        public override int AnimationIterations => GetAnimationIterations();
-        public override int FrameCount => GetFrameCount();
+        public override TimeSpan AnimationDelay { get; } = TimeSpan.Zero;
+        public override int AnimationIterations { get; } = 0;
+        public override int FrameCount { get; } = 1;
 
         public MagickImage(Stream stream, IFileFormat imageFormat, IImageCodec codec) :
             this(stream, imageFormat, codec, ImageDecoderOptions.Default) {
@@ -42,6 +42,7 @@ namespace Gsemac.Drawing.Imaging {
 
             MagickFormat magickFormat = ImageMagickUtilities.GetMagickFormatFromFileFormat(imageFormat);
 
+            ImageMagick.MagickImage staticImage = null;
             MagickImageCollection images = new MagickImageCollection();
 
             MagickReadSettings readSettings = new MagickReadSettings() {
@@ -61,7 +62,7 @@ namespace Gsemac.Drawing.Imaging {
                 // Attempting to use MagickImageCollection to just read the first frame works for some files,
                 // but only when the first frame contains complete image data (i.e. no diff information).
 
-                ImageMagick.MagickImage initialImage = new ImageMagick.MagickImage(stream, magickFormat);
+                staticImage = new ImageMagick.MagickImage(stream, magickFormat);
 
                 // We have to reset the stream to do the ping after the read, or else ImageMagick complains about invalid image headers.
                 // Therefore we either need to read the entire image, or seek backwards (for seekable streams). 
@@ -74,11 +75,6 @@ namespace Gsemac.Drawing.Imaging {
 
                 }
 
-                // The initial image is inserted after the call to Ping so that it is not replaced.
-                // We don't have to worry about calling Dispose because MagickImageCollection's Dispose method calls Dispose on all images.
-
-                images.Insert(0, initialImage);
-
             }
             else {
 
@@ -88,7 +84,26 @@ namespace Gsemac.Drawing.Imaging {
 
             }
 
+            FrameCount = GetFrameCount(images);
+            AnimationDelay = GetAnimationDelay(images);
+            AnimationIterations = GetAnimationIterations(images);
+
+            if (staticImage is object) {
+
+                // The initial image is inserted after the call to Ping so that it is not replaced.
+                // We don't have to worry about calling Dispose because MagickImageCollection's Dispose method calls Dispose on all images.
+
+                images.Clear();
+                images.Insert(0, staticImage);
+
+            }
+
             this.images = images;
+
+            // If we weren't passed in an image format, try to figure it out from the MagickFormat.
+
+            if (imageFormat is null && images.Count > 0)
+                imageFormat = ImageMagickUtilities.GetFileFormatFromMagickFormat(images.First().Format);
 
             Format = imageFormat;
             Codec = codec;
@@ -113,7 +128,7 @@ namespace Gsemac.Drawing.Imaging {
 
         // Internal members
 
-        internal IMagickImage BaseImage => images.First();
+        internal MagickImageCollection BaseImages => images;
 
         // Protected members
 
@@ -165,17 +180,23 @@ namespace Gsemac.Drawing.Imaging {
 
         }
 
-        private TimeSpan GetAnimationDelay() {
+        private static TimeSpan GetAnimationDelay(MagickImageCollection images) {
 
-            return TimeSpan.FromMilliseconds(BaseImage.AnimationDelay * 10);
+            if (images.Count <= 0)
+                return TimeSpan.Zero;
 
-        }
-        private int GetAnimationIterations() {
-
-            return BaseImage.AnimationIterations;
+            return TimeSpan.FromMilliseconds(images.First().AnimationDelay * 10);
 
         }
-        private int GetFrameCount() {
+        private static int GetAnimationIterations(MagickImageCollection images) {
+
+            if (images.Count <= 0)
+                return 0;
+
+            return images.First().AnimationIterations;
+
+        }
+        private static int GetFrameCount(MagickImageCollection images) {
 
             int frameCount = images.Count;
 

@@ -1,4 +1,6 @@
-﻿using Gsemac.IO;
+﻿using Gsemac.Collections.Extensions;
+using Gsemac.IO;
+using Gsemac.IO.FileFormats;
 using ImageMagick;
 using System;
 using System.Collections.Generic;
@@ -10,71 +12,45 @@ namespace Gsemac.Drawing.Imaging {
 
         // Public members
 
-        public static MagickFormat GetMagickFormatFromFileExtension(string value) {
-
-            if (!string.IsNullOrEmpty(value)) {
-
-                IEnumerable<MagickFormat> formats = dict.Value
-                    .Where(pair => pair.Value == value)
-                    .Select(pair => pair.Key);
-
-                if (formats.Any())
-                    return formats.First();
-
-            }
-
-            return MagickFormat.Unknown;
-
-        }
         public static MagickFormat GetMagickFormatFromFileFormat(IFileFormat fileFormat) {
 
-            string fileExtension = fileFormat?.Extensions?.FirstOrDefault();
+            if (fileFormat is null)
+                return MagickFormat.Unknown;
 
-            if (!string.IsNullOrWhiteSpace(fileExtension))
-                return GetMagickFormatFromFileExtension(fileExtension);
+            if (formatDictionary.Value.Reverse().TryGetValue(fileFormat, out MagickFormat magickFormat))
+                return magickFormat;
 
             return MagickFormat.Unknown;
 
         }
-        public static string GetFileExtensionFromMagickFormat(MagickFormat magickFormat) {
+        public static IFileFormat GetFileFormatFromMagickFormat(MagickFormat magickFormat) {
 
-            if (dict.Value.TryGetValue(magickFormat, out string value))
-                return value;
+            if (formatDictionary.Value.TryGetValue(magickFormat, out IFileFormat fileFormat))
+                return fileFormat;
 
-            return string.Empty;
-
-        }
-
-        public static IEnumerable<MagickFormat> GetMagickFormats() {
-
-            return dict.Value.Keys;
-
-        }
-        public static IEnumerable<string> GetFileExtensions() {
-
-            return dict.Value.Values;
+            return null;
 
         }
 
         // Private members
 
-        private static readonly Lazy<IDictionary<MagickFormat, string>> dict = new Lazy<IDictionary<MagickFormat, string>>(CreateDict);
+        private static readonly Lazy<IDictionary<MagickFormat, IFileFormat>> formatDictionary = new Lazy<IDictionary<MagickFormat, IFileFormat>>(CreateFormatDictionary);
 
-        private static IDictionary<MagickFormat, string> CreateDict() {
+        private static IDictionary<MagickFormat, IFileFormat> CreateFormatDictionary() {
 
-            return new Dictionary<MagickFormat, string>{
-                { MagickFormat.Avif, ".avif" },
-                { MagickFormat.Bmp, ".bmp" },
-                { MagickFormat.Gif, ".gif" },
-                { MagickFormat.Ico, ".ico" },
-                { MagickFormat.Jpeg, ".jpeg" },
-                { MagickFormat.Jpg, ".jpg" },
-                { MagickFormat.Jxl, ".jxl" },
-                { MagickFormat.Png, ".png" },
-                { MagickFormat.Tif, ".tif" },
-                { MagickFormat.Tiff, ".tiff" },
-                { MagickFormat.WebP, ".webp" },
-                { MagickFormat.Wmf, ".wmf" },
+            return new Dictionary<MagickFormat, IFileFormat>{
+                { MagickFormat.Avif, ImageFormat.Avif },
+                { MagickFormat.Bmp, ImageFormat.Bmp },
+                { MagickFormat.Gif, ImageFormat.Gif },
+                { MagickFormat.Ico, ImageFormat.Ico },
+                { MagickFormat.Jpeg, ImageFormat.Jpeg },
+                { MagickFormat.Jpg, ImageFormat.Jpeg },
+                { MagickFormat.Jxl, ImageFormat.Jxl },
+                { MagickFormat.Png, ImageFormat.Png },
+                { MagickFormat.Tif, ImageFormat.Tiff },
+                { MagickFormat.Tiff, ImageFormat.Tiff },
+                { MagickFormat.WebP, ImageFormat.WebP },
+                { MagickFormat.Wmf, ImageFormat.Wmf },
             };
 
         }

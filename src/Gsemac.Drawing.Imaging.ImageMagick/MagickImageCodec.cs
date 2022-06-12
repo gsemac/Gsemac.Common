@@ -43,16 +43,31 @@ namespace Gsemac.Drawing.Imaging {
 
         public IImage Decode(Stream stream, IImageDecoderOptions options) {
 
+            if (stream is null)
+                throw new ArgumentNullException(nameof(stream));
+
+            if (options is null)
+                throw new ArgumentNullException(nameof(options));
+
             return new MagickImage(stream, imageFormat, this, options);
 
         }
         public void Encode(IImage image, Stream stream, IImageEncoderOptions encoderOptions) {
 
+            if (image is null)
+                throw new ArgumentNullException(nameof(image));
+
+            if (stream is null)
+                throw new ArgumentNullException(nameof(stream));
+
+            if (encoderOptions is null)
+                throw new ArgumentNullException(nameof(encoderOptions));
+
             if (image is MagickImage magickImage) {
 
                 // If the image is aleady a MagickImage, we can save it directly.
 
-                Save(magickImage.BaseImage, stream, encoderOptions);
+                Save(magickImage.BaseImages, stream, encoderOptions);
 
             }
             else {
@@ -72,7 +87,7 @@ namespace Gsemac.Drawing.Imaging {
                     ms.Seek(0, SeekOrigin.Begin);
 
                     using (magickImage = new MagickImage(ms, imageFormat, this))
-                        Save(magickImage.BaseImage, stream, encoderOptions);
+                        Save(magickImage.BaseImages, stream, encoderOptions);
 
                 }
 
@@ -106,23 +121,42 @@ namespace Gsemac.Drawing.Imaging {
         }
         private static MagickFormat GetMagickFormatForFileExtension(string fileExtension) {
 
-            MagickFormat? key = ImageMagickUtilities.GetMagickFormatFromFileExtension(fileExtension.ToLowerInvariant());
+            IFileFormat fileFormat = FileFormatFactory.Default.FromFileExtension(fileExtension);
+            MagickFormat magickFormat = ImageMagickUtilities.GetMagickFormatFromFileFormat(fileFormat);
 
-            if (!key.HasValue)
+            if (magickFormat == MagickFormat.Unknown)
                 throw new FileFormatException(IO.Properties.ExceptionMessages.UnsupportedFileFormat);
 
-            return key.Value;
+            return magickFormat;
 
         }
 
-        private void Save(IMagickImage magickImage, Stream stream, IImageEncoderOptions encoderOptions) {
+        private void Save(MagickImageCollection images, Stream stream, IImageEncoderOptions options) {
 
-            if (imageFormat is object)
-                magickImage.Format = GetMagickFormatForFileExtension(imageFormat.Extensions.FirstOrDefault());
+            if (images is null)
+                throw new ArgumentNullException(nameof(images));
 
-            magickImage.Quality = encoderOptions.Quality;
+            if (stream is null)
+                throw new ArgumentNullException(nameof(stream));
 
-            magickImage.Write(stream);
+            if (options is null)
+                throw new ArgumentNullException(nameof(options));
+
+            foreach (IMagickImage image in images)
+                image.Quality = options.Quality;
+
+            if (imageFormat is object) {
+
+                MagickFormat format = GetMagickFormatForFileExtension(imageFormat.Extensions.FirstOrDefault());
+
+                images.Write(stream, format);
+
+            }
+            else {
+
+                images.Write(stream);
+
+            }
 
         }
 

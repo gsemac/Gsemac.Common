@@ -1,6 +1,7 @@
 using Gsemac.Drawing.Extensions;
 using Gsemac.Drawing.Imaging.Extensions;
 using Gsemac.Drawing.Tests.Properties;
+using Gsemac.IO.FileFormats;
 using Gsemac.Win32;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
@@ -112,8 +113,37 @@ namespace Gsemac.Drawing.Imaging.Tests {
                 Assert.IsFalse(image.IsAnimated());
         }
 
+        [TestMethod]
+        public void TestImageFormatIsValidAfterConvertingToDifferentImageFormat() {
+
+            using (Stream outputStream = new MemoryStream()) {
+
+                using (IImage image = ImageFromFile("static.png"))
+                    image.Save(outputStream, ImageFormat.Jpeg);
+
+                outputStream.Seek(0, SeekOrigin.Begin);
+
+                using (IImage image = ImageFromStream(outputStream)) {
+
+                    Assert.IsNotNull(image);
+
+                    Assert.AreEqual(ImageFormat.Jpeg, image.Format);
+
+                }
+
+            }
+
+        }
+
         // Private members
 
+        private static IImage ImageFromStream(Stream stream) {
+
+            IImageCodec codec = new GdiImageCodec();
+
+            return codec.Decode(stream);
+
+        }
         private static IImage ImageFromFile(string fileName) {
 
             IImageCodec codec = new GdiImageCodec();

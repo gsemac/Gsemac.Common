@@ -95,7 +95,6 @@ namespace Gsemac.Drawing.Imaging.ImageMagick.Tests {
             }
 
         }
-
         [TestMethod]
         public void TestAnimationInfoIsValidAfterConvertingAnimatedWebPToAnimatedGif() {
 
@@ -112,9 +111,32 @@ namespace Gsemac.Drawing.Imaging.ImageMagick.Tests {
 
                     Assert.IsNotNull(image);
 
+                    Assert.AreEqual(ImageFormat.Gif, image.Format);
                     Assert.AreEqual(TimeSpan.FromMilliseconds(200), image.AnimationDelay);
                     Assert.AreEqual(3, image.FrameCount);
                     Assert.AreEqual(0, image.AnimationIterations);
+
+                }
+
+            }
+
+        }
+
+        [TestMethod]
+        public void TestImageFormatIsValidAfterConvertingToDifferentImageFormat() {
+
+            using (Stream outputStream = new MemoryStream()) {
+
+                using (IImage image = ImageFromFile("static.webp"))
+                    image.Save(outputStream, ImageFormat.Gif);
+
+                outputStream.Seek(0, SeekOrigin.Begin);
+
+                using (IImage image = ImageFromStream(outputStream)) {
+
+                    Assert.IsNotNull(image);
+
+                    Assert.AreEqual(ImageFormat.Gif, image.Format);
 
                 }
 

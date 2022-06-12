@@ -1,7 +1,6 @@
 ﻿using Gsemac.Drawing.Imaging;
 using Gsemac.IO;
 using System;
-using System.Collections.Generic;
 using System.Drawing;
 
 namespace Gsemac.Drawing {
@@ -18,8 +17,6 @@ namespace Gsemac.Drawing {
         TimeSpan AnimationDelay { get; }
         int AnimationIterations { get; }
         int FrameCount { get; }
-
-        IEnumerable<IImage> GetFrames();
 
         IImage Clone();
 
