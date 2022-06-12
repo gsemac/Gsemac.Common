@@ -27,13 +27,13 @@ namespace Gsemac.Drawing.Imaging {
 
         }
 
-        public void Encode(IImage image, Stream stream, IImageEncoderOptions encoderOptions) {
+        public void Encode(IImage image, Stream stream, IEncoderOptions encoderOptions) {
 
             using (Bitmap bitmap = image.ToBitmap())
                 EncodeWebPBitmap(bitmap, stream, encoderOptions);
 
         }
-        public IImage Decode(Stream stream, IImageDecoderOptions options) {
+        public IImage Decode(Stream stream, IDecoderOptions options) {
 
             byte[] webPData = stream.ToArray();
 
@@ -58,10 +58,10 @@ namespace Gsemac.Drawing.Imaging {
 
         }
 
-        private void EncodeWebPBitmap(Bitmap bitmap, Stream stream, IImageEncoderOptions encoderOptions) {
+        private void EncodeWebPBitmap(Bitmap bitmap, Stream stream, IEncoderOptions encoderOptions) {
 
             bool useLosslessEncoding = encoderOptions.Quality >= 100 ||
-                encoderOptions.OptimizationMode == ImageOptimizationMode.Lossless;
+                encoderOptions.OptimizationMode == OptimizationMode.Lossless;
 
             using (WebP encoder = new WebP())
             using (MemoryStream webPStream = new MemoryStream(useLosslessEncoding ? encoder.EncodeLossless(bitmap) : encoder.EncodeLossy(bitmap, encoderOptions.Quality)))

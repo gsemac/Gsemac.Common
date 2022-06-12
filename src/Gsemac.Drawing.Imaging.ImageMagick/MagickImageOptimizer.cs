@@ -17,22 +17,22 @@ namespace Gsemac.Drawing.Imaging {
 
         }
 
-        public bool Optimize(Stream stream, ImageOptimizationMode optimizationMode) {
+        public bool Optimize(Stream stream, OptimizationMode optimizationMode) {
 
             if (stream.CanSeek && stream.CanRead) {
 
-                if (optimizationMode != ImageOptimizationMode.None) {
+                if (optimizationMode != OptimizationMode.None) {
 
                     ImageMagick.ImageOptimizer optimizer = new ImageMagick.ImageOptimizer {
                         IgnoreUnsupportedFormats = true
                     };
 
-                    if (optimizationMode == ImageOptimizationMode.Maximum)
+                    if (optimizationMode == OptimizationMode.Maximum)
                         optimizer.OptimalCompression = true;
 
                     bool result;
 
-                    if (optimizationMode == ImageOptimizationMode.Lossless)
+                    if (optimizationMode == OptimizationMode.Lossless)
                         result = optimizer.LosslessCompress(stream);
                     else
                         result = optimizer.Compress(stream);

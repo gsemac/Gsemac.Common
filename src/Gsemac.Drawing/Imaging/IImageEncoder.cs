@@ -6,7 +6,7 @@ namespace Gsemac.Drawing.Imaging {
     public interface IImageEncoder :
         IHasSupportedFileFormats {
 
-        void Encode(IImage image, Stream stream, IImageEncoderOptions options);
+        void Encode(IImage image, Stream stream, IEncoderOptions options);
 
     }
 

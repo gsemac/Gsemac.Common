@@ -24,7 +24,7 @@ namespace Gsemac.Drawing.Imaging {
 
         }
 
-        public bool Optimize(Stream stream, ImageOptimizationMode optimizationMode) {
+        public bool Optimize(Stream stream, OptimizationMode optimizationMode) {
 
             if (stream.CanRead && stream.CanSeek) {
 

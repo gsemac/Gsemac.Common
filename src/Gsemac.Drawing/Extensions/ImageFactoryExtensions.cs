@@ -13,10 +13,10 @@ namespace Gsemac.Drawing.Extensions {
 
         public static IImage FromFile(this IImageFactory imageFactory, string filePath) {
 
-            return FromFile(imageFactory, filePath, ImageDecoderOptions.Default);
+            return FromFile(imageFactory, filePath, DecoderOptions.Default);
 
         }
-        public static IImage FromFile(this IImageFactory imageFactory, string filePath, IImageDecoderOptions options) {
+        public static IImage FromFile(this IImageFactory imageFactory, string filePath, IDecoderOptions options) {
 
             if (imageFactory is null)
                 throw new ArgumentNullException(nameof(imageFactory));
@@ -26,7 +26,7 @@ namespace Gsemac.Drawing.Extensions {
 
             if (options.Format is null) {
 
-                options = new ImageDecoderOptions(options) {
+                options = new DecoderOptions(options) {
                     Format = FileFormatFactory.Default.FromFile(filePath),
                 };
 
@@ -44,7 +44,7 @@ namespace Gsemac.Drawing.Extensions {
             if (stream is null)
                 throw new ArgumentNullException(nameof(stream));
 
-            return imageFactory.FromStream(stream, ImageDecoderOptions.Default);
+            return imageFactory.FromStream(stream, DecoderOptions.Default);
 
         }
 

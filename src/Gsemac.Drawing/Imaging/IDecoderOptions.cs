@@ -2,10 +2,10 @@
 
 namespace Gsemac.Drawing.Imaging {
 
-    public interface IImageDecoderOptions {
+    public interface IDecoderOptions {
 
         IFileFormat Format { get; }
-        ImageDecoderMode Mode { get; }
+        DecoderMode Mode { get; }
 
     }
 

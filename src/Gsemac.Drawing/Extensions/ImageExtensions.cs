@@ -1,9 +1,9 @@
 ﻿using Gsemac.Drawing.Imaging;
 using Gsemac.IO;
-using Gsemac.IO.Extensions;
 using System;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 
 namespace Gsemac.Drawing.Extensions {
 
@@ -22,15 +22,15 @@ namespace Gsemac.Drawing.Extensions {
 
         public static void Save(this IImage image, Stream stream) {
 
-            image.Codec.Encode(image, stream, ImageEncoderOptions.Default);
+            image.Codec.Encode(image, stream, EncoderOptions.Default);
 
         }
-        public static void Save(this IImage image, Stream stream, IFileFormat imageFormat) {
+        public static void Save(this IImage image, Stream stream, IFileFormat format) {
 
-            image.Save(stream, imageFormat, ImageEncoderOptions.Default);
+            image.Save(stream, format, EncoderOptions.Default);
 
         }
-        public static void Save(this IImage image, Stream stream, IFileFormat imageFormat, IImageEncoderOptions encoderOptions) {
+        public static void Save(this IImage image, Stream stream, IFileFormat format, IEncoderOptions options) {
 
             if (image is null)
                 throw new ArgumentNullException(nameof(image));
@@ -38,32 +38,28 @@ namespace Gsemac.Drawing.Extensions {
             if (stream is null)
                 throw new ArgumentNullException(nameof(stream));
 
-            if (imageFormat is null)
-                throw new ArgumentNullException(nameof(imageFormat));
+            if (format is null)
+                throw new ArgumentNullException(nameof(format));
 
-            if (encoderOptions is null)
-                throw new ArgumentNullException(nameof(encoderOptions));
+            if (options is null)
+                throw new ArgumentNullException(nameof(options));
 
-            // Attempt to use the same codec the image was created with if it supports the given image format.
-
-            IImageEncoder encoder = (image.Codec is object && image.Codec.IsSupportedFileFormat(imageFormat)) ?
-                image.Codec :
-                ImageCodecFactory.Default.FromFileFormat(imageFormat);
+            IImageEncoder encoder = ImageCodecFactory.Default.FromFileFormat(format);
 
             if (encoder is null)
                 throw new FileFormatException(IO.Properties.ExceptionMessages.UnsupportedFileFormat);
 
-            encoder.Encode(image, stream, encoderOptions);
+            encoder.Encode(image, stream, options);
 
-            if (stream.CanSeek && encoderOptions.OptimizationMode != ImageOptimizationMode.None) {
+            if (stream.CanSeek && options.OptimizationMode != OptimizationMode.None) {
 
-                IImageOptimizer imageOptimizer = ImageOptimizerFactory.Default.FromFileFormat(imageFormat);
+                IImageOptimizer imageOptimizer = ImageOptimizerFactory.Default.FromFileFormat(format);
 
-                if (!(imageOptimizer is null)) {
+                if (imageOptimizer is object) {
 
                     stream.Seek(0, SeekOrigin.Begin);
 
-                    imageOptimizer.Optimize(stream, encoderOptions.OptimizationMode);
+                    imageOptimizer.Optimize(stream, options.OptimizationMode);
 
                 }
 
@@ -73,25 +69,25 @@ namespace Gsemac.Drawing.Extensions {
 
         public static void Save(this IImage image, string filePath) {
 
-            image.Save(filePath, ImageEncoderOptions.Default);
+            image.Save(filePath, EncoderOptions.Default);
 
         }
-        public static void Save(this IImage image, string filePath, IFileFormat imageFormat) {
+        public static void Save(this IImage image, string filePath, IFileFormat format) {
 
-            image.Save(filePath, imageFormat, ImageEncoderOptions.Default);
+            image.Save(filePath, format, EncoderOptions.Default);
 
         }
-        public static void Save(this IImage image, string filePath, IImageEncoderOptions encoderOptions) {
+        public static void Save(this IImage image, string filePath, IEncoderOptions options) {
 
             IFileFormat imageFormat = FileFormatFactory.Default.FromFileExtension(filePath);
 
             if (imageFormat is null)
                 throw new FileFormatException(IO.Properties.ExceptionMessages.UnsupportedFileFormat);
 
-            image.Save(filePath, imageFormat, encoderOptions);
+            image.Save(filePath, imageFormat, options);
 
         }
-        public static void Save(this IImage image, string filePath, IFileFormat imageFormat, IImageEncoderOptions encoderOptions) {
+        public static void Save(this IImage image, string filePath, IFileFormat format, IEncoderOptions options) {
 
             if (image is null)
                 throw new ArgumentNullException(nameof(image));
@@ -99,14 +95,17 @@ namespace Gsemac.Drawing.Extensions {
             if (filePath is null)
                 throw new ArgumentNullException(nameof(filePath));
 
-            if (imageFormat is null)
-                throw new ArgumentNullException(nameof(imageFormat));
+            if (format is null)
+                throw new ArgumentNullException(nameof(format));
 
-            if (encoderOptions is null)
-                throw new ArgumentNullException(nameof(encoderOptions));
+            if (options is null)
+                throw new ArgumentNullException(nameof(options));
+
+            if (options.AddFileExtension && format.Extensions.Any() && !format.Extensions.Any(ext => filePath.EndsWith(ext, StringComparison.OrdinalIgnoreCase)))
+                filePath += format.Extensions.First();
 
             using (FileStream stream = File.Open(filePath, FileMode.OpenOrCreate))
-                image.Save(stream, imageFormat, encoderOptions);
+                image.Save(stream, format, options);
 
         }
 

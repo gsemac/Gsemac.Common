@@ -4,7 +4,7 @@ namespace Gsemac.Drawing.Imaging.Extensions {
 
     public static class ImageOptimizerExtensions {
 
-        public static bool Optimize(this IImageOptimizer imageOptimizer, string inputFilePath, string outputFilePath, ImageOptimizationMode optimizationMode) {
+        public static bool Optimize(this IImageOptimizer imageOptimizer, string inputFilePath, string outputFilePath, OptimizationMode optimizationMode) {
 
             using (MemoryStream ms = new MemoryStream()) {
 

@@ -11,15 +11,15 @@ namespace Gsemac.Drawing.Imaging.Extensions {
 
         public static void Encode(this IImageEncoder encoder, IImage image, Stream stream) {
 
-            encoder.Encode(image, stream, ImageEncoderOptions.Default);
+            encoder.Encode(image, stream, EncoderOptions.Default);
 
         }
         public static void Encode(this IImageEncoder encoder, IImage image, string filePath) {
 
-            encoder.Encode(image, filePath, ImageEncoderOptions.Default);
+            encoder.Encode(image, filePath, EncoderOptions.Default);
 
         }
-        public static void Encode(this IImageEncoder encoder, IImage image, string filePath, IImageEncoderOptions options) {
+        public static void Encode(this IImageEncoder encoder, IImage image, string filePath, IEncoderOptions options) {
 
             if (encoder is null)
                 throw new ArgumentNullException(nameof(encoder));
@@ -46,15 +46,15 @@ namespace Gsemac.Drawing.Imaging.Extensions {
             if (stream is null)
                 throw new ArgumentNullException(nameof(stream));
 
-            return decoder.Decode(stream, ImageDecoderOptions.Default);
+            return decoder.Decode(stream, DecoderOptions.Default);
 
         }
         public static IImage Decode(this IImageDecoder decoder, string filePath) {
 
-            return Decode(decoder, filePath, ImageDecoderOptions.Default);
+            return Decode(decoder, filePath, DecoderOptions.Default);
 
         }
-        public static IImage Decode(this IImageDecoder decoder, string filePath, IImageDecoderOptions options) {
+        public static IImage Decode(this IImageDecoder decoder, string filePath, IDecoderOptions options) {
 
             if (decoder is null)
                 throw new ArgumentNullException(nameof(decoder));

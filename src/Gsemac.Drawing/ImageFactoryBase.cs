@@ -18,7 +18,7 @@ namespace Gsemac.Drawing {
 
         }
 
-        public IImage FromStream(Stream stream, IImageDecoderOptions options) {
+        public IImage FromStream(Stream stream, IDecoderOptions options) {
 
             if (stream is null)
                 throw new ArgumentNullException(nameof(stream));
