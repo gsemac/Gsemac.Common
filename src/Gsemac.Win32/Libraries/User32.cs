@@ -17,6 +17,16 @@ namespace Gsemac.Win32 {
             return DestroyIconNative(hIcon);
 
         }
+        public static bool ExitWindowsEx(uint uFlags, uint dwReason) {
+
+            return ExitWindowsExNative(uFlags, dwReason);
+
+        }
+        public static bool LockWorkStation() {
+
+            return LockWorkStationNative();
+
+        }
         public static bool ReleaseCapture() {
 
             return ReleaseCaptureNative();
@@ -54,6 +64,10 @@ namespace Gsemac.Win32 {
         private static extern IntPtr GetDCNative(IntPtr hwnd);
         [DllImport("user32", EntryPoint = "DestroyIcon", SetLastError = true)]
         private static extern bool DestroyIconNative(IntPtr hIcon);
+        [DllImport("user32", EntryPoint = "ExitWindowsEx", SetLastError = true)]
+        private static extern bool ExitWindowsExNative(uint uFlags, uint dwReason);
+        [DllImport("user32", EntryPoint = "LockWorkStation", SetLastError = true)]
+        private static extern bool LockWorkStationNative();
         [DllImport("user32", EntryPoint = "ReleaseCapture")]
         public static extern bool ReleaseCaptureNative();
         [DllImport("user32", EntryPoint = "ReleaseDC")]
