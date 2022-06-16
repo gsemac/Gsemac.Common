@@ -5,22 +5,22 @@ namespace Gsemac.Win32 {
 
     [StructLayout(LayoutKind.Sequential)]
     public struct HDItemA {
-        public uint Mask;
-        public int Cxy;
+        public uint mask;
+        public int cxy;
         [MarshalAs(UnmanagedType.LPTStr)]
-        public string PszText;
-        public IntPtr Hbm;
-        public int CchTextMax;
-        public int Fmt;
-        public IntPtr LParam;
-        public int IImage;
-        public int IOrder;
-        public uint Type;
-        public IntPtr PvFilter;
-        public uint State;
+        public string pszText;
+        public IntPtr hbm;
+        public int cchTextMax;
+        public int fmt;
+        public IntPtr lParam;
+        public int iImage;
+        public int iOrder;
+        public uint type;
+        public IntPtr pvFilter;
+        public uint state;
     }
 
-    public static class Comctl32 {
+    public static partial class Defines {
 
         public const int HDF_SORTUP = 0x0400;
         public const int HDF_SORTDOWN = 0x0200;

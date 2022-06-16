@@ -6,8 +6,6 @@ namespace Gsemac.Win32 {
 
         // Public members
 
-        public static int ATTACH_PARENT_PROCESS = -1;
-
         public static bool AddDllDirectory(string newDirectory) {
 
             return AddDllDirectoryNative(newDirectory);
@@ -28,6 +26,11 @@ namespace Gsemac.Win32 {
             return FreeConsoleNative();
 
         }
+        public static bool MoveFileW(string lpExistingFileName, string lpNewFileName) {
+
+            return MoveFileWNative(lpExistingFileName, lpNewFileName);
+
+        }
         public static bool SetDllDirectory(string lpPathName) {
 
             return SetDllDirectoryNative(lpPathName);
@@ -44,6 +47,8 @@ namespace Gsemac.Win32 {
         private static extern bool AttachConsoleNative(int dwProcessId);
         [DllImport("kernel32", EntryPoint = "FreeConsole", SetLastError = true)]
         private static extern bool FreeConsoleNative();
+        [DllImport("kernel32", EntryPoint = "MoveFileW", CharSet = CharSet.Unicode, SetLastError = true)]
+        private static extern bool MoveFileWNative(string lpExistingFileName, string lpNewFileName);
         [DllImport("kernel32", EntryPoint = "SetDllDirectory", CharSet = CharSet.Unicode, SetLastError = true)]
         private static extern bool SetDllDirectoryNative(string lpPathName);
 

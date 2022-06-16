@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 
-namespace Gsemac.Win32 {
+namespace Gsemac.Win32.Managed {
 
     public class WindowsExplorerSortComparer :
         IComparer,

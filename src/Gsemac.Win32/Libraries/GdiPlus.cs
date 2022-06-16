@@ -1,11 +1,9 @@
 ﻿using System;
-using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 
 namespace Gsemac.Win32 {
 
     [Flags]
-    [SuppressMessage("Naming", "CA1712:Do not prefix enum values with type name", Justification = "The names are written to be identical to those in gdiplusenums.h.")]
     public enum EmfToWmfBitsFlags {
         EmfToWmfBitsFlagsDefault = 0x00000000,
         EmfToWmfBitsFlagsEmbedEmf = 0x00000001,

@@ -3,6 +3,7 @@ using System;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
+using static Gsemac.Win32.Defines;
 
 namespace Gsemac.Forms {
 
@@ -95,7 +96,7 @@ namespace Gsemac.Forms {
 
                 User32.ReleaseCapture();
 
-                User32.SendMessage((sender as Form).Handle, User32.WM_NCLBUTTONDOWN, (IntPtr)User32.HTCAPTION, (IntPtr)0);
+                User32.SendMessage((sender as Form).Handle, WM_NCLBUTTONDOWN, (IntPtr)HTCAPTION, (IntPtr)0);
 
             }
 

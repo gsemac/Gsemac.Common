@@ -7,9 +7,6 @@ namespace Gsemac.Win32 {
 
         // Public members
 
-        public static int MM_ISOTROPIC = 7;
-        public static int MM_ANISOTROPIC = 8;
-
         public static IntPtr CopyMetaFile(IntPtr hmf, string filename) {
 
             return CopyMetaFileNative(hmf, filename);

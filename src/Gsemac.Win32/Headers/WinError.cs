@@ -1,6 +1,6 @@
 ﻿namespace Gsemac.Win32 {
 
-    public static class WinError {
+    public static partial class Defines {
 
         /// <summary>
         /// The disk is full.

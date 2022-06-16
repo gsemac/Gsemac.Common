@@ -8,6 +8,7 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
+using static Gsemac.Win32.Defines;
 
 namespace Gsemac.Drawing.Imaging {
 
@@ -172,10 +173,10 @@ namespace Gsemac.Drawing.Imaging {
 
                 IntPtr hEmf = metafile.GetHenhmetafile();
 
-                uint bufferSize = GdiPlus.GdipEmfToWmfBits(hEmf, 0, null, Gdi32.MM_ANISOTROPIC, EmfToWmfBitsFlags.EmfToWmfBitsFlagsDefault);
+                uint bufferSize = GdiPlus.GdipEmfToWmfBits(hEmf, 0, null, MM_ANISOTROPIC, EmfToWmfBitsFlags.EmfToWmfBitsFlagsDefault);
                 byte[] buffer = new byte[bufferSize];
 
-                GdiPlus.GdipEmfToWmfBits(hEmf, bufferSize, buffer, Gdi32.MM_ANISOTROPIC, EmfToWmfBitsFlags.EmfToWmfBitsFlagsDefault);
+                GdiPlus.GdipEmfToWmfBits(hEmf, bufferSize, buffer, MM_ANISOTROPIC, EmfToWmfBitsFlags.EmfToWmfBitsFlagsDefault);
 
                 Gdi32.DeleteEnhMetaFile(hEmf);
 

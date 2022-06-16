@@ -3,6 +3,7 @@ using System;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows.Forms;
+using static Gsemac.Win32.Defines;
 
 namespace Gsemac.Forms {
 
@@ -48,7 +49,7 @@ namespace Gsemac.Forms {
             // This prevents us from adding the event handler twice.
 
             listView.ColumnClick -= ListViewColumnClickEventHandler;
-            
+
             if (enabled) {
 
                 foreach (var pair in listView.Items.Cast<ListViewItem>().Select((item, index) => Tuple.Create(item, index))) {
@@ -89,38 +90,38 @@ namespace Gsemac.Forms {
         }
         private static void SetNativeColumnSortIcon(ListView listView, int column, SortOrder sortOrder) {
 
-            IntPtr columnHeader = User32.SendMessage(listView.Handle, Comctl32.LVM_GETHEADER, IntPtr.Zero, IntPtr.Zero);
+            IntPtr columnHeader = User32.SendMessage(listView.Handle, LVM_GETHEADER, IntPtr.Zero, IntPtr.Zero);
 
             for (int columnIndex = 0; columnIndex < listView.Columns.Count; ++columnIndex) {
 
                 var columnPtr = new IntPtr(columnIndex);
 
                 HDItemA item = new HDItemA() {
-                    Mask = Comctl32.HDI_FORMAT,
+                    mask = HDI_FORMAT,
                 };
 
-                if (User32.SendMessage(columnHeader, Comctl32.HDM_GETITEM, columnPtr, ref item) == IntPtr.Zero)
+                if (User32.SendMessage(columnHeader, HDM_GETITEM, columnPtr, ref item) == IntPtr.Zero)
                     throw new Win32Exception();
 
-                item.Fmt &= ~Comctl32.HDF_SORTDOWN & ~Comctl32.HDF_SORTUP;
+                item.fmt &= ~HDF_SORTDOWN & ~HDF_SORTUP;
 
                 if (sortOrder != SortOrder.None && columnIndex == column) {
 
                     switch (sortOrder) {
 
                         case SortOrder.Ascending:
-                            item.Fmt |= Comctl32.HDF_SORTUP;
+                            item.fmt |= HDF_SORTUP;
                             break;
 
                         case SortOrder.Descending:
-                            item.Fmt |= Comctl32.HDF_SORTDOWN;
+                            item.fmt |= HDF_SORTDOWN;
                             break;
 
                     }
 
                 }
 
-                if (User32.SendMessage(columnHeader, Comctl32.HDM_SETITEM, columnPtr, ref item) == IntPtr.Zero)
+                if (User32.SendMessage(columnHeader, HDM_SETITEM, columnPtr, ref item) == IntPtr.Zero)
                     throw new Win32Exception();
 
             }
