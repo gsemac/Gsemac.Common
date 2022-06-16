@@ -11,6 +11,9 @@ using System.Linq;
 
 namespace Gsemac.Drawing.Imaging {
 
+#if !NETFRAMEWORK
+    [RequiresAssemblies("System.Drawing.Common")]
+#endif
     public class GdiImageCodec :
         PluginBase,
         IImageCodec {
