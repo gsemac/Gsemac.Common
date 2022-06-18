@@ -1,6 +1,6 @@
 ﻿using System.Runtime.InteropServices;
 
-namespace Gsemac.Win32 {
+namespace Gsemac.Win32.Native {
 
     public static class Shlwapi {
 

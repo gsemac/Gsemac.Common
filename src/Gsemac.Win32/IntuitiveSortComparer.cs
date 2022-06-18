@@ -1,10 +1,14 @@
-﻿using System.Collections;
+﻿using Gsemac.Win32.Native;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 
-namespace Gsemac.Win32.Managed {
+namespace Gsemac.Win32 {
 
-    public class WindowsExplorerSortComparer :
+    /// <summary>
+    /// Sorts strings (i.e. filenames) according to the "Intuitive or Numerical" sorting method used by Windows Explorer using <see cref="Shlwapi.StrCmpLogicalW"/>.
+    /// </summary>
+    public class IntuitiveSortComparer :
         IComparer,
         IComparer<string>,
         IComparer<FileInfo> {

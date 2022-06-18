@@ -2,7 +2,7 @@ using Gsemac.Drawing.Extensions;
 using Gsemac.Drawing.Imaging.Extensions;
 using Gsemac.Drawing.Tests.Properties;
 using Gsemac.IO.FileFormats;
-using Gsemac.Win32;
+using Gsemac.Win32.Native;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Drawing;

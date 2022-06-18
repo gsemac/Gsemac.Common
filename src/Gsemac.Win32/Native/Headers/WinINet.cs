@@ -1,4 +1,4 @@
-﻿namespace Gsemac.Win32.Headers {
+﻿namespace Gsemac.Win32.Native {
 
     public static partial class Defines {
 

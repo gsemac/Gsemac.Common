@@ -1,9 +1,9 @@
-﻿using Gsemac.Win32;
+﻿using Gsemac.Win32.Native;
 using System;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows.Forms;
-using static Gsemac.Win32.Defines;
+using static Gsemac.Win32.Native.Defines;
 
 namespace Gsemac.Forms {
 

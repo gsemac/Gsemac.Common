@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 
-namespace Gsemac.Win32 {
+namespace Gsemac.Win32.Native {
 
     [StructLayout(LayoutKind.Sequential)]
     public struct HDItemA {

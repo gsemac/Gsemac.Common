@@ -1,14 +1,14 @@
 ﻿using Gsemac.IO;
 using Gsemac.IO.Extensions;
 using Gsemac.Reflection.Plugins;
-using Gsemac.Win32;
+using Gsemac.Win32.Native;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
-using static Gsemac.Win32.Defines;
+using static Gsemac.Win32.Native.Defines;
 
 namespace Gsemac.Drawing.Imaging {
 
