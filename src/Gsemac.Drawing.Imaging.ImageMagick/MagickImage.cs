@@ -22,9 +22,9 @@ namespace Gsemac.Drawing.Imaging {
         public override int FrameCount { get; } = 1;
 
         public MagickImage(Stream stream, IFileFormat imageFormat, IImageCodec codec) :
-            this(stream, imageFormat, codec, DecoderOptions.Default) {
+            this(stream, imageFormat, codec, ImageDecoderOptions.Default) {
         }
-        public MagickImage(Stream stream, IFileFormat imageFormat, IImageCodec codec, IDecoderOptions options) {
+        public MagickImage(Stream stream, IFileFormat imageFormat, IImageCodec codec, IImageDecoderOptions options) {
 
             if (stream is null)
                 throw new ArgumentNullException(nameof(stream));
@@ -49,14 +49,14 @@ namespace Gsemac.Drawing.Imaging {
                 Format = magickFormat,
             };
 
-            if (options.Mode == DecoderMode.Metadata) {
+            if (options.Mode == ImageDecoderMode.Metadata) {
 
                 // Just load the metadata from the image.
 
                 images.Ping(stream, readSettings);
 
             }
-            else if (options.Mode == DecoderMode.Static) {
+            else if (options.Mode == ImageDecoderMode.Static) {
 
                 // Read the initial image, and let ImageMagick figure out how to read it most efficiently.
                 // Attempting to use MagickImageCollection to just read the first frame works for some files,

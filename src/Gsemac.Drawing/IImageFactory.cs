@@ -7,7 +7,7 @@ namespace Gsemac.Drawing {
     public interface IImageFactory :
         IHasSupportedFileFormats {
 
-        IImage FromStream(Stream stream, IDecoderOptions options);
+        IImage FromStream(Stream stream, IImageDecoderOptions options);
 
     }
 

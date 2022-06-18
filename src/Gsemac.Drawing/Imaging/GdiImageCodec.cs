@@ -35,7 +35,7 @@ namespace Gsemac.Drawing.Imaging {
 
         }
 
-        public void Encode(IImage image, Stream stream, IEncoderOptions encoderOptions) {
+        public void Encode(IImage image, Stream stream, IImageEncoderOptions encoderOptions) {
 
             if (image is null)
                 throw new ArgumentNullException(nameof(image));
@@ -64,7 +64,7 @@ namespace Gsemac.Drawing.Imaging {
             }
 
         }
-        public IImage Decode(Stream stream, IDecoderOptions options) {
+        public IImage Decode(Stream stream, IImageDecoderOptions options) {
 
             if (stream is null)
                 throw new ArgumentNullException(nameof(stream));
@@ -106,7 +106,7 @@ namespace Gsemac.Drawing.Imaging {
 
         private readonly IFileFormat imageFormat;
 
-        private void EncodeBitmap(Image image, Stream stream, IEncoderOptions encoderOptions) {
+        private void EncodeBitmap(Image image, Stream stream, IImageEncoderOptions encoderOptions) {
 
             if (image is null)
                 throw new ArgumentNullException(nameof(image));

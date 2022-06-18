@@ -31,8 +31,8 @@ namespace Gsemac.Drawing.Imaging.ImageMagick.Tests {
         [TestMethod]
         public void TestAnimationInfoIsValidWithAnimatedGifAndStaticDecoderMode() {
 
-            IDecoderOptions options = new DecoderOptions() {
-                Mode = DecoderMode.Static,
+            IImageDecoderOptions options = new ImageDecoderOptions() {
+                Mode = ImageDecoderMode.Static,
             };
 
             using (IImage image = ImageFromFile("animated.gif", options)) {
@@ -49,8 +49,8 @@ namespace Gsemac.Drawing.Imaging.ImageMagick.Tests {
         [TestMethod]
         public void TestAnimationInfoIsValidWithAnimatedGifAndMetadataDecoderMode() {
 
-            IDecoderOptions options = new DecoderOptions() {
-                Mode = DecoderMode.Metadata,
+            IImageDecoderOptions options = new ImageDecoderOptions() {
+                Mode = ImageDecoderMode.Metadata,
             };
 
             using (IImage image = ImageFromFile("animated.gif", options)) {
@@ -155,10 +155,10 @@ namespace Gsemac.Drawing.Imaging.ImageMagick.Tests {
         }
         private static IImage ImageFromFile(string fileName) {
 
-            return ImageFromFile(fileName, DecoderOptions.Default);
+            return ImageFromFile(fileName, ImageDecoderOptions.Default);
 
         }
-        private static IImage ImageFromFile(string fileName, IDecoderOptions options) {
+        private static IImage ImageFromFile(string fileName, IImageDecoderOptions options) {
 
             IFileFormat fileFormat = FileFormatFactory.Default.FromFileExtension(fileName);
             IImageCodec codec = new MagickImageCodec(fileFormat);

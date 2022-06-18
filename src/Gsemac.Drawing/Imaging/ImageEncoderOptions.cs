@@ -1,9 +1,9 @@
 ﻿namespace Gsemac.Drawing.Imaging {
 
-    public class EncoderOptions :
-        IEncoderOptions {
+    public class ImageEncoderOptions :
+        IImageEncoderOptions {
 
-        public static EncoderOptions Default => new EncoderOptions();
+        public static ImageEncoderOptions Default => new ImageEncoderOptions();
 
         public OptimizationMode OptimizationMode { get; set; } = OptimizationMode.None;
         public int Quality { get; set; } = ImageQuality.Best;
@@ -11,7 +11,7 @@
 
         public override bool Equals(object obj) {
 
-            if (obj is IEncoderOptions other) {
+            if (obj is IImageEncoderOptions other) {
 
                 return OptimizationMode == other.OptimizationMode &&
                     Quality == other.Quality;

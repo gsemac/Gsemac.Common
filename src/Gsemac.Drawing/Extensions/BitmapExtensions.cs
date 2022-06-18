@@ -10,7 +10,7 @@ namespace Gsemac.Drawing.Extensions {
 
         // Public members
 
-        public static void Save(this Image bitmap, string filePath, IFileFormat imageFormat, IImageEncoder encoder, IEncoderOptions encoderOptions) {
+        public static void Save(this Image bitmap, string filePath, IFileFormat imageFormat, IImageEncoder encoder, IImageEncoderOptions encoderOptions) {
 
             if (bitmap is null)
                 throw new ArgumentNullException(nameof(bitmap));
@@ -31,7 +31,7 @@ namespace Gsemac.Drawing.Extensions {
                 Save(bitmap, fs, imageFormat, encoder, encoderOptions);
 
         }
-        public static void Save(this Image bitmap, string filePath, IFileFormat imageFormat, IEncoderOptions encoderOptions) {
+        public static void Save(this Image bitmap, string filePath, IFileFormat imageFormat, IImageEncoderOptions encoderOptions) {
 
             if (bitmap is null)
                 throw new ArgumentNullException(nameof(bitmap));
@@ -55,10 +55,10 @@ namespace Gsemac.Drawing.Extensions {
         }
         public static void Save(this Image bitmap, string filePath, IFileFormat imageFormat) {
 
-            Save(bitmap, filePath, imageFormat, EncoderOptions.Default);
+            Save(bitmap, filePath, imageFormat, ImageEncoderOptions.Default);
 
         }
-        public static void Save(this Image bitmap, string filePath, IEncoderOptions encoderOptions) {
+        public static void Save(this Image bitmap, string filePath, IImageEncoderOptions encoderOptions) {
 
             if (bitmap is null)
                 throw new ArgumentNullException(nameof(bitmap));
@@ -76,10 +76,10 @@ namespace Gsemac.Drawing.Extensions {
         }
         public static void Save(this Image bitmap, string filePath) {
 
-            Save(bitmap, filePath, EncoderOptions.Default);
+            Save(bitmap, filePath, ImageEncoderOptions.Default);
 
         }
-        public static void Save(this Image bitmap, Stream stream, IFileFormat imageFormat, IImageEncoder encoder, IEncoderOptions encoderOptions) {
+        public static void Save(this Image bitmap, Stream stream, IFileFormat imageFormat, IImageEncoder encoder, IImageEncoderOptions encoderOptions) {
 
             if (bitmap is null)
                 throw new ArgumentNullException(nameof(bitmap));
@@ -97,7 +97,7 @@ namespace Gsemac.Drawing.Extensions {
                 encoder.Encode(image, stream, encoderOptions);
 
         }
-        public static void Save(this Image bitmap, Stream stream, IFileFormat imageFormat, IEncoderOptions encoderOptions) {
+        public static void Save(this Image bitmap, Stream stream, IFileFormat imageFormat, IImageEncoderOptions encoderOptions) {
 
             if (bitmap is null)
                 throw new ArgumentNullException(nameof(bitmap));
@@ -118,7 +118,7 @@ namespace Gsemac.Drawing.Extensions {
         }
         public static void Save(this Image bitmap, Stream stream, IFileFormat imageFormat) {
 
-            Save(bitmap, stream, imageFormat, EncoderOptions.Default);
+            Save(bitmap, stream, imageFormat, ImageEncoderOptions.Default);
 
         }
 

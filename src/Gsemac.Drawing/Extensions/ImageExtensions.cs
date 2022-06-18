@@ -22,15 +22,15 @@ namespace Gsemac.Drawing.Extensions {
 
         public static void Save(this IImage image, Stream stream) {
 
-            image.Codec.Encode(image, stream, EncoderOptions.Default);
+            image.Codec.Encode(image, stream, ImageEncoderOptions.Default);
 
         }
         public static void Save(this IImage image, Stream stream, IFileFormat format) {
 
-            image.Save(stream, format, EncoderOptions.Default);
+            image.Save(stream, format, ImageEncoderOptions.Default);
 
         }
-        public static void Save(this IImage image, Stream stream, IFileFormat format, IEncoderOptions options) {
+        public static void Save(this IImage image, Stream stream, IFileFormat format, IImageEncoderOptions options) {
 
             if (image is null)
                 throw new ArgumentNullException(nameof(image));
@@ -69,15 +69,15 @@ namespace Gsemac.Drawing.Extensions {
 
         public static void Save(this IImage image, string filePath) {
 
-            image.Save(filePath, EncoderOptions.Default);
+            image.Save(filePath, ImageEncoderOptions.Default);
 
         }
         public static void Save(this IImage image, string filePath, IFileFormat format) {
 
-            image.Save(filePath, format, EncoderOptions.Default);
+            image.Save(filePath, format, ImageEncoderOptions.Default);
 
         }
-        public static void Save(this IImage image, string filePath, IEncoderOptions options) {
+        public static void Save(this IImage image, string filePath, IImageEncoderOptions options) {
 
             IFileFormat imageFormat = FileFormatFactory.Default.FromFileExtension(filePath);
 
@@ -87,7 +87,7 @@ namespace Gsemac.Drawing.Extensions {
             image.Save(filePath, imageFormat, options);
 
         }
-        public static void Save(this IImage image, string filePath, IFileFormat format, IEncoderOptions options) {
+        public static void Save(this IImage image, string filePath, IFileFormat format, IImageEncoderOptions options) {
 
             if (image is null)
                 throw new ArgumentNullException(nameof(image));

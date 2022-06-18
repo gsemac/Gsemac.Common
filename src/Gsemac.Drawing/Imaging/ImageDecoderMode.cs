@@ -1,6 +1,6 @@
 ﻿namespace Gsemac.Drawing.Imaging {
 
-    public enum DecoderMode {
+    public enum ImageDecoderMode {
         Metadata,
         Static,
         Full,

@@ -1,6 +1,6 @@
 ﻿namespace Gsemac.Drawing.Imaging {
 
-    public interface IEncoderOptions {
+    public interface IImageEncoderOptions {
 
         OptimizationMode OptimizationMode { get; }
         int Quality { get; }
