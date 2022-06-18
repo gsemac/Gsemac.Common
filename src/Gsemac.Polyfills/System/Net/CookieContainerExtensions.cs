@@ -7,7 +7,10 @@ namespace Gsemac.Polyfills.System.Net {
 
     public static class CookieContainerExtensions {
 
+        // Public members
+
         public static CookieCollection GetAllCookies(this CookieContainer cookieContainer) {
+
             // Adapted from https://stackoverflow.com/a/50548676/5383169 (JJS)
 
             if (cookieContainer is null)
