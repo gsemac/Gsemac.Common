@@ -70,6 +70,15 @@
 
         public const int WM_NCLBUTTONDOWN = 0xA1;
 
+        public const int EWX_LOGOFF = 0x00000000;
+        public const int EWX_SHUTDOWN = 0x00000001;
+        public const int EWX_REBOOT = 0x00000002;
+        public const int EWX_FORCE = 0x00000004;
+        public const int EWX_POWEROFF = 0x00000008;
+        public const int EWX_FORCEIFHUNG = 0x00000010;
+
+        public const int SHTDN_REASON_MAJOR_OTHER = 0x00000000;
+
     }
 
 }

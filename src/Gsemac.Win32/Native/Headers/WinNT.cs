@@ -1,4 +1,30 @@
-﻿namespace Gsemac.Win32.Native {
+﻿using System.Runtime.InteropServices;
+
+namespace Gsemac.Win32.Native {
+
+    [StructLayout(LayoutKind.Sequential)]
+    public struct LUID {
+
+        public uint LowPart;
+        public uint HighPart;
+
+    }
+
+    [StructLayout(LayoutKind.Sequential, Pack = 4)]
+    public struct LUID_AND_ATTRIBUTES {
+
+        public LUID Luid;
+        public uint Attributes;
+
+    }
+
+    public struct TOKEN_PRIVILEGES {
+
+        public int PrivilegeCount;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = Defines.ANYSIZE_ARRAY)]
+        public LUID_AND_ATTRIBUTES[] Privileges;
+
+    }
 
     public static partial class Defines {
 
@@ -24,6 +50,7 @@
         public const int FILE_ATTRIBUTE_PINNED = 0x80000;
         public const int FILE_ATTRIBUTE_UNPINNED = 0x100000;
 
+        public const int ANYSIZE_ARRAY = 1;
         public const int MAX_PATH = 260;
 
     }

@@ -1,4 +1,5 @@
-﻿using System.Runtime.InteropServices;
+﻿using System;
+using System.Runtime.InteropServices;
 
 namespace Gsemac.Win32.Native {
 
@@ -26,6 +27,11 @@ namespace Gsemac.Win32.Native {
             return FreeConsoleNative();
 
         }
+        public static IntPtr GetCurrentProcess() {
+
+            return GetCurrentProcessNative();
+
+        }
         public static bool MoveFileW(string lpExistingFileName, string lpNewFileName) {
 
             return MoveFileWNative(lpExistingFileName, lpNewFileName);
@@ -47,6 +53,8 @@ namespace Gsemac.Win32.Native {
         private static extern bool AttachConsoleNative(int dwProcessId);
         [DllImport("kernel32", EntryPoint = "FreeConsole", SetLastError = true)]
         private static extern bool FreeConsoleNative();
+        [DllImport("kernel32", EntryPoint = "GetCurrentProcess", SetLastError = true)]
+        private static extern IntPtr GetCurrentProcessNative();
         [DllImport("kernel32", EntryPoint = "MoveFileW", CharSet = CharSet.Unicode, SetLastError = true)]
         private static extern bool MoveFileWNative(string lpExistingFileName, string lpNewFileName);
         [DllImport("kernel32", EntryPoint = "SetDllDirectory", CharSet = CharSet.Unicode, SetLastError = true)]
