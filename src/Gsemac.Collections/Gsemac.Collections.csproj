@@ -4,7 +4,7 @@
 		<TargetFrameworks>net40-client;netstandard2.0</TargetFrameworks>
 		<Company />
 		<Authors>gsemac</Authors>
-		<Version>0.9.1</Version>
+		<Version>0.9.2</Version>
 		<GenerateDocumentationFile>true</GenerateDocumentationFile>
 		<GeneratePackageOnBuild>false</GeneratePackageOnBuild>
 		<PackageProjectUrl>https://github.com/gsemac/Gsemac.Common</PackageProjectUrl>
@@ -22,7 +22,6 @@
 
 	<ItemGroup Condition="$(DefineConstants.Contains('NET40_OR_LESSER'))">
 		<ProjectReference Include="..\Gsemac.Polyfills\Gsemac.Polyfills.csproj" />
-
 	</ItemGroup>
 
 	<PropertyGroup Condition="$(DefineConstants.Contains('NET40_OR_LESSER'))">
