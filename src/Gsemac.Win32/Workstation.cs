@@ -30,6 +30,21 @@ namespace Gsemac.Win32 {
         }
         public static bool Shutdown() {
 
+            return RequestShutdownPrivilege() &&
+                User32.ExitWindowsEx(Defines.EWX_SHUTDOWN, Defines.SHTDN_REASON_MAJOR_OTHER);
+
+        }
+        public static bool Shutdown(TimeSpan timeout) {
+
+            return RequestShutdownPrivilege() &&
+                Advapi32.InitiateSystemShutdownEx(null, null, (uint)timeout.TotalSeconds, bForceAppsClosed: false, bRebootAfterShutdown: false, Defines.SHTDN_REASON_MAJOR_OTHER);
+
+        }
+
+        // Private members
+
+        private static bool RequestShutdownPrivilege() {
+
             IntPtr processHandle = Kernel32.GetCurrentProcess();
 
             if (Advapi32.OpenProcessToken(processHandle, Defines.TOKEN_ADJUST_PRIVILEGES | Defines.TOKEN_QUERY, out IntPtr tokenHandle)) {
@@ -48,12 +63,11 @@ namespace Gsemac.Win32 {
                 };
 
                 return Advapi32.LookupPrivilegeValue(null, Defines.SE_SHUTDOWN_NAME, ref tokenPrivileges.Privileges[0].Luid) &&
-                    Advapi32.AdjustTokenPrivileges(tokenHandle, false, ref tokenPrivileges) &&
-                    User32.ExitWindowsEx(Defines.EWX_SHUTDOWN, Defines.SHTDN_REASON_MAJOR_OTHER);
+                    Advapi32.AdjustTokenPrivileges(tokenHandle, false, ref tokenPrivileges);
 
             }
 
-            // The process did not complete successfully.
+            // We weren't able to get the shutdown privilege.
 
             return false;
 
