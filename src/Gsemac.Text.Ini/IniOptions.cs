@@ -3,8 +3,14 @@
     public class IniOptions :
             IIniOptions {
 
-        public bool Unescape { get; set; } = true;
-        public bool AllowComments { get; set; } = true;
+        // Public members
+
+        public bool AllowComments { get; } = true;
+        public string CommentMarker { get; } = ";";
+        public string PropertyValueSeparator { get; } = "=";
+        public bool Unescape { get; } = true;
+
+        public static IniOptions Default => new IniOptions();
 
     }
 

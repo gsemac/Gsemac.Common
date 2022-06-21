@@ -2,8 +2,10 @@
 
     public interface IIniOptions {
 
-        bool Unescape { get; set; }
-        bool AllowComments { get; set; }
+        bool AllowComments { get; }
+        string CommentMarker { get; }
+        string PropertyValueSeparator { get; }
+        bool Unescape { get; }
 
     }
 

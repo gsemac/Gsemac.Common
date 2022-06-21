@@ -1,11 +1,12 @@
 ﻿using Gsemac.Text.Extensions;
+using Gsemac.Text.Lexers;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
-namespace Gsemac.Text.Ini {
+namespace Gsemac.Text.Ini.Lexers {
 
-    public class IniLexer :
+    internal class IniLexer :
         LexerBase<IIniLexerToken>,
         IIniLexer {
 
@@ -97,7 +98,7 @@ namespace Gsemac.Text.Ini {
             string value = Reader.ReadLine(new char[] { ']', '\r', '\n' }, allowEscapeSequences: true);
 
             if (options.Unescape)
-                value = IniDocument.Unescape(value);
+                value = IniUtilities.Unescape(value);
 
             // Whitespace surrounding section names is ignored.
 
@@ -126,14 +127,14 @@ namespace Gsemac.Text.Ini {
             return true;
 
         }
-        private void ReadCommentStart() {
+        private void ReadCommentMarker() {
 
             if (EndOfStream)
                 return;
 
             Reader.SkipWhiteSpace();
 
-            tokens.Enqueue(new IniLexerToken(IniLexerTokenType.CommentStart, ((char)Reader.Read()).ToString()));
+            tokens.Enqueue(new IniLexerToken(IniLexerTokenType.CommentMarker, ((char)Reader.Read()).ToString()));
 
         }
         private void ReadCommentContent() {
@@ -151,7 +152,7 @@ namespace Gsemac.Text.Ini {
             string value = Reader.ReadLine(delimiters, allowEscapeSequences: true);
 
             if (options.Unescape)
-                value = IniDocument.Unescape(value);
+                value = IniUtilities.Unescape(value);
 
             // Whitespace surrounding property names is ignored.
 
@@ -190,7 +191,7 @@ namespace Gsemac.Text.Ini {
             string value = Reader.ReadLine(delimiters, allowEscapeSequences: true);
 
             if (options.Unescape)
-                value = IniDocument.Unescape(value);
+                value = IniUtilities.Unescape(value);
 
             // Whitespace surrounding property values is ignored.
 
@@ -209,7 +210,7 @@ namespace Gsemac.Text.Ini {
         }
         private void ReadComment() {
 
-            ReadCommentStart();
+            ReadCommentMarker();
             ReadCommentContent();
 
         }

@@ -17,7 +17,7 @@ The following style guide is mostly to help keep myself consistent.
 #### Factory Classes
 
 * If the `Create` method does not take any arguments, inherit from `IFactory<T>`.
-* If there is a need for multiple `Create` methods, use methods with the `From` prefix instead (`FromStream`, `FromFile`, `FromBitmap`, etc.).
+* If there is a need for multiple `Create` methods, use methods with the `From` prefix instead (`FromStream`, `FromFile`, `FromBitmap`, etc.). For methods taking `string` parameters, use `Parse`.
 
 ### Exceptions
 

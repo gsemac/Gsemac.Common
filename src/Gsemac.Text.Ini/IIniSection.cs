@@ -5,13 +5,12 @@ namespace Gsemac.Text.Ini {
     public interface IIniSection :
         IEnumerable<IIniProperty> {
 
-        string this[string key] { get; set; }
+        string this[string propertyName] { get; set; }
 
         string Name { get; }
-
-        void AddProperty(IIniProperty property);
-        IIniProperty GetProperty(string name);
-        bool RemoveProperty(string name);
+        string Comment { get; set; }
+        IIniPropertyCollection Properties { get; }
+        IIniSectionCollection Sections { get; }
 
     }
 

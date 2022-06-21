@@ -1,17 +1,17 @@
-﻿namespace Gsemac.Text.Ini {
+﻿namespace Gsemac.Text.Ini.Lexers {
 
-    public enum IniLexerTokenType {
+    internal enum IniLexerTokenType {
         SectionStart, // [
         SectionName,
         SectionEnd, // ]
         PropertyName,
-        PropertyValueSeparator, // =
+        PropertyValueSeparator, // =, :
         PropertyValue,
-        CommentStart,
+        CommentMarker, // ;, #
         Comment
     }
 
-    public interface IIniLexerToken {
+    internal interface IIniLexerToken {
 
         // Public members
 

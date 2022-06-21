@@ -1,6 +1,6 @@
-﻿namespace Gsemac.Text.Ini {
+﻿namespace Gsemac.Text.Ini.Lexers {
 
-    public class IniLexerToken :
+    internal class IniLexerToken :
         IIniLexerToken {
 
         // Public members
@@ -10,8 +10,8 @@
 
         public IniLexerToken(IniLexerTokenType type, string value) {
 
-            this.Type = type;
-            this.Value = value;
+            Type = type;
+            Value = value;
 
         }
 

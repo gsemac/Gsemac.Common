@@ -1,6 +1,4 @@
-﻿using Gsemac.Collections;
-using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 
 namespace Gsemac.Text.Ini {
@@ -10,61 +8,32 @@ namespace Gsemac.Text.Ini {
 
         // Public members
 
-        public string this[string key] {
-            get => GetProperty(key)?.Value ?? string.Empty;
-            set => AddProperty(new IniProperty(key, value));
+        public string this[string propertyName] {
+            get => properties.Get(propertyName)?.Value ?? string.Empty;
+            set => properties.Add(propertyName, value);
         }
 
-        public string Name { get; }
+        public string Name { get; } = string.Empty;
+        public string Comment { get; set; } = string.Empty;
 
+        public IIniPropertyCollection Properties => properties;
+        public IIniSectionCollection Sections => sections;
+
+        public int Count => properties.Count;
+        public bool IsReadOnly => properties.IsReadOnly;
+
+        public IniSection() :
+            this(string.Empty) {
+        }
         public IniSection(string name) {
 
             Name = name;
 
         }
-        internal IniSection(string name, IIniDocument parentDocument) :
-            this(name) {
-
-            this.parentIniData = parentDocument;
-
-        }
-
-        public void AddProperty(IIniProperty property) {
-
-            if (property is null)
-                throw new ArgumentNullException(nameof(property));
-
-            properties[GetKey(property.Name)] = property;
-
-            // Add the section to its parent if we haven't done so already.
-            // This is so temporary sections can be created that are only added when values are added.
-
-            if (!(parentIniData is null) && !addedToParent) {
-
-                parentIniData.AddSection(this);
-
-                addedToParent = true;
-
-            }
-
-        }
-        public IIniProperty GetProperty(string name) {
-
-            if (properties.TryGetValue(GetKey(name), out IIniProperty property))
-                return property;
-
-            return null;
-
-        }
-        public bool RemoveProperty(string name) {
-
-            return properties.Remove(GetKey(name));
-
-        }
 
         public IEnumerator<IIniProperty> GetEnumerator() {
 
-            return properties.Values.GetEnumerator();
+            return properties.GetEnumerator();
 
         }
         IEnumerator IEnumerable.GetEnumerator() {
@@ -75,18 +44,8 @@ namespace Gsemac.Text.Ini {
 
         // Private members
 
-        private readonly IDictionary<string, IIniProperty> properties = new OrderedDictionary<string, IIniProperty>();
-        private readonly IIniDocument parentIniData = null;
-        private bool addedToParent = false;
-
-        private string GetKey(string propertyName) {
-
-            if (string.IsNullOrEmpty(propertyName))
-                return propertyName;
-
-            return propertyName.ToLowerInvariant().Trim();
-
-        }
+        private readonly IIniPropertyCollection properties = new IniPropertyCollection();
+        private readonly IIniSectionCollection sections = new IniSectionCollection();
 
     }
 
