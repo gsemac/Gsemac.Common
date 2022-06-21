@@ -19,7 +19,7 @@ namespace Gsemac.Text.Properties {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class ExceptionMessages {
@@ -66,6 +66,15 @@ namespace Gsemac.Text.Properties {
         internal static string StringCannotBeOfZeroLength {
             get {
                 return ResourceManager.GetString("StringCannotBeOfZeroLength", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The lexer encountered an unexpected token..
+        /// </summary>
+        internal static string UnexpectedToken {
+            get {
+                return ResourceManager.GetString("UnexpectedToken", resourceCulture);
             }
         }
     }

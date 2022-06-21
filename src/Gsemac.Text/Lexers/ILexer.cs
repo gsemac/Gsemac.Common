@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Gsemac.Text {
+namespace Gsemac.Text.Lexers {
 
     public interface ILexer<T> :
         IDisposable {

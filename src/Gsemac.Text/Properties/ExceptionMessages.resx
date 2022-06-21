@@ -120,4 +120,7 @@
   <data name="StringCannotBeOfZeroLength" xml:space="preserve">
     <value>String cannot be of zero length.</value>
   </data>
+  <data name="UnexpectedToken" xml:space="preserve">
+    <value>The lexer encountered an unexpected token.</value>
+  </data>
 </root>

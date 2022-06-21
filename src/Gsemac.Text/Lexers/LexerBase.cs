@@ -1,6 +1,6 @@
 ﻿using System.IO;
 
-namespace Gsemac.Text {
+namespace Gsemac.Text.Lexers {
 
     public abstract class LexerBase<T> :
          ILexer<T> {
