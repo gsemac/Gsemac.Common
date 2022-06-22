@@ -70,11 +70,38 @@ namespace Gsemac.Text.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The lexer encountered an unexpected character..
+        /// </summary>
+        internal static string UnexpectedLexerChar {
+            get {
+                return ResourceManager.GetString("UnexpectedLexerChar", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The lexer encountered an unexpected character: &apos;{0}&apos;.
+        /// </summary>
+        internal static string UnexpectedLexerCharWithValue {
+            get {
+                return ResourceManager.GetString("UnexpectedLexerCharWithValue", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The lexer encountered an unexpected token..
         /// </summary>
-        internal static string UnexpectedToken {
+        internal static string UnexpectedLexerToken {
             get {
-                return ResourceManager.GetString("UnexpectedToken", resourceCulture);
+                return ResourceManager.GetString("UnexpectedLexerToken", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The lexer encountered an unexpected token: &apos;{0}&apos;.
+        /// </summary>
+        internal static string UnexpectedLexerTokenWithValue {
+            get {
+                return ResourceManager.GetString("UnexpectedLexerTokenWithValue", resourceCulture);
             }
         }
     }

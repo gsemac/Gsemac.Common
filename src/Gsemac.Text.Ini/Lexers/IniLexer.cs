@@ -68,7 +68,7 @@ namespace Gsemac.Text.Ini.Lexers {
                     ReadSection();
 
                 }
-                else if (nextChar == ';' && options.AllowComments) {
+                else if (options.CommentMarker.Length > 0 && options.AllowComments && nextChar == options.CommentMarker.First()) {
 
                     ReadComment();
 
@@ -129,12 +129,14 @@ namespace Gsemac.Text.Ini.Lexers {
         }
         private void ReadCommentMarker() {
 
-            if (EndOfStream)
+            if (EndOfStream || options.CommentMarker.Length <= 0)
                 return;
 
             Reader.SkipWhiteSpace();
 
-            tokens.Enqueue(new IniLexerToken(IniLexerTokenType.CommentMarker, ((char)Reader.Read()).ToString()));
+            ReadStringAndThrowOnUnexpectedCharacters(options.CommentMarker);
+
+            tokens.Enqueue(new IniLexerToken(IniLexerTokenType.CommentMarker, options.CommentMarker));
 
         }
         private void ReadCommentContent() {
@@ -201,11 +203,11 @@ namespace Gsemac.Text.Ini.Lexers {
 
         }
 
-        private void ReadSection() {
+        private bool ReadSection() {
 
-            if (ReadSectionStart())
-                if (ReadSectionName())
-                    ReadSectionEnd();
+            return ReadSectionStart() &&
+                ReadSectionName() &&
+                ReadSectionEnd();
 
         }
         private void ReadComment() {
@@ -214,11 +216,27 @@ namespace Gsemac.Text.Ini.Lexers {
             ReadCommentContent();
 
         }
-        private void ReadProperty() {
+        private bool ReadProperty() {
 
-            if (ReadPropertyName())
-                if (ReadPropertyValueSeparator())
-                    ReadPropertyValue();
+            return ReadPropertyName() &&
+                ReadPropertyValueSeparator() &&
+                ReadPropertyValue();
+
+        }
+
+        private void ReadStringAndThrowOnUnexpectedCharacters(string stringToRead) {
+
+            foreach (char c in stringToRead) {
+
+                int nextChar = Reader.Read();
+
+                if (nextChar == -1)
+                    break;
+
+                if ((char)nextChar != c)
+                    throw new UnexpectedCharacterException((char)nextChar);
+
+            }
 
         }
 

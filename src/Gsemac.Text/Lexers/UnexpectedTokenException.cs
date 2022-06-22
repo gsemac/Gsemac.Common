@@ -11,13 +11,13 @@ namespace Gsemac.Text.Lexers {
         // Public members
 
         public UnexpectedTokenException() :
-            this(ExceptionMessages.UnexpectedToken) {
+            this(ExceptionMessages.UnexpectedLexerToken) {
         }
-        public UnexpectedTokenException(string message) :
-            base(message) {
+        public UnexpectedTokenException(string tokenValue) :
+            base(string.Format(ExceptionMessages.UnexpectedLexerTokenWithValue, tokenValue)) {
         }
-        public UnexpectedTokenException(string message, Exception innerException) :
-            base(message, innerException) {
+        public UnexpectedTokenException(string tokenValue, Exception innerException) :
+            base(string.Format(ExceptionMessages.UnexpectedLexerTokenWithValue, tokenValue), innerException) {
         }
 
         // Protected members
