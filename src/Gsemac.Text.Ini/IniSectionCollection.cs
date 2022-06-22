@@ -10,7 +10,7 @@ namespace Gsemac.Text.Ini {
 
         // Public members
 
-        public int Count => sections.Count;
+        public int Count => GetNonTransientSections().Count();
         public bool IsReadOnly => sections.IsReadOnly;
 
         public IIniSection this[string sectionName] {
@@ -49,6 +49,7 @@ namespace Gsemac.Text.Ini {
                 return false;
 
             return sections.TryGetValue(item.Name, out IniSectionInfo info) &&
+                !info.IsTransient &&
                 info.Section.Equals(item);
 
         }
@@ -89,9 +90,7 @@ namespace Gsemac.Text.Ini {
 
         public IEnumerator<IIniSection> GetEnumerator() {
 
-            return sections.Values
-                .Where(info => !info.IsTransient)
-                .Select(info => info.Section)
+            return GetNonTransientSections()
                 .GetEnumerator();
 
         }
@@ -139,6 +138,13 @@ namespace Gsemac.Text.Ini {
             sections.Add(sectionName, info);
 
             return info.Section;
+
+        }
+        private IEnumerable<IIniSection> GetNonTransientSections() {
+
+            return sections.Values
+              .Where(info => !info.IsTransient)
+              .Select(info => info.Section);
 
         }
 
