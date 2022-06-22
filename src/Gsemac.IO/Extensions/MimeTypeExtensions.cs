@@ -1,4 +1,4 @@
-﻿using Gsemac.Text;
+﻿using Gsemac.Text.PatternMatching;
 
 namespace Gsemac.IO.Extensions {
 
