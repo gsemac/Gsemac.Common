@@ -17,6 +17,18 @@ namespace Gsemac.Text.Extensions {
             return textReader.Read() != -1;
 
         }
+        public static bool Skip(this TextReader textReader, int count) {
+
+            if (textReader is null)
+                throw new ArgumentNullException(nameof(textReader));
+
+            for (int i = 0; i < count; ++i)
+                if (textReader.Read() != -1)
+                    break;
+
+            return textReader.Peek() != -1;
+
+        }
         public static void SkipWhiteSpace(this TextReader textReader) {
 
             if (textReader is null)
