@@ -15,10 +15,15 @@ namespace Gsemac.Text.Ini {
         }
         public ICollection<string> Values { get; } = new List<string>();
 
+        public IniProperty(string name) :
+            this(name, null) {
+        }
         public IniProperty(string name, string value) {
 
             Name = name;
-            Value = value;
+
+            if (!string.IsNullOrEmpty(value))
+                Value = value;
 
         }
 

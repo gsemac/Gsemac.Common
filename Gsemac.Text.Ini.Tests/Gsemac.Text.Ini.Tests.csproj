@@ -1,4 +1,4 @@
-﻿<Project Sdk="MSBuild.Sdk.Extras/3.0.44">
+<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
 		<TargetFramework>net5.0</TargetFramework>
@@ -16,7 +16,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\..\src\Gsemac.Reflection\Gsemac.Reflection.csproj" />
+	  <ProjectReference Include="..\src\Gsemac.Text.Ini\Gsemac.Text.Ini.csproj" />
 	</ItemGroup>
 
 </Project>
