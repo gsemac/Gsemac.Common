@@ -8,7 +8,7 @@ namespace Gsemac.Text.Ini.Tests {
         // this[]
 
         [TestMethod]
-        public void TestGetTransientSectionDoesNotResultInVisibleSection() {
+        public void TestGetTransientSectionDoesNotAddSectionToCollection() {
 
             IIniSectionCollection items = new IniSectionCollection();
 
@@ -24,6 +24,33 @@ namespace Gsemac.Text.Ini.Tests {
 
             Assert.IsFalse(items.Contains(transientSection.Name));
             Assert.IsFalse(items.Contains(transientSection));
+
+        }
+        [TestMethod]
+        public void TestAddPropertyToTransientSectionAddsSectionToCollection() {
+
+            IIniSectionCollection items = new IniSectionCollection();
+
+            // Adding a property to a transient section should cause it to no longer be transient.
+
+            items["section"]["key"] = "value";
+
+            Assert.AreEqual(1, items.Count);
+
+            Assert.IsTrue(items.Get("section") is object);
+
+            Assert.IsTrue(items.Contains("section"));
+
+        }
+
+        [TestMethod]
+        public void TestGettingMissingPropertyByIndexIsNotNull() {
+
+            IIniSectionCollection items = new IniSectionCollection();
+
+            string value = items["section"]["key"];
+
+            Assert.AreEqual(string.Empty, value);
 
         }
 

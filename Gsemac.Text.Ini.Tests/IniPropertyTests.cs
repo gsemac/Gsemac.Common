@@ -20,6 +20,28 @@ namespace Gsemac.Text.Ini.Tests {
             Assert.AreEqual("1, 2, 3, 4", property.Value);
 
         }
+        [TestMethod]
+        public void TestPropertyCreatedWithoutValueHasEmptyStringAsValue() {
+
+            // The "Value" property should never return null.
+            // We can prove an INI property does not exist by checking for its key rather than checking for a null value.
+
+            IIniProperty property = new IniProperty("key");
+
+            Assert.AreEqual(string.Empty, property.Value);
+
+        }
+        [TestMethod]
+        public void TestPropertyCreatedWithNullValueHasEmptyStringAsValue() {
+
+            // The "Value" property should never return null.
+            // We can prove an INI property does not exist by checking for its key rather than checking for a null value.
+
+            IIniProperty property = new IniProperty("key", null);
+
+            Assert.AreEqual(string.Empty, property.Value);
+
+        }
 
         // Values
 
