@@ -8,6 +8,8 @@ namespace Gsemac.Text.Ini {
 
         // Public members
 
+        public static IniFactory Default => new IniFactory();
+
         public IIni FromStream(Stream stream, IIniOptions options) {
 
             Ini result = new Ini(options);
