@@ -5,9 +5,7 @@ namespace Gsemac.Text.Lexers {
     public interface ILexer<T> :
         IDisposable {
 
-        bool EndOfStream { get; }
-
-        bool ReadToken(out T token);
+        bool Read(out T token);
         T Peek();
 
     }

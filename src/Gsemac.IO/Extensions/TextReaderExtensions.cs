@@ -3,7 +3,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 
-namespace Gsemac.Text.Extensions {
+namespace Gsemac.IO.Extensions {
 
     public static class TextReaderExtensions {
 
@@ -52,7 +52,7 @@ namespace Gsemac.Text.Extensions {
             if (textReader is null)
                 throw new ArgumentNullException(nameof(textReader));
 
-            return ReadLine(textReader, new[] { delimiter });
+            return textReader.ReadLine(new[] { delimiter });
 
         }
         public static string ReadLine(this TextReader textReader, params char[] delimiters) {
@@ -60,7 +60,7 @@ namespace Gsemac.Text.Extensions {
             if (textReader is null)
                 throw new ArgumentNullException(nameof(textReader));
 
-            return ReadLine(textReader, delimiters, allowEscapeSequences: false);
+            return textReader.ReadLine(delimiters, allowEscapeSequences: false);
 
         }
         public static string ReadLine(this TextReader textReader, char[] delimiters, bool allowEscapeSequences) {
@@ -71,7 +71,7 @@ namespace Gsemac.Text.Extensions {
             StringBuilder valueBuilder = new StringBuilder();
             bool insideEscapeSequence = false;
 
-            while (textReader.Peek() != -1 && ((insideEscapeSequence && allowEscapeSequences) || !delimiters.Any(c => c == (char)textReader.Peek()))) {
+            while (textReader.Peek() != -1 && (insideEscapeSequence && allowEscapeSequences || !delimiters.Any(c => c == (char)textReader.Peek()))) {
 
                 char nextChar = (char)textReader.Read();
 
@@ -90,6 +90,19 @@ namespace Gsemac.Text.Extensions {
             }
 
             return valueBuilder.ToString();
+
+        }
+
+        public static string ReadString(this TextReader textReader, int count) {
+
+            char[] buffer = new char[count];
+
+            int charsRead = textReader.Read(buffer, 0, count);
+
+            if (charsRead <= 0)
+                return string.Empty;
+
+            return new string(buffer, 0, charsRead);
 
         }
 
@@ -121,6 +134,15 @@ namespace Gsemac.Text.Extensions {
                 value = (char)nextChar;
 
             return nextChar >= 0;
+
+        }
+
+        public static bool EndOfText(this TextReader textReader) {
+
+            if (textReader is null)
+                throw new ArgumentNullException(nameof(textReader));
+
+            return !TryPeek(textReader, out _);
 
         }
 

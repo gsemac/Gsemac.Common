@@ -1,13 +1,12 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 
 namespace Gsemac.Text.Lexers {
 
     public abstract class LexerBase<T> :
          ILexer<T> {
 
-        public bool EndOfStream => Reader.EndOfStream;
-
-        public abstract bool ReadToken(out T token);
+        public abstract bool Read(out T token);
         public abstract T Peek();
 
         public void Dispose() {
@@ -18,11 +17,17 @@ namespace Gsemac.Text.Lexers {
 
         // Protected members
 
-        protected StreamReader Reader { get; }
+        protected TextReader Reader { get; }
 
-        protected LexerBase(Stream stream) {
+        protected LexerBase(Stream stream) :
+            this(new StreamReader(stream)) {
+        }
+        protected LexerBase(TextReader reader) {
 
-            Reader = new StreamReader(stream);
+            if (reader is null)
+                throw new ArgumentNullException(nameof(reader));
+
+            Reader = reader;
 
         }
 
