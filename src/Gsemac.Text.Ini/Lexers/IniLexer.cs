@@ -1,5 +1,8 @@
-﻿using Gsemac.Text.Extensions;
+﻿using Gsemac.IO;
+using Gsemac.IO.Extensions;
+using Gsemac.Text.Extensions;
 using Gsemac.Text.Lexers;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -13,10 +16,13 @@ namespace Gsemac.Text.Ini.Lexers {
         // Public members
 
         public IniLexer(Stream stream) :
-            base(stream) {
+            base(new PeekBufferStreamReader(stream)) {
         }
         public IniLexer(Stream stream, IIniOptions options) :
             this(stream) {
+
+            if (options is null)
+                throw new ArgumentNullException(nameof(options));
 
             this.options = options;
 
@@ -30,7 +36,7 @@ namespace Gsemac.Text.Ini.Lexers {
             return tokens.Any() ? tokens.Peek() : null;
 
         }
-        public override bool ReadToken(out IIniLexerToken token) {
+        public override bool Read(out IIniLexerToken token) {
 
             if (!tokens.Any())
                 ReadNextTokens();
@@ -52,6 +58,10 @@ namespace Gsemac.Text.Ini.Lexers {
 
         }
 
+        // Protected members
+
+        new protected PeekBufferStreamReader Reader => (PeekBufferStreamReader)base.Reader;
+
         // Private members
 
         private readonly Queue<IIniLexerToken> tokens = new Queue<IIniLexerToken>();
@@ -61,14 +71,14 @@ namespace Gsemac.Text.Ini.Lexers {
 
             Reader.SkipWhiteSpace();
 
-            if (Reader.TryPeek(out char nextChar)) {
+            if (!Reader.EndOfText()) {
 
-                if (nextChar == '[') {
+                if (Reader.Peek() == '[') {
 
                     ReadSection();
 
                 }
-                else if (options.CommentMarker.Length > 0 && options.AllowComments && nextChar == options.CommentMarker.First()) {
+                else if (options.CommentMarker.Length > 0 && options.AllowComments && ReaderHasString(options.CommentMarker)) {
 
                     ReadComment();
 
@@ -85,10 +95,10 @@ namespace Gsemac.Text.Ini.Lexers {
 
         private bool ReadSectionStart() {
 
-            if (EndOfStream)
+            if (Reader.EndOfText())
                 return false;
 
-            tokens.Enqueue(new IniLexerToken(IniLexerTokenType.SectionStart, ((char)Reader.Read()).ToString()));
+            tokens.Enqueue(new IniLexerToken(IniLexerTokenType.SectionNameStart, ((char)Reader.Read()).ToString()));
 
             return true;
 
@@ -114,7 +124,7 @@ namespace Gsemac.Text.Ini.Lexers {
         }
         private bool ReadSectionEnd() {
 
-            if (EndOfStream)
+            if (Reader.EndOfText())
                 return false;
 
             // If we reached the end of the line rather than the end of the section, the section was not closed.
@@ -122,21 +132,19 @@ namespace Gsemac.Text.Ini.Lexers {
             if (Reader.TryPeek(out char nextChar) && nextChar.IsNewLine())
                 return false;
 
-            tokens.Enqueue(new IniLexerToken(IniLexerTokenType.SectionEnd, ((char)Reader.Read()).ToString()));
+            tokens.Enqueue(new IniLexerToken(IniLexerTokenType.SectionNameEnd, ((char)Reader.Read()).ToString()));
 
             return true;
 
         }
         private void ReadCommentMarker() {
 
-            if (EndOfStream || options.CommentMarker.Length <= 0)
+            if (Reader.EndOfText() || options.CommentMarker.Length <= 0)
                 return;
 
             Reader.SkipWhiteSpace();
 
-            ReadStringAndThrowOnUnexpectedCharacters(options.CommentMarker);
-
-            tokens.Enqueue(new IniLexerToken(IniLexerTokenType.CommentMarker, options.CommentMarker));
+            tokens.Enqueue(new IniLexerToken(IniLexerTokenType.CommentMarker, Reader.ReadString(options.CommentMarker.Length)));
 
         }
         private void ReadCommentContent() {
@@ -170,7 +178,7 @@ namespace Gsemac.Text.Ini.Lexers {
         }
         private bool ReadPropertyValueSeparator() {
 
-            if (EndOfStream)
+            if (Reader.EndOfText())
                 return false;
 
             // If we reached the end of the line rather than a property value separator, the property does not have a value.
@@ -224,19 +232,9 @@ namespace Gsemac.Text.Ini.Lexers {
 
         }
 
-        private void ReadStringAndThrowOnUnexpectedCharacters(string stringToRead) {
+        private bool ReaderHasString(string value) {
 
-            foreach (char c in stringToRead) {
-
-                int nextChar = Reader.Read();
-
-                if (nextChar == -1)
-                    break;
-
-                if ((char)nextChar != c)
-                    throw new UnexpectedCharacterException((char)nextChar);
-
-            }
+            return Reader.PeekString(value.Length).Equals(value);
 
         }
 

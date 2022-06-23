@@ -7,8 +7,8 @@ namespace Gsemac.Text.Ini {
 
         // Public members
 
-        public string Name { get; } = string.Empty;
         public string Comment { get; set; } = string.Empty;
+        public string Name { get; } = string.Empty;
         public string Value {
             get => GetValue();
             set => SetValue(value);

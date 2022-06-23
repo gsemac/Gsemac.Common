@@ -86,8 +86,19 @@ namespace Gsemac.Text.Ini {
             if (section != Global && !string.IsNullOrEmpty(section.Name))
                 sb.AppendLine($"[{IniUtilities.Escape(section.Name)}]");
 
-            foreach (IIniProperty property in section)
+            foreach (IIniProperty property in section) {
+
+                if (options.AllowComments && !string.IsNullOrEmpty(options.CommentMarker) && !string.IsNullOrEmpty(property.Comment)) {
+
+                    sb.Append(options.CommentMarker);
+                    sb.Append(' ');
+                    sb.AppendLine(property.Comment);
+
+                }
+
                 sb.AppendLine($"{IniUtilities.Escape(property.Name)}={IniUtilities.Escape(property.Value)}");
+
+            }
 
         }
 

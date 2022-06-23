@@ -1,9 +1,9 @@
 ﻿namespace Gsemac.Text.Ini.Lexers {
 
     internal enum IniLexerTokenType {
-        SectionStart, // [
+        SectionNameStart, // [
         SectionName,
-        SectionEnd, // ]
+        SectionNameEnd, // ]
         PropertyName,
         PropertyValueSeparator, // =, :
         PropertyValue,
