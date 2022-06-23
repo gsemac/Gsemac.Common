@@ -1,5 +1,4 @@
-﻿using Gsemac.Collections;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Text;
 
@@ -8,22 +7,63 @@ namespace Gsemac.Collections.Tests {
     [TestClass]
     public class CircularBufferTests {
 
+        // this[]
+
+        [TestMethod]
+        public void TestGetValueAtIndexAfterRead() {
+
+            CircularBuffer<char> queue = new();
+
+            foreach (char c in "hello world!")
+                queue.Write(c);
+
+            queue.Read();
+
+            Assert.AreEqual('o', queue[3]);
+
+        }
+        [TestMethod]
+        public void TestSetValueAtIndexAfterRead() {
+
+            CircularBuffer<char> queue = new();
+
+            foreach (char c in "hello world!")
+                queue.Write(c);
+
+            queue.Read();
+
+            queue[3] = 'x';
+
+            Assert.AreEqual('x', queue[3]);
+
+        }
+        [TestMethod]
+        public void TestGetValueAtOutOfBoundsIndexThrowsException() {
+
+            CircularBuffer<char> queue = new();
+
+            Assert.ThrowsException<IndexOutOfRangeException>(() => queue[5]);
+
+        }
+
+        // Length
+
         [TestMethod]
         public void TestLengthOfEmptyBufferIsZero() {
 
-            Assert.AreEqual(0, new CircularBuffer().Length);
+            Assert.AreEqual(0, new CircularBuffer<byte>().Length);
 
         }
         [TestMethod]
         public void TestLengthOfEmptyBufferWithInitialCapacityIsZero() {
 
-            Assert.AreEqual(0, new CircularBuffer(32).Length);
+            Assert.AreEqual(0, new CircularBuffer<byte>(32).Length);
 
         }
         [TestMethod]
         public void TestLengthAfterWrite() {
 
-            CircularBuffer queue = new CircularBuffer();
+            CircularBuffer<byte> queue = new();
 
             byte[] input = Encoding.ASCII.GetBytes("hello world!");
             queue.Write(input, 0, input.Length);
@@ -31,10 +71,13 @@ namespace Gsemac.Collections.Tests {
             Assert.AreEqual(input.Length, queue.Length);
 
         }
+
+        // Read
+
         [TestMethod]
         public void TestWriteThenRead() {
 
-            CircularBuffer queue = new CircularBuffer();
+            CircularBuffer<byte> queue = new();
 
             byte[] input = Encoding.ASCII.GetBytes("hello world!");
             queue.Write(input, 0, input.Length);
@@ -48,7 +91,7 @@ namespace Gsemac.Collections.Tests {
         [TestMethod]
         public void TestWriteThenReadWithWrapAround() {
 
-            CircularBuffer queue = new CircularBuffer(10);
+            CircularBuffer<byte> queue = new CircularBuffer<byte>(10);
 
             byte[] input = Encoding.ASCII.GetBytes("123456");
             queue.Write(input, 0, input.Length);
@@ -68,7 +111,7 @@ namespace Gsemac.Collections.Tests {
         [TestMethod]
         public void TestReadAfterCapacityChanged() {
 
-            CircularBuffer queue = new CircularBuffer(20);
+            CircularBuffer<byte> queue = new CircularBuffer<byte>(20);
             int capacity = queue.Capacity;
 
             byte[] input = Encoding.ASCII.GetBytes("hello world!");

@@ -1,16 +1,17 @@
-﻿using System;
+﻿using Gsemac.Collections.Properties;
+using System;
 
 namespace Gsemac.Collections {
 
     /// <summary>
-    /// Provides a queue interface over a byte buffer.
+    /// Provides a queue-like interface over a buffer.
     /// </summary>
-    public class CircularBuffer {
+    public class CircularBuffer<T> {
 
         // Public members
 
         /// <summary>
-        /// Returns the number of unread bytes in the queue.
+        /// Returns the number of unread items available in the buffer.
         /// </summary>
         public int Length {
             get {
@@ -38,13 +39,18 @@ namespace Gsemac.Collections {
             set => SetCapacity(value);
         }
 
+        public T this[int index] {
+            get => GetItemAtIndex(index);
+            set => SetItemAtIndex(index, value);
+        }
+
         /// <summary>
-        /// Initializes a new instance of the <see cref="CircularBuffer"/> class.
+        /// Initializes a new instance of the <see cref="CircularBuffer{T}"/> class.
         /// </summary>
         public CircularBuffer() {
         }
         /// <summary>
-        /// Initializes a new instance of the <see cref="CircularBuffer"/> class.
+        /// Initializes a new instance of the <see cref="CircularBuffer{T}"/> class with the specified initial capacity.
         /// </summary>
         /// <param name="initialCapacity">Starting capacity of the underlying buffer.</param>
         public CircularBuffer(int initialCapacity) {
@@ -52,7 +58,11 @@ namespace Gsemac.Collections {
             Capacity = initialCapacity;
 
         }
-        public CircularBuffer(byte[] buffer) :
+        /// <summary>
+        /// Initializes a new instance of the <see cref="CircularBuffer{T}"/> class that wraps the specified buffer.
+        /// </summary>
+        /// <param name="buffer">The underlying buffer for the <see cref="CircularBuffer{T}"/> instance.</param>
+        public CircularBuffer(T[] buffer) :
             this(buffer.Length) {
 
             this.fixedCapacity = true;
@@ -61,74 +71,15 @@ namespace Gsemac.Collections {
         }
 
         /// <summary>
-        /// Adds a single byte to the queue.
+        /// Reads a single value from the queue.
         /// </summary>
-        /// <param name="value">Value to add.</param>
-        public void WriteByte(byte value) {
-
-            Write(new byte[] { value }, 0, 1);
-
-        }
-        /// <summary>
-        /// Adds an array of bytes to the queue.
-        /// </summary>
-        /// <param name="buffer">Values to add.</param>
-        /// <param name="offset">Starting offset in buffer.</param>
-        /// <param name="count">Number of bytes to write from the buffer.</param>
-        public void Write(byte[] buffer, int offset, int count) {
-
-            int bytesToWrite = count;
-
-            // Make sure the capacity is large enough to store the new bytes.
-
-            EnsureCapacity(bytesToWrite);
-
-            if (wpos < rpos) {
-
-                // New capacity will have been provided between the write and read heads, so we can write guaranteed that there is enough space.
-
-                Buffer.BlockCopy(buffer, offset, this.buffer, wpos, count);
-
-                wpos += count;
-
-            }
-            else {
-
-                int writeCapacityLeft = this.buffer.Length - wpos;
-
-                // Copy as much as we can to the end of the buffer.
-
-                int bytesWritten = Math.Min(bytesToWrite, writeCapacityLeft);
-
-                Buffer.BlockCopy(buffer, offset, this.buffer, wpos, bytesWritten);
-
-                bytesToWrite -= bytesWritten;
-
-                wpos = (wpos + bytesWritten) % this.buffer.Length;
-
-                if (bytesToWrite > 0) {
-
-                    // Go back to the front of the buffer to continue writing.
-
-                    Buffer.BlockCopy(buffer, offset + bytesWritten, this.buffer, wpos, bytesToWrite);
-
-                    wpos = bytesToWrite;
-
-                }
-
-            }
-
-        }
-        /// <summary>
-        /// Reads a single byte from the queue.
-        /// </summary>
-        /// <returns>A single byte from the queue.</returns>
-        public byte ReadByte() {
+        /// <returns>A single value from the queue.</returns>
+        public T Read() {
 
             if (Length <= 0)
-                throw new Exception("Queue was empty.");
+                throw new InvalidOperationException(Properties.ExceptionMessages.CircularBufferIsEmpty);
 
-            byte[] buffer = new byte[1];
+            T[] buffer = new T[1];
 
             Read(buffer, 0, 1);
 
@@ -136,13 +87,13 @@ namespace Gsemac.Collections {
 
         }
         /// <summary>
-        /// Reads an array of bytes from the queue, returning the number of bytes read.
+        /// Reads an array of values from the queue, returning the number of values read.
         /// </summary>
         /// <param name="buffer">Buffer to read into.</param>
         /// <param name="offset">Offset at which to begin writing.</param>
-        /// <param name="count">Maximum number of bytes to read.</param>
+        /// <param name="count">Maximum number of values to read.</param>
         /// <returns></returns>
-        public int Read(byte[] buffer, int offset, int count) {
+        public int Read(T[] buffer, int offset, int count) {
 
             int bytesToRead = count;
             int bytesRead = 0;
@@ -154,7 +105,7 @@ namespace Gsemac.Collections {
 
                 bytesRead = Math.Min(bytesToRead, wpos - rpos);
 
-                Buffer.BlockCopy(this.buffer, rpos, buffer, offset, Math.Min(bytesToRead, bytesRead));
+                Array.Copy(this.buffer, rpos, buffer, offset, Math.Min(bytesToRead, bytesRead));
 
                 rpos += Math.Min(bytesToRead, bytesRead);
 
@@ -167,7 +118,7 @@ namespace Gsemac.Collections {
 
                 bytesRead = Math.Min(capacityLeft, count);
 
-                Buffer.BlockCopy(this.buffer, rpos, buffer, offset, bytesRead);
+                Array.Copy(this.buffer, rpos, buffer, offset, bytesRead);
 
                 rpos = (rpos + bytesRead) % this.buffer.Length;
 
@@ -177,7 +128,7 @@ namespace Gsemac.Collections {
 
                     bytesToRead = Math.Min(bytesToRead, wpos - rpos);
 
-                    Buffer.BlockCopy(this.buffer, rpos, buffer, offset + bytesRead, bytesToRead);
+                    Array.Copy(this.buffer, rpos, buffer, offset + bytesRead, bytesToRead);
 
                     bytesRead += bytesToRead;
 
@@ -188,6 +139,75 @@ namespace Gsemac.Collections {
             }
 
             return bytesRead;
+
+        }
+        /// <summary>
+        /// Writes a single value to the buffer.
+        /// </summary>
+        /// <param name="value">The value to add.</param>
+        public void Write(T value) {
+
+            Write(new T[] { value }, 0, 1);
+
+        }
+        /// <summary>
+        /// Adds an array of values to the queue.
+        /// </summary>
+        /// <param name="buffer">Values to add.</param>
+        /// <param name="offset">Starting offset in buffer.</param>
+        /// <param name="count">Number of values to write from the buffer.</param>
+        public void Write(T[] buffer, int offset, int count) {
+
+            int bytesToWrite = count;
+
+            // Make sure the capacity is large enough to store the new bytes.
+
+            EnsureCapacity(bytesToWrite);
+
+            if (wpos < rpos) {
+
+                // New capacity will have been provided between the write and read heads, so we can write guaranteed that there is enough space.
+
+                Array.Copy(buffer, offset, this.buffer, wpos, count);
+
+                wpos += count;
+
+            }
+            else {
+
+                int writeCapacityLeft = this.buffer.Length - wpos;
+
+                // Copy as much as we can to the end of the buffer.
+
+                int bytesWritten = Math.Min(bytesToWrite, writeCapacityLeft);
+
+                Array.Copy(buffer, offset, this.buffer, wpos, bytesWritten);
+
+                bytesToWrite -= bytesWritten;
+
+                wpos = (wpos + bytesWritten) % this.buffer.Length;
+
+                if (bytesToWrite > 0) {
+
+                    // Go back to the front of the buffer to continue writing.
+
+                    Array.Copy(buffer, offset + bytesWritten, this.buffer, wpos, bytesToWrite);
+
+                    wpos = bytesToWrite;
+
+                }
+
+            }
+
+        }
+
+        /// <summary>
+        /// Returns the next item in the buffer without removing it.
+        /// </summary>
+        /// <returns>The item byte in the buffer.</returns>
+        public T Peek() {
+
+            return buffer[rpos];
 
         }
 
@@ -202,13 +222,6 @@ namespace Gsemac.Collections {
             rpos = 0;
 
         }
-        /// <summary>
-        /// Returns the next byte in the queue without dequeueing it.
-        /// </summary>
-        /// <returns>The next byte in the queue.</returns>
-        public byte Peek() {
-            return buffer[rpos];
-        }
 
         // Private members
 
@@ -216,7 +229,7 @@ namespace Gsemac.Collections {
         private const int minCapacity = 4;
 
         private readonly bool fixedCapacity = false;
-        private byte[] buffer;
+        private T[] buffer;
         private int wpos = 0; // write position
         private int rpos = 0; // read position
 
@@ -258,14 +271,14 @@ namespace Gsemac.Collections {
             if (fixedCapacity)
                 throw new InvalidOperationException(Properties.ExceptionMessages.BufferIsNotExpandable);
 
-            byte[] newBuffer = new byte[capacity];
+            T[] newBuffer = new T[capacity];
 
             if (rpos < wpos) {
 
                 // If the read head is behind the write head, just copy in the data that we still have to read (between the heads).
                 // This places all of the new capacity after the write head.
 
-                Buffer.BlockCopy(buffer, rpos, newBuffer, 0, wpos - rpos);
+                Array.Copy(buffer, rpos, newBuffer, 0, wpos - rpos);
 
                 wpos -= rpos;
                 rpos = 0;
@@ -275,11 +288,11 @@ namespace Gsemac.Collections {
 
                 // If the write head is behind the read head, we need to put the new capacity between them.
 
-                Buffer.BlockCopy(buffer, 0, newBuffer, 0, wpos);
+                Array.Copy(buffer, 0, newBuffer, 0, wpos);
 
                 int unreadSegmentLength = buffer.Length - rpos;
 
-                Buffer.BlockCopy(buffer, rpos, newBuffer, newBuffer.Length - unreadSegmentLength, unreadSegmentLength);
+                Array.Copy(buffer, rpos, newBuffer, newBuffer.Length - unreadSegmentLength, unreadSegmentLength);
 
                 rpos = newBuffer.Length - unreadSegmentLength;
 
@@ -294,6 +307,28 @@ namespace Gsemac.Collections {
             }
 
             buffer = newBuffer;
+
+        }
+
+        int GetActualIndex(int index) {
+
+            return (rpos + index) % Capacity;
+
+        }
+        T GetItemAtIndex(int index) {
+
+            if (index < 0 || index >= Length)
+                throw new IndexOutOfRangeException(ExceptionMessages.BufferIndexOutOfBounds);
+
+            return buffer[GetActualIndex(index)];
+
+        }
+        void SetItemAtIndex(int index, T value) {
+
+            if (index < 0 || index >= Length)
+                throw new IndexOutOfRangeException(ExceptionMessages.BufferIndexOutOfBounds);
+
+            buffer[GetActualIndex(index)] = value;
 
         }
 

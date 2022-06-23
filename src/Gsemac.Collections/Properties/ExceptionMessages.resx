@@ -120,8 +120,14 @@
   <data name="BufferHasNoSpaceLeft" xml:space="preserve">
     <value>The buffer has no space left.</value>
   </data>
+  <data name="BufferIndexOutOfBounds" xml:space="preserve">
+    <value>Index was outside the bounds of the buffer.</value>
+  </data>
   <data name="BufferIsNotExpandable" xml:space="preserve">
     <value>Buffer is not expandable.</value>
+  </data>
+  <data name="CircularBufferIsEmpty" xml:space="preserve">
+    <value>The buffer is empty.</value>
   </data>
   <data name="CollectionIsReadOnly" xml:space="preserve">
     <value>Collection is read-only.</value>

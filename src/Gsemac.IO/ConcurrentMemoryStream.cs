@@ -143,7 +143,7 @@ namespace Gsemac.IO {
 
         // Private members
 
-        private readonly CircularBuffer streamBuffer = new CircularBuffer();
+        private readonly CircularBuffer<byte> streamBuffer = new CircularBuffer<byte>();
         private volatile bool isBlocking = false;
         private volatile bool isClosed = false;
 

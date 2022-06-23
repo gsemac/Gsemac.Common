@@ -19,7 +19,7 @@ namespace Gsemac.Collections.Properties {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class ExceptionMessages {
@@ -70,11 +70,29 @@ namespace Gsemac.Collections.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Index was outside the bounds of the buffer..
+        /// </summary>
+        internal static string BufferIndexOutOfBounds {
+            get {
+                return ResourceManager.GetString("BufferIndexOutOfBounds", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Buffer is not expandable..
         /// </summary>
         internal static string BufferIsNotExpandable {
             get {
                 return ResourceManager.GetString("BufferIsNotExpandable", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The buffer is empty..
+        /// </summary>
+        internal static string CircularBufferIsEmpty {
+            get {
+                return ResourceManager.GetString("CircularBufferIsEmpty", resourceCulture);
             }
         }
         
