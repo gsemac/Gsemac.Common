@@ -16,7 +16,7 @@ namespace Gsemac.Text.Ini.Lexers {
         // Public members
 
         public IniLexer(Stream stream) :
-            base(new PeekBufferStreamReader(stream)) {
+            base(new LookaheadStreamReader(stream)) {
         }
         public IniLexer(Stream stream, IIniOptions options) :
             this(stream) {
@@ -60,9 +60,13 @@ namespace Gsemac.Text.Ini.Lexers {
 
         // Protected members
 
-        new protected PeekBufferStreamReader Reader => (PeekBufferStreamReader)base.Reader;
+        new protected LookaheadStreamReader Reader => (LookaheadStreamReader)base.Reader;
 
         // Private members
+
+        private const string SectionNameStart = "[";
+        private const string SectionNameEnd = "]";
+        public const string NewLine = "\n";
 
         private readonly Queue<IIniLexerToken> tokens = new Queue<IIniLexerToken>();
         private readonly IIniOptions options = new IniOptions();
@@ -73,7 +77,7 @@ namespace Gsemac.Text.Ini.Lexers {
 
             if (!Reader.EndOfText()) {
 
-                if (Reader.Peek() == '[') {
+                if (ReaderHasString(SectionNameStart)) {
 
                     ReadSection();
 
@@ -105,9 +109,13 @@ namespace Gsemac.Text.Ini.Lexers {
         }
         private bool ReadSectionName() {
 
-            string value = Reader.ReadLine(new char[] { ']', '\r', '\n' }, allowEscapeSequences: true);
+            string value = Reader.ReadLine(new[] { SectionNameEnd }, new ReadLineOptions() {
+                BreakOnNewLine = true,
+                ConsumeDelimiter = false,
+                IgnoreEscapedDelimiters = options.AllowEscapeSequences,
+            });
 
-            if (options.Unescape)
+            if (options.AllowEscapeSequences)
                 value = IniUtilities.Unescape(value);
 
             // Whitespace surrounding section names is ignored.
@@ -158,10 +166,17 @@ namespace Gsemac.Text.Ini.Lexers {
         }
         private bool ReadPropertyName() {
 
-            char[] delimiters = options.AllowComments ? new char[] { '=', ';', '\r', '\n' } : new char[] { '=', '\r', '\n' };
-            string value = Reader.ReadLine(delimiters, allowEscapeSequences: true);
+            string[] delimiters = options.AllowComments ?
+                new[] { options.PropertyValueSeparator, options.CommentMarker } :
+                new[] { options.PropertyValueSeparator };
 
-            if (options.Unescape)
+            string value = Reader.ReadLine(delimiters, new ReadLineOptions() {
+                BreakOnNewLine = true,
+                ConsumeDelimiter = false,
+                IgnoreEscapedDelimiters = options.AllowEscapeSequences,
+            });
+
+            if (options.AllowEscapeSequences)
                 value = IniUtilities.Unescape(value);
 
             // Whitespace surrounding property names is ignored.
@@ -185,7 +200,7 @@ namespace Gsemac.Text.Ini.Lexers {
 
             if (Reader.TryPeek(out char nextChar)) {
 
-                if (nextChar.IsNewLine() || nextChar != '=')
+                if (nextChar.IsNewLine() || !ReaderHasString(options.PropertyValueSeparator))
                     return false;
 
             }
@@ -197,10 +212,17 @@ namespace Gsemac.Text.Ini.Lexers {
         }
         private bool ReadPropertyValue() {
 
-            char[] delimiters = options.AllowComments ? new char[] { ';', '\r', '\n' } : new char[] { '\r', '\n' };
-            string value = Reader.ReadLine(delimiters, allowEscapeSequences: true);
+            string[] delimiters = options.AllowComments ?
+                new string[] { options.CommentMarker, NewLine } :
+                new string[0];
 
-            if (options.Unescape)
+            string value = Reader.ReadLine(delimiters, new ReadLineOptions() {
+                BreakOnNewLine = true,
+                ConsumeDelimiter = false,
+                IgnoreEscapedDelimiters = options.AllowEscapeSequences,
+            });
+
+            if (options.AllowEscapeSequences)
                 value = IniUtilities.Unescape(value);
 
             // Whitespace surrounding property values is ignored.

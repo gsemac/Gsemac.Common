@@ -3,9 +3,10 @@
     public interface IIniOptions {
 
         bool AllowComments { get; }
+        bool AllowEscapeSequences { get; }
+
         string CommentMarker { get; }
         string PropertyValueSeparator { get; }
-        bool Unescape { get; }
 
     }
 

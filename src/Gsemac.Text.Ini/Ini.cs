@@ -96,7 +96,9 @@ namespace Gsemac.Text.Ini {
 
                 }
 
-                sb.AppendLine($"{IniUtilities.Escape(property.Name)}={IniUtilities.Escape(property.Value)}");
+                sb.Append(IniUtilities.Escape(property.Name));
+                sb.Append(options.PropertyValueSeparator);
+                sb.AppendLine(IniUtilities.Escape(property.Value));
 
             }
 
