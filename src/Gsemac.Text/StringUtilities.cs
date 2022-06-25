@@ -498,7 +498,7 @@ namespace Gsemac.Text {
         }
         public static string StreamToString(Stream stream, Encoding encoding) {
 
-            using (StreamReader sr = new StreamReader(stream, encoding))
+            using (StreamReader sr = new NonClosingStreamReader(stream, encoding))
                 return sr.ReadToEnd();
 
         }
@@ -525,6 +525,28 @@ namespace Gsemac.Text {
         }
 
         // Private members
+
+        private class NonClosingStreamReader :
+            StreamReader {
+
+            // Public members
+
+            public NonClosingStreamReader(Stream stream, Encoding encoding) :
+                base(stream, encoding) {
+            }
+
+            // Protected members
+
+            protected override void Dispose(bool disposing) {
+
+                // Close the StreamReader without calling Dispose on the underyling stream.
+                // https://stackoverflow.com/a/6784157/5383169 (Aaron Murgatroyd)
+
+                base.Dispose(false);
+
+            }
+
+        }
 
         private static string UnescapeEscapeSequence(string input) {
 
