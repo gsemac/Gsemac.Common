@@ -513,6 +513,17 @@ namespace Gsemac.Text {
 
         }
 
+        public static bool IsNewLine(string value) {
+
+            if (string.IsNullOrEmpty(value))
+                return false;
+
+            return value.Equals("\r") ||
+                value.Equals("\n") ||
+                value.Equals("\r\n");
+
+        }
+
         // Private members
 
         private static string UnescapeEscapeSequence(string input) {
