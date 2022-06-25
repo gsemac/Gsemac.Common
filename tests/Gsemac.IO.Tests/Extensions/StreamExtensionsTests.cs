@@ -1,10 +1,9 @@
-﻿using Gsemac.IO.Extensions;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.IO;
 using System.Text;
 
-namespace Gsemac.IO.Tests.Extensions {
+namespace Gsemac.IO.Extensions.Tests {
 
     [TestClass]
     public class StreamExtensionsTests {

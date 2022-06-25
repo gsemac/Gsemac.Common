@@ -169,6 +169,15 @@ namespace Gsemac.IO.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The ConsumeDelimiter option must be true when using string delimiters..
+        /// </summary>
+        internal static string ReadLineWithStringDelimiterMustConsumeDelimiter {
+            get {
+                return ResourceManager.GetString("ReadLineWithStringDelimiterMustConsumeDelimiter", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The read operation timed out..
         /// </summary>
         internal static string ReadOperationTimedOut {
