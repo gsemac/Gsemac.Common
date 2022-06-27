@@ -48,7 +48,7 @@ namespace Gsemac.Text.Ini {
 
                         case IniLexerTokenType.PropertyValue:
 
-                            if (!(lastProperty is null))
+                            if (lastProperty is object)
                                 lastProperty.Value = token.Value;
 
                             break;

@@ -99,7 +99,7 @@ namespace Gsemac.Text.Ini {
 
             writer.Write(options.CommentMarker);
             writer.Write(' ');
-            writer.Write(value);
+            writer.WriteLine(value);
 
         }
 

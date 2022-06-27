@@ -86,13 +86,8 @@ namespace Gsemac.Text.Ini {
 
             foreach (IIniProperty property in section) {
 
-                //if (options.AllowComments && !string.IsNullOrEmpty(options.CommentMarker) && !string.IsNullOrEmpty(property.Comment)) {
-
-                //    sb.Append(options.CommentMarker);
-                //    sb.Append(' ');
-                //    sb.AppendLine(property.Comment);
-
-                //}
+                if (options.EnableComments && !string.IsNullOrEmpty(options.CommentMarker) && !string.IsNullOrEmpty(property.Comment))
+                    writer.WriteComment(property.Comment);
 
                 writer.WritePropertyName(property.Name);
                 writer.WriteNameValueSeparator();
