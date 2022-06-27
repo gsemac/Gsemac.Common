@@ -17,9 +17,22 @@ namespace Gsemac.Text.Ini {
             get => GetOrDefault(sectionName);
         }
 
-        public void Add(string sectionName) {
+        public IniSectionCollection() :
+            this(EqualityComparer<string>.Default) {
+        }
+        public IniSectionCollection(IEqualityComparer<string> keyComparer) {
 
-            Add(new IniSection(sectionName));
+            if (keyComparer is null)
+                throw new ArgumentNullException(nameof(keyComparer));
+
+            sections = new Dictionary<string, IniSectionInfo>(keyComparer);
+            this.keyComparer = keyComparer;
+
+        }
+
+        public void Add(string name) {
+
+            Add(new IniSection(name, keyComparer));
 
         }
         public void Add(IIniSection item) {
@@ -37,9 +50,9 @@ namespace Gsemac.Text.Ini {
 
         }
 
-        public bool Contains(string sectionName) {
+        public bool Contains(string name) {
 
-            return sections.TryGetValue(sectionName, out IniSectionInfo info) &&
+            return sections.TryGetValue(name, out IniSectionInfo info) &&
                 !info.IsTransient;
 
         }
@@ -60,18 +73,18 @@ namespace Gsemac.Text.Ini {
 
         }
 
-        public IIniSection Get(string sectionName) {
+        public IIniSection Get(string name) {
 
-            if (sections.TryGetValue(sectionName, out IniSectionInfo info) && !info.IsTransient)
+            if (sections.TryGetValue(name, out IniSectionInfo info) && !info.IsTransient)
                 return info.Section;
 
             return null;
 
         }
 
-        public bool Remove(string sectionName) {
+        public bool Remove(string name) {
 
-            return sections.Remove(sectionName);
+            return sections.Remove(name);
 
         }
         public bool Remove(IIniSection item) {
@@ -126,7 +139,8 @@ namespace Gsemac.Text.Ini {
 
         }
 
-        private readonly IDictionary<string, IniSectionInfo> sections = new Dictionary<string, IniSectionInfo>();
+        private readonly IDictionary<string, IniSectionInfo> sections;
+        private readonly IEqualityComparer<string> keyComparer;
 
         private IIniSection GetOrDefault(string sectionName) {
 

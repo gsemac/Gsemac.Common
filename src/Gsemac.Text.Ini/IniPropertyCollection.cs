@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 
 namespace Gsemac.Text.Ini {
@@ -15,9 +16,21 @@ namespace Gsemac.Text.Ini {
             get => Get(propertyName);
         }
 
-        public void Add(string propertyName, string propertyValue) {
+        public IniPropertyCollection() :
+            this(EqualityComparer<string>.Default) {
+        }
+        public IniPropertyCollection(IEqualityComparer<string> keyComparer) {
 
-            properties.Add(propertyName, new IniProperty(propertyName, propertyValue));
+            if (keyComparer is null)
+                throw new ArgumentNullException(nameof(keyComparer));
+
+            properties = new Dictionary<string, IIniProperty>(keyComparer);
+
+        }
+
+        public void Add(string name, string value) {
+
+            properties.Add(name, new IniProperty(name, value));
 
         }
         public void Add(IIniProperty item) {
@@ -41,9 +54,9 @@ namespace Gsemac.Text.Ini {
                 property.Equals(item);
 
         }
-        public bool Contains(string propertyName) {
+        public bool Contains(string name) {
 
-            return properties.ContainsKey(propertyName);
+            return properties.ContainsKey(name);
 
         }
 
@@ -53,26 +66,26 @@ namespace Gsemac.Text.Ini {
 
         }
 
-        public IIniProperty Get(string propertyName) {
+        public IIniProperty Get(string name) {
 
-            if (properties.TryGetValue(propertyName, out IIniProperty property))
+            if (properties.TryGetValue(name, out IIniProperty property))
                 return property;
 
             return null;
 
         }
-        public void Set(string propertyName, string propertyValue) {
+        public void Set(string name, string value) {
 
-            if (properties.TryGetValue(propertyName, out IIniProperty property))
-                property.Value = propertyValue;
+            if (properties.TryGetValue(name, out IIniProperty property))
+                property.Value = value;
 
-            Add(propertyName, propertyValue);
+            Add(name, value);
 
         }
 
-        public bool Remove(string propertyName) {
+        public bool Remove(string name) {
 
-            return properties.Remove(propertyName);
+            return properties.Remove(name);
 
         }
         public bool Remove(IIniProperty item) {
@@ -102,7 +115,7 @@ namespace Gsemac.Text.Ini {
 
         // Private members
 
-        private readonly IDictionary<string, IIniProperty> properties = new Dictionary<string, IIniProperty>();
+        private readonly IDictionary<string, IIniProperty> properties;
 
     }
 

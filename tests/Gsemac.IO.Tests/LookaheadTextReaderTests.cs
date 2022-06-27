@@ -6,7 +6,7 @@ using System.IO;
 namespace Gsemac.IO.Tests {
 
     [TestClass]
-    public class LookaheadStreamReaderTests {
+    public class LookaheadTextReaderTests {
 
         // Public members
 
@@ -16,7 +16,7 @@ namespace Gsemac.IO.Tests {
         public void TestPeekWithMultipleCharacters() {
 
             using Stream stream = StringUtilities.StringToStream("hello world!");
-            using LookaheadStreamReader reader = new(stream);
+            using LookaheadTextReader reader = new(stream);
 
             Assert.AreEqual("hello", reader.PeekString(5));
             Assert.AreEqual("hello ", reader.ReadString(6));

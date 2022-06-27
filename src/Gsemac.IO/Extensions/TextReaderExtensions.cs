@@ -303,6 +303,20 @@ namespace Gsemac.IO.Extensions {
 
         }
 
+        public static bool IsNext(this TextReader reader, char value) {
+
+            if (reader is null)
+                throw new ArgumentNullException(nameof(reader));
+
+            int nextChar = reader.Peek();
+
+            if (nextChar < 0)
+                return false;
+
+            return (char)nextChar == value;
+
+        }
+
         public static bool EndOfText(this TextReader reader) {
 
             if (reader is null)

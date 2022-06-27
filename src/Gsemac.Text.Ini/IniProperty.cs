@@ -29,7 +29,15 @@ namespace Gsemac.Text.Ini {
 
         public override string ToString() {
 
-            return Value;
+            using (IIniWriter iniWriter = new IniWriter()) {
+
+                iniWriter.WritePropertyName(Name);
+                iniWriter.WriteNameValueSeparator();
+                iniWriter.WritePropertyValue(Value);
+
+                return iniWriter.ToString();
+
+            }
 
         }
 

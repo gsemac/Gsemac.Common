@@ -8,7 +8,7 @@ namespace Gsemac.Text.Ini {
         string this[string propertyName] { get; set; }
 
         string Comment { get; set; }
-        string Name { get; }     
+        string Name { get; }
         IIniPropertyCollection Properties { get; }
         IIniSectionCollection Sections { get; }
 

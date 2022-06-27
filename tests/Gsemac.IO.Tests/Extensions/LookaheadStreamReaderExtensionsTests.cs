@@ -130,9 +130,9 @@ namespace Gsemac.IO.Extensions.Tests {
 
         // Private members
 
-        private static LookaheadStreamReader CreateReader(string str) {
+        private static LookaheadTextReader CreateReader(string str) {
 
-            return new LookaheadStreamReader(StringUtilities.StringToStream(str));
+            return new LookaheadTextReader(StringUtilities.StringToStream(str));
 
         }
 

@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 
 namespace Gsemac.Text.Ini {
@@ -25,9 +26,21 @@ namespace Gsemac.Text.Ini {
         public IniSection() :
             this(string.Empty) {
         }
-        public IniSection(string name) {
+        public IniSection(IEqualityComparer<string> keyComparer) :
+           this(string.Empty, keyComparer) {
+        }
+        public IniSection(string name) :
+            this(name, EqualityComparer<string>.Default) {
+        }
+        public IniSection(string name, IEqualityComparer<string> keyComparer) {
+
+            if (keyComparer is null)
+                throw new ArgumentNullException(nameof(keyComparer));
 
             Name = name;
+
+            properties = new IniPropertyCollection(keyComparer);
+            sections = new IniSectionCollection(keyComparer);
 
         }
 
@@ -44,8 +57,8 @@ namespace Gsemac.Text.Ini {
 
         // Private members
 
-        private readonly IIniPropertyCollection properties = new IniPropertyCollection();
-        private readonly IIniSectionCollection sections = new IniSectionCollection();
+        private readonly IIniPropertyCollection properties;
+        private readonly IIniSectionCollection sections;
 
     }
 

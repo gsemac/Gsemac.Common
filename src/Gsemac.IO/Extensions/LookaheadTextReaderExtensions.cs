@@ -6,11 +6,11 @@ using System.Text;
 
 namespace Gsemac.IO.Extensions {
 
-    public static class LookaheadStreamReaderExtensions {
+    public static class LookaheadTextReaderExtensions {
 
         // Public members
 
-        public static string ReadLine(this LookaheadStreamReader reader, string delimiter) {
+        public static string ReadLine(this LookaheadTextReader reader, string delimiter) {
 
             if (reader is null)
                 throw new ArgumentNullException(nameof(reader));
@@ -18,7 +18,7 @@ namespace Gsemac.IO.Extensions {
             return reader.ReadLine(new[] { delimiter });
 
         }
-        public static string ReadLine(this LookaheadStreamReader reader, string[] delimiters) {
+        public static string ReadLine(this LookaheadTextReader reader, string[] delimiters) {
 
             if (reader is null)
                 throw new ArgumentNullException(nameof(reader));
@@ -26,7 +26,7 @@ namespace Gsemac.IO.Extensions {
             return reader.ReadLine(delimiters, ReadLineOptions.Default);
 
         }
-        public static string ReadLine(this LookaheadStreamReader reader, string[] delimiters, IReadLineOptions options) {
+        public static string ReadLine(this LookaheadTextReader reader, string[] delimiters, IReadLineOptions options) {
 
             if (reader is null)
                 throw new ArgumentNullException(nameof(reader));
@@ -112,7 +112,7 @@ namespace Gsemac.IO.Extensions {
 
         }
 
-        public static string PeekString(this LookaheadStreamReader reader, int count) {
+        public static string PeekString(this LookaheadTextReader reader, int count) {
 
             if (reader is null)
                 throw new ArgumentNullException(nameof(reader));
@@ -125,6 +125,15 @@ namespace Gsemac.IO.Extensions {
                 return string.Empty;
 
             return new string(buffer, 0, charsRead);
+
+        }
+
+        public static bool IsNext(this LookaheadTextReader reader, string value) {
+
+            if (reader is null)
+                throw new ArgumentNullException(nameof(reader));
+
+            return reader.PeekString(value.Length).Equals(value);
 
         }
 

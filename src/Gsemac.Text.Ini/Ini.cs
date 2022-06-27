@@ -2,7 +2,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace Gsemac.Text.Ini {
 
@@ -28,6 +27,9 @@ namespace Gsemac.Text.Ini {
 
             this.options = options;
 
+            global = new IniSection(options.KeyComparer);
+            sections = new IniSectionCollection(options.KeyComparer);
+
         }
 
         public IEnumerator<IIniSection> GetEnumerator() {
@@ -43,62 +45,58 @@ namespace Gsemac.Text.Ini {
 
         public override string ToString() {
 
-            StringBuilder sb = new StringBuilder();
+            using (IIniWriter writer = new IniWriter(options)) {
 
-            if (Global.Any()) {
+                if (Global.Any()) {
 
-                WriteSection(sb, Global);
+                    WriteSection(writer, Global);
+
+                }
+
+                foreach (IIniSection section in this) {
+
+                    if (section == Global)
+                        continue;
+
+                    WriteSection(writer, section);
+
+                }
+
+                return writer.ToString();
 
             }
-
-
-            foreach (IIniSection section in this) {
-
-                sb.AppendLine();
-
-                if (section == Global)
-                    continue;
-
-                WriteSection(sb, section);
-
-            }
-
-            return sb.ToString();
 
         }
 
         // Private members
 
-        private readonly IIniSection global = new IniSection();
-        private readonly IIniSectionCollection sections = new IniSectionCollection();
+        private readonly IIniSection global;
+        private readonly IIniSectionCollection sections;
         private readonly IIniOptions options;
 
-        private string GetKey(string sectionName) {
+        private void WriteSection(IIniWriter writer, IIniSection section) {
 
-            if (string.IsNullOrEmpty(sectionName))
-                return sectionName;
+            if (section != Global && !string.IsNullOrEmpty(section.Name)) {
 
-            return sectionName.ToLowerInvariant().Trim();
+                writer.WriteSectionStart();
+                writer.WriteSectionName(section.Name);
+                writer.WriteSectionEnd();
 
-        }
-        private void WriteSection(StringBuilder sb, IIniSection section) {
-
-            if (section != Global && !string.IsNullOrEmpty(section.Name))
-                sb.AppendLine($"[{IniUtilities.Escape(section.Name)}]");
+            }
 
             foreach (IIniProperty property in section) {
 
-                if (options.AllowComments && !string.IsNullOrEmpty(options.CommentMarker) && !string.IsNullOrEmpty(property.Comment)) {
+                //if (options.AllowComments && !string.IsNullOrEmpty(options.CommentMarker) && !string.IsNullOrEmpty(property.Comment)) {
 
-                    sb.Append(options.CommentMarker);
-                    sb.Append(' ');
-                    sb.AppendLine(property.Comment);
+                //    sb.Append(options.CommentMarker);
+                //    sb.Append(' ');
+                //    sb.AppendLine(property.Comment);
 
-                }
+                //}
 
-                sb.Append(IniUtilities.Escape(property.Name));
-                sb.Append(options.PropertyValueSeparator);
-                sb.AppendLine(IniUtilities.Escape(property.Value));
+                writer.WritePropertyName(property.Name);
+                writer.WriteNameValueSeparator();
+                writer.WritePropertyValue(property.Value);
 
             }
 

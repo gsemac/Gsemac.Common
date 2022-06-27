@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.IO;
 
 namespace Gsemac.Text.Lexers {
@@ -12,6 +14,18 @@ namespace Gsemac.Text.Lexers {
         public void Dispose() {
 
             Dispose(true);
+
+        }
+
+        public IEnumerator<T> GetEnumerator() {
+
+            while (Read(out T token))
+                yield return token;
+
+        }
+        IEnumerator IEnumerable.GetEnumerator() {
+
+            return GetEnumerator();
 
         }
 

@@ -5,18 +5,21 @@ using System.Text;
 
 namespace Gsemac.IO {
 
-    public class LookaheadStreamReader :
+    public class LookaheadTextReader :
         TextReader {
 
         // Public members
 
-        public LookaheadStreamReader(Stream stream) :
+        public LookaheadTextReader(Stream stream) :
              this(new StreamReader(stream)) {
         }
-        public LookaheadStreamReader(Stream stream, Encoding encoding) :
+        public LookaheadTextReader(Stream stream, Encoding encoding) :
             this(new StreamReader(stream, encoding)) {
         }
-        public LookaheadStreamReader(TextReader reader) {
+        public LookaheadTextReader(string value) :
+            this(new StringReader(value)) {
+        }
+        public LookaheadTextReader(TextReader reader) {
 
             this.reader = reader;
 

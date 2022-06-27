@@ -5,15 +5,15 @@ namespace Gsemac.Text.Ini {
     public interface IIniPropertyCollection :
         ICollection<IIniProperty> {
 
-        IIniProperty this[string propertyName] { get; }
+        IIniProperty this[string name] { get; }
 
-        void Add(string propertyName, string propertyValue);
-        bool Remove(string propertyName);
+        void Add(string name, string value);
+        bool Remove(string name);
 
-        bool Contains(string propertyName);
+        bool Contains(string name);
 
-        IIniProperty Get(string propertyName);
-        void Set(string propertyName, string propertyValue);
+        IIniProperty Get(string name);
+        void Set(string name, string value);
 
     }
 

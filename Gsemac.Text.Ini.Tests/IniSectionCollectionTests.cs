@@ -1,4 +1,5 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
 
 namespace Gsemac.Text.Ini.Tests {
 
@@ -44,13 +45,38 @@ namespace Gsemac.Text.Ini.Tests {
         }
 
         [TestMethod]
-        public void TestGettingMissingPropertyByIndexIsNotNull() {
+        public void TestGettingMissingPropertyIsNotNull() {
 
             IIniSectionCollection items = new IniSectionCollection();
 
             string value = items["section"]["key"];
 
             Assert.AreEqual(string.Empty, value);
+
+        }
+
+        // Contains
+
+        [TestMethod]
+        public void TestLookupIsCaseSensitiveByDefault() {
+
+            IIniSectionCollection items = new IniSectionCollection {
+                "section",
+            };
+
+            Assert.IsTrue(items.Contains("section"));
+            Assert.IsFalse(items.Contains("SECTION"));
+
+        }
+        [TestMethod]
+        public void TestLookupWithCaseInsensitiveKeyComparer() {
+
+            IIniSectionCollection items = new IniSectionCollection(StringComparer.OrdinalIgnoreCase) {
+                "section",
+            };
+
+            Assert.IsTrue(items.Contains("section"));
+            Assert.IsTrue(items.Contains("SECTION"));
 
         }
 

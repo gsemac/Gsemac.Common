@@ -7,12 +7,12 @@ namespace Gsemac.Text.Ini {
 
         IIniSection this[string sectionName] { get; }
 
-        void Add(string sectionName);
-        bool Remove(string sectionName);
+        void Add(string name);
+        bool Remove(string name);
 
-        bool Contains(string sectionName);
+        bool Contains(string name);
 
-        IIniSection Get(string sectionName);
+        IIniSection Get(string name);
 
     }
 

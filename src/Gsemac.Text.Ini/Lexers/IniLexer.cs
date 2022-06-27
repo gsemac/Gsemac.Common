@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using static Gsemac.Text.Ini.IniConstants;
 
 namespace Gsemac.Text.Ini.Lexers {
 
@@ -16,10 +17,22 @@ namespace Gsemac.Text.Ini.Lexers {
         // Public members
 
         public IniLexer(Stream stream) :
-            base(new LookaheadStreamReader(stream)) {
+            this(stream, IniOptions.Default) {
         }
         public IniLexer(Stream stream, IIniOptions options) :
-            this(stream) {
+            this(new StreamReader(stream), options) {
+        }
+        public IniLexer(string value) :
+            this(value, IniOptions.Default) {
+        }
+        public IniLexer(string value, IIniOptions options) :
+        this(new StringReader(value), options) {
+        }
+        public IniLexer(TextReader reader) :
+            this(reader, IniOptions.Default) {
+        }
+        public IniLexer(TextReader reader, IIniOptions options) :
+            base(new LookaheadTextReader(reader)) {
 
             if (options is null)
                 throw new ArgumentNullException(nameof(options));
@@ -60,13 +73,9 @@ namespace Gsemac.Text.Ini.Lexers {
 
         // Protected members
 
-        new protected LookaheadStreamReader Reader => (LookaheadStreamReader)base.Reader;
+        new protected LookaheadTextReader Reader => (LookaheadTextReader)base.Reader;
 
         // Private members
-
-        private const string SectionNameStart = "[";
-        private const string SectionNameEnd = "]";
-        public const string NewLine = "\n";
 
         private readonly Queue<IIniLexerToken> tokens = new Queue<IIniLexerToken>();
         private readonly IIniOptions options = new IniOptions();
@@ -77,19 +86,19 @@ namespace Gsemac.Text.Ini.Lexers {
 
             if (!Reader.EndOfText()) {
 
-                if (ReaderHasString(SectionNameStart)) {
+                if (Reader.IsNext(SectionNameStart)) {
 
-                    ReadSection();
+                    ReadSection(Reader);
 
                 }
-                else if (options.CommentMarker.Length > 0 && options.AllowComments && ReaderHasString(options.CommentMarker)) {
+                else if (options.CommentMarker.Length > 0 && options.EnableComments && Reader.IsNext(options.CommentMarker)) {
 
-                    ReadComment();
+                    ReadComment(Reader);
 
                 }
                 else {
 
-                    ReadProperty();
+                    ReadProperty(Reader);
 
                 }
 
@@ -97,86 +106,85 @@ namespace Gsemac.Text.Ini.Lexers {
 
         }
 
-        private bool ReadSectionStart() {
+        private bool ReadSectionName(LookaheadTextReader reader) {
 
-            if (Reader.EndOfText())
-                return false;
+            // A section name must appear on its own line, followed by whitespace or an inline comment (if enabled).
+            // If we read an invalid section name, it will be treated as a property instead (with or without a value, depending on how it's formatted).
 
-            tokens.Enqueue(new IniLexerToken(IniLexerTokenType.SectionNameStart, ((char)Reader.Read()).ToString()));
+            string[] delimiters = options.EnableInlineComments ?
+                new[] { options.CommentMarker, } :
+                new string[0];
 
-            return true;
+            // Read the section name.
 
-        }
-        private bool ReadSectionName() {
-
-            string value = Reader.ReadLine(new[] { SectionNameEnd }, new ReadLineOptions() {
+            string value = reader.ReadLine(delimiters, new ReadLineOptions() {
                 BreakOnNewLine = true,
                 ConsumeDelimiter = false,
-                IgnoreEscapedDelimiters = options.AllowEscapeSequences,
-            });
+                IgnoreEscapedDelimiters = options.EnableEscapeSequences,
+            }).Trim();
 
-            if (options.AllowEscapeSequences)
-                value = IniUtilities.Unescape(value);
+            // The section name is valid if it ends with an UNESCAPED section name end character ("]").
 
-            // Whitespace surrounding section names is ignored.
+            bool sectionNameIsValid = value.EndsWith(SectionNameEnd) &&
+                (!options.EnableEscapeSequences || !value.EndsWith(EscapeCharacter + SectionNameEnd));
 
-            tokens.Enqueue(new IniLexerToken(IniLexerTokenType.SectionName, value.Trim()));
+            if (sectionNameIsValid) {
 
-            // If we reached the end of the line rather than the end of the section, the section was not closed.
+                // Remove the outer section name markers from the section name.
 
-            if (Reader.TryPeek(out char nextChar) && nextChar.IsNewLine())
-                return false;
+                value = FormatStringValue(value.Substring(1, value.Length - 2));
 
-            return true;
+                tokens.Enqueue(new IniLexerToken(IniLexerTokenType.SectionNameStart, SectionNameStart));
+                tokens.Enqueue(new IniLexerToken(IniLexerTokenType.SectionName, value));
+                tokens.Enqueue(new IniLexerToken(IniLexerTokenType.SectionNameEnd, SectionNameEnd));
 
-        }
-        private bool ReadSectionEnd() {
+            }
+            else {
 
-            if (Reader.EndOfText())
-                return false;
+                // The section name is invalid, so reinterpret it as a property.
 
-            // If we reached the end of the line rather than the end of the section, the section was not closed.
+                using (LookaheadTextReader propertyReader = new LookaheadTextReader(value))
+                    ReadProperty(propertyReader);
 
-            if (Reader.TryPeek(out char nextChar) && nextChar.IsNewLine())
-                return false;
+            }
 
-            tokens.Enqueue(new IniLexerToken(IniLexerTokenType.SectionNameEnd, ((char)Reader.Read()).ToString()));
-
-            return true;
+            return sectionNameIsValid;
 
         }
-        private void ReadCommentMarker() {
 
-            if (Reader.EndOfText() || options.CommentMarker.Length <= 0)
+        private void ReadCommentMarker(LookaheadTextReader reader) {
+
+            if (reader.EndOfText() || options.CommentMarker.Length <= 0)
                 return;
 
-            Reader.SkipWhiteSpace();
+            reader.SkipWhiteSpace();
 
-            tokens.Enqueue(new IniLexerToken(IniLexerTokenType.CommentMarker, Reader.ReadString(options.CommentMarker.Length)));
+            tokens.Enqueue(new IniLexerToken(IniLexerTokenType.CommentMarker, reader.ReadString(options.CommentMarker.Length)));
 
         }
-        private void ReadCommentContent() {
+        private void ReadCommentContent(LookaheadTextReader reader) {
 
-            string value = Reader.ReadLine();
+            string value = reader.ReadLine();
 
             // Whitespace surrounding comments is ignored.
 
             tokens.Enqueue(new IniLexerToken(IniLexerTokenType.Comment, value.Trim()));
 
         }
-        private bool ReadPropertyName() {
 
-            string[] delimiters = options.AllowComments ?
-                new[] { options.PropertyValueSeparator, options.CommentMarker } :
-                new[] { options.PropertyValueSeparator };
+        private bool ReadPropertyName(LookaheadTextReader reader) {
 
-            string value = Reader.ReadLine(delimiters, new ReadLineOptions() {
+            string[] delimiters = options.EnableInlineComments ?
+                new[] { options.NameValueSeparator, options.CommentMarker } :
+                new[] { options.NameValueSeparator };
+
+            string value = reader.ReadLine(delimiters, new ReadLineOptions() {
                 BreakOnNewLine = true,
                 ConsumeDelimiter = false,
-                IgnoreEscapedDelimiters = options.AllowEscapeSequences,
+                IgnoreEscapedDelimiters = options.EnableEscapeSequences,
             });
 
-            if (options.AllowEscapeSequences)
+            if (options.EnableEscapeSequences)
                 value = IniUtilities.Unescape(value);
 
             // Whitespace surrounding property names is ignored.
@@ -185,44 +193,51 @@ namespace Gsemac.Text.Ini.Lexers {
 
             // If we reached the end of the line rather than the end of the property, the property does not have a value.
 
-            if (Reader.TryPeek(out char nextChar) && nextChar.IsNewLine())
+            if (reader.TryPeek(out char nextChar) && nextChar.IsNewLine())
                 return false;
 
             return true;
 
         }
-        private bool ReadPropertyValueSeparator() {
+        private bool ReadNameValueSeparator(LookaheadTextReader reader) {
 
-            if (Reader.EndOfText())
+            if (reader.EndOfText())
                 return false;
+
+            // Skip whitespace leading up to the separator, but do NOT skip newlines, because we don't want to read the following property.
+
+            string[] delimiters = new[] {
+                options.NameValueSeparator
+            };
+
+            reader.ReadLine(delimiters, new ReadLineOptions() {
+                BreakOnNewLine = true,
+                ConsumeDelimiter = false,
+            });
 
             // If we reached the end of the line rather than a property value separator, the property does not have a value.
 
-            if (Reader.TryPeek(out char nextChar)) {
+            if (!reader.IsNext(options.NameValueSeparator))
+                return false;
 
-                if (nextChar.IsNewLine() || !ReaderHasString(options.PropertyValueSeparator))
-                    return false;
-
-            }
-
-            tokens.Enqueue(new IniLexerToken(IniLexerTokenType.PropertyValueSeparator, ((char)Reader.Read()).ToString()));
+            tokens.Enqueue(new IniLexerToken(IniLexerTokenType.PropertyValueSeparator, reader.ReadString(options.NameValueSeparator.Length)));
 
             return true;
 
         }
-        private bool ReadPropertyValue() {
+        private bool ReadPropertyValue(LookaheadTextReader reader) {
 
-            string[] delimiters = options.AllowComments ?
-                new string[] { options.CommentMarker, NewLine } :
+            string[] delimiters = options.EnableInlineComments ?
+                new string[] { options.CommentMarker } :
                 new string[0];
 
-            string value = Reader.ReadLine(delimiters, new ReadLineOptions() {
+            string value = reader.ReadLine(delimiters, new ReadLineOptions() {
                 BreakOnNewLine = true,
                 ConsumeDelimiter = false,
-                IgnoreEscapedDelimiters = options.AllowEscapeSequences,
+                IgnoreEscapedDelimiters = options.EnableEscapeSequences,
             });
 
-            if (options.AllowEscapeSequences)
+            if (options.EnableEscapeSequences)
                 value = IniUtilities.Unescape(value);
 
             // Whitespace surrounding property values is ignored.
@@ -233,30 +248,37 @@ namespace Gsemac.Text.Ini.Lexers {
 
         }
 
-        private bool ReadSection() {
+        private bool ReadSection(LookaheadTextReader reader) {
 
-            return ReadSectionStart() &&
-                ReadSectionName() &&
-                ReadSectionEnd();
+            return ReadSectionName(reader);
 
         }
-        private void ReadComment() {
+        private void ReadComment(LookaheadTextReader reader) {
 
-            ReadCommentMarker();
-            ReadCommentContent();
+            ReadCommentMarker(reader);
+            ReadCommentContent(reader);
 
         }
-        private bool ReadProperty() {
+        private bool ReadProperty(LookaheadTextReader reader) {
 
-            return ReadPropertyName() &&
-                ReadPropertyValueSeparator() &&
-                ReadPropertyValue();
+            return ReadPropertyName(reader) &&
+                ReadNameValueSeparator(reader) &&
+                ReadPropertyValue(reader);
 
         }
 
-        private bool ReaderHasString(string value) {
+        private string FormatStringValue(string value) {
 
-            return Reader.PeekString(value.Length).Equals(value);
+            if (string.IsNullOrEmpty(value))
+                return value;
+
+            if (options.EnableEscapeSequences)
+                value = IniUtilities.Unescape(value);
+
+            if (!string.IsNullOrEmpty(value))
+                value = value.Trim();
+
+            return value;
 
         }
 
