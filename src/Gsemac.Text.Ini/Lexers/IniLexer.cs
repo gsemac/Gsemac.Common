@@ -184,12 +184,9 @@ namespace Gsemac.Text.Ini.Lexers {
                 IgnoreEscapedDelimiters = options.EnableEscapeSequences,
             });
 
-            if (options.EnableEscapeSequences)
-                value = IniUtilities.Unescape(value);
+            value = FormatStringValue(value);
 
-            // Whitespace surrounding property names is ignored.
-
-            tokens.Enqueue(new IniLexerToken(IniLexerTokenType.PropertyName, value.Trim()));
+            tokens.Enqueue(new IniLexerToken(IniLexerTokenType.PropertyName, value));
 
             // If we reached the end of the line rather than the end of the property, the property does not have a value.
 
@@ -237,12 +234,9 @@ namespace Gsemac.Text.Ini.Lexers {
                 IgnoreEscapedDelimiters = options.EnableEscapeSequences,
             });
 
-            if (options.EnableEscapeSequences)
-                value = IniUtilities.Unescape(value);
+            value = FormatStringValue(value);
 
-            // Whitespace surrounding property values is ignored.
-
-            tokens.Enqueue(new IniLexerToken(IniLexerTokenType.PropertyValue, value.Trim()));
+            tokens.Enqueue(new IniLexerToken(IniLexerTokenType.PropertyValue, value));
 
             return true;
 
@@ -275,7 +269,7 @@ namespace Gsemac.Text.Ini.Lexers {
             if (options.EnableEscapeSequences)
                 value = IniUtilities.Unescape(value);
 
-            if (!string.IsNullOrEmpty(value))
+            if (options.TrimWhiteSpace && !string.IsNullOrEmpty(value))
                 value = value.Trim();
 
             return value;

@@ -30,12 +30,26 @@ namespace Gsemac.Text.Ini {
 
         public void Add(string name, string value) {
 
-            properties.Add(name, new IniProperty(name, value));
+            Add(new IniProperty(name, value));
 
         }
         public void Add(IIniProperty item) {
 
-            properties.Add(item.Name, item);
+            if (item is null)
+                throw new ArgumentNullException(nameof(item));
+
+            if (properties.TryGetValue(item.Name, out IIniProperty existingProperty)) {
+
+                // Update the existing property.
+
+                existingProperty.Value = item.Value;
+
+            }
+            else {
+
+                properties.Add(item.Name, item);
+
+            }
 
         }
 

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Gsemac.Collections.Extensions;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -40,7 +41,18 @@ namespace Gsemac.Text.Ini {
             if (item is null)
                 throw new ArgumentNullException(nameof(item));
 
-            sections.Add(item.Name, new IniSectionInfo(item));
+            // If we try to add a section that already exists, just merge the properties.
+
+            if (sections.TryGetValue(item.Name, out IniSectionInfo existingSection)) {
+
+                existingSection.Section.Properties.AddRange(item.Properties);
+
+            }
+            else {
+
+                sections.Add(item.Name, new IniSectionInfo(item));
+
+            }
 
         }
 

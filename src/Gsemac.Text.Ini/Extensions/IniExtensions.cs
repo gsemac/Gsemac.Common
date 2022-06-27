@@ -7,7 +7,24 @@ namespace Gsemac.Text.Ini.Extensions {
 
         // Public members
 
-        public static string Get(this IIni ini, string propertyName) {
+        public static IIniProperty Get(this IIni ini, string propertyName) {
+
+            if (ini is null)
+                throw new ArgumentNullException(nameof(ini));
+
+            return ini.Global.Properties.Get(propertyName);
+
+        }
+        public static IIniProperty Get(this IIni ini, string sectionName, string propertyName) {
+
+            if (ini is null)
+                throw new ArgumentNullException(nameof(ini));
+
+            return ini.Sections.Get(sectionName).Properties.Get(propertyName);
+
+        }
+
+        public static string GetValue(this IIni ini, string propertyName) {
 
             if (ini is null)
                 throw new ArgumentNullException(nameof(ini));
@@ -16,7 +33,7 @@ namespace Gsemac.Text.Ini.Extensions {
                 .Value ?? string.Empty;
 
         }
-        public static string Get(this IIni ini, string sectionName, string propertyName) {
+        public static string GetValue(this IIni ini, string sectionName, string propertyName) {
 
             if (ini is null)
                 throw new ArgumentNullException(nameof(ini));
@@ -26,6 +43,26 @@ namespace Gsemac.Text.Ini.Extensions {
                     .Value ?? string.Empty;
 
         }
+
+        public static void SetValue(this IIni ini, string propertyName, string propertyValue) {
+
+            if (ini is null)
+                throw new ArgumentNullException(nameof(ini));
+
+            ini.Global.Properties.Add(propertyName, propertyValue);
+
+        }
+        public static void SetValue(this IIni ini, string sectionName, string propertyName, string propertyValue) {
+
+            if (ini is null)
+                throw new ArgumentNullException(nameof(ini));
+
+            IIniSection section = GetOrAddSection(ini, sectionName);
+
+            section.Properties.Set(propertyName, propertyValue);
+
+        }
+
         public static void Add(this IIni ini, string propertyName, string propertyValue) {
 
             if (ini is null)
@@ -44,24 +81,7 @@ namespace Gsemac.Text.Ini.Extensions {
             section.Properties.Add(propertyName, propertyValue);
 
         }
-        public static void Set(this IIni ini, string propertyName, string propertyValue) {
 
-            if (ini is null)
-                throw new ArgumentNullException(nameof(ini));
-
-            ini.Global.Properties.Add(propertyName, propertyValue);
-
-        }
-        public static void Set(this IIni ini, string sectionName, string propertyName, string propertyValue) {
-
-            if (ini is null)
-                throw new ArgumentNullException(nameof(ini));
-
-            IIniSection section = GetOrAddSection(ini, sectionName);
-
-            section.Properties.Set(propertyName, propertyValue);
-
-        }
         public static bool Remove(this IIni ini, string propertyName) {
 
             if (ini is null)
@@ -83,6 +103,7 @@ namespace Gsemac.Text.Ini.Extensions {
             return section.Properties.Remove(propertyName);
 
         }
+
         public static bool Contains(this IIni ini, string propertyName) {
 
             if (ini is null)

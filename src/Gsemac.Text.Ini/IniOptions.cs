@@ -22,6 +22,7 @@ namespace Gsemac.Text.Ini {
         }
         public bool EnableInlineComments { get; set; } = false;
         public bool EnableEscapeSequences { get; set; } = false;
+        public bool TrimWhiteSpace { get; set; } = true;
 
         public string CommentMarker { get; set; } = DefaultCommentMarker;
         public string NameValueSeparator { get; set; } = DefaultNameValueSeparator;

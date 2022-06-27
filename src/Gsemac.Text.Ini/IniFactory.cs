@@ -40,16 +40,31 @@ namespace Gsemac.Text.Ini {
 
                         case IniLexerTokenType.PropertyName:
 
-                            lastProperty = new IniProperty(token.Value, string.Empty);
+                            lastProperty = new IniProperty(token.Value);
 
-                            (lastSection ?? result.Global).Properties.Add(lastProperty);
+                            // Get the last section by name rather than using the object directly.
+                            // This is because the section we added may have been merged with an existing section.
+
+                            if (lastSection is object)
+                                result[lastSection.Name].Properties.Add(lastProperty);
+                            else
+                                result.Global.Properties.Add(lastProperty);
 
                             break;
 
                         case IniLexerTokenType.PropertyValue:
 
-                            if (lastProperty is object)
-                                lastProperty.Value = token.Value;
+                            // Get the last property by name rather than using the object directly.
+                            // This is because the property we added may have been merged with an existing property.
+
+                            if (lastProperty is object) {
+
+                                if (lastSection is object)
+                                    result[lastSection.Name].Properties.Add(lastProperty.Name, token.Value);
+                                else
+                                    result.Global.Properties.Add(lastProperty.Name, token.Value);
+
+                            }
 
                             break;
 

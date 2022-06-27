@@ -7,6 +7,7 @@ namespace Gsemac.Text.Ini {
         bool EnableComments { get; }
         bool EnableInlineComments { get; }
         bool EnableEscapeSequences { get; }
+        bool TrimWhiteSpace { get; }
 
         string CommentMarker { get; }
         string NameValueSeparator { get; }
