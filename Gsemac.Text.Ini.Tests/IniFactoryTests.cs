@@ -179,6 +179,19 @@ namespace Gsemac.Text.Ini.Tests {
 
         }
 
+        [TestMethod]
+        public void TestParseWithEmptyProperties() {
+
+            IIni ini = IniFactory.Default.Parse(ReadAllText("IniWithEmptyProperties.ini"));
+
+            Assert.AreEqual(3, ini.Global.Properties.Count);
+
+            Assert.AreEqual(string.Empty, ini.GetValue("key1"));
+            Assert.AreEqual(string.Empty, ini.GetValue("key2"));
+            Assert.AreEqual(string.Empty, ini.GetValue("key3"));
+
+        }
+
         // Private members
 
         private static string ReadAllText(string filePath) {
