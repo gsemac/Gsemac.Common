@@ -1,4 +1,6 @@
-﻿using System.Text.RegularExpressions;
+﻿using System;
+using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace Gsemac.Text.Ini {
 
@@ -8,7 +10,30 @@ namespace Gsemac.Text.Ini {
 
         public static string Escape(string input) {
 
-            string result = Regex.Replace(input, @"[\\'""\x00\a\b\t\r\n;#=:]",
+            return Escape(input, IniOptions.Default);
+
+        }
+        public static string Escape(string input, IIniOptions options) {
+
+            if (options is null)
+                throw new ArgumentNullException(nameof(options));
+
+            if (string.IsNullOrEmpty(input))
+                return input;
+
+            // Add custom delimiters to the pattern.
+
+            string pattern = string.Join("|", new[] {
+                @"[\\'""\x00\a\b\t\r\n\[\]]"
+            }
+            .Concat(new[] {
+                options.CommentMarker,
+                options.NameValueSeparator,
+            }
+            .Where(p => !string.IsNullOrWhiteSpace(p))
+            .Select(p => Regex.Escape(p))));
+
+            string result = Regex.Replace(input, pattern,
                 m => {
 
                     switch (m.Value) {
@@ -41,6 +66,7 @@ namespace Gsemac.Text.Ini {
             return result;
 
         }
+
         public static string Unescape(string input) {
 
             return StringUtilities.Unescape(input, UnescapeOptions.UnescapeEscapeSequences);

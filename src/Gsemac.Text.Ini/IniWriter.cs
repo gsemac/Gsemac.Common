@@ -166,7 +166,7 @@ namespace Gsemac.Text.Ini {
                 return value;
 
             if (options.EnableEscapeSequences)
-                value = IniUtilities.Unescape(value);
+                value = IniUtilities.Escape(value, options);
 
             if (options.TrimWhiteSpace && !string.IsNullOrEmpty(value))
                 value = value.Trim();
