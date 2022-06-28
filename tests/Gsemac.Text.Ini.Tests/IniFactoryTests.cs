@@ -61,6 +61,22 @@ namespace Gsemac.Text.Ini.Tests {
             Assert.AreEqual("value4", ini.GetValue("section2", "key4"));
 
         }
+        [TestMethod]
+        public void TestParseWithUnixLineSeparators() {
+
+            IIni ini = IniFactory.Default.Parse(ReadAllText("IniWithUnixLineSeparators.ini"));
+
+            Assert.AreEqual(2, ini.Sections.Count);
+
+            Assert.IsTrue(ini.Sections.Contains("section1"));
+            Assert.IsTrue(ini.Sections.Contains("section2"));
+
+            Assert.AreEqual("value1", ini.GetValue("section1", "key1"));
+            Assert.AreEqual("value2", ini.GetValue("section1", "key2"));
+            Assert.AreEqual("value3", ini.GetValue("section2", "key3"));
+            Assert.AreEqual("value4", ini.GetValue("section2", "key4"));
+
+        }
 
         [TestMethod]
         public void TestParseWithCommentsAndCommentsEnabled() {
@@ -159,6 +175,47 @@ namespace Gsemac.Text.Ini.Tests {
         }
 
         [TestMethod]
+        public void TestParseReadsPropertyWithNameValueDelimiterInValue() {
+
+            IIni ini = IniFactory.Default.Parse("key==value");
+
+            Assert.AreEqual("=value", ini.GetValue("key"));
+
+        }
+        [TestMethod]
+        public void TestParseReadsPropertyWithInlineCommentAndInlineCommentsEnabled() {
+
+            IIni ini = IniFactory.Default.Parse("key=value ;comment", new IniOptions() {
+                EnableInlineComments = true,
+            });
+
+            Assert.AreEqual("value", ini.GetValue("key"));
+
+        }
+        [TestMethod]
+        public void TestParseReadsPropertyWithInlineCommentAndInlineCommentsDisabled() {
+
+            IIni ini = IniFactory.Default.Parse("key=value ;comment", new IniOptions() {
+                EnableInlineComments = false,
+            });
+
+            Assert.AreEqual("value ;comment", ini.GetValue("key"));
+
+        }
+        [TestMethod]
+        public void TestParseWithEmptyProperties() {
+
+            IIni ini = IniFactory.Default.Parse(ReadAllText("IniWithEmptyProperties.ini"));
+
+            Assert.AreEqual(3, ini.Global.Properties.Count);
+
+            Assert.AreEqual(string.Empty, ini.GetValue("key1"));
+            Assert.AreEqual(string.Empty, ini.GetValue("key2"));
+            Assert.AreEqual(string.Empty, ini.GetValue("key3"));
+
+        }
+
+        [TestMethod]
         public void TestParseWithDuplicateSectionsMergesProperties() {
 
             IIni ini = IniFactory.Default.Parse(ReadAllText("IniWithDuplicateSections.ini"));
@@ -176,19 +233,6 @@ namespace Gsemac.Text.Ini.Tests {
             IIni ini = IniFactory.Default.Parse(ReadAllText("IniWithDuplicateProperties.ini"));
 
             Assert.AreEqual("value2", ini.GetValue("key"));
-
-        }
-
-        [TestMethod]
-        public void TestParseWithEmptyProperties() {
-
-            IIni ini = IniFactory.Default.Parse(ReadAllText("IniWithEmptyProperties.ini"));
-
-            Assert.AreEqual(3, ini.Global.Properties.Count);
-
-            Assert.AreEqual(string.Empty, ini.GetValue("key1"));
-            Assert.AreEqual(string.Empty, ini.GetValue("key2"));
-            Assert.AreEqual(string.Empty, ini.GetValue("key3"));
 
         }
 
