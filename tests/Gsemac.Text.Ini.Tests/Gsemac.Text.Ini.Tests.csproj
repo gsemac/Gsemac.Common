@@ -16,7 +16,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\src\Gsemac.Text.Ini\Gsemac.Text.Ini.csproj" />
+	  <ProjectReference Include="..\..\src\Gsemac.Text.Ini\Gsemac.Text.Ini.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>
