@@ -3,7 +3,7 @@
 namespace Gsemac.Data.ValueConversion.Tests {
 
     [TestClass]
-    public class StringToNumberConverter {
+    public class StringToNumberConverterTests {
 
         // Convert
 

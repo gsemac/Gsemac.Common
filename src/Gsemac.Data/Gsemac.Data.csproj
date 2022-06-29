@@ -21,7 +21,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="..\src\Gsemac.Reflection\Gsemac.Reflection.csproj" />
+	  <ProjectReference Include="..\Gsemac.Reflection\Gsemac.Reflection.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>
