@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Gsemac.Data.ValueConversion;
+using System.Collections.Generic;
 
 namespace Gsemac.Text.Ini {
 
@@ -13,6 +14,7 @@ namespace Gsemac.Text.Ini {
         string NameValueSeparator { get; }
 
         IEqualityComparer<string> KeyComparer { get; }
+        IValueConverterFactory ValueConverterFactory { get; }
 
     }
 

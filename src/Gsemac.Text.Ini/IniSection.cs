@@ -10,7 +10,7 @@ namespace Gsemac.Text.Ini {
         // Public members
 
         public string this[string propertyName] {
-            get => properties.Get(propertyName)?.Value ?? string.Empty;
+            get => properties[propertyName]?.Value ?? string.Empty;
             set => properties.Add(propertyName, value);
         }
 

@@ -21,8 +21,6 @@ namespace Gsemac.Text.Ini.Tests {
 
             Assert.AreEqual(0, items.Count);
 
-            Assert.IsTrue(items.Get(transientSection.Name) is null);
-
             Assert.IsFalse(items.Contains(transientSection.Name));
             Assert.IsFalse(items.Contains(transientSection));
 
@@ -38,7 +36,7 @@ namespace Gsemac.Text.Ini.Tests {
 
             Assert.AreEqual(1, items.Count);
 
-            Assert.IsTrue(items.Get("section") is object);
+            Assert.IsTrue(items["section"] is object);
 
             Assert.IsTrue(items.Contains("section"));
 

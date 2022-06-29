@@ -53,50 +53,6 @@ namespace Gsemac.Text.Ini {
 
         }
 
-        public void Clear() {
-
-            properties.Clear();
-
-        }
-
-        public bool Contains(IIniProperty item) {
-
-            if (item is null)
-                return false;
-
-            return properties.TryGetValue(item.Name, out IIniProperty property) &&
-                property.Equals(item);
-
-        }
-        public bool Contains(string name) {
-
-            return properties.ContainsKey(name);
-
-        }
-
-        public void CopyTo(IIniProperty[] array, int arrayIndex) {
-
-            properties.Values.CopyTo(array, arrayIndex);
-
-        }
-
-        public IIniProperty Get(string name) {
-
-            if (properties.TryGetValue(name, out IIniProperty property))
-                return property;
-
-            return null;
-
-        }
-        public void Set(string name, string value) {
-
-            if (properties.TryGetValue(name, out IIniProperty property))
-                property.Value = value;
-
-            Add(name, value);
-
-        }
-
         public bool Remove(string name) {
 
             return properties.Remove(name);
@@ -116,6 +72,33 @@ namespace Gsemac.Text.Ini {
 
         }
 
+        public bool Contains(IIniProperty item) {
+
+            if (item is null)
+                return false;
+
+            return properties.TryGetValue(item.Name, out IIniProperty property) &&
+                property.Equals(item);
+
+        }
+        public bool Contains(string name) {
+
+            return properties.ContainsKey(name);
+
+        }
+
+        public void Clear() {
+
+            properties.Clear();
+
+        }
+
+        public void CopyTo(IIniProperty[] array, int arrayIndex) {
+
+            properties.Values.CopyTo(array, arrayIndex);
+
+        }
+
         public IEnumerator<IIniProperty> GetEnumerator() {
 
             return properties.Values.GetEnumerator();
@@ -130,6 +113,15 @@ namespace Gsemac.Text.Ini {
         // Private members
 
         private readonly IDictionary<string, IIniProperty> properties;
+
+        private IIniProperty Get(string name) {
+
+            if (properties.TryGetValue(name, out IIniProperty property))
+                return property;
+
+            return null;
+
+        }
 
     }
 

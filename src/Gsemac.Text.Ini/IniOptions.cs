@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Gsemac.Data.ValueConversion;
+using Gsemac.Text.Ini.ValueConversion;
+using System;
 using System.Collections.Generic;
 using static Gsemac.Text.Ini.IniConstants;
 
@@ -28,6 +30,7 @@ namespace Gsemac.Text.Ini {
         public string NameValueSeparator { get; set; } = DefaultNameValueSeparator;
 
         public IEqualityComparer<string> KeyComparer => StringComparer.InvariantCulture;
+        public IValueConverterFactory ValueConverterFactory => new IniValueConverterFactory();
 
         public static IniOptions Default => new IniOptions();
 

@@ -12,8 +12,6 @@ namespace Gsemac.Text.Ini {
 
         bool Contains(string name);
 
-        IIniSection Get(string name);
-
     }
 
 }

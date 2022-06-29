@@ -114,7 +114,7 @@ namespace Gsemac.Text.Ini.Tests {
 
             string sectionName = "section[]";
 
-            Assert.AreEqual(4, ini.Sections.Get(sectionName).Properties.Count);
+            Assert.AreEqual(4, ini.Sections[sectionName].Properties.Count);
 
             Assert.AreEqual("value1", ini.GetValue(sectionName, "key1="));
             Assert.AreEqual("val;ue2", ini.GetValue(sectionName, "key2"));
@@ -133,7 +133,7 @@ namespace Gsemac.Text.Ini.Tests {
 
             ini.Save("out.ini");
 
-            Assert.AreEqual(5, ini.Sections.Get(sectionName)?.Properties.Count ?? 0);
+            Assert.AreEqual(5, ini.Sections[sectionName]?.Properties.Count ?? 0);
 
             Assert.AreEqual("=value1", ini.GetValue(sectionName, @"key1\"));
             Assert.AreEqual(@"val\;ue2", ini.GetValue(sectionName, "key2"));
@@ -223,8 +223,8 @@ namespace Gsemac.Text.Ini.Tests {
             Assert.AreEqual(1, ini.Sections.Count);
             Assert.AreEqual(2, ini.Sections.First().Properties.Count);
 
-            Assert.AreEqual("value1", ini.Sections.First().GetValue("key1"));
-            Assert.AreEqual("value2", ini.Sections.First().GetValue("key2"));
+            Assert.AreEqual("value1", ini.Sections.First()["key1"]);
+            Assert.AreEqual("value2", ini.Sections.First()["key2"]);
 
         }
         [TestMethod]

@@ -56,9 +56,22 @@ namespace Gsemac.Text.Ini {
 
         }
 
-        public void Clear() {
+        public bool Remove(string name) {
 
-            sections.Clear();
+            return sections.Remove(name);
+
+        }
+        public bool Remove(IIniSection item) {
+
+            if (item is null)
+                return false;
+
+            // If we have an identical section to the one given, remove it.
+
+            if (Contains(item))
+                return sections.Remove(item.Name);
+
+            return false;
 
         }
 
@@ -79,37 +92,15 @@ namespace Gsemac.Text.Ini {
 
         }
 
+        public void Clear() {
+
+            sections.Clear();
+
+        }
+
         public void CopyTo(IIniSection[] array, int arrayIndex) {
 
             this.ToList().CopyTo(array, arrayIndex);
-
-        }
-
-        public IIniSection Get(string name) {
-
-            if (sections.TryGetValue(name, out IniSectionInfo info) && !info.IsTransient)
-                return info.Section;
-
-            return null;
-
-        }
-
-        public bool Remove(string name) {
-
-            return sections.Remove(name);
-
-        }
-        public bool Remove(IIniSection item) {
-
-            if (item is null)
-                return false;
-
-            // If we have an identical section to the one given, remove it.
-
-            if (Contains(item))
-                return sections.Remove(item.Name);
-
-            return false;
 
         }
 

@@ -12,10 +12,6 @@ namespace Gsemac.Text.Ini {
 
         bool Contains(string name);
 
-        IIniProperty Get(string name);
-
-        void Set(string name, string value);
-
     }
 
 }
