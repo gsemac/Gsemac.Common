@@ -1,5 +1,4 @@
-﻿using Gsemac.Collections.Extensions;
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -45,7 +44,7 @@ namespace Gsemac.Text.Ini {
 
             if (sections.TryGetValue(item.Name, out IniSectionInfo existingSection)) {
 
-                existingSection.Section.Properties.AddRange(item.Properties);
+                existingSection.Section.Merge(item);
 
             }
             else {

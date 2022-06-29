@@ -80,6 +80,19 @@ namespace Gsemac.Text.Ini {
 
         }
 
+        public static void Merge(this IIni ini, IIni other) {
+
+            if (ini is null)
+                throw new ArgumentNullException(nameof(ini));
+
+            if (other is null)
+                throw new ArgumentNullException(nameof(other));
+
+            foreach (IIniSection section in other.Sections)
+                ini.Sections.Add(section);
+
+        }
+
         public static void Save(this IIni ini, string filePath) {
 
             using (FileStream fs = new FileStream(filePath, FileMode.Create))
