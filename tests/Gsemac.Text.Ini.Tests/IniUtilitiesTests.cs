@@ -15,7 +15,6 @@ namespace Gsemac.Text.Ini.Tests {
 
             Assert.AreEqual(escaped, @"C:\\path\\\[name\=\]");
 
-
         }
         [TestMethod]
         public void TestEscapeEscapesCustomDelimiters() {
@@ -28,7 +27,6 @@ namespace Gsemac.Text.Ini.Tests {
             });
 
             Assert.AreEqual(escaped, @"key\:value \# comment");
-
 
         }
 

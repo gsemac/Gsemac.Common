@@ -9,6 +9,36 @@ namespace Gsemac.Text.Ini.Tests {
         // this[]
 
         [TestMethod]
+        public void TestGetSectionWithInvalidSectionNameReturnsObject() {
+
+            // Attempting to get a section using an invalid name should return a transient section object.
+
+            IIniSection section = new IniSectionCollection()[string.Empty];
+
+            Assert.IsTrue(section is object);
+
+        }
+        [TestMethod]
+        public void TestGetSectionWithNullSectionNameReturnsObject() {
+
+            IIniSection section = new IniSectionCollection()[null];
+
+            Assert.IsTrue(section is object);
+
+        }
+        [TestMethod]
+        public void TestGetSectionWithEmptyAndNullSectionNamesReturnsSameObject() {
+
+            IIniSectionCollection items = new IniSectionCollection();
+
+            IIniSection section1 = items[string.Empty];
+            IIniSection section2 = items[null];
+
+            Assert.IsTrue(ReferenceEquals(section1, section2));
+
+        }
+
+        [TestMethod]
         public void TestGetTransientSectionDoesNotAddSectionToCollection() {
 
             IIniSectionCollection items = new IniSectionCollection();

@@ -13,7 +13,7 @@ namespace Gsemac.Text.Ini {
         public bool IsReadOnly => properties.IsReadOnly;
 
         public IIniProperty this[string propertyName] {
-            get => Get(propertyName);
+            get => Get(FormatPropertyName(propertyName));
         }
 
         public IniPropertyCollection() :
@@ -30,7 +30,7 @@ namespace Gsemac.Text.Ini {
 
         public void Add(string name, string value) {
 
-            Add(new IniProperty(name, value));
+            Add(new IniProperty(FormatPropertyName(name), value));
 
         }
         public void Add(IIniProperty item) {
@@ -83,7 +83,7 @@ namespace Gsemac.Text.Ini {
         }
         public bool Contains(string name) {
 
-            return properties.ContainsKey(name);
+            return properties.ContainsKey(FormatPropertyName(name));
 
         }
 
@@ -114,9 +114,18 @@ namespace Gsemac.Text.Ini {
 
         private readonly IDictionary<string, IIniProperty> properties;
 
+        private string FormatPropertyName(string value) {
+
+            if (value is null)
+                value = string.Empty;
+
+            return value;
+
+        }
+
         private IIniProperty Get(string name) {
 
-            if (properties.TryGetValue(name, out IIniProperty property))
+            if (name is object && properties.TryGetValue(name, out IIniProperty property))
                 return property;
 
             return null;

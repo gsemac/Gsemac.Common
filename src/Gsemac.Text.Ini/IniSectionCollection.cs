@@ -15,7 +15,7 @@ namespace Gsemac.Text.Ini {
         public bool IsReadOnly => sections.IsReadOnly;
 
         public IIniSection this[string sectionName] {
-            get => GetOrDefault(sectionName);
+            get => GetOrDefault(FormatSectionName(sectionName));
         }
 
         public IniSectionCollection() :
@@ -33,7 +33,7 @@ namespace Gsemac.Text.Ini {
 
         public void Add(string name) {
 
-            Add(new IniSection(name, keyComparer));
+            Add(new IniSection(FormatSectionName(name), keyComparer));
 
         }
         public void Add(IIniSection item) {
@@ -58,7 +58,7 @@ namespace Gsemac.Text.Ini {
 
         public bool Remove(string name) {
 
-            return sections.Remove(name);
+            return sections.Remove(FormatSectionName(name));
 
         }
         public bool Remove(IIniSection item) {
@@ -77,7 +77,7 @@ namespace Gsemac.Text.Ini {
 
         public bool Contains(string name) {
 
-            return sections.TryGetValue(name, out IniSectionInfo info) &&
+            return sections.TryGetValue(FormatSectionName(name), out IniSectionInfo info) &&
                 !info.IsTransient;
 
         }
@@ -144,6 +144,15 @@ namespace Gsemac.Text.Ini {
 
         private readonly IDictionary<string, IniSectionInfo> sections;
         private readonly IEqualityComparer<string> keyComparer;
+
+        private string FormatSectionName(string value) {
+
+            if (value is null)
+                value = string.Empty;
+
+            return value;
+
+        }
 
         private IIniSection GetOrDefault(string sectionName) {
 
