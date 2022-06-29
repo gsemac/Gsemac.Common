@@ -19,6 +19,7 @@ namespace Gsemac.Text.Ini.Tests {
             IIni ini = IniFactory.Default.Parse(ReadAllText("IniWithGlobalProperties.ini"));
 
             Assert.AreEqual(3, ini.Global.Properties.Count);
+
             Assert.AreEqual("value1", ini.GetValue("key1"));
             Assert.AreEqual("value2", ini.GetValue("key2"));
             Assert.AreEqual("value3", ini.GetValue("key3"));
@@ -30,6 +31,7 @@ namespace Gsemac.Text.Ini.Tests {
             IIni ini = IniFactory.Default.Parse(ReadAllText("IniWithSections.ini"));
 
             Assert.AreEqual(2, ini.Sections.Count);
+
             Assert.AreEqual("value1", ini.GetValue("section1", "key1"));
             Assert.AreEqual("value2", ini.GetValue("section1", "key2"));
             Assert.AreEqual("value3", ini.GetValue("section2", "key3"));
@@ -46,9 +48,11 @@ namespace Gsemac.Text.Ini.Tests {
         }
 
         [TestMethod]
-        public void TestParseWithMixedWhiteSpace() {
+        public void TestParseWithMixedWhiteSpaceAndTrimWhiteSpaceDisabled() {
 
-            IIni ini = IniFactory.Default.Parse(ReadAllText("IniWithMixedWhiteSpace.ini"));
+            IIni ini = IniFactory.Default.Parse(ReadAllText("IniWithMixedWhiteSpace.ini"), new IniOptions() {
+                TrimWhiteSpace = true,
+            });
 
             Assert.AreEqual(2, ini.Sections.Count);
 
@@ -58,6 +62,26 @@ namespace Gsemac.Text.Ini.Tests {
             Assert.AreEqual("value1", ini.GetValue("section1", "key1"));
             Assert.AreEqual("value2", ini.GetValue("section1", "key2"));
             Assert.AreEqual("value3", ini.GetValue("section2", "key3"));
+            Assert.AreEqual("value4", ini.GetValue("section2", "key4"));
+
+        }
+        [TestMethod]
+        public void TestParseWithMixedWhiteSpaceAndTrimWhiteSpaceEnabled() {
+
+            // Only whitespace surrounding property values is preserved.
+
+            IIni ini = IniFactory.Default.Parse(ReadAllText("IniWithMixedWhiteSpace.ini"), new IniOptions() {
+                TrimWhiteSpace = false,
+            });
+
+            Assert.AreEqual(2, ini.Sections.Count);
+
+            Assert.IsTrue(ini.Sections.Contains("section1"));
+            Assert.IsTrue(ini.Sections.Contains("section2"));
+
+            Assert.AreEqual("	value1", ini.GetValue("section1", "key1"));
+            Assert.AreEqual(" value2", ini.GetValue("section1", "key2"));
+            Assert.AreEqual("   value3   ", ini.GetValue("section2", "key3"));
             Assert.AreEqual("value4", ini.GetValue("section2", "key4"));
 
         }

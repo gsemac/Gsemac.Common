@@ -132,7 +132,7 @@ namespace Gsemac.Text.Ini.Lexers {
 
                 // Remove the outer section name markers from the section name.
 
-                value = FormatStringValue(value.Substring(1, value.Length - 2));
+                value = IniUtilities.FormatValue(value.Substring(1, value.Length - 2), options, isPropertyValue: false, writingValue: false);
 
                 tokens.Enqueue(new IniLexerToken(IniLexerTokenType.SectionNameStart, SectionNameStart));
                 tokens.Enqueue(new IniLexerToken(IniLexerTokenType.SectionName, value));
@@ -184,7 +184,7 @@ namespace Gsemac.Text.Ini.Lexers {
                 IgnoreEscapedDelimiters = options.EnableEscapeSequences,
             });
 
-            value = FormatStringValue(value);
+            value = IniUtilities.FormatValue(value, options, isPropertyValue: false, writingValue: false);
 
             tokens.Enqueue(new IniLexerToken(IniLexerTokenType.PropertyName, value));
 
@@ -234,7 +234,7 @@ namespace Gsemac.Text.Ini.Lexers {
                 IgnoreEscapedDelimiters = options.EnableEscapeSequences,
             });
 
-            value = FormatStringValue(value);
+            value = IniUtilities.FormatValue(value, options, isPropertyValue: true, writingValue: false);
 
             tokens.Enqueue(new IniLexerToken(IniLexerTokenType.PropertyValue, value));
 
@@ -258,21 +258,6 @@ namespace Gsemac.Text.Ini.Lexers {
             return ReadPropertyName(reader) &&
                 ReadNameValueSeparator(reader) &&
                 ReadPropertyValue(reader);
-
-        }
-
-        private string FormatStringValue(string value) {
-
-            if (string.IsNullOrEmpty(value))
-                return value;
-
-            if (options.EnableEscapeSequences)
-                value = IniUtilities.Unescape(value);
-
-            if (options.TrimWhiteSpace && !string.IsNullOrEmpty(value))
-                value = value.Trim();
-
-            return value;
 
         }
 

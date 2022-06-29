@@ -73,6 +73,23 @@ namespace Gsemac.Text.Ini {
 
         }
 
+        // Internal members
+
+        internal static string FormatValue(string value, IIniOptions options, bool isPropertyValue, bool writingValue) {
+
+            if (string.IsNullOrEmpty(value))
+                return value;
+
+            if (options.EnableEscapeSequences)
+                value = writingValue ? Escape(value, options) : Unescape(value);
+
+            if (!(isPropertyValue && !options.TrimWhiteSpace) && !string.IsNullOrEmpty(value))
+                value = value.Trim();
+
+            return value;
+
+        }
+
     }
 
 }

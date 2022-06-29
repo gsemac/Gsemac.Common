@@ -57,7 +57,7 @@ namespace Gsemac.Text.Ini {
         }
         public void WriteSectionName(string value) {
 
-            writer.Write(FormatStringValue(value));
+            writer.Write(IniUtilities.FormatValue(value, options, isPropertyValue: false, writingValue: true));
 
         }
         public void WriteSectionEnd() {
@@ -70,7 +70,7 @@ namespace Gsemac.Text.Ini {
 
         public void WritePropertyName(string value) {
 
-            writer.Write(FormatStringValue(value));
+            writer.Write(IniUtilities.FormatValue(value, options, isPropertyValue: false, writingValue: true));
 
         }
         public void WriteNameValueSeparator() {
@@ -80,7 +80,7 @@ namespace Gsemac.Text.Ini {
         }
         public void WritePropertyValue(string value) {
 
-            writer.WriteLine(FormatStringValue(value));
+            writer.WriteLine(IniUtilities.FormatValue(value, options, isPropertyValue: true, writingValue: true));
 
             lastAction = LastAction.WroteProperty;
 
@@ -159,21 +159,6 @@ namespace Gsemac.Text.Ini {
 
         private LastAction lastAction = LastAction.None;
         private bool disposedValue;
-
-        private string FormatStringValue(string value) {
-
-            if (string.IsNullOrEmpty(value))
-                return value;
-
-            if (options.EnableEscapeSequences)
-                value = IniUtilities.Escape(value, options);
-
-            if (options.TrimWhiteSpace && !string.IsNullOrEmpty(value))
-                value = value.Trim();
-
-            return value;
-
-        }
 
     }
 
