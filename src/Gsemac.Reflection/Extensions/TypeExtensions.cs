@@ -42,10 +42,14 @@ namespace Gsemac.Reflection.Extensions {
             return TypeUtilities.GetNullableType(type);
 
         }
-
         public static bool IsBuiltInType(this Type type) {
 
             return TypeUtilities.IsBuiltInType(type);
+
+        }
+        public static bool IsNumericType(this Type type) {
+
+            return TypeUtilities.IsNumericType(type);
 
         }
 
