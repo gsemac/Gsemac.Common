@@ -33,7 +33,7 @@
 	<Choose>
 		<When Condition="$(DefineConstants.Contains('NET45_OR_GREATER')) Or $(DefineConstants.Contains('NETCOREAPP')) Or $(DefineConstants.Contains('NETSTANDARD'))">
 			<ItemGroup>
-				<PackageReference Include="Magick.NET-Q16-AnyCPU" Version="11.2.0" />
+				<PackageReference Include="Magick.NET-Q16-AnyCPU" Version="11.2.1" />
 				<PackageReference Include="Magick.NET.SystemDrawing" Version="5.0.3" />
 			</ItemGroup>
 		</When>
