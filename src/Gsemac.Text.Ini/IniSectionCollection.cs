@@ -18,7 +18,7 @@ namespace Gsemac.Text.Ini {
         }
 
         public IniSectionCollection() :
-            this(EqualityComparer<string>.Default) {
+            this(StringComparer.InvariantCultureIgnoreCase) {
         }
         public IniSectionCollection(IEqualityComparer<string> keyComparer) {
 

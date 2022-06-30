@@ -86,25 +86,25 @@ namespace Gsemac.Text.Ini.Tests {
         // Contains
 
         [TestMethod]
-        public void TestLookupIsCaseSensitiveByDefault() {
+        public void TestLookupIsCaseInsensitiveByDefault() {
 
             IIniSectionCollection items = new IniSectionCollection {
                 "section",
             };
 
             Assert.IsTrue(items.Contains("section"));
-            Assert.IsFalse(items.Contains("SECTION"));
+            Assert.IsTrue(items.Contains("SECTION"));
 
         }
         [TestMethod]
-        public void TestLookupWithCaseInsensitiveKeyComparer() {
+        public void TestLookupWithCaseSensitiveKeyComparer() {
 
-            IIniSectionCollection items = new IniSectionCollection(StringComparer.OrdinalIgnoreCase) {
+            IIniSectionCollection items = new IniSectionCollection(StringComparer.Ordinal) {
                 "section",
             };
 
             Assert.IsTrue(items.Contains("section"));
-            Assert.IsTrue(items.Contains("SECTION"));
+            Assert.IsFalse(items.Contains("SECTION"));
 
         }
 

@@ -29,8 +29,8 @@ namespace Gsemac.Text.Ini {
         public string CommentMarker { get; set; } = DefaultCommentMarker;
         public string NameValueSeparator { get; set; } = DefaultNameValueSeparator;
 
-        public IEqualityComparer<string> KeyComparer => StringComparer.InvariantCulture;
-        public IValueConverterFactory ValueConverterFactory => new IniValueConverterFactory();
+        public IEqualityComparer<string> KeyComparer { get; set; } = StringComparer.InvariantCultureIgnoreCase; // Windows' implementation is case-insensitive
+        public IValueConverterFactory ValueConverterFactory { get; set; } = new IniValueConverterFactory();
 
         public static IniOptions Default => new IniOptions();
 
