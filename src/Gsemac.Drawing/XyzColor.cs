@@ -46,11 +46,16 @@ namespace Gsemac.Drawing {
                 .Build();
 
         }
+
         public static bool operator ==(XyzColor left, XyzColor right) {
+
             return left.Equals(right);
+
         }
         public static bool operator !=(XyzColor left, XyzColor right) {
+
             return !(left == right);
+
         }
 
         // Private members
