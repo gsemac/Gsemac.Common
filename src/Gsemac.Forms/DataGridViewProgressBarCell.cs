@@ -1,4 +1,5 @@
-﻿using Gsemac.Drawing.Extensions;
+﻿using Gsemac.Drawing;
+using Gsemac.Drawing.Extensions;
 using System;
 using System.ComponentModel;
 using System.Drawing;
@@ -62,8 +63,8 @@ namespace Gsemac.Forms {
             double progressPercentage = progressValue / 100.0;
             string progressStr = $"{progressValue:0.#}%";
 
-            Color outlineColor = BackgroundColor.AddShade(0.15f);
-            Color progressOutlineColor = ProgressColor.AddShade(0.15f);
+            Color outlineColor = ColorUtilities.Shade(BackgroundColor, 0.15f);
+            Color progressOutlineColor = ColorUtilities.Shade(ProgressColor, 0.15f);
 
             // Paint the progress bar background.
 

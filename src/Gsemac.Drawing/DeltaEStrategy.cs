@@ -1,5 +1,4 @@
-﻿using Gsemac.Drawing.Extensions;
-using System;
+﻿using System;
 using System.Drawing;
 
 namespace Gsemac.Drawing {
@@ -11,9 +10,9 @@ namespace Gsemac.Drawing {
 
             // Algorithm from https://www.easyrgb.com/en/math.php
 
-            LabColor labFirst = first.ToLab();
-            LabColor labSecond = second.ToLab();
-            
+            LabColor labFirst = ColorUtilities.RgbToLab(first);
+            LabColor labSecond = ColorUtilities.RgbToLab(second);
+
             double deltaE = Math.Sqrt(
                 Math.Pow(labFirst.L - labSecond.L, 2) +
                 Math.Pow(labFirst.A - labSecond.A, 2) +
