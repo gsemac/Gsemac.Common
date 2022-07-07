@@ -5,7 +5,7 @@
 
         // Public members
 
-        public static ValueConverterFactory Default => new ValueConverterFactory();
+        public static ValueConverterFactory Default { get; } = new ValueConverterFactory();
 
     }
 
