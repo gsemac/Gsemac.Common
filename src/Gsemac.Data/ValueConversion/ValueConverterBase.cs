@@ -11,7 +11,7 @@ namespace Gsemac.Data.ValueConversion {
         public Type SourceType { get; }
         public Type DestinationType { get; }
 
-        public virtual object Convert(object value) {
+        public object Convert(object value) {
 
             if (TryConvert(value, out object result))
                 return result;
@@ -57,7 +57,7 @@ namespace Gsemac.Data.ValueConversion {
         }
 
         public abstract bool TryConvert(TSource value, out TDestination result);
-        public override bool TryConvert(object value, out object result) {
+        public sealed override bool TryConvert(object value, out object result) {
 
             result = default;
 
