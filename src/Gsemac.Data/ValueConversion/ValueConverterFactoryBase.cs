@@ -25,10 +25,9 @@ namespace Gsemac.Data.ValueConversion {
 
                 return new CompositeValueConverter(convertersArray);
 
-
             }
 
-            return new DefaultValueConverter(sourceType, destinationType);
+            return new TypeCastConverter(sourceType, destinationType);
 
         }
 
@@ -87,28 +86,6 @@ namespace Gsemac.Data.ValueConversion {
         }
 
         // Private members
-
-        private class DefaultValueConverter :
-            ValueConverterBase {
-
-            // Public members
-
-            public DefaultValueConverter(Type sourceType, Type destinationType) :
-                base(sourceType, destinationType) {
-            }
-
-            public override bool TryConvert(object value, out object result) {
-
-                result = null;
-
-                if (value is object && !value.GetType().Equals(SourceType))
-                    return false;
-
-                return TypeUtilities.TryCast(value, DestinationType, out result);
-
-            }
-
-        }
 
         private readonly IDictionary<Tuple<Type, Type>, List<IValueConverter>> converters = new Dictionary<Tuple<Type, Type>, List<IValueConverter>>();
 

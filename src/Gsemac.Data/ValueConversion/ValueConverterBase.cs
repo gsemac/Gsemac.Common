@@ -16,7 +16,10 @@ namespace Gsemac.Data.ValueConversion {
             if (TryConvert(value, out object result))
                 return result;
 
-            throw new ArgumentException(string.Format(ExceptionMessages.CannotConvertObjectsOfType, value.GetType(), value), nameof(value));
+            if (DestinationType is object)
+                throw new ArgumentException(string.Format(ExceptionMessages.CannotConvertObjectToType, value.GetType(), DestinationType, value), nameof(value));
+            else
+                throw new ArgumentException(string.Format(ExceptionMessages.CannotConvertObjectsOfType, value.GetType(), value), nameof(value));
 
         }
         public abstract bool TryConvert(object value, out object result);
