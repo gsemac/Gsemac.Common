@@ -1,4 +1,4 @@
-﻿using Gsemac.Reflection;
+﻿using Gsemac.Reflection.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,6 +11,14 @@ namespace Gsemac.Data.ValueConversion {
         // Public members
 
         public IValueConverter Create(Type sourceType, Type destinationType) {
+
+            if (sourceType is null)
+                throw new ArgumentNullException(nameof(sourceType));
+
+            if (destinationType is null)
+                throw new ArgumentNullException(nameof(destinationType));
+
+            // If the types are the same, we don't need to do any conversion at all.
 
             var key = CreateKey(sourceType, destinationType);
 
@@ -26,19 +34,49 @@ namespace Gsemac.Data.ValueConversion {
                 return new CompositeValueConverter(convertersArray);
 
             }
+            else if (options.EnableDefaultConverters && IsTriviallyCastableType(sourceType) && IsTriviallyCastableType(destinationType)) {
 
-            return new TypeCastConverter(sourceType, destinationType);
+                // Avoid costly transitive conversions along the path number -> string -> number if both types are numeric types that can easily be casted.
+                // Also, don't be strict about the input type for numeric conversions, because the conversion can then fail when passing incompatible literals.
+
+                return new TypeCastConverter(sourceType, destinationType, enforceSourceType: false);
+
+            }
+            else if (sourceType.Equals(destinationType)) {
+
+                // The two types are the same, so we don't need to do any conversion at all.
+                // This is done after checking for numeric types so we can use a less-strict converter for those types.
+
+                return new IdentityConverter(sourceType);
+
+            }
+            else if (options.EnableTransitiveConversion) {
+
+                // We didn't find any converters matching our source/destination types.
+                // However, maybe we can find a transitive path from one to the other.
+
+                IValueConverter[] transitiveConversionPath = GetTransitiveConversionPath(converters.SelectMany(p => p.Value), sourceType, destinationType)
+                    .ToArray();
+
+                return new TransitiveConverter(transitiveConversionPath);
+
+            }
+
+            return new TypeCastConverter(sourceType, destinationType, enforceSourceType: true);
 
         }
 
         // Protected members
 
         protected ValueConverterFactoryBase() :
-            this(useDefaultConverters: true) {
+            this(ValueConverterFactoryOptions.Default) {
         }
-        protected ValueConverterFactoryBase(bool useDefaultConverters) {
+        protected ValueConverterFactoryBase(IValueConverterFactoryOptions options) {
 
-            if (useDefaultConverters) {
+            if (options is null)
+                throw new ArgumentNullException(nameof(options));
+
+            if (options.EnableDefaultConverters) {
 
                 AddValueConverter(new BoolToStringConverter());
                 AddValueConverter(new StringToBoolConverter());
@@ -69,6 +107,8 @@ namespace Gsemac.Data.ValueConversion {
 
             }
 
+            this.options = options;
+
         }
 
         protected void AddValueConverter(IValueConverter valueConverter) {
@@ -87,11 +127,43 @@ namespace Gsemac.Data.ValueConversion {
 
         // Private members
 
+        private readonly IValueConverterFactoryOptions options;
         private readonly IDictionary<Tuple<Type, Type>, List<IValueConverter>> converters = new Dictionary<Tuple<Type, Type>, List<IValueConverter>>();
+
+        private IEnumerable<IValueConverter> GetTransitiveConversionPath(IEnumerable<IValueConverter> source, Type sourceType, Type destinationType) {
+
+            // Get all converters that can convert from the source type.
+
+            IEnumerable<IValueConverter> matchingConverters = source.Where(converter => converter.SourceType.Equals(sourceType));
+
+            foreach (IValueConverter matchingConverter in matchingConverters) {
+
+                // Find the next steps in the conversion chain.
+
+                if (matchingConverter.DestinationType.Equals(destinationType))
+                    return new[] { matchingConverter };
+
+                IEnumerable<IValueConverter> nextMatchingConverters = GetTransitiveConversionPath(source.Except(matchingConverters), matchingConverter.DestinationType, destinationType);
+
+                if (nextMatchingConverters.Any())
+                    return new[] { matchingConverter }.Concat(nextMatchingConverters);
+
+            }
+
+            // We did not find any matching converters.
+
+            return Enumerable.Empty<IValueConverter>();
+
+        }
 
         private static Tuple<Type, Type> CreateKey(Type sourceType, Type destinationType) {
 
             return Tuple.Create(sourceType, destinationType);
+
+        }
+        private static bool IsTriviallyCastableType(Type type) {
+
+            return type.IsNumericType() || type.Equals(typeof(bool));
 
         }
 

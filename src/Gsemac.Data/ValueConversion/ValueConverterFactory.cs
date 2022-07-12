@@ -7,6 +7,11 @@
 
         public static ValueConverterFactory Default { get; } = new ValueConverterFactory();
 
+        public ValueConverterFactory() { }
+        public ValueConverterFactory(IValueConverterFactoryOptions options) :
+            base(options) {
+        }
+
     }
 
 }

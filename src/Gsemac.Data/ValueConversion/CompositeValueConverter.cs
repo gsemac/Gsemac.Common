@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Gsemac.Data.ValueConversion {
 
-    public class CompositeValueConverter :
+    internal class CompositeValueConverter :
         ValueConverterBase {
 
         // Public members

@@ -3,28 +3,35 @@ using System;
 
 namespace Gsemac.Data.ValueConversion {
 
-    public class TypeCastConverter :
+    internal class TypeCastConverter :
         ValueConverterBase {
 
         // Public members
 
-        public TypeCastConverter(Type destinationType) :
-            base(typeof(object), destinationType) {
-        }
-        public TypeCastConverter(Type sourceType, Type destinationType) :
+        public TypeCastConverter(Type sourceType, Type destinationType, bool enforceSourceType) :
             base(sourceType, destinationType) {
+
+            this.enforceSourceType = enforceSourceType;
+
         }
 
         public override bool TryConvert(object value, out object result) {
 
             result = default;
 
-            if (value is object && !value.GetType().Equals(SourceType))
+            // The source type is optionally checked before attempting the conversion.
+            // This is so we can have converters that do things like converting any numeric type to another numeric type.
+
+            if (enforceSourceType && value is object && !value.GetType().Equals(SourceType))
                 return false;
 
             return TypeUtilities.TryCast(value, DestinationType, out result);
 
         }
+
+        // Private members
+
+        private readonly bool enforceSourceType;
 
     }
 
