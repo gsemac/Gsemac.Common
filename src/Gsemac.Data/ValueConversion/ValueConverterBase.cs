@@ -29,6 +29,9 @@ namespace Gsemac.Data.ValueConversion {
         protected ValueConverterBase() :
             this(typeof(object), typeof(object)) {
         }
+        protected ValueConverterBase(Type destinationType) :
+            this(typeof(object), destinationType) {
+        }
         protected ValueConverterBase(Type sourceType, Type destinationType) {
 
             if (sourceType is null)
