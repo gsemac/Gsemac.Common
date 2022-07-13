@@ -3,12 +3,12 @@ using System;
 
 namespace Gsemac.Data.ValueConversion {
 
-    internal class TypeCastConverter :
+    internal class TypeCastValueConverter :
         ValueConverterBase {
 
         // Public members
 
-        public TypeCastConverter(Type sourceType, Type destinationType, bool enforceSourceType) :
+        public TypeCastValueConverter(Type sourceType, Type destinationType, bool enforceSourceType) :
             base(sourceType, destinationType) {
 
             this.enforceSourceType = enforceSourceType;

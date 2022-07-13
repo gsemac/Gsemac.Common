@@ -39,7 +39,7 @@ namespace Gsemac.Data.ValueConversion {
                 // Avoid costly transitive conversions along the path number -> string -> number if both types are numeric types that can easily be casted.
                 // Also, don't be strict about the input type for numeric conversions, because the conversion can then fail when passing incompatible literals.
 
-                return new TypeCastConverter(sourceType, destinationType, enforceSourceType: false);
+                return new TypeCastValueConverter(sourceType, destinationType, enforceSourceType: false);
 
             }
             else if (sourceType.Equals(destinationType)) {
@@ -47,7 +47,7 @@ namespace Gsemac.Data.ValueConversion {
                 // The two types are the same, so we don't need to do any conversion at all.
                 // This is done after checking for numeric types so we can use a less-strict converter for those types.
 
-                return new IdentityConverter(sourceType);
+                return new IdentityValueConverter(sourceType);
 
             }
             else if (options.EnableTransitiveConversion) {
@@ -58,11 +58,11 @@ namespace Gsemac.Data.ValueConversion {
                 IValueConverter[] transitiveConversionPath = GetTransitiveConversionPath(converters.SelectMany(p => p.Value), sourceType, destinationType)
                     .ToArray();
 
-                return new TransitiveConverter(transitiveConversionPath);
+                return new TransitiveValueConverter(transitiveConversionPath);
 
             }
 
-            return new TypeCastConverter(sourceType, destinationType, enforceSourceType: true);
+            return new TypeCastValueConverter(sourceType, destinationType, enforceSourceType: true);
 
         }
 

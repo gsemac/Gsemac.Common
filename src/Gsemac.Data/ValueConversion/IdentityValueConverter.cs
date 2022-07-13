@@ -2,12 +2,12 @@
 
 namespace Gsemac.Data.ValueConversion {
 
-    internal class IdentityConverter :
+    internal class IdentityValueConverter :
         ValueConverterBase {
 
         // Public members
 
-        public IdentityConverter(Type type) :
+        public IdentityValueConverter(Type type) :
             base(type, type) {
         }
 

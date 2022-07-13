@@ -3,12 +3,12 @@ using System.Linq;
 
 namespace Gsemac.Data.ValueConversion {
 
-    internal class TransitiveConverter :
+    internal class TransitiveValueConverter :
         ValueConverterBase {
 
         // Public members
 
-        public TransitiveConverter(IValueConverter[] converters) :
+        public TransitiveValueConverter(IValueConverter[] converters) :
             base(converters?.FirstOrDefault()?.SourceType, converters?.LastOrDefault()?.DestinationType) {
 
             if (converters is null)
