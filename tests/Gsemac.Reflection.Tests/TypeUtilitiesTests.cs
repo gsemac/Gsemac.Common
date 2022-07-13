@@ -1,9 +1,12 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
 
 namespace Gsemac.Reflection.Tests {
 
     [TestClass]
     public class TypeUtilitiesTests {
+
+        // Public members
 
         // TryCast
 
@@ -89,6 +92,63 @@ namespace Gsemac.Reflection.Tests {
 
             Assert.IsTrue(TypeUtilities.TryCast("35", out int result));
             Assert.AreEqual(35, result);
+
+        }
+
+        [TestMethod]
+        public void TestTryCastWithEnableConstructorAndDefaultConstructor() {
+
+            Assert.IsFalse(TypeUtilities.TryCast("hello world", new CastOptions() {
+                EnableConstructor = true,
+            }, out ClassWithDefaultConstructor _));
+
+        }
+        [TestMethod]
+        public void TestTryCastWithEnableConstructorAndMatchingConstructor() {
+
+            Assert.IsTrue(TypeUtilities.TryCast("hello world", new CastOptions() {
+                EnableConstructor = true,
+            }, out ClassWithStringConstructor result));
+
+            Assert.AreEqual("hello world", result.Text);
+
+        }
+        [TestMethod]
+        public void TestTryCastWithEnableConstructorAndThrowingConstructor() {
+
+            Assert.IsFalse(TypeUtilities.TryCast("hello world", new CastOptions() {
+                EnableConstructor = true,
+            }, out ClassWithThrowingConstructor _));
+
+        }
+
+        // Private members
+
+        private class ClassWithDefaultConstructor { }
+
+        private class ClassWithStringConstructor {
+
+            // Public members
+
+            public string Text { get; }
+
+            public ClassWithStringConstructor(string text) {
+
+                Text = text;
+
+            }
+
+        }
+
+        private class ClassWithThrowingConstructor {
+
+            // Public members
+
+            public ClassWithThrowingConstructor(string _) {
+
+                throw new ArgumentException(null, nameof(_));
+
+            }
 
         }
 

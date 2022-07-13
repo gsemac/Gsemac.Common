@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Reflection;
 
 namespace Gsemac.Reflection {
 
@@ -141,7 +142,15 @@ namespace Gsemac.Reflection {
 
         public static bool TryCast<T>(object obj, out T result) {
 
-            if (TryCast(obj, typeof(T), out object resultObject)) {
+            return TryCast(obj, CastOptions.Default, out result);
+
+        }
+        public static bool TryCast<T>(object obj, ICastOptions options, out T result) {
+
+            if (options is null)
+                throw new ArgumentNullException(nameof(options));
+
+            if (TryCast(obj, typeof(T), options, out object resultObject)) {
 
                 result = (T)resultObject;
 
@@ -155,6 +164,16 @@ namespace Gsemac.Reflection {
 
         }
         public static bool TryCast(object obj, Type type, out object result) {
+
+            return TryCast(obj, type, CastOptions.Default, out result);
+
+        }
+        public static bool TryCast(object obj, Type type, ICastOptions options, out object result) {
+
+            if (options is null)
+                throw new ArgumentNullException(nameof(options));
+
+            result = default;
 
             bool success = true;
 
@@ -184,7 +203,24 @@ namespace Gsemac.Reflection {
                     }
                     else {
 
-                        result = Convert.ChangeType(obj, newType, CultureInfo.InvariantCulture);
+                        try {
+
+                            result = Convert.ChangeType(obj, newType, CultureInfo.InvariantCulture);
+
+                        }
+                        catch (Exception) {
+
+                            // I originally had this catch InvalidCastException, but it's also possible for other exceptions to be thrown, such as FormatException when parsing strings.
+                            // Because this method is never supposed to throw, I've changed it to catch all exceptions.
+
+                            if (!options.EnableConstructor)
+                                throw;
+
+                            // Attempt to create an instance of the object using constructor initialization.
+
+                            result = Activator.CreateInstance(newType, new[] { obj });
+
+                        }
 
                     }
 
@@ -197,11 +233,6 @@ namespace Gsemac.Reflection {
 
             }
             catch (Exception) {
-
-                // I originally had this catch InvalidCastException, but it's also possible for other exceptions to be thrown, such as FormatException when parsing strings.
-                // Because this method is never supposed to throw, I've changed it to catch all exceptions.
-
-                result = default;
 
                 success = false;
 
