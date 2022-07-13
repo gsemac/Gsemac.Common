@@ -8,8 +8,11 @@ namespace Gsemac.Data.ValueConversion {
 
         // Public members
 
-        public TypeCastValueConverter(Type sourceType, Type destinationType, bool enforceSourceType) :
+        public TypeCastValueConverter(Type sourceType, Type destinationType, ICastOptions options, bool enforceSourceType) :
             base(sourceType, destinationType) {
+
+            if (options is null)
+                throw new ArgumentNullException(nameof(options));
 
             this.enforceSourceType = enforceSourceType;
 

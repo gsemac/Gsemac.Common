@@ -39,7 +39,7 @@ namespace Gsemac.Data.ValueConversion {
                 // Avoid costly transitive conversions along the path number -> string -> number if both types are numeric types that can easily be casted.
                 // Also, don't be strict about the input type for numeric conversions, because the conversion can then fail when passing incompatible literals.
 
-                return new TypeCastValueConverter(sourceType, destinationType, enforceSourceType: false);
+                return new TypeCastValueConverter(sourceType, destinationType, options.CastOptions, enforceSourceType: false);
 
             }
             else if (sourceType.Equals(destinationType)) {
@@ -62,7 +62,7 @@ namespace Gsemac.Data.ValueConversion {
 
             }
 
-            return new TypeCastValueConverter(sourceType, destinationType, enforceSourceType: true);
+            return new TypeCastValueConverter(sourceType, destinationType, options.CastOptions, enforceSourceType: true);
 
         }
 

@@ -1,4 +1,6 @@
-﻿namespace Gsemac.Data.ValueConversion {
+﻿using Gsemac.Reflection;
+
+namespace Gsemac.Data.ValueConversion {
 
     public class ValueConverterFactoryOptions :
         IValueConverterFactoryOptions {
@@ -7,8 +9,16 @@
 
         public static ValueConverterFactoryOptions Default => new ValueConverterFactoryOptions();
 
+        public ICastOptions CastOptions {
+            get => castOptions;
+            set => castOptions = value ?? Reflection.CastOptions.Default;
+        }
         public bool EnableTransitiveConversion { get; set; } = false;
         public bool EnableDefaultConverters { get; set; } = true;
+
+        // Private members
+
+        private ICastOptions castOptions = Reflection.CastOptions.Default;
 
     }
 
