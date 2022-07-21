@@ -4,20 +4,20 @@ using System;
 namespace Gsemac.Data.ValueConversion.Tests {
 
     [TestClass]
-    public class TypeCastConverterTests {
+    public class TypeCastValueConverterTests {
 
         // Convert
 
         [TestMethod]
         public void TestConvertWithValidConversion() {
 
-            Assert.AreEqual(5, new TypeCastConverter<int>().Convert(5.2));
+            Assert.AreEqual(5, new TypeCastValueConverter<int>().Convert(5.2));
 
         }
         [TestMethod]
         public void TestConvertWithInvalidConversionThrowsException() {
 
-            Assert.ThrowsException<ArgumentException>(() => new TypeCastConverter<int>().Convert("hello"));
+            Assert.ThrowsException<ArgumentException>(() => new TypeCastValueConverter<int>().Convert("hello"));
 
         }
 

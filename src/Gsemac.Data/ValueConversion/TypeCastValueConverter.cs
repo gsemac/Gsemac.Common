@@ -38,7 +38,7 @@ namespace Gsemac.Data.ValueConversion {
 
     }
 
-    public class TypeCastConverter<TDestination> :
+    public class TypeCastValueConverter<TDestination> :
        ValueConverterBase<object, TDestination> {
 
         // Public members
@@ -51,7 +51,7 @@ namespace Gsemac.Data.ValueConversion {
 
     }
 
-    public class TypeCastConverter<TSource, TDestination> :
+    public class TypeCastValueConverter<TSource, TDestination> :
         ValueConverterBase<TSource, TDestination> {
 
         // Public members

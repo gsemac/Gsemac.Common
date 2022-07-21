@@ -196,7 +196,14 @@ namespace Gsemac.Reflection {
                        Nullable.GetUnderlyingType(type) :
                        type;
 
-                    if (newType.IsEnum) {
+                    if (obj is object && newType.IsAssignableFrom(obj.GetType())) {
+
+                        // The object can be casted directly to the target type.
+
+                        result = obj;
+
+                    }
+                    else if (newType.IsEnum) {
 
                         success = EnumUtilities.TryParse(obj, newType, new EnumParseOptions() { IgnoreCase = true, }, out result);
 

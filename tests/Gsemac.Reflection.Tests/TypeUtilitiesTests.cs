@@ -11,6 +11,20 @@ namespace Gsemac.Reflection.Tests {
         // TryCast
 
         [TestMethod]
+        public void TestTryCastWithValidCast() {
+
+            Assert.IsTrue(TypeUtilities.TryCast("35", out int result));
+            Assert.AreEqual(35, result);
+
+        }
+        [TestMethod]
+        public void TestTryCastWithInvalidCast() {
+
+            Assert.IsFalse(TypeUtilities.TryCast("abc", out int _));
+
+        }
+
+        [TestMethod]
         public void TestTryCastStringToEnumWithValidName() {
 
             Assert.IsTrue(TypeUtilities.TryCast("Item3", out TestEnum enumValue));
@@ -82,20 +96,6 @@ namespace Gsemac.Reflection.Tests {
         }
 
         [TestMethod]
-        public void TestTryCastWithInvalidValue() {
-
-            Assert.IsFalse(TypeUtilities.TryCast("abc", out int _));
-
-        }
-        [TestMethod]
-        public void TestTryCastWithValidValue() {
-
-            Assert.IsTrue(TypeUtilities.TryCast("35", out int result));
-            Assert.AreEqual(35, result);
-
-        }
-
-        [TestMethod]
         public void TestTryCastWithEnableConstructorAndDefaultConstructor() {
 
             Assert.IsFalse(TypeUtilities.TryCast("hello world", new CastOptions() {
@@ -122,7 +122,32 @@ namespace Gsemac.Reflection.Tests {
 
         }
 
+        [TestMethod]
+        public void TestTryCastToInterfaceWithClassImplementingInterface() {
+
+            object obj = new ClassImplementingInterface();
+
+            Assert.IsTrue(TypeUtilities.TryCast(obj, out Interface result));
+            Assert.IsTrue(ReferenceEquals(obj, result));
+
+        }
+        [TestMethod]
+        public void TestTryCastToSameType() {
+
+            object obj = new ClassWithDefaultConstructor();
+
+            Assert.IsTrue(TypeUtilities.TryCast(obj, out ClassWithDefaultConstructor result));
+            Assert.IsTrue(ReferenceEquals(obj, result));
+
+        }
+
         // Private members
+
+        private interface Interface { }
+
+        private class ClassImplementingInterface :
+            Interface {
+        }
 
         private class ClassWithDefaultConstructor { }
 

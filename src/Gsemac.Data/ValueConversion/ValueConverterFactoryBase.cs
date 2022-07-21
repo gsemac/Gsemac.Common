@@ -58,7 +58,8 @@ namespace Gsemac.Data.ValueConversion {
                 IValueConverter[] transitiveConversionPath = GetTransitiveConversionPath(converters.SelectMany(p => p.Value), sourceType, destinationType)
                     .ToArray();
 
-                return new TransitiveValueConverter(transitiveConversionPath);
+                if (transitiveConversionPath.Any())
+                    return new TransitiveValueConverter(transitiveConversionPath);
 
             }
 
