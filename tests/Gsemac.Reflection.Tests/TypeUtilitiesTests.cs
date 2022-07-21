@@ -140,6 +140,15 @@ namespace Gsemac.Reflection.Tests {
             Assert.IsTrue(ReferenceEquals(obj, result));
 
         }
+        [TestMethod]
+        public void TestTryCastCustomClassToString() {
+
+            object obj = new ClassWithDefaultConstructor();
+
+            Assert.IsTrue(TypeUtilities.TryCast(obj, out string result));
+            Assert.AreEqual(obj.ToString(), result);
+
+        }
 
         // Private members
 

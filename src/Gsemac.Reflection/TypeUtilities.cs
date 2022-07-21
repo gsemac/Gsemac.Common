@@ -220,12 +220,25 @@ namespace Gsemac.Reflection {
                             // I originally had this catch InvalidCastException, but it's also possible for other exceptions to be thrown, such as FormatException when parsing strings.
                             // Because this method is never supposed to throw, I've changed it to catch all exceptions.
 
-                            if (!options.EnableConstructor)
+                            if (obj is object && newType.Equals(typeof(string))) {
+
+                                // Convert any object to a string by calling the ToString method.
+
+                                result = obj.ToString();
+
+                            }
+                            else if (options.EnableConstructor) {
+
+                                // Attempt to create an instance of the object using constructor initialization.
+
+                                result = Activator.CreateInstance(newType, new[] { obj });
+
+                            }
+                            else {
+
                                 throw;
 
-                            // Attempt to create an instance of the object using constructor initialization.
-
-                            result = Activator.CreateInstance(newType, new[] { obj });
+                            }
 
                         }
 
