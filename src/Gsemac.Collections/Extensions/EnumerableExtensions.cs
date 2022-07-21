@@ -8,8 +8,6 @@ namespace Gsemac.Collections.Extensions {
 
         // Public members
 
-        public delegate bool TryFunc<T, TOut>(T input, out TOut value);
-
         public static IEnumerable<T> TakeLast<T>(this IEnumerable<T> source, int length) {
 
             if (source is null)
