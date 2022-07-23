@@ -99,16 +99,16 @@ namespace Gsemac.Reflection.Tests {
         public void TestTryCastWithEnableConstructorAndDefaultConstructor() {
 
             Assert.IsFalse(TypeUtilities.TryCast("hello world", new CastOptions() {
-                EnableConstructor = true,
-            }, out ClassWithDefaultConstructor _));
+                EnableConstructorInitialization = true,
+            }, out TestClassWithDefaultConstructor _));
 
         }
         [TestMethod]
         public void TestTryCastWithEnableConstructorAndMatchingConstructor() {
 
             Assert.IsTrue(TypeUtilities.TryCast("hello world", new CastOptions() {
-                EnableConstructor = true,
-            }, out ClassWithStringConstructor result));
+                EnableConstructorInitialization = true,
+            }, out TestClassWithStringConstructor result));
 
             Assert.AreEqual("hello world", result.Text);
 
@@ -117,33 +117,33 @@ namespace Gsemac.Reflection.Tests {
         public void TestTryCastWithEnableConstructorAndThrowingConstructor() {
 
             Assert.IsFalse(TypeUtilities.TryCast("hello world", new CastOptions() {
-                EnableConstructor = true,
-            }, out ClassWithThrowingConstructor _));
+                EnableConstructorInitialization = true,
+            }, out TestClassWithThrowingConstructor _));
 
         }
 
         [TestMethod]
         public void TestTryCastToInterfaceWithClassImplementingInterface() {
 
-            object obj = new ClassImplementingInterface();
+            object obj = new TestClassImplementingInterface();
 
-            Assert.IsTrue(TypeUtilities.TryCast(obj, out Interface result));
+            Assert.IsTrue(TypeUtilities.TryCast(obj, out ITestInterface result));
             Assert.IsTrue(ReferenceEquals(obj, result));
 
         }
         [TestMethod]
         public void TestTryCastToSameType() {
 
-            object obj = new ClassWithDefaultConstructor();
+            object obj = new TestClassWithDefaultConstructor();
 
-            Assert.IsTrue(TypeUtilities.TryCast(obj, out ClassWithDefaultConstructor result));
+            Assert.IsTrue(TypeUtilities.TryCast(obj, out TestClassWithDefaultConstructor result));
             Assert.IsTrue(ReferenceEquals(obj, result));
 
         }
         [TestMethod]
         public void TestTryCastCustomClassToString() {
 
-            object obj = new ClassWithDefaultConstructor();
+            object obj = new TestClassWithDefaultConstructor();
 
             Assert.IsTrue(TypeUtilities.TryCast(obj, out string result));
             Assert.AreEqual(obj.ToString(), result);
@@ -152,21 +152,21 @@ namespace Gsemac.Reflection.Tests {
 
         // Private members
 
-        private interface Interface { }
+        private interface ITestInterface { }
 
-        private class ClassImplementingInterface :
-            Interface {
+        private class TestClassImplementingInterface :
+            ITestInterface {
         }
 
-        private class ClassWithDefaultConstructor { }
+        private class TestClassWithDefaultConstructor { }
 
-        private class ClassWithStringConstructor {
+        private class TestClassWithStringConstructor {
 
             // Public members
 
             public string Text { get; }
 
-            public ClassWithStringConstructor(string text) {
+            public TestClassWithStringConstructor(string text) {
 
                 Text = text;
 
@@ -174,11 +174,11 @@ namespace Gsemac.Reflection.Tests {
 
         }
 
-        private class ClassWithThrowingConstructor {
+        private class TestClassWithThrowingConstructor {
 
             // Public members
 
-            public ClassWithThrowingConstructor(string _) {
+            public TestClassWithThrowingConstructor(string _) {
 
                 throw new ArgumentException(null, nameof(_));
 

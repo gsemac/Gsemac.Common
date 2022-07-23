@@ -227,7 +227,7 @@ namespace Gsemac.Reflection {
                                 result = obj.ToString();
 
                             }
-                            else if (options.EnableConstructor) {
+                            else if (options.EnableConstructorInitialization) {
 
                                 // Attempt to create an instance of the object using constructor initialization.
 

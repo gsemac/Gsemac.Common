@@ -13,7 +13,10 @@ namespace Gsemac.Data.ValueConversion {
             get => castOptions;
             set => castOptions = value ?? Reflection.CastOptions.Default;
         }
-        public bool EnableTransitiveConversion { get; set; } = false;
+
+        public bool EnableDerivedClassLookup { get; set; } = false;
+        public bool EnableTransitiveLookup { get; set; } = false;
+
         public bool EnableDefaultConverters { get; set; } = true;
 
         // Private members

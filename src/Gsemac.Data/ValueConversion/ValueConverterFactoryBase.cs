@@ -50,7 +50,21 @@ namespace Gsemac.Data.ValueConversion {
                 return new IdentityValueConverter(sourceType);
 
             }
-            else if (options.EnableTransitiveConversion) {
+            else if (options.EnableDerivedClassLookup) {
+
+                // If we have a converter that converts to a class derived from the class we're converting to, we can use that instead.
+                // This is useful if we're attempting to convert an object to an interface, and we have a converter that returns an object implementing that interface.
+
+                IValueConverter[] derivedClassConverters = converters
+                    .SelectMany(p => p.Value)
+                    .Where(converter => converter.SourceType.Equals(sourceType) && ConverterHasMatchingDestinationType(converter, destinationType))
+                    .ToArray();
+
+                if (derivedClassConverters.Any())
+                    return new CompositeValueConverter(derivedClassConverters);
+
+            }
+            else if (options.EnableTransitiveLookup) {
 
                 // We didn't find any converters matching our source/destination types.
                 // However, maybe we can find a transitive path from one to the other.
@@ -136,13 +150,14 @@ namespace Gsemac.Data.ValueConversion {
             // Get all converters that can convert from the source type.
 
             IEnumerable<IValueConverter> matchingConverters = source.Where(converter => converter.SourceType.Equals(sourceType));
+            IEnumerable<IValueConverter> matchingDestinationConverters = matchingConverters.Where(converter => ConverterHasMatchingDestinationType(converter, destinationType));
+
+            if (matchingDestinationConverters.Any())
+                return new[] { new CompositeValueConverter(matchingDestinationConverters) };
 
             foreach (IValueConverter matchingConverter in matchingConverters) {
 
                 // Find the next steps in the conversion chain.
-
-                if (matchingConverter.DestinationType.Equals(destinationType))
-                    return new[] { matchingConverter };
 
                 IEnumerable<IValueConverter> nextMatchingConverters = GetTransitiveConversionPath(source.Except(matchingConverters), matchingConverter.DestinationType, destinationType);
 
@@ -157,11 +172,19 @@ namespace Gsemac.Data.ValueConversion {
 
         }
 
+        private bool ConverterHasMatchingDestinationType(IValueConverter valueConverter, Type destinationType) {
+
+            return valueConverter.DestinationType.Equals(destinationType) ||
+                (options.EnableDerivedClassLookup && destinationType.IsAssignableFrom(valueConverter.DestinationType));
+
+        }
+
         private static Tuple<Type, Type> CreateKey(Type sourceType, Type destinationType) {
 
             return Tuple.Create(sourceType, destinationType);
 
         }
+
         private static bool IsTriviallyCastableType(Type type) {
 
             return type.IsNumericType() || type.Equals(typeof(bool));

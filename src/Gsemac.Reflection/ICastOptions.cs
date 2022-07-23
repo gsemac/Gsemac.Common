@@ -3,7 +3,7 @@
     public interface ICastOptions {
 
         bool IgnoreCase { get; }
-        bool EnableConstructor { get; }
+        bool EnableConstructorInitialization { get; }
 
     }
 
