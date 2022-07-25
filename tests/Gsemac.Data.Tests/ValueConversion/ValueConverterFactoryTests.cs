@@ -1,5 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using System.Globalization;
 
 namespace Gsemac.Data.ValueConversion.Tests {
 
@@ -9,6 +10,34 @@ namespace Gsemac.Data.ValueConversion.Tests {
         // Public members
 
         // Create
+
+        [TestMethod]
+        public void TestTransitiveConversionWithTransitiveLookupDisabled() {
+
+            TestValueConverterFactory factory = new(new ValueConverterFactoryOptions() {
+                EnableTransitiveLookup = false,
+            });
+
+            factory.AddValueConverter(ValueConverter.Create<int, string>(arg => arg.ToString(CultureInfo.InvariantCulture)));
+            factory.AddValueConverter(ValueConverter.Create<string, TestClassWithConstructor>(arg => new TestClassWithConstructor(arg)));
+
+            Assert.IsFalse(factory.Create<int, TestClassWithConstructor>().TryConvert(5, out TestClassWithConstructor _));
+
+        }
+        [TestMethod]
+        public void TestTransitiveConversionWithTransitiveLookupEnabled() {
+
+            TestValueConverterFactory factory = new(new ValueConverterFactoryOptions() {
+                EnableTransitiveLookup = true,
+            });
+
+            factory.AddValueConverter(ValueConverter.Create<int, string>(arg => arg.ToString(CultureInfo.InvariantCulture)));
+            factory.AddValueConverter(ValueConverter.Create<string, TestClassWithConstructor>(arg => new TestClassWithConstructor(arg)));
+
+            Assert.IsTrue(factory.Create<int, TestClassWithConstructor>().TryConvert(5, out TestClassWithConstructor result));
+            Assert.AreEqual("5", result.Value);
+
+        }
 
         [TestMethod]
         public void TestInvalidConversionWithTransitiveLookupEnabledDoesNotThrowException() {
@@ -25,7 +54,7 @@ namespace Gsemac.Data.ValueConversion.Tests {
         }
 
         [TestMethod]
-        public void TestConvertToInterfaceWithDerivedClassLookupDisabled() {
+        public void TestConversionToInterfaceWithDerivedClassLookupDisabled() {
 
             TestValueConverterFactory factory = new(new ValueConverterFactoryOptions() {
                 EnableDerivedClassLookup = false,
@@ -37,7 +66,7 @@ namespace Gsemac.Data.ValueConversion.Tests {
 
         }
         [TestMethod]
-        public void TestConvertToInterfaceWithDerivedClassLookupEnabled() {
+        public void TestConversionToInterfaceWithDerivedClassLookupEnabled() {
 
             TestValueConverterFactory factory = new(new ValueConverterFactoryOptions() {
                 EnableDerivedClassLookup = true,
@@ -55,6 +84,20 @@ namespace Gsemac.Data.ValueConversion.Tests {
 
         private class TestClassImplementingInterface :
             ITestInterface {
+        }
+
+        private class TestClassWithConstructor {
+
+            // Public members
+
+            public string Value { get; }
+
+            public TestClassWithConstructor(string value) {
+
+                Value = value;
+
+            }
+
         }
 
         private class TestValueConverterFactory :
