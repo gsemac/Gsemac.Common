@@ -7,7 +7,7 @@ namespace Gsemac.Core {
 
         // Public members
 
-        public IHashCodeBuilder Add(object obj) {
+        public IHashCodeBuilder WithValue<T>(T obj) {
 
             hashCodes.Add(obj?.GetHashCode() ?? 0);
 
@@ -17,14 +17,14 @@ namespace Gsemac.Core {
 
         public int Build() {
 
-            // https://stackoverflow.com/a/1646913/5383169
+            // https://stackoverflow.com/a/1646913/5383169 (Jon Skeet)
 
             unchecked {
 
                 int hash = 17;
 
                 foreach (int hashCode in hashCodes)
-                    hash *= 31 + hashCode;
+                    hash = hash * 31 + hashCode;
 
                 return hash;
 

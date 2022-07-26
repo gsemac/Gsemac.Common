@@ -2,7 +2,7 @@
 
     public interface IHashCodeBuilder {
 
-        IHashCodeBuilder Add(object obj);
+        IHashCodeBuilder WithValue<T>(T obj);
 
         int Build();
 

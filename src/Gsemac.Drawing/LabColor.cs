@@ -26,9 +26,9 @@ namespace Gsemac.Drawing {
         public override int GetHashCode() {
 
             return new HashCodeBuilder()
-                .Add(L)
-                .Add(A)
-                .Add(B)
+                .WithValue(L)
+                .WithValue(A)
+                .WithValue(B)
                 .Build();
 
         }
