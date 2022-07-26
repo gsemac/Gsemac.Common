@@ -30,9 +30,23 @@ namespace Gsemac.Data.ValueConversion {
 
             public override bool TryConvert(TSource value, out TDestination result) {
 
-                result = factory(value);
+                try {
 
-                return true;
+                    result = factory(value);
+
+                    return true;
+
+                }
+                catch (Exception) {
+
+                    // We don't know if the user-provided delegate will throw or not, but we don't want TryConvert to throw.
+                    // While we eat the exception here, it could be possible to make it accessible to the user by making Convert overridable.
+
+                    result = default;
+
+                    return false;
+
+                }
 
             }
 
