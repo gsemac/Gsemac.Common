@@ -34,7 +34,7 @@ namespace Gsemac.Data.ValueConversion {
                 return new CompositeValueConverter(convertersArray);
 
             }
-            else if (options.EnableDefaultConverters && IsTriviallyCastableType(sourceType) && IsTriviallyCastableType(destinationType)) {
+            else if (options.EnableDefaultConversions && IsTriviallyCastableType(sourceType) && IsTriviallyCastableType(destinationType)) {
 
                 // Avoid costly transitive conversions along the path number -> string -> number if both types are numeric types that can easily be casted.
                 // Also, don't be strict about the input type for numeric conversions, because the conversion can then fail when passing incompatible literals.
@@ -61,7 +61,7 @@ namespace Gsemac.Data.ValueConversion {
                     .ToArray();
 
                 if (derivedClassConverters.Any())
-                    return new CompositeValueConverter(derivedClassConverters);
+                    return new CompositeValueConverter(derivedClassConverters.Reverse());
 
             }
             else if (options.EnableTransitiveLookup) {
@@ -91,36 +91,8 @@ namespace Gsemac.Data.ValueConversion {
             if (options is null)
                 throw new ArgumentNullException(nameof(options));
 
-            if (options.EnableDefaultConverters) {
-
-                AddValueConverter(new BoolToStringConverter());
-                AddValueConverter(new StringToBoolConverter());
-
-                AddValueConverter(new NumberToStringConverter<byte>());
-                AddValueConverter(new NumberToStringConverter<sbyte>());
-                AddValueConverter(new NumberToStringConverter<decimal>());
-                AddValueConverter(new NumberToStringConverter<double>());
-                AddValueConverter(new NumberToStringConverter<float>());
-                AddValueConverter(new NumberToStringConverter<int>());
-                AddValueConverter(new NumberToStringConverter<uint>());
-                AddValueConverter(new NumberToStringConverter<long>());
-                AddValueConverter(new NumberToStringConverter<ulong>());
-                AddValueConverter(new NumberToStringConverter<short>());
-                AddValueConverter(new NumberToStringConverter<ushort>());
-
-                AddValueConverter(new StringToNumberConverter<byte>());
-                AddValueConverter(new StringToNumberConverter<sbyte>());
-                AddValueConverter(new StringToNumberConverter<decimal>());
-                AddValueConverter(new StringToNumberConverter<double>());
-                AddValueConverter(new StringToNumberConverter<float>());
-                AddValueConverter(new StringToNumberConverter<int>());
-                AddValueConverter(new StringToNumberConverter<uint>());
-                AddValueConverter(new StringToNumberConverter<long>());
-                AddValueConverter(new StringToNumberConverter<ulong>());
-                AddValueConverter(new StringToNumberConverter<short>());
-                AddValueConverter(new StringToNumberConverter<ushort>());
-
-            }
+            if (options.EnableDefaultConversions)
+                AddDefaultValueConverters();
 
             this.options = options;
 
@@ -145,6 +117,37 @@ namespace Gsemac.Data.ValueConversion {
         private readonly IValueConverterFactoryOptions options;
         private readonly IDictionary<Tuple<Type, Type>, List<IValueConverter>> converters = new Dictionary<Tuple<Type, Type>, List<IValueConverter>>();
 
+        private void AddDefaultValueConverters() {
+
+            AddValueConverter(new BoolToStringConverter());
+            AddValueConverter(new StringToBoolConverter());
+
+            AddValueConverter(new NumberToStringConverter<byte>());
+            AddValueConverter(new NumberToStringConverter<sbyte>());
+            AddValueConverter(new NumberToStringConverter<decimal>());
+            AddValueConverter(new NumberToStringConverter<double>());
+            AddValueConverter(new NumberToStringConverter<float>());
+            AddValueConverter(new NumberToStringConverter<int>());
+            AddValueConverter(new NumberToStringConverter<uint>());
+            AddValueConverter(new NumberToStringConverter<long>());
+            AddValueConverter(new NumberToStringConverter<ulong>());
+            AddValueConverter(new NumberToStringConverter<short>());
+            AddValueConverter(new NumberToStringConverter<ushort>());
+
+            AddValueConverter(new StringToNumberConverter<byte>());
+            AddValueConverter(new StringToNumberConverter<sbyte>());
+            AddValueConverter(new StringToNumberConverter<decimal>());
+            AddValueConverter(new StringToNumberConverter<double>());
+            AddValueConverter(new StringToNumberConverter<float>());
+            AddValueConverter(new StringToNumberConverter<int>());
+            AddValueConverter(new StringToNumberConverter<uint>());
+            AddValueConverter(new StringToNumberConverter<long>());
+            AddValueConverter(new StringToNumberConverter<ulong>());
+            AddValueConverter(new StringToNumberConverter<short>());
+            AddValueConverter(new StringToNumberConverter<ushort>());
+
+        }
+
         private IEnumerable<IValueConverter> GetTransitiveConversionPath(IEnumerable<IValueConverter> source, Type sourceType, Type destinationType) {
 
             // Get all converters that can convert from the source type.
@@ -153,7 +156,7 @@ namespace Gsemac.Data.ValueConversion {
             IEnumerable<IValueConverter> matchingDestinationConverters = matchingConverters.Where(converter => ConverterHasMatchingDestinationType(converter, destinationType));
 
             if (matchingDestinationConverters.Any())
-                return new[] { new CompositeValueConverter(matchingDestinationConverters) };
+                return new[] { new CompositeValueConverter(matchingDestinationConverters.Reverse()) };
 
             foreach (IValueConverter matchingConverter in matchingConverters) {
 

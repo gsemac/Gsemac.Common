@@ -9,7 +9,7 @@ namespace Gsemac.Data.ValueConversion {
         bool EnableDerivedClassLookup { get; }
         bool EnableTransitiveLookup { get; }
 
-        bool EnableDefaultConverters { get; }
+        bool EnableDefaultConversions { get; }
 
     }
 

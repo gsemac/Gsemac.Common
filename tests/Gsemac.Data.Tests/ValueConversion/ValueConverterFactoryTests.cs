@@ -12,9 +12,22 @@ namespace Gsemac.Data.ValueConversion.Tests {
         // Create
 
         [TestMethod]
+        public void TestConversionToInterfaceWithMultipleCandidatesUsesLastCandidate() {
+
+            TestValueConverterFactory factory = new TestValueConverterFactory();
+
+            factory.AddValueConverter(ValueConverter.Create<string, TestClassWithConstructor>(str => new TestClassWithConstructor("bad")));
+            factory.AddValueConverter(ValueConverter.Create<string, TestClassWithConstructor>(str => new TestClassWithConstructor("good")));
+
+            Assert.IsTrue(factory.Create<string, TestClassWithConstructor>().TryConvert("abc", out TestClassWithConstructor result));
+            Assert.AreEqual("good", result.Value);
+
+        }
+
+        [TestMethod]
         public void TestTransitiveConversionWithTransitiveLookupDisabled() {
 
-            TestValueConverterFactory factory = new(new ValueConverterFactoryOptions() {
+            TestValueConverterFactory factory = new TestValueConverterFactory(new ValueConverterFactoryOptions() {
                 EnableTransitiveLookup = false,
             });
 
@@ -27,7 +40,7 @@ namespace Gsemac.Data.ValueConversion.Tests {
         [TestMethod]
         public void TestTransitiveConversionWithTransitiveLookupEnabled() {
 
-            TestValueConverterFactory factory = new(new ValueConverterFactoryOptions() {
+            TestValueConverterFactory factory = new TestValueConverterFactory(new ValueConverterFactoryOptions() {
                 EnableTransitiveLookup = true,
             });
 
@@ -38,25 +51,41 @@ namespace Gsemac.Data.ValueConversion.Tests {
             Assert.AreEqual("5", result.Value);
 
         }
-
         [TestMethod]
         public void TestInvalidConversionWithTransitiveLookupEnabledDoesNotThrowException() {
 
             // Invalid conversions should fail normally (return false) even if we fail to find a valid transitive conversion path.
             // In other words, failing to find a transitive conversion path should not throw an exception.
 
-            ValueConverterFactory factory = new(new ValueConverterFactoryOptions() {
+            ValueConverterFactory factory = new ValueConverterFactory(new ValueConverterFactoryOptions() {
                 EnableTransitiveLookup = true,
             });
 
             Assert.IsFalse(factory.Create<string, ValueConverterFactoryTests>().TryConvert("abc", out object _));
 
         }
+        [TestMethod]
+        public void TestTransitiveConversionToInterfaceWithDerivedClassLookupEnabledAndMultipleCandidatesUsesLastCandidate() {
+
+            TestValueConverterFactory factory = new TestValueConverterFactory(new ValueConverterFactoryOptions() {
+                EnableTransitiveLookup = true,
+                EnableDerivedClassLookup = true,
+            });
+
+            factory.AddValueConverter(ValueConverter.Create<int, string>(arg => arg.ToString(CultureInfo.InvariantCulture)));
+            factory.AddValueConverter(ValueConverter.Create<string, TestClassWithConstructor>(str => new TestClassWithConstructor("bad")));
+            factory.AddValueConverter(ValueConverter.Create<string, TestClassWithConstructor>(str => new TestClassWithConstructor("good")));
+
+            Assert.IsTrue(factory.Create<string, ITestInterface>().TryConvert("abc", out ITestInterface result));
+            Assert.AreEqual(typeof(TestClassWithConstructor), result.GetType());
+            Assert.AreEqual("good", ((TestClassWithConstructor)result).Value);
+
+        }
 
         [TestMethod]
         public void TestConversionToInterfaceWithDerivedClassLookupDisabled() {
 
-            TestValueConverterFactory factory = new(new ValueConverterFactoryOptions() {
+            TestValueConverterFactory factory = new TestValueConverterFactory(new ValueConverterFactoryOptions() {
                 EnableDerivedClassLookup = false,
             });
 
@@ -68,7 +97,7 @@ namespace Gsemac.Data.ValueConversion.Tests {
         [TestMethod]
         public void TestConversionToInterfaceWithDerivedClassLookupEnabled() {
 
-            TestValueConverterFactory factory = new(new ValueConverterFactoryOptions() {
+            TestValueConverterFactory factory = new TestValueConverterFactory(new ValueConverterFactoryOptions() {
                 EnableDerivedClassLookup = true,
             });
 
@@ -78,9 +107,9 @@ namespace Gsemac.Data.ValueConversion.Tests {
 
         }
         [TestMethod]
-        public void TestConversionToInterfaceWithDerivedClassLookupEnabledAndMultipleCandidates() {
+        public void TestConversionToInterfaceWithDerivedClassLookupEnabledAndMultipleCandidatesIgnoresFailedConversions() {
 
-            TestValueConverterFactory factory = new(new ValueConverterFactoryOptions() {
+            TestValueConverterFactory factory = new TestValueConverterFactory(new ValueConverterFactoryOptions() {
                 EnableDerivedClassLookup = true,
             });
 
@@ -88,6 +117,21 @@ namespace Gsemac.Data.ValueConversion.Tests {
             factory.AddValueConverter(ValueConverter.Create<string, TestClassImplementingInterface>(str => new TestClassImplementingInterface()));
 
             Assert.IsTrue(factory.Create<string, ITestInterface>().TryConvert("abc", out ITestInterface _));
+
+        }
+        [TestMethod]
+        public void TestConversionToInterfaceWithDerivedClassLookupEnabledAndMultipleCandidatesUsesLastCandidate() {
+
+            TestValueConverterFactory factory = new TestValueConverterFactory(new ValueConverterFactoryOptions() {
+                EnableDerivedClassLookup = true,
+            });
+
+            factory.AddValueConverter(ValueConverter.Create<string, TestClassWithConstructor>(str => new TestClassWithConstructor("bad")));
+            factory.AddValueConverter(ValueConverter.Create<string, TestClassWithConstructor>(str => new TestClassWithConstructor("good")));
+
+            Assert.IsTrue(factory.Create<string, ITestInterface>().TryConvert("abc", out ITestInterface result));
+            Assert.AreEqual(typeof(TestClassWithConstructor), result.GetType());
+            Assert.AreEqual("good", ((TestClassWithConstructor)result).Value);
 
         }
 
@@ -99,7 +143,8 @@ namespace Gsemac.Data.ValueConversion.Tests {
             ITestInterface {
         }
 
-        private class TestClassWithConstructor {
+        private class TestClassWithConstructor :
+            ITestInterface {
 
             // Public members
 

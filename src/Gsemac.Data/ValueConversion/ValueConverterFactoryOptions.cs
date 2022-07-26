@@ -17,7 +17,7 @@ namespace Gsemac.Data.ValueConversion {
         public bool EnableDerivedClassLookup { get; set; } = false;
         public bool EnableTransitiveLookup { get; set; } = false;
 
-        public bool EnableDefaultConverters { get; set; } = true;
+        public bool EnableDefaultConversions { get; set; } = true;
 
         // Private members
 
