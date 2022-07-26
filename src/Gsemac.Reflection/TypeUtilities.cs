@@ -170,6 +170,9 @@ namespace Gsemac.Reflection {
         }
         public static bool TryCast(object obj, Type type, ICastOptions options, out object result) {
 
+            if (type is null)
+                throw new ArgumentNullException(nameof(type));
+
             if (options is null)
                 throw new ArgumentNullException(nameof(options));
 
@@ -177,9 +180,11 @@ namespace Gsemac.Reflection {
 
             bool success = true;
 
+            bool isNullableType = type.IsNullableType();
+
             try {
 
-                if (type.IsNullableType() && obj is null) {
+                if (isNullableType && obj is null) {
 
                     // If the type is nullable and we have a null object, we can trivially create an instance of the nullable type.
                     // It's important to use null explicitly instead of obj, because CreateInstance will change "null" arguments to "default" for primitive types.
@@ -192,7 +197,7 @@ namespace Gsemac.Reflection {
                     // If we have a nullable type and object is not null, we need to cast to the underlying type.
                     // This is because Convert.ChangeType will fail for nullable types.
 
-                    Type newType = type.IsNullableType() ?
+                    Type newType = isNullableType ?
                        Nullable.GetUnderlyingType(type) :
                        type;
 
