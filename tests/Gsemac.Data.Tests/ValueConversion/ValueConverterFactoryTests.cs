@@ -77,6 +77,19 @@ namespace Gsemac.Data.ValueConversion.Tests {
             Assert.IsTrue(factory.Create<string, ITestInterface>().TryConvert("abc", out ITestInterface _));
 
         }
+        [TestMethod]
+        public void TestConversionToInterfaceWithDerivedClassLookupEnabledAndMultipleCandidates() {
+
+            TestValueConverterFactory factory = new(new ValueConverterFactoryOptions() {
+                EnableDerivedClassLookup = true,
+            });
+
+            factory.AddValueConverter(ValueConverter.Create<string, TestClassImplementingInterface>(str => throw new Exception()));
+            factory.AddValueConverter(ValueConverter.Create<string, TestClassImplementingInterface>(str => new TestClassImplementingInterface()));
+
+            Assert.IsTrue(factory.Create<string, ITestInterface>().TryConvert("abc", out ITestInterface _));
+
+        }
 
         // Private members
 
