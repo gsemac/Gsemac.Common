@@ -16,8 +16,10 @@ namespace Gsemac.Data.ValueConversion {
         public static string ToHtml(Color value) {
 
             // If the color is transparent, just return the "transparent" keyword.
+            // "Empty" colors will also be treated as transparent, because they have the RGBA value (0, 0, 0, 0).
+            // This makes them transparent when used in graphics routines.
 
-            if (value.A <= 0)
+            if (value.IsEmpty || value.A <= 0)
                 return Color.Transparent.Name;
 
             // If this color has an explicit name, return the name of the color.

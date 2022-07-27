@@ -65,7 +65,12 @@ namespace Gsemac.Data.ValueConversion.Tests {
             Assert.AreEqual("darkgray", new ColorToStringConverter().Convert(Color.DarkGray));
 
         }
+        [TestMethod]
+        public void TestConvertEmptyColorReturnsTransparent() {
 
+            Assert.AreEqual("transparent", new ColorToStringConverter().Convert(Color.Empty));
+
+        }
 
     }
 
