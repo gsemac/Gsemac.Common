@@ -65,7 +65,25 @@ namespace Gsemac.Data.ValueConversion.Tests {
 
         }
         [TestMethod]
-        public void TestTransitiveConversionToInterfaceWithDerivedClassLookupEnabledAndMultipleCandidatesUsesLastCandidate() {
+        public void TestTransitiveConversionToInterfaceWithTransitiveLookupEnabledAndDerivedClassLookupEnabled() {
+
+            // When both transitive and derived class lookup are enabled, we should be able to find a transitive path to the derived class type.
+
+            TestValueConverterFactory factory = new TestValueConverterFactory(new ValueConverterFactoryOptions() {
+                EnableTransitiveLookup = true,
+                EnableDerivedClassLookup = true,
+            });
+
+            factory.AddValueConverter(ValueConverter.Create<int, string>(arg => arg.ToString(CultureInfo.InvariantCulture)));
+            factory.AddValueConverter(ValueConverter.Create<string, TestClassWithConstructor>(str => new TestClassWithConstructor(str)));
+
+            Assert.IsTrue(factory.Create<int, ITestInterface>().TryConvert(5, out ITestInterface result));
+            Assert.AreEqual(typeof(TestClassWithConstructor), result.GetType());
+            Assert.AreEqual("5", ((TestClassWithConstructor)result).Value);
+
+        }
+        [TestMethod]
+        public void TestTransitiveConversionToInterfaceWitWithTransitiveLookupEnabledAndDerivedClassLookupEnabledAndMultipleCandidatesUsesLastCandidate() {
 
             TestValueConverterFactory factory = new TestValueConverterFactory(new ValueConverterFactoryOptions() {
                 EnableTransitiveLookup = true,
@@ -76,7 +94,7 @@ namespace Gsemac.Data.ValueConversion.Tests {
             factory.AddValueConverter(ValueConverter.Create<string, TestClassWithConstructor>(str => new TestClassWithConstructor("bad")));
             factory.AddValueConverter(ValueConverter.Create<string, TestClassWithConstructor>(str => new TestClassWithConstructor("good")));
 
-            Assert.IsTrue(factory.Create<string, ITestInterface>().TryConvert("abc", out ITestInterface result));
+            Assert.IsTrue(factory.Create<int, ITestInterface>().TryConvert(5, out ITestInterface result));
             Assert.AreEqual(typeof(TestClassWithConstructor), result.GetType());
             Assert.AreEqual("good", ((TestClassWithConstructor)result).Value);
 

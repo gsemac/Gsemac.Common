@@ -34,7 +34,8 @@ namespace Gsemac.Data.ValueConversion {
                 return new CompositeValueConverter(convertersArray);
 
             }
-            else if (options.EnableDefaultConversions && IsTriviallyCastableType(sourceType) && IsTriviallyCastableType(destinationType)) {
+
+            if (options.EnableDefaultConversions && IsTriviallyCastableType(sourceType) && IsTriviallyCastableType(destinationType)) {
 
                 // Avoid costly transitive conversions along the path number -> string -> number if both types are numeric types that can easily be casted.
                 // Also, don't be strict about the input type for numeric conversions, because the conversion can then fail when passing incompatible literals.
@@ -42,7 +43,8 @@ namespace Gsemac.Data.ValueConversion {
                 return new TypeCastValueConverter(sourceType, destinationType, options.CastOptions, enforceSourceType: false);
 
             }
-            else if (sourceType.Equals(destinationType)) {
+
+            if (sourceType.Equals(destinationType)) {
 
                 // The two types are the same, so we don't need to do any conversion at all.
                 // This is done after checking for numeric types so we can use a less-strict converter for those types.
@@ -50,7 +52,8 @@ namespace Gsemac.Data.ValueConversion {
                 return new IdentityValueConverter(sourceType);
 
             }
-            else if (options.EnableDerivedClassLookup) {
+
+            if (options.EnableDerivedClassLookup) {
 
                 // If we have a converter that converts to a class derived from the class we're converting to, we can use that instead.
                 // This is useful if we're attempting to convert an object to an interface, and we have a converter that returns an object implementing that interface.
@@ -64,7 +67,8 @@ namespace Gsemac.Data.ValueConversion {
                     return new CompositeValueConverter(derivedClassConverters.Reverse());
 
             }
-            else if (options.EnableTransitiveLookup) {
+
+            if (options.EnableTransitiveLookup) {
 
                 // We didn't find any converters matching our source/destination types.
                 // However, maybe we can find a transitive path from one to the other.
