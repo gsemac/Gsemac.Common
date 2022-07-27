@@ -92,7 +92,7 @@ namespace Gsemac.Drawing {
             int newG = (int)(g + (255 - g) * factor);
             int newB = (int)(b + (255 - b) * factor);
 
-            return Color.FromArgb(newR, newG, newB);
+            return Color.FromArgb(color.A, newR, newG, newB);
 
         }
         public static Color Shade(this Color color, float factor) {
@@ -101,7 +101,7 @@ namespace Gsemac.Drawing {
 
             factor = 1.0f - factor;
 
-            return Color.FromArgb((int)(color.R * factor), (int)(color.G * factor), (int)(color.B * factor));
+            return Color.FromArgb(color.A, (int)(color.R * factor), (int)(color.G * factor), (int)(color.B * factor));
 
         }
 
@@ -109,7 +109,7 @@ namespace Gsemac.Drawing {
 
             int greyColor = (int)((0.11 * color.R) + (0.59 * color.G) + (0.30 * color.B));
 
-            return Color.FromArgb(greyColor, greyColor, greyColor);
+            return Color.FromArgb(color.A, greyColor, greyColor, greyColor);
 
         }
 
