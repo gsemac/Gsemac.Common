@@ -146,6 +146,9 @@ namespace Gsemac.Data.ValueConversion {
             AddValueConverter(new StringToNumberConverter<short>());
             AddValueConverter(new StringToNumberConverter<ushort>());
 
+            AddValueConverter(new ColorToStringConverter());
+            AddValueConverter(new StringToColorConverter());
+
         }
 
         private IEnumerable<IValueConverter> GetTransitiveConversionPath(IEnumerable<IValueConverter> source, Type sourceType, Type destinationType) {
