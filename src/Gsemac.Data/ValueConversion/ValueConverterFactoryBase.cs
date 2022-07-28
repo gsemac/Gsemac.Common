@@ -12,13 +12,100 @@ namespace Gsemac.Data.ValueConversion {
 
         public IValueConverter Create(Type sourceType, Type destinationType) {
 
+            var key = CreateKey(sourceType, destinationType);
+
+            if (!options.EnableLookupCache || !TryGetValueConverterFromCache(key, out IValueConverter valueConverter))
+                valueConverter = CreateInternal(sourceType, destinationType);
+
+            if (options.EnableLookupCache)
+                AddValueToCache(key, valueConverter);
+
+            return valueConverter;
+
+        }
+
+        // Protected members
+
+        protected ValueConverterFactoryBase() :
+            this(ValueConverterFactoryOptions.Default) {
+        }
+        protected ValueConverterFactoryBase(IValueConverterFactoryOptions options) {
+
+            if (options is null)
+                throw new ArgumentNullException(nameof(options));
+
+            if (options.EnableDefaultConversions)
+                AddDefaultValueConverters();
+
+            this.options = options;
+
+        }
+
+        protected void AddValueConverter(IValueConverter valueConverter) {
+
+            if (valueConverter is null)
+                throw new ArgumentNullException(nameof(valueConverter));
+
+            var key = CreateKey(valueConverter.SourceType, valueConverter.DestinationType);
+
+            if (converters.TryGetValue(key, out var valueConverters))
+                valueConverters.Add(valueConverter);
+            else
+                converters.Add(key, new List<IValueConverter> { valueConverter });
+
+            // Reset the cache, since we have a new converter to consider for lookups.
+
+            ClearCache();
+
+        }
+
+        // Private members
+
+        private readonly IValueConverterFactoryOptions options;
+        private readonly IDictionary<Tuple<Type, Type>, List<IValueConverter>> converters = new Dictionary<Tuple<Type, Type>, List<IValueConverter>>();
+        private readonly IDictionary<Tuple<Type, Type>, IValueConverter> converterCache = new Dictionary<Tuple<Type, Type>, IValueConverter>();
+
+        private void AddDefaultValueConverters() {
+
+            AddValueConverter(new BoolToStringConverter());
+            AddValueConverter(new StringToBoolConverter());
+
+            AddValueConverter(new NumberToStringConverter<byte>());
+            AddValueConverter(new NumberToStringConverter<sbyte>());
+            AddValueConverter(new NumberToStringConverter<decimal>());
+            AddValueConverter(new NumberToStringConverter<double>());
+            AddValueConverter(new NumberToStringConverter<float>());
+            AddValueConverter(new NumberToStringConverter<int>());
+            AddValueConverter(new NumberToStringConverter<uint>());
+            AddValueConverter(new NumberToStringConverter<long>());
+            AddValueConverter(new NumberToStringConverter<ulong>());
+            AddValueConverter(new NumberToStringConverter<short>());
+            AddValueConverter(new NumberToStringConverter<ushort>());
+
+            AddValueConverter(new StringToNumberConverter<byte>());
+            AddValueConverter(new StringToNumberConverter<sbyte>());
+            AddValueConverter(new StringToNumberConverter<decimal>());
+            AddValueConverter(new StringToNumberConverter<double>());
+            AddValueConverter(new StringToNumberConverter<float>());
+            AddValueConverter(new StringToNumberConverter<int>());
+            AddValueConverter(new StringToNumberConverter<uint>());
+            AddValueConverter(new StringToNumberConverter<long>());
+            AddValueConverter(new StringToNumberConverter<ulong>());
+            AddValueConverter(new StringToNumberConverter<short>());
+            AddValueConverter(new StringToNumberConverter<ushort>());
+
+            AddValueConverter(new ColorToStringConverter());
+            AddValueConverter(new StringToColorConverter());
+
+        }
+
+        private IValueConverter CreateInternal(Type sourceType, Type destinationType) {
+
             if (sourceType is null)
                 throw new ArgumentNullException(nameof(sourceType));
 
             if (destinationType is null)
                 throw new ArgumentNullException(nameof(destinationType));
-
-            // If the types are the same, we don't need to do any conversion at all.
 
             var key = CreateKey(sourceType, destinationType);
 
@@ -58,13 +145,13 @@ namespace Gsemac.Data.ValueConversion {
                 // If we have a converter that converts to a class derived from the class we're converting to, we can use that instead.
                 // This is useful if we're attempting to convert an object to an interface, and we have a converter that returns an object implementing that interface.
 
-                IValueConverter[] derivedClassConverters = converters
+                IEnumerable<IValueConverter> derivedClassConverters = converters
                     .SelectMany(p => p.Value)
                     .Where(converter => converter.SourceType.Equals(sourceType) && ConverterHasMatchingDestinationType(converter, destinationType))
-                    .ToArray();
+                    .Reverse();
 
                 if (derivedClassConverters.Any())
-                    return new CompositeValueConverter(derivedClassConverters.Reverse());
+                    return new CompositeValueConverter(derivedClassConverters.ToArray());
 
             }
 
@@ -85,73 +172,22 @@ namespace Gsemac.Data.ValueConversion {
 
         }
 
-        // Protected members
+        private bool TryGetValueConverterFromCache(Tuple<Type, Type> key, out IValueConverter result) {
 
-        protected ValueConverterFactoryBase() :
-            this(ValueConverterFactoryOptions.Default) {
-        }
-        protected ValueConverterFactoryBase(IValueConverterFactoryOptions options) {
-
-            if (options is null)
-                throw new ArgumentNullException(nameof(options));
-
-            if (options.EnableDefaultConversions)
-                AddDefaultValueConverters();
-
-            this.options = options;
+            lock (converterCache)
+                return converterCache.TryGetValue(key, out result);
 
         }
+        private void AddValueToCache(Tuple<Type, Type> key, IValueConverter value) {
 
-        protected void AddValueConverter(IValueConverter valueConverter) {
-
-            if (valueConverter is null)
-                throw new ArgumentNullException(nameof(valueConverter));
-
-            var key = CreateKey(valueConverter.SourceType, valueConverter.DestinationType);
-
-            if (converters.TryGetValue(key, out var valueConverters))
-                valueConverters.Add(valueConverter);
-            else
-                converters.Add(key, new List<IValueConverter> { valueConverter });
+            lock (converterCache)
+                converterCache[key] = value;
 
         }
+        private void ClearCache() {
 
-        // Private members
-
-        private readonly IValueConverterFactoryOptions options;
-        private readonly IDictionary<Tuple<Type, Type>, List<IValueConverter>> converters = new Dictionary<Tuple<Type, Type>, List<IValueConverter>>();
-
-        private void AddDefaultValueConverters() {
-
-            AddValueConverter(new BoolToStringConverter());
-            AddValueConverter(new StringToBoolConverter());
-
-            AddValueConverter(new NumberToStringConverter<byte>());
-            AddValueConverter(new NumberToStringConverter<sbyte>());
-            AddValueConverter(new NumberToStringConverter<decimal>());
-            AddValueConverter(new NumberToStringConverter<double>());
-            AddValueConverter(new NumberToStringConverter<float>());
-            AddValueConverter(new NumberToStringConverter<int>());
-            AddValueConverter(new NumberToStringConverter<uint>());
-            AddValueConverter(new NumberToStringConverter<long>());
-            AddValueConverter(new NumberToStringConverter<ulong>());
-            AddValueConverter(new NumberToStringConverter<short>());
-            AddValueConverter(new NumberToStringConverter<ushort>());
-
-            AddValueConverter(new StringToNumberConverter<byte>());
-            AddValueConverter(new StringToNumberConverter<sbyte>());
-            AddValueConverter(new StringToNumberConverter<decimal>());
-            AddValueConverter(new StringToNumberConverter<double>());
-            AddValueConverter(new StringToNumberConverter<float>());
-            AddValueConverter(new StringToNumberConverter<int>());
-            AddValueConverter(new StringToNumberConverter<uint>());
-            AddValueConverter(new StringToNumberConverter<long>());
-            AddValueConverter(new StringToNumberConverter<ulong>());
-            AddValueConverter(new StringToNumberConverter<short>());
-            AddValueConverter(new StringToNumberConverter<ushort>());
-
-            AddValueConverter(new ColorToStringConverter());
-            AddValueConverter(new StringToColorConverter());
+            lock (converterCache)
+                converterCache.Clear();
 
         }
 
@@ -160,10 +196,13 @@ namespace Gsemac.Data.ValueConversion {
             // Get all converters that can convert from the source type.
 
             IEnumerable<IValueConverter> matchingConverters = source.Where(converter => converter.SourceType.Equals(sourceType));
-            IEnumerable<IValueConverter> matchingDestinationConverters = matchingConverters.Where(converter => ConverterHasMatchingDestinationType(converter, destinationType));
+
+            IEnumerable<IValueConverter> matchingDestinationConverters = matchingConverters
+                .Where(converter => ConverterHasMatchingDestinationType(converter, destinationType))
+                .Reverse();
 
             if (matchingDestinationConverters.Any())
-                return new[] { new CompositeValueConverter(matchingDestinationConverters.Reverse()) };
+                return new[] { new CompositeValueConverter(matchingDestinationConverters.ToArray()) };
 
             foreach (IValueConverter matchingConverter in matchingConverters) {
 
@@ -181,7 +220,6 @@ namespace Gsemac.Data.ValueConversion {
             return Enumerable.Empty<IValueConverter>();
 
         }
-
         private bool ConverterHasMatchingDestinationType(IValueConverter valueConverter, Type destinationType) {
 
             return valueConverter.DestinationType.Equals(destinationType) ||
@@ -194,7 +232,6 @@ namespace Gsemac.Data.ValueConversion {
             return Tuple.Create(sourceType, destinationType);
 
         }
-
         private static bool IsTriviallyCastableType(Type type) {
 
             return type.IsNumericType() || type.Equals(typeof(bool));

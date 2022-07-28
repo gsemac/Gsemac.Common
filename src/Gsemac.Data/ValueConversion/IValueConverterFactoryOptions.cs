@@ -11,6 +11,8 @@ namespace Gsemac.Data.ValueConversion {
 
         bool EnableDefaultConversions { get; }
 
+        bool EnableLookupCache { get; }
+
     }
 
 }

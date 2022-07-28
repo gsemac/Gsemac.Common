@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Linq;
 
 namespace Gsemac.Data.ValueConversion {
 
@@ -8,7 +8,8 @@ namespace Gsemac.Data.ValueConversion {
 
         // Public members
 
-        public CompositeValueConverter(IEnumerable<IValueConverter> converters) {
+        public CompositeValueConverter(IValueConverter[] converters) :
+            base(GetSourceType(converters), GetDestinationType(converters)) {
 
             if (converters is null)
                 throw new ArgumentNullException(nameof(converters));
@@ -34,7 +35,24 @@ namespace Gsemac.Data.ValueConversion {
 
         // Private members
 
-        private readonly IEnumerable<IValueConverter> converters;
+        private readonly IValueConverter[] converters;
+
+        private static Type GetSourceType(IValueConverter[] converters) {
+
+            if (converters is object && converters.Length > 0 && converters.All(converter => converter.SourceType.Equals(converters.First().SourceType)))
+                return converters.First().SourceType;
+
+            return typeof(object);
+
+        }
+        private static Type GetDestinationType(IValueConverter[] converters) {
+
+            if (converters is object && converters.Length > 0 && converters.All(converter => converter.DestinationType.Equals(converters.Last().DestinationType)))
+                return converters.Last().DestinationType;
+
+            return typeof(object);
+
+        }
 
     }
 

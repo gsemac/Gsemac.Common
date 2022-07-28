@@ -19,6 +19,8 @@ namespace Gsemac.Data.ValueConversion {
 
         public bool EnableDefaultConversions { get; set; } = true;
 
+        public bool EnableLookupCache { get; set; } = true;
+
         // Private members
 
         private ICastOptions castOptions = Reflection.CastOptions.Default;
