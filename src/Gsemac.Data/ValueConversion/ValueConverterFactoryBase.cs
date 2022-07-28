@@ -14,11 +14,11 @@ namespace Gsemac.Data.ValueConversion {
 
             var key = CreateKey(sourceType, destinationType);
 
-            if (!options.EnableLookupCache || !TryGetValueConverterFromCache(key, out IValueConverter valueConverter))
+            if (!options.EnableLookupCache || !TryGetValueConverterFromCache(sourceType, destinationType, out IValueConverter valueConverter))
                 valueConverter = CreateInternal(sourceType, destinationType);
 
             if (options.EnableLookupCache)
-                AddValueToCache(key, valueConverter);
+                AddValueToCache(sourceType, destinationType, valueConverter);
 
             return valueConverter;
 
@@ -109,7 +109,12 @@ namespace Gsemac.Data.ValueConversion {
 
             var key = CreateKey(sourceType, destinationType);
 
-            if (converters.TryGetValue(key, out var valueConverters) && valueConverters.Any()) {
+            // Check for converters specified in the type's attributes.
+            // Attribute-based converters take priority over the converters added to the factory.
+
+            var attributeValueConverters = GetAttributeConverters(sourceType, destinationType);
+
+            if ((attributeValueConverters.TryGetValue(key, out var valueConverters) || converters.TryGetValue(key, out valueConverters)) && valueConverters.Any()) {
 
                 // Reverse the order of value converters, so ones added later are tried before ones added earlier.
                 // They are combined into a CompositeValueConverter, which will try all converters for the given types until one works.
@@ -145,13 +150,13 @@ namespace Gsemac.Data.ValueConversion {
                 // If we have a converter that converts to a class derived from the class we're converting to, we can use that instead.
                 // This is useful if we're attempting to convert an object to an interface, and we have a converter that returns an object implementing that interface.
 
-                IEnumerable<IValueConverter> derivedClassConverters = converters
+                IEnumerable<IValueConverter> candidateValueConverters = converters
                     .SelectMany(p => p.Value)
                     .Where(converter => converter.SourceType.Equals(sourceType) && ConverterHasMatchingDestinationType(converter, destinationType))
                     .Reverse();
 
-                if (derivedClassConverters.Any())
-                    return new CompositeValueConverter(derivedClassConverters.ToArray());
+                if (candidateValueConverters.Any())
+                    return new CompositeValueConverter(candidateValueConverters.ToArray());
 
             }
 
@@ -160,7 +165,9 @@ namespace Gsemac.Data.ValueConversion {
                 // We didn't find any converters matching our source/destination types.
                 // However, maybe we can find a transitive path from one to the other.
 
-                IValueConverter[] transitiveConversionPath = GetTransitiveConversionPath(converters.SelectMany(p => p.Value), sourceType, destinationType)
+                IEnumerable<IValueConverter> candidateValueConverters = converters.SelectMany(p => p.Value);
+
+                IValueConverter[] transitiveConversionPath = GetTransitiveConversionPath(candidateValueConverters, sourceType, destinationType)
                     .ToArray();
 
                 if (transitiveConversionPath.Any())
@@ -172,13 +179,17 @@ namespace Gsemac.Data.ValueConversion {
 
         }
 
-        private bool TryGetValueConverterFromCache(Tuple<Type, Type> key, out IValueConverter result) {
+        private bool TryGetValueConverterFromCache(Type sourceType, Type destinationType, out IValueConverter result) {
+
+            var key = CreateKey(sourceType, destinationType);
 
             lock (converterCache)
                 return converterCache.TryGetValue(key, out result);
 
         }
-        private void AddValueToCache(Tuple<Type, Type> key, IValueConverter value) {
+        private void AddValueToCache(Type sourceType, Type destinationType, IValueConverter value) {
+
+            var key = CreateKey(sourceType, destinationType);
 
             lock (converterCache)
                 converterCache[key] = value;
@@ -188,6 +199,23 @@ namespace Gsemac.Data.ValueConversion {
 
             lock (converterCache)
                 converterCache.Clear();
+
+        }
+
+        private IDictionary<Tuple<Type, Type>, List<IValueConverter>> GetAttributeConverters(Type sourceType, Type destinationType) {
+
+            if (!options.EnableAttributeLookup)
+                return new Dictionary<Tuple<Type, Type>, List<IValueConverter>>();
+
+            return sourceType.GetCustomAttributes(inherit: false)
+                .Concat(destinationType.GetCustomAttributes(inherit: false))
+                .OfType<ValueConverterAttribute>()
+                .Select(attribute => attribute.ValueConverterType)
+                .Distinct()
+                .Where(type => type.IsDefaultConstructable())
+                .Select(type => (IValueConverter)Activator.CreateInstance(type))
+                .GroupBy(valueConverter => CreateKey(valueConverter.SourceType, valueConverter.DestinationType))
+                .ToDictionary(group => group.Key, group => new List<IValueConverter>(group));
 
         }
 

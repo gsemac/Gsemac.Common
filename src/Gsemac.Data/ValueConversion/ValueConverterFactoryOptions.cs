@@ -14,11 +14,11 @@ namespace Gsemac.Data.ValueConversion {
             set => castOptions = value ?? Reflection.CastOptions.Default;
         }
 
+        public bool EnableAttributeLookup { get; set; } = true;
         public bool EnableDerivedClassLookup { get; set; } = false;
         public bool EnableTransitiveLookup { get; set; } = false;
 
         public bool EnableDefaultConversions { get; set; } = true;
-
         public bool EnableLookupCache { get; set; } = true;
 
         // Private members

@@ -57,7 +57,7 @@ namespace Gsemac.Data.ValueConversion.Tests {
             // Invalid conversions should fail normally (return false) even if we fail to find a valid transitive conversion path.
             // In other words, failing to find a transitive conversion path should not throw an exception.
 
-            ValueConverterFactory factory = new ValueConverterFactory(new ValueConverterFactoryOptions() {
+            ValueConverterFactory factory = new TestValueConverterFactory(new ValueConverterFactoryOptions() {
                 EnableTransitiveLookup = true,
             });
 
@@ -153,6 +153,18 @@ namespace Gsemac.Data.ValueConversion.Tests {
 
         }
 
+        [TestMethod]
+        public void TestConversionWithValueConverterAttribute() {
+
+            TestValueConverterFactory factory = new TestValueConverterFactory(new ValueConverterFactoryOptions() {
+                EnableAttributeLookup = true,
+            });
+
+            Assert.IsTrue(factory.Create<string, TestClassWithAttribute>().TryConvert("good", out TestClassWithAttribute result));
+            Assert.AreEqual("good", result.Value);
+
+        }
+
         // Private members
 
         private interface ITestInterface { }
@@ -171,6 +183,37 @@ namespace Gsemac.Data.ValueConversion.Tests {
             public TestClassWithConstructor(string value) {
 
                 Value = value;
+
+            }
+
+        }
+
+        [ValueConverter(typeof(TestClassWithAttributeConverter))]
+        private class TestClassWithAttribute :
+            ITestInterface {
+
+            // Public members
+
+            public string Value { get; }
+
+            public TestClassWithAttribute(string value) {
+
+                Value = value;
+
+            }
+
+        }
+
+        private class TestClassWithAttributeConverter :
+            ValueConverterBase<string, TestClassWithAttribute> {
+
+            // Public members
+
+            public override bool TryConvert(string value, out TestClassWithAttribute result) {
+
+                result = new TestClassWithAttribute(value);
+
+                return true;
 
             }
 

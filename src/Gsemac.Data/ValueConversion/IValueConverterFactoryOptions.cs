@@ -6,11 +6,11 @@ namespace Gsemac.Data.ValueConversion {
 
         ICastOptions CastOptions { get; }
 
+        bool EnableAttributeLookup { get; } 
         bool EnableDerivedClassLookup { get; }
         bool EnableTransitiveLookup { get; }
 
         bool EnableDefaultConversions { get; }
-
         bool EnableLookupCache { get; }
 
     }

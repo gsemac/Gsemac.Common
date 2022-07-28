@@ -43,7 +43,7 @@ namespace Gsemac.Reflection {
 
         public static bool IsDefaultConstructable(Type type) {
 
-            return type.GetConstructor(Type.EmptyTypes) != null;
+            return type.GetConstructor(Type.EmptyTypes) is object;
 
         }
         public static bool IsConstructableFrom(Type type, IEnumerable<Type> types) {
