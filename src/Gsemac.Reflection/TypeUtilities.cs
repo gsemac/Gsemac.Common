@@ -3,7 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using System.Reflection;
 
 namespace Gsemac.Reflection {
 
@@ -76,7 +75,7 @@ namespace Gsemac.Reflection {
 
         }
 
-        public static bool IsNullableType(Type type) {
+        public static bool IsNullable(Type type) {
 
             return type is object &&
                 type.IsGenericType &&
@@ -84,7 +83,7 @@ namespace Gsemac.Reflection {
                 type.GetGenericTypeDefinition() == typeof(Nullable<>);
 
         }
-        public static Type GetNullableType(Type type) {
+        public static Type GetNullable(Type type) {
 
             // https://stackoverflow.com/a/108122 (Alex Lyman)
 
@@ -96,7 +95,7 @@ namespace Gsemac.Reflection {
                 return type;
 
         }
-        public static bool IsBuiltInType(Type type) {
+        public static bool IsBuiltIn(Type type) {
 
             // Returns true for built-in types as defined here:
             // https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/builtin-types/built-in-types
@@ -111,7 +110,7 @@ namespace Gsemac.Reflection {
                 typeCode != TypeCode.Empty;
 
         }
-        public static bool IsNumericType(Type type) {
+        public static bool IsNumeric(Type type) {
 
             if (type is null)
                 throw new ArgumentNullException(nameof(type));
@@ -180,7 +179,7 @@ namespace Gsemac.Reflection {
 
             bool success = true;
 
-            bool isNullableType = type.IsNullableType();
+            bool isNullableType = type.IsNullable();
 
             try {
 
@@ -251,7 +250,7 @@ namespace Gsemac.Reflection {
 
                     // If we managed to cast the object to the underlying type, then we can easily construct an instance of the nullable type using the casted object.
 
-                    if (type.IsNullableType() && success && result is object)
+                    if (type.IsNullable() && success && result is object)
                         result = Activator.CreateInstance(type, result);
 
                 }

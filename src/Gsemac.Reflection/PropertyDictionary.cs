@@ -253,7 +253,7 @@ namespace Gsemac.Reflection {
                 string propertyKey = propertyInfo.Name;
                 Type propertyType = propertyInfo.PropertyType;
 
-                bool propertyTypeIsObject = !propertyType.IsBuiltInType();
+                bool propertyTypeIsObject = !propertyType.IsBuiltIn();
 
                 if (propertyInfo.CanWrite || !options.HasFlag(PropertyDictionaryOptions.SkipReadOnlyProperties))
                     propertyCache[propertyKey] = new ObjectPropertyPair(obj, propertyInfo);
@@ -312,7 +312,7 @@ namespace Gsemac.Reflection {
 
             lock (propertyCacheMutex) {
 
-                if (!objectProperty.Property.PropertyType.IsBuiltInType()) {
+                if (!objectProperty.Property.PropertyType.IsBuiltIn()) {
 
                     object oldPropertyValue = GetPropertyValue(objectProperty);
 

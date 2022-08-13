@@ -32,24 +32,24 @@ namespace Gsemac.Reflection.Extensions {
 
         }
 
-        public static bool IsNullableType(this Type type) {
+        public static bool IsNullable(this Type type) {
 
-            return TypeUtilities.IsNullableType(type);
-
-        }
-        public static Type GetNullableType(this Type type) {
-
-            return TypeUtilities.GetNullableType(type);
+            return TypeUtilities.IsNullable(type);
 
         }
-        public static bool IsBuiltInType(this Type type) {
+        public static Type GetNullable(this Type type) {
 
-            return TypeUtilities.IsBuiltInType(type);
+            return TypeUtilities.GetNullable(type);
 
         }
-        public static bool IsNumericType(this Type type) {
+        public static bool IsBuiltIn(this Type type) {
 
-            return TypeUtilities.IsNumericType(type);
+            return TypeUtilities.IsBuiltIn(type);
+
+        }
+        public static bool IsNumeric(this Type type) {
+
+            return TypeUtilities.IsNumeric(type);
 
         }
 

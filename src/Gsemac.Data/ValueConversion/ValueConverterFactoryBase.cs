@@ -262,7 +262,7 @@ namespace Gsemac.Data.ValueConversion {
         }
         private static bool IsTriviallyCastableType(Type type) {
 
-            return type.IsNumericType() || type.Equals(typeof(bool));
+            return type.IsNumeric() || type.Equals(typeof(bool));
 
         }
 
