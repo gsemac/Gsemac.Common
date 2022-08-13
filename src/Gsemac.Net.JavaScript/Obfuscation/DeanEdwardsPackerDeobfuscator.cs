@@ -1,4 +1,5 @@
-﻿using Jint;
+﻿using JavaScriptEngineSwitcher.Core;
+using JavaScriptEngineSwitcher.Jint;
 using System.Text.RegularExpressions;
 
 namespace Gsemac.Net.JavaScript.Obfuscation {
@@ -22,11 +23,11 @@ namespace Gsemac.Net.JavaScript.Obfuscation {
 
         private static string Unpack(string unpackerScript) {
 
-            Engine engine = new Engine();
+            if (string.IsNullOrWhiteSpace(unpackerScript))
+                return unpackerScript;
 
-            return engine.Execute($"({unpackerScript})")
-                .GetCompletionValue()
-                .AsString();
+            using (IJsEngine engine = new JintJsEngine())
+                return engine.Evaluate($"({unpackerScript})").ToString();
 
         }
 
