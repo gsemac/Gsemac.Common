@@ -1,5 +1,7 @@
-﻿using Gsemac.Text;
+﻿using Gsemac.Reflection.Extensions;
+using Gsemac.Text;
 using System;
+using System.Globalization;
 using System.Linq;
 using System.Text.RegularExpressions;
 
@@ -19,6 +21,7 @@ namespace Gsemac.Net.JavaScript {
             return Uri.UnescapeDataString(str);
 
         }
+
         public static string EncodeUri(string str) {
 
             return Uri.EscapeUriString(str);
@@ -38,6 +41,35 @@ namespace Gsemac.Net.JavaScript {
             return result;
 
         }
+
+        public static bool IsNaN(object value) {
+
+            if (value is null)
+                return false;
+
+            // Numeric types are always numbers
+
+            if (value.GetType().IsNumeric())
+                return false;
+
+            if (value is string str) {
+
+                // Empty string is converted to 0
+
+                if (string.IsNullOrWhiteSpace(str))
+                    return false;
+
+                return !double.TryParse(str, NumberStyles.Float, CultureInfo.InvariantCulture, out double parsedNumber)
+                    || double.IsNaN(parsedNumber);
+
+            }
+
+            // The input could not be interpreted as a number.
+
+            return true;
+
+        }
+
         public static int? ParseInt(string str) {
 
             int radix = 10;
@@ -77,6 +109,7 @@ namespace Gsemac.Net.JavaScript {
             }
 
         }
+
         public static string Unescape(string str) {
 
             str = StringUtilities.Unescape(str, UnescapeOptions.UnescapeEscapeSequences | UnescapeOptions.UnescapeUriEncoding);

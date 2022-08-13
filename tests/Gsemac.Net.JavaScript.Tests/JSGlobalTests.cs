@@ -5,20 +5,24 @@ namespace Gsemac.Net.JavaScript.Tests {
     [TestClass]
     public class JSGlobalTests {
 
+        // DecodeUri
+
         [TestMethod]
         public void TestDecodeUri() {
 
-            // Example from https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/decodeURI
+            // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/decodeURI
 
             Assert.AreEqual("https://developer.mozilla.org/ru/docs/JavaScript_шеллы",
                 JSGlobal.DecodeUri("https://developer.mozilla.org/ru/docs/JavaScript_%D1%88%D0%B5%D0%BB%D0%BB%D1%8B"));
 
         }
 
+        // EncodeUri
+
         [TestMethod]
         public void TestEncodeUriWithReservedCharacters() {
 
-            // Example from https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/encodeURI
+            // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/encodeURI
 
             Assert.AreEqual(";,/?:@&=+$#", JSGlobal.EncodeUri(";,/?:@&=+$#"));
 
@@ -26,7 +30,7 @@ namespace Gsemac.Net.JavaScript.Tests {
         [TestMethod]
         public void TestEncodeUriWithUnreservedCharacters() {
 
-            // Example from https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/encodeURI
+            // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/encodeURI
 
             Assert.AreEqual("-_.!~*'()", JSGlobal.EncodeUri("-_.!~*'()"));
 
@@ -34,16 +38,18 @@ namespace Gsemac.Net.JavaScript.Tests {
         [TestMethod]
         public void TestEncodeUriWithAlphanumericCharactersAndWhitespace() {
 
-            // Example from https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/encodeURI
+            // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/encodeURI
 
             Assert.AreEqual("ABC%20abc%20123", JSGlobal.EncodeUri("ABC abc 123"));
 
         }
 
+        // EncodeUriComponent
+
         [TestMethod]
         public void TestEncodeUriComponentWithReservedCharacters() {
 
-            // Example from https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/encodeURI
+            // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/encodeURI
 
             Assert.AreEqual("%3B%2C%2F%3F%3A%40%26%3D%2B%24%23", JSGlobal.EncodeUriComponent(";,/?:@&=+$#"));
 
@@ -51,7 +57,7 @@ namespace Gsemac.Net.JavaScript.Tests {
         [TestMethod]
         public void TestEncodeUriComponentWithUnreservedCharacters() {
 
-            // Example from https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/encodeURI
+            // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/encodeURI
 
             Assert.AreEqual("-_.!~*'()", JSGlobal.EncodeUriComponent("-_.!~*'()"));
 
@@ -59,26 +65,95 @@ namespace Gsemac.Net.JavaScript.Tests {
         [TestMethod]
         public void TestEncodeUriComponentWithAlphanumericCharactersAndWhitespace() {
 
-            // Example from https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/encodeURI
+            // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/encodeURI
 
             Assert.AreEqual("ABC%20abc%20123", JSGlobal.EncodeUriComponent("ABC abc 123"));
 
         }
 
+        // IsNaN
+
         [TestMethod]
-        public void TestPartIntWithBase10() {
+        public void TestIsNaNWithNull() {
+
+            // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/isNaN
+
+            Assert.IsFalse(JSGlobal.IsNaN(null));
+
+        }
+        [TestMethod]
+        public void TestIsNaNWithInteger() {
+
+            // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/isNaN
+
+            Assert.IsFalse(JSGlobal.IsNaN(37));
+
+        }
+        [TestMethod]
+        public void TestIsNaNWithIntegerString() {
+
+            // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/isNaN
+
+            Assert.IsFalse(JSGlobal.IsNaN("37"));
+
+        }
+        [TestMethod]
+        public void TestIsNaNWithNumberWithFloatString() {
+
+            // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/isNaN
+
+            Assert.IsFalse(JSGlobal.IsNaN("37.37"));
+
+        }
+        [TestMethod]
+        public void TestIsNaNWithNumberWithFloatWithAlternativeSeparatorString() {
+
+            // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/isNaN
+
+            Assert.IsTrue(JSGlobal.IsNaN("37,37"));
+
+        }
+        [TestMethod]
+        public void TestIsNaNWithNonNumericString() {
+
+            // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/isNaN
+
+            Assert.IsTrue(JSGlobal.IsNaN("123ABC"));
+
+        }
+        [TestMethod]
+        public void TestIsNaNWithEmptyString() {
+
+            // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/isNaN
+
+            Assert.IsFalse(JSGlobal.IsNaN(" "));
+
+        }
+        [TestMethod]
+        public void TestIsNaNWithWhiteSpaceString() {
+
+            // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/isNaN
+
+            Assert.IsFalse(JSGlobal.IsNaN("  "));
+
+        }
+
+        // ParseInt
+
+        [TestMethod]
+        public void TestParseIntWithBase10() {
 
             Assert.AreEqual(123, JSGlobal.ParseInt("123", 10));
 
         }
         [TestMethod]
-        public void TestPartIntWithBase16() {
+        public void TestParseIntWithBase16() {
 
             Assert.AreEqual(291, JSGlobal.ParseInt("0x123"));
 
         }
         [TestMethod]
-        public void TestPartIntWithLeadingZero() {
+        public void TestParseIntWithLeadingZero() {
 
             // ECMAScript 5 forbids a leading 0 denoting an octal number, and it should be interpreted as base-10.
             // All major browsers follow this convention.
@@ -87,10 +162,12 @@ namespace Gsemac.Net.JavaScript.Tests {
 
         }
 
+        // Unescape
+
         [TestMethod]
         public void TestUnescapeWithAsciiString() {
 
-            // Example from https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/unescape
+            // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/unescape
 
             Assert.AreEqual("abc123", JSGlobal.Unescape("abc123"));
 
@@ -98,7 +175,7 @@ namespace Gsemac.Net.JavaScript.Tests {
         [TestMethod]
         public void TestUnescapeWithUriEncoding() {
 
-            // Example from https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/unescape
+            // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/unescape
 
             Assert.AreEqual("äöü", JSGlobal.Unescape("%E4%F6%FC"));
 
@@ -106,7 +183,7 @@ namespace Gsemac.Net.JavaScript.Tests {
         [TestMethod]
         public void TestUnescapeWithUnicodeUriEncoding() {
 
-            // Example from https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/unescape
+            // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/unescape
 
             Assert.AreEqual("ć", JSGlobal.Unescape("%u0107"));
 
