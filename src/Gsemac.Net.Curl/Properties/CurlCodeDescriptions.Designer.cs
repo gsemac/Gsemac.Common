@@ -61,6 +61,15 @@ namespace Gsemac.Net.Curl.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Failed to connect() to host or proxy..
+        /// </summary>
+        internal static string CouldntConnect {
+            get {
+                return ResourceManager.GetString("CouldntConnect", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Could not resolve host..
         /// </summary>
         internal static string CouldntResolveHost {

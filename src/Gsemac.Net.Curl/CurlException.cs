@@ -60,9 +60,9 @@ namespace Gsemac.Net.Curl {
 
             sb.Append($"({(int)resultCode}) ");
 
-            if ((int)resultCode == -1) {
+            if ((int)resultCode < 0) {
 
-                sb.Append("The process exited prematurely.");
+                sb.Append(string.Format(ExceptionMessages.CurlProcessReturnedErrorCode, resultCode));
 
             }
             else {
@@ -77,6 +77,10 @@ namespace Gsemac.Net.Curl {
                         sb.Append(CurlCodeDescriptions.CouldntResolveHost);
                         break;
 
+                    case CurlCode.CouldntConnect:
+                        sb.Append(CurlCodeDescriptions.CouldntConnect);
+                        break;
+
                     case CurlCode.PeerFailedVerification:
                         sb.Append(CurlCodeDescriptions.PeerFailedVerification);
                         break;
@@ -86,7 +90,7 @@ namespace Gsemac.Net.Curl {
                         break;
 
                     default:
-                        sb.Append($"The operation returned with error code {(int)resultCode}.");
+                        sb.Append(string.Format(ExceptionMessages.CurlOperationReturnedErrorCode, (int)resultCode));
                         break;
 
                 }

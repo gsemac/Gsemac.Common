@@ -79,6 +79,24 @@ namespace Gsemac.Net.Curl.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Curl operation returned error code {0}..
+        /// </summary>
+        internal static string CurlOperationReturnedErrorCode {
+            get {
+                return ResourceManager.GetString("CurlOperationReturnedErrorCode", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Curl process returned error code {0}..
+        /// </summary>
+        internal static string CurlProcessReturnedErrorCode {
+            get {
+                return ResourceManager.GetString("CurlProcessReturnedErrorCode", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The remote server returned an error: ({0}) {1}..
         /// </summary>
         internal static string RemoteServerReturnedAnError {

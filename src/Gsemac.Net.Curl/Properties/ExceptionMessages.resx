@@ -123,6 +123,12 @@
   <data name="ConnectedPartyDidNotRespond" xml:space="preserve">
     <value>A connection attempt failed because the connected party did not properly respond after a period of time, or established connection failed because connected host has failed to respond. A connection attempt failed because the connected party did not properly respond after a period of time, or established connection failed because connected host has failed to respond.</value>
   </data>
+  <data name="CurlOperationReturnedErrorCode" xml:space="preserve">
+    <value>Curl operation returned error code {0}.</value>
+  </data>
+  <data name="CurlProcessReturnedErrorCode" xml:space="preserve">
+    <value>Curl process returned error code {0}.</value>
+  </data>
   <data name="RemoteServerReturnedAnError" xml:space="preserve">
     <value>The remote server returned an error: ({0}) {1}.</value>
   </data>
