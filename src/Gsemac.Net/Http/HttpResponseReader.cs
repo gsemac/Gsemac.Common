@@ -27,7 +27,7 @@ namespace Gsemac.Net.Http {
 
                 startLine = null;
 
-                return true;
+                return false;
 
             }
 
