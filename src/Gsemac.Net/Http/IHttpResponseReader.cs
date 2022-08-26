@@ -5,7 +5,7 @@
 
         new IHttpStatusLine StartLine { get; }
 
-        bool ReadStartLine(out IHttpStatusLine startLine);
+        bool TryReadStartLine(out IHttpStatusLine startLine);
 
     }
 

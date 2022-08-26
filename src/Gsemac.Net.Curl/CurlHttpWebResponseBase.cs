@@ -93,7 +93,7 @@ namespace Gsemac.Net.Curl {
                     // We might fail to read the status line if we had a redirect that wasn't followed (i.e. "AllowAutoRedirect" is false).
                     // In that case, there are no other responses to read.
 
-                    if (!reader.ReadStartLine(out IHttpStatusLine statusLine))
+                    if (!reader.TryReadStartLine(out IHttpStatusLine statusLine))
                         break;
 
                     ProtocolVersion = statusLine.ProtocolVersion;

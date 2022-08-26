@@ -5,7 +5,7 @@
 
         new IHttpRequestLine StartLine { get; }
 
-        bool ReadStartLine(out IHttpRequestLine startLine);
+        bool TryReadStartLine(out IHttpRequestLine startLine);
 
     }
 

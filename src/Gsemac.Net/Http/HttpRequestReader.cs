@@ -14,9 +14,9 @@ namespace Gsemac.Net.Http {
             base(httpStream) {
         }
 
-        public bool ReadStartLine(out IHttpRequestLine startLine) {
+        public bool TryReadStartLine(out IHttpRequestLine startLine) {
 
-            if (ReadStartLine(out IHttpStartLine result)) {
+            if (TryReadStartLine(out IHttpStartLine result)) {
 
                 startLine = (IHttpRequestLine)result;
 

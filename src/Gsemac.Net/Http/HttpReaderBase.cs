@@ -15,7 +15,7 @@ namespace Gsemac.Net.Http {
         public IHttpStartLine StartLine => startLine.Value;
         public IEnumerable<IHttpHeader> Headers => headers.Value;
 
-        public bool ReadStartLine(out IHttpStartLine startLine) {
+        public bool TryReadStartLine(out IHttpStartLine startLine) {
 
             // When the user chooses to manually read a start line, we'll reset the reader.
             // This is for the case where we're reading from a stream that contains a list of concatenated requests (e.g. from cURL).
@@ -27,7 +27,7 @@ namespace Gsemac.Net.Http {
             return startLine is object;
 
         }
-        public bool ReadHeader(out IHttpHeader header) {
+        public bool TryReadHeader(out IHttpHeader header) {
 
             ResetHeaders();
 

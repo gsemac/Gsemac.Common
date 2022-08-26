@@ -10,8 +10,8 @@ namespace Gsemac.Net.Http {
         IHttpStartLine StartLine { get; }
         IEnumerable<IHttpHeader> Headers { get; }
 
-        bool ReadStartLine(out IHttpStartLine startLine);
-        bool ReadHeader(out IHttpHeader header);
+        bool TryReadStartLine(out IHttpStartLine startLine);
+        bool TryReadHeader(out IHttpHeader header);
 
         Stream GetBodyStream();
 
