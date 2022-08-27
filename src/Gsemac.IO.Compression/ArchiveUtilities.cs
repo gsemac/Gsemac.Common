@@ -38,7 +38,7 @@ namespace Gsemac.IO.Compression {
             string outputPath = Path.GetDirectoryName(filePath);
 
             if (extractToNewFolder)
-                outputPath = Path.Combine(outputPath, PathUtilities.GetFilenameWithoutExtension(filePath));
+                outputPath = Path.Combine(outputPath, PathUtilities.GetFileNameWithoutExtension(filePath));
 
             Extract(filePath, outputPath);
 

@@ -153,6 +153,9 @@
   <data name="OperationTimedOut" xml:space="preserve">
     <value>The operation timed out.</value>
   </data>
+  <data name="PathIsNotFilePath" xml:space="preserve">
+    <value>The given path '{0}' is a not a file path.</value>
+  </data>
   <data name="ReadLineWithStringDelimiterMustConsumeDelimiter" xml:space="preserve">
     <value>The ConsumeDelimiter option must be true when using string delimiters.</value>
   </data>

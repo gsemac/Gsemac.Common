@@ -35,7 +35,7 @@ namespace Gsemac.IO {
             string ext = PathUtilities.GetFileExtension(filePath);
 
             if (string.IsNullOrWhiteSpace(ext))
-                ext = PathUtilities.GetFilename(filePath);
+                ext = PathUtilities.GetFileName(filePath);
             else
                 ext = PathUtilities.NormalizeFileExtension(ext);
 

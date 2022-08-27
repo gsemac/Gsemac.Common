@@ -169,6 +169,15 @@ namespace Gsemac.IO.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The given path &apos;{0}&apos; is a not a file path..
+        /// </summary>
+        internal static string PathIsNotFilePath {
+            get {
+                return ResourceManager.GetString("PathIsNotFilePath", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The ConsumeDelimiter option must be true when using string delimiters..
         /// </summary>
         internal static string ReadLineWithStringDelimiterMustConsumeDelimiter {

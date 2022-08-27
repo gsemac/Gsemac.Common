@@ -1,4 +1,5 @@
-﻿using Gsemac.Text;
+﻿using Gsemac.IO.Properties;
+using Gsemac.Text;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -193,12 +194,12 @@ namespace Gsemac.IO {
 
         }
 
-        public static string GetFilename(string path) {
+        public static string GetFileName(string path) {
 
-            return GetFilename(path, new PathInfo());
+            return GetFileName(path, new PathInfo());
 
         }
-        public static string GetFilename(string path, IPathInfo pathInfo) {
+        public static string GetFileName(string path, IPathInfo pathInfo) {
 
             if (pathInfo is null)
                 throw new ArgumentNullException(nameof(pathInfo));
@@ -207,18 +208,18 @@ namespace Gsemac.IO {
             // The user is optionally able to specify explicitly whether the path is a URL or a local path.
 
             if (IsUrl(path, pathInfo))
-                return GetFilenameFromUrl(path);
+                return GetFileNameFromUrl(path);
 
             // If the path cannot be determined to be a URL, treat it like a local path.
             // Invalid path characters are be allowed (e.g. "|"), and content after the hash character ("#") should be included in the filename.
             // While this signifies the start of a URI fragment for URLs, it is a valid path character on Windows and most Linux flavors.
 
-            return GetFilenameWithRegex(path, IsUrl(path, pathInfo));
+            return GetFileNameWithRegex(path, IsUrl(path, pathInfo));
 
         }
-        public static string GetFilenameWithoutExtension(string path) {
+        public static string GetFileNameWithoutExtension(string path) {
 
-            string fileName = GetFilename(path);
+            string fileName = GetFileName(path);
 
             return StringUtilities.BeforeLast(fileName, ".");
 
@@ -226,12 +227,10 @@ namespace Gsemac.IO {
 
         public static string GetFileExtension(string path) {
 
-            string filename = GetFilename(path);
+            string filename = GetFileName(path);
 
-            if (filename is null)
+            if (string.IsNullOrWhiteSpace(filename))
                 return string.Empty;
-            else if (string.IsNullOrEmpty(filename))
-                return "";
             else
                 return Path.GetExtension(ReplaceInvalidPathChars(filename, SanitizePathOptions.Default));
 
@@ -241,15 +240,12 @@ namespace Gsemac.IO {
             if (string.IsNullOrEmpty(path))
                 throw new ArgumentNullException(nameof(extension));
 
-            if (string.IsNullOrEmpty(extension))
-                throw new ArgumentNullException(nameof(extension));
-
             if (!IsFilePath(path, verifyFileExists: false))
-                throw new ArgumentException("The given path was not a valid file path.");
+                throw new ArgumentException(string.Format(ExceptionMessages.PathIsNotFilePath, path));
 
-            extension = extension.Trim();
+            extension = extension?.Trim();
 
-            if (!extension.StartsWith("."))
+            if (!string.IsNullOrWhiteSpace(extension) && !extension.StartsWith("."))
                 extension = "." + extension;
 
             string oldExtension = GetFileExtension(path);
@@ -287,6 +283,14 @@ namespace Gsemac.IO {
             extension = "." + extension;
 
             return extension;
+
+        }
+        public static bool HasFileExtension(string path) {
+
+            if (string.IsNullOrWhiteSpace(path))
+                return false;
+
+            return !string.IsNullOrWhiteSpace(GetFileExtension(path));
 
         }
 
@@ -916,7 +920,7 @@ namespace Gsemac.IO {
             }
 
         }
-        private static string GetFilenameFromUrl(string path) {
+        private static string GetFileNameFromUrl(string path) {
 
             if (path is null)
                 return string.Empty;
@@ -938,12 +942,12 @@ namespace Gsemac.IO {
                 // Even though it shouldn't be allowed, there are URLs out there that contain them.
                 // We should still be able to handle this case.
 
-                return GetFilenameWithRegex(path, isUrl: true);
+                return GetFileNameWithRegex(path, isUrl: true);
 
             }
 
         }
-        private static string GetFilenameWithRegex(string path, bool isUrl) {
+        private static string GetFileNameWithRegex(string path, bool isUrl) {
 
             if (path is null)
                 return string.Empty;

@@ -305,97 +305,109 @@ namespace Gsemac.IO.Tests {
         // GetFileName
 
         [TestMethod]
-        public void TestGetFilenameFromUri() {
+        public void TestGetFileNameFromUri() {
 
-            Assert.AreEqual("file.jpg", PathUtilities.GetFilename("https://website.com/file.jpg"));
-
-        }
-        [TestMethod]
-        public void TestGetFilenameFromUnrootedUri() {
-
-            Assert.AreEqual("file.jpg", PathUtilities.GetFilename("path/file.jpg"));
+            Assert.AreEqual("file.jpg", PathUtilities.GetFileName("https://website.com/file.jpg"));
 
         }
         [TestMethod]
-        public void TestGetFilenameFromUriWithUriParameters() {
+        public void TestGetFileNameFromUnrootedUri() {
 
-            Assert.AreEqual("file.jpg", PathUtilities.GetFilename("path/file.jpg?file=1#anchor"));
+            Assert.AreEqual("file.jpg", PathUtilities.GetFileName("path/file.jpg"));
 
         }
         [TestMethod]
-        public void TestGetFilenameFromUriWithMultipleUriParameters() {
+        public void TestGetFileNameFromUriWithUriParameters() {
+
+            Assert.AreEqual("file.jpg", PathUtilities.GetFileName("path/file.jpg?file=1#anchor"));
+
+        }
+        [TestMethod]
+        public void TestGetFileNameFromUriWithMultipleUriParameters() {
 
             // The last URI parameter has its name omitted intentionally (this test is due to a real-world encounter).
 
             // If this were treated like a regular path, "proxy?img=file=&file.jpg" would be the filename.
             // However, the actual filename here is "proxy", which also does not have a file extension.
 
-            Assert.AreEqual("proxy", PathUtilities.GetFilename("https://website.com/proxy?img=file=&file.jpg"));
+            Assert.AreEqual("proxy", PathUtilities.GetFileName("https://website.com/proxy?img=file=&file.jpg"));
 
         }
         [TestMethod]
-        public void TestGetFilenameFromLocalPath() {
+        public void TestGetFileNameFromLocalPath() {
 
-            Assert.AreEqual("file.jpg", PathUtilities.GetFilename(@"c:\path\file.jpg"));
-
-        }
-        [TestMethod]
-        public void TestGetFilenameFromUriWithIllegalCharacters() {
-
-            Assert.AreEqual("|file.jpg", PathUtilities.GetFilename("path/|file.jpg"));
+            Assert.AreEqual("file.jpg", PathUtilities.GetFileName(@"c:\path\file.jpg"));
 
         }
         [TestMethod]
-        public void TestGetFilenameFromUriWithIllegalCharactersWithHashCharacter() {
+        public void TestGetFileNameFromUriWithIllegalCharacters() {
+
+            Assert.AreEqual("|file.jpg", PathUtilities.GetFileName("path/|file.jpg"));
+
+        }
+        [TestMethod]
+        public void TestGetFileNameFromUriWithIllegalCharactersWithHashCharacter() {
 
             // The hash character ("#") is a valid path character on Windows.
             // Filenames containing the hash character ("#") are valid on Windows, and the part after the hash should not be stripped.
 
-            Assert.AreEqual("|file.jpg#hash.png", PathUtilities.GetFilename("path/|file.jpg#hash.png"));
+            Assert.AreEqual("|file.jpg#hash.png", PathUtilities.GetFileName("path/|file.jpg#hash.png"));
 
         }
         [TestMethod]
-        public void TestGetFilenameFromUriWithHashCharacter() {
+        public void TestGetFileNameFromUriWithHashCharacter() {
 
             // URL fragments begin with the hash ("#") character.
             // Filenames containing the hash character ("#") are valid on Windows, and the part after the hash should not be stripped.
 
-            Assert.AreEqual(@"PathWith#Hash.jpg", PathUtilities.GetFilename(@"C:\PathWith#Hash.jpg"));
+            Assert.AreEqual(@"PathWith#Hash.jpg", PathUtilities.GetFileName(@"C:\PathWith#Hash.jpg"));
 
         }
         [TestMethod]
-        public void TestGetFilenameFromUrlWithHashCharacter() {
+        public void TestGetFileNameFromUrlWithHashCharacter() {
 
             // For URLs, everything after the hash character ("#") should be ignored as it indicates the start of a URI fragment.
 
-            Assert.AreEqual(@"PathWith.png", PathUtilities.GetFilename(@"https://example.com/PathWith.png#Hash.jpg"));
+            Assert.AreEqual(@"PathWith.png", PathUtilities.GetFileName(@"https://example.com/PathWith.png#Hash.jpg"));
+
+        }
+        [TestMethod]
+        public void TestGetFileNameWithEmptyString() {
+
+            Assert.AreEqual(string.Empty, PathUtilities.GetFileName(string.Empty));
+
+        }
+        [TestMethod]
+        public void TestGetFileNameWithNullString() {
+
+            Assert.AreEqual(string.Empty, PathUtilities.GetFileName(null));
 
         }
 
         // GetFileNameWithoutExtension
 
         [TestMethod]
-        public void TestGetFilenameWithoutExtension() {
+        public void TestGetFileNameWithoutExtension() {
 
-            Assert.AreEqual("file", PathUtilities.GetFilenameWithoutExtension("path/file.jpg"));
-
-        }
-        [TestMethod]
-        public void TestGetFilenameWithoutExtensionWithParameters() {
-
-            Assert.AreEqual("file", PathUtilities.GetFilenameWithoutExtension("path/file.jpg?file=1#anchor"));
+            Assert.AreEqual("file", PathUtilities.GetFileNameWithoutExtension("path/file.jpg"));
 
         }
         [TestMethod]
-        public void TestGetFilenameWithoutExtensionWithMultiplePeriods() {
+        public void TestGetFileNameWithoutExtensionWithParameters() {
 
-            Assert.AreEqual("file.1", PathUtilities.GetFilenameWithoutExtension("path/file.1.jpg"));
+            Assert.AreEqual("file", PathUtilities.GetFileNameWithoutExtension("path/file.jpg?file=1#anchor"));
 
         }
         [TestMethod]
-        public void TestGetFilenameWithoutExtensionWithNoExtension() {
+        public void TestGetFileNameWithoutExtensionWithMultiplePeriods() {
 
-            Assert.AreEqual("file", PathUtilities.GetFilenameWithoutExtension("path/file"));
+            Assert.AreEqual("file.1", PathUtilities.GetFileNameWithoutExtension("path/file.1.jpg"));
+
+        }
+        [TestMethod]
+        public void TestGetFileNameWithoutExtensionWithNoExtension() {
+
+            Assert.AreEqual("file", PathUtilities.GetFileNameWithoutExtension("path/file"));
 
         }
 
@@ -438,6 +450,30 @@ namespace Gsemac.IO.Tests {
             Assert.AreEqual(@".jpg", PathUtilities.GetFileExtension(@"PathWith#Hash.jpg"));
 
         }
+        [TestMethod]
+        public void TestGetFileExtensionWithPathWithoutExtension() {
+
+            Assert.AreEqual(string.Empty, PathUtilities.GetFileExtension(@"c:/file"));
+
+        }
+        [TestMethod]
+        public void TestGetFileExtensionWithDirectoryPath() {
+
+            Assert.AreEqual(string.Empty, PathUtilities.GetFileExtension(@"c:/folder/"));
+
+        }
+        [TestMethod]
+        public void TestGetFileExtensionWithEmptyString() {
+
+            Assert.AreEqual(string.Empty, PathUtilities.GetFileExtension(string.Empty));
+
+        }
+        [TestMethod]
+        public void TestGetFileExtensionWithNullString() {
+
+            Assert.AreEqual(string.Empty, PathUtilities.GetFileExtension(null));
+
+        }
 
         // SetFileExtension
 
@@ -451,6 +487,30 @@ namespace Gsemac.IO.Tests {
         public void TestSetFileExtensionWithRelativeFilePath() {
 
             Assert.AreEqual("path/file.jpg", PathUtilities.SetFileExtension("path/file.tmp", ".jpg"));
+
+        }
+        [TestMethod]
+        public void TestSetFileExtensionWithEmptyFileExtension() {
+
+            Assert.AreEqual("path/file", PathUtilities.SetFileExtension("path/file.tmp", string.Empty));
+
+        }
+        [TestMethod]
+        public void TestSetFileExtensionWithNullFileExtension() {
+
+            Assert.AreEqual("path/file", PathUtilities.SetFileExtension("path/file.tmp", null));
+
+        }
+        [TestMethod]
+        public void TestSetFileExtensionWithPathWithoutFileExtension() {
+
+            Assert.AreEqual("path/file.jpg", PathUtilities.SetFileExtension("path/file", ".jpg"));
+
+        }
+        [TestMethod]
+        public void TestSetFileExtensionWithFileExtensionWithoutLeadingDot() {
+
+            Assert.AreEqual("path/file.jpg", PathUtilities.SetFileExtension("path/file", "jpg"));
 
         }
 

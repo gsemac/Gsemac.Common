@@ -160,7 +160,7 @@ namespace Gsemac.Net.WebDrivers {
 
                 try {
 
-                    string filePathInArchive = PathUtilities.GetFilename(webDriverExecutablePath);
+                    string filePathInArchive = PathUtilities.GetFileName(webDriverExecutablePath);
 
                     OnLog.Info($"Extracting {filePathInArchive}");
 

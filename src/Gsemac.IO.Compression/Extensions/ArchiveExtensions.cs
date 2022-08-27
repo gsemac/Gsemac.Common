@@ -8,7 +8,7 @@ namespace Gsemac.IO.Compression.Extensions {
 
         public static bool AddFile(this IArchive archive, string filePath, bool overwrite = true) {
 
-            string entryName = PathUtilities.GetFilename(filePath);
+            string entryName = PathUtilities.GetFileName(filePath);
 
             return archive.AddFile(filePath, entryName, overwrite);
 

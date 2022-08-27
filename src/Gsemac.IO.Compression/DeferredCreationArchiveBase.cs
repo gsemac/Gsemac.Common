@@ -124,7 +124,7 @@ namespace Gsemac.IO.Compression {
             GenericArchiveEntry {
 
             public string FilePath { get; set; }
-            public bool RenameRequired => !Name.Equals(PathUtilities.GetFilename(FilePath));
+            public bool RenameRequired => !Name.Equals(PathUtilities.GetFileName(FilePath));
 
         }
 
