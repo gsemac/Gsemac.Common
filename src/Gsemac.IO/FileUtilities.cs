@@ -155,7 +155,7 @@ namespace Gsemac.IO {
                     lastException = ex;
 
                     if ((DateTimeOffset.Now - startTime) < timeout)
-                        Thread.Sleep(DefaultSleepMs);
+                        Thread.Sleep(DefaultSleep);
 
                 }
 
@@ -335,7 +335,7 @@ namespace Gsemac.IO {
                     lastException = ex;
 
                     if ((DateTimeOffset.Now - startTime) < timeout)
-                        Thread.Sleep(DefaultSleepMs);
+                        Thread.Sleep(DefaultSleep);
 
                 }
 
@@ -354,8 +354,7 @@ namespace Gsemac.IO {
 
         // Private members
 
-        private const int DefaultSleepMs = 250;
-
+        private static readonly TimeSpan DefaultSleep = TimeSpan.FromMilliseconds(250);
         private static readonly TimeSpan DefaultTimeout = TimeSpan.FromMinutes(1);
 
         private static void CreateDestinationDirectory(string filePath) {
@@ -372,7 +371,7 @@ namespace Gsemac.IO {
         private static bool WaitForFileToBeDeleted(string filePath, DateTimeOffset startTime, TimeSpan? timeout) {
 
             while (File.Exists(filePath) && (DateTimeOffset.Now - startTime) < timeout)
-                Thread.Sleep(DefaultSleepMs);
+                Thread.Sleep(DefaultSleep);
 
             return !File.Exists(filePath);
 
@@ -393,7 +392,7 @@ namespace Gsemac.IO {
                     success = false;
 
                     if (timeout.HasValue && (DateTimeOffset.Now - startTime) < timeout)
-                        Thread.Sleep(DefaultSleepMs);
+                        Thread.Sleep(DefaultSleep);
 
                 }
 
