@@ -50,12 +50,12 @@ namespace Gsemac.IO {
 
         }
 
-        public static string FormatBytes(long totalBytes, int decimalPlaces = 1, ByteFormat byteFormat = ByteFormat.Binary) {
+        public static string FormatBytes(long totalBytes, int precision = 1, ByteFormat byteFormat = ByteFormat.Binary) {
 
             // Based on the answer given here: https://stackoverflow.com/a/14488941 (JLRishe)
 
-            if (decimalPlaces < 0)
-                throw new ArgumentOutOfRangeException(string.Format(Properties.ExceptionMessages.MustBeGreaterThanZero, nameof(decimalPlaces)), nameof(decimalPlaces));
+            if (precision < 0)
+                throw new ArgumentOutOfRangeException(string.Format(Properties.ExceptionMessages.MustBeGreaterThanZero, nameof(precision)), nameof(precision));
 
             string[] suffixes;
             long power;
@@ -97,11 +97,11 @@ namespace Gsemac.IO {
 
             }
 
-            string formatStr = "{0:n" + decimalPlaces.ToString(CultureInfo.InvariantCulture) + "} {1}";
+            string formatStr = "{0:n" + precision.ToString(CultureInfo.InvariantCulture) + "} {1}";
 
             if (totalBytes < 0) {
 
-                return "-" + FormatBytes(Math.Abs(totalBytes), decimalPlaces);
+                return "-" + FormatBytes(Math.Abs(totalBytes), precision);
 
             }
             else if (totalBytes == 0) {
@@ -118,7 +118,7 @@ namespace Gsemac.IO {
 
                 double threshold = 0.97;
 
-                if (order < suffixes.Length - 1 && Math.Round(adjustedQuantity, decimalPlaces) >= (power * threshold)) {
+                if (order < suffixes.Length - 1 && Math.Round(adjustedQuantity, precision) >= (power * threshold)) {
 
                     order += 1;
                     adjustedQuantity /= power;
@@ -165,7 +165,7 @@ namespace Gsemac.IO {
 
         }
 
-        public static bool Copy(string filePath, string newFilePath, bool overwrite = false, TimeSpan? timeout = null) {
+        public static bool Copy(string filePath, string newFilePath, bool overwrite = false, TimeSpan timeout = default) {
 
             if (!File.Exists(filePath))
                 throw new FileNotFoundException(string.Format(Properties.ExceptionMessages.FileNotFound, filePath), filePath);
@@ -179,8 +179,11 @@ namespace Gsemac.IO {
 
                 CreateDestinationDirectory(newFilePath);
 
-                using (Stream sourceStream = WaitForFile(filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite, timeout ?? DefaultTimeout))
-                using (Stream destinationStream = WaitForFile(newFilePath, overwrite ? FileMode.Create : FileMode.CreateNew, FileAccess.Write, FileShare.None, timeout ?? DefaultTimeout))
+                // Copying files using streams can be significantly slower than using File.Copy, but it ensures that the operation is synchronous.
+                // Another way to do this might be using File.Exists with WaitForFile to verify that the destination file is fully written and unlocked.
+
+                using (Stream sourceStream = WaitForFile(filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite, timeout))
+                using (Stream destinationStream = WaitForFile(newFilePath, overwrite ? FileMode.Create : FileMode.CreateNew, FileAccess.Write, FileShare.None, timeout))
                     sourceStream.CopyTo(destinationStream);
 
             }
@@ -188,7 +191,7 @@ namespace Gsemac.IO {
             return true;
 
         }
-        public static bool TryCopy(string filePath, string newFilePath, bool overwrite = false, TimeSpan? timeout = null) {
+        public static bool TryCopy(string filePath, string newFilePath, bool overwrite = false, TimeSpan timeout = default) {
 
             if (!File.Exists(filePath))
                 return false;
@@ -199,7 +202,7 @@ namespace Gsemac.IO {
             return TryWithTimeout(() => Copy(filePath, newFilePath, overwrite, timeout), timeout);
 
         }
-        public static bool Move(string filePath, string newFilePath, bool overwrite = false, TimeSpan? timeout = null) {
+        public static bool Move(string filePath, string newFilePath, bool overwrite = false, TimeSpan timeout = default) {
 
             // Be careful that we don't delete the original file if the two paths point to the same file.
             // If the paths are equivalent, the move is considered to be a success.
@@ -225,7 +228,7 @@ namespace Gsemac.IO {
             return success;
 
         }
-        public static bool TryMove(string filePath, string newFilePath, bool overwrite = false, TimeSpan? timeout = null) {
+        public static bool TryMove(string filePath, string newFilePath, bool overwrite = false, TimeSpan timeout = default) {
 
             if (!File.Exists(filePath))
                 return false;
@@ -257,7 +260,7 @@ namespace Gsemac.IO {
             return success;
 
         }
-        public static bool Rename(string filePath, string newFilename, bool overwrite = false, TimeSpan? timeout = null) {
+        public static bool Rename(string filePath, string newFilename, bool overwrite = false, TimeSpan timeout = default) {
 
             string directoryPath = Path.GetDirectoryName(Path.GetFullPath(filePath));
             string newFilePath = Path.Combine(directoryPath, newFilename);
@@ -265,7 +268,7 @@ namespace Gsemac.IO {
             return Move(filePath, newFilePath, overwrite, timeout);
 
         }
-        public static bool TryRename(string filePath, string newFilename, bool overwrite = false, TimeSpan? timeout = null) {
+        public static bool TryRename(string filePath, string newFilename, bool overwrite = false, TimeSpan timeout = default) {
 
             string directoryPath = Path.GetDirectoryName(Path.GetFullPath(filePath));
             string newFilePath = Path.Combine(directoryPath, newFilename);
@@ -273,7 +276,7 @@ namespace Gsemac.IO {
             return TryMove(filePath, newFilePath, overwrite, timeout);
 
         }
-        public static bool Delete(string filePath, TimeSpan? timeout = null) {
+        public static bool Delete(string filePath, TimeSpan timeout = default) {
 
             // File.Delete doesn't wait for the operation to finish before returning, so this is a workaround.
             // More info: https://stackoverflow.com/questions/9370012/waiting-for-system-to-delete-file
@@ -282,8 +285,8 @@ namespace Gsemac.IO {
 
                 // Wait until nothing is locking the file.
 
-                if (timeout.HasValue)
-                    using (var stream = WaitForFile(filePath, timeout.Value))
+                if (timeout > TimeSpan.Zero)
+                    using (var stream = WaitForFile(filePath, timeout))
                         stream.Close();
 
                 DateTimeOffset startTime = DateTimeOffset.Now;
@@ -294,7 +297,7 @@ namespace Gsemac.IO {
 
                 // Block until the file system reports that the file no longer exists.
 
-                if (timeout.HasValue && !WaitForFileToBeDeleted(filePath, startTime, timeout))
+                if (timeout > TimeSpan.Zero && !WaitForFileToBeDeleted(filePath, startTime, timeout))
                     throw new TimeoutException(Properties.ExceptionMessages.OperationTimedOut);
 
             }
@@ -306,7 +309,7 @@ namespace Gsemac.IO {
             return true;
 
         }
-        public static bool TryDelete(string filePath, TimeSpan? timeout = null) {
+        public static bool TryDelete(string filePath, TimeSpan timeout = default) {
 
             if (!File.Exists(filePath))
                 return true;
@@ -315,7 +318,7 @@ namespace Gsemac.IO {
 
         }
 
-        public static string ReadAllText(string filePath, TimeSpan? timeout = null) {
+        public static string ReadAllText(string filePath, TimeSpan timeout = default) {
 
             if (!File.Exists(filePath))
                 throw new FileNotFoundException(string.Format(Properties.ExceptionMessages.FileNotFound, filePath), filePath);
@@ -355,7 +358,6 @@ namespace Gsemac.IO {
         // Private members
 
         private static readonly TimeSpan DefaultSleep = TimeSpan.FromMilliseconds(250);
-        private static readonly TimeSpan DefaultTimeout = TimeSpan.FromMinutes(1);
 
         private static void CreateDestinationDirectory(string filePath) {
 
@@ -368,7 +370,7 @@ namespace Gsemac.IO {
                 Directory.CreateDirectory(newFileDirectory);
 
         }
-        private static bool WaitForFileToBeDeleted(string filePath, DateTimeOffset startTime, TimeSpan? timeout) {
+        private static bool WaitForFileToBeDeleted(string filePath, DateTimeOffset startTime, TimeSpan timeout) {
 
             while (File.Exists(filePath) && (DateTimeOffset.Now - startTime) < timeout)
                 Thread.Sleep(DefaultSleep);
@@ -376,10 +378,11 @@ namespace Gsemac.IO {
             return !File.Exists(filePath);
 
         }
-        private static bool TryWithTimeout(Func<bool> action, TimeSpan? timeout) {
+        private static bool TryWithTimeout(Func<bool> action, TimeSpan timeout) {
 
             DateTimeOffset startTime = DateTimeOffset.Now;
             bool success;
+
             do {
 
                 try {
@@ -391,12 +394,12 @@ namespace Gsemac.IO {
 
                     success = false;
 
-                    if (timeout.HasValue && (DateTimeOffset.Now - startTime) < timeout)
+                    if ((DateTimeOffset.Now - startTime) < timeout)
                         Thread.Sleep(DefaultSleep);
 
                 }
 
-            } while (!success && timeout.HasValue && (DateTimeOffset.Now - startTime) < timeout);
+            } while (!success && (DateTimeOffset.Now - startTime) < timeout);
 
             return success;
 
