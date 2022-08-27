@@ -25,6 +25,9 @@ namespace Gsemac.IO {
 
         public static long GetFileSize(string filePath) {
 
+            if (!File.Exists(filePath))
+                return 0;
+
             return new FileInfo(filePath).Length;
 
         }
