@@ -2,7 +2,7 @@
 
 namespace Gsemac.IO.FileFormats {
 
-    public sealed class MP4FileFormat :
+    public sealed class Mp4FileFormat :
         FileFormatBase {
 
         public override IEnumerable<string> Extensions => new[] { ".mp4" };

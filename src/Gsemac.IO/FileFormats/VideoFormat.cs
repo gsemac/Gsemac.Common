@@ -8,7 +8,7 @@ namespace Gsemac.IO.FileFormats {
 
         // Public members
 
-        public static IFileFormat MP4 => new MP4FileFormat();
+        public static IFileFormat Mp4 => new Mp4FileFormat();
 
         public static IEnumerable<IFileFormat> GetFormats() {
 
