@@ -1,4 +1,5 @@
-﻿using Gsemac.Net.GitHub;
+﻿using Gsemac.IO.Logging;
+using Gsemac.Net.GitHub;
 using Gsemac.Net.GitHub.Extensions;
 using Gsemac.Net.Http;
 using Gsemac.Net.WebBrowsers;
@@ -13,18 +14,30 @@ namespace Gsemac.Net.WebDrivers {
         // Public members
 
         public FirefoxWebDriverUpdater() :
-            this(WebDriverUpdaterOptions.Default) {
+            this(Logger.Null) {
+        }
+        public FirefoxWebDriverUpdater(ILogger logger) :
+            this(WebDriverUpdaterOptions.Default, logger) {
         }
         public FirefoxWebDriverUpdater(IWebDriverUpdaterOptions webDriverUpdaterOptions) :
-            this(new HttpWebRequestFactory(), webDriverUpdaterOptions) {
+            this(webDriverUpdaterOptions, Logger.Null) {
+        }
+        public FirefoxWebDriverUpdater(IWebDriverUpdaterOptions webDriverUpdaterOptions, ILogger logger) :
+            this(HttpWebRequestFactory.Default, webDriverUpdaterOptions, logger) {
         }
         public FirefoxWebDriverUpdater(IHttpWebRequestFactory webRequestFactory, IWebDriverUpdaterOptions webDriverUpdaterOptions) :
-            base(WebBrowserId.Firefox, webRequestFactory, webDriverUpdaterOptions) {
+            this(webRequestFactory, webDriverUpdaterOptions, Logger.Null) {
+        }
+        public FirefoxWebDriverUpdater(IHttpWebRequestFactory webRequestFactory, IWebDriverUpdaterOptions webDriverUpdaterOptions, ILogger logger) :
+            base(webRequestFactory, new WebDriverUpdaterOptions(webDriverUpdaterOptions) { WebBrowserId = WebBrowserId.Firefox }, logger) {
+
+            this.webRequestFactory = webRequestFactory;
+
         }
 
         // Protected members
 
-        protected override Uri GetWebDriverUri(IWebBrowserInfo webBrowserInfo, IHttpWebRequestFactory webRequestFactory) {
+        protected override Uri GetWebDriverUri(IWebBrowserInfo webBrowserInfo) {
 
             string releasesUrl = "https://github.com/mozilla/geckodriver/releases/latest";
 
@@ -49,6 +62,8 @@ namespace Gsemac.Net.WebDrivers {
         }
 
         // Private members
+
+        private readonly IHttpWebRequestFactory webRequestFactory;
 
         private string GetPlatformOS() {
 

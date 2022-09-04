@@ -1,6 +1,7 @@
 ﻿using Gsemac.IO;
 using Gsemac.IO.Compression;
 using Gsemac.IO.Logging;
+using Gsemac.IO.Logging.Extensions;
 using Gsemac.Net.Extensions;
 using Gsemac.Net.Http;
 using Gsemac.Net.Http.Extensions;
@@ -8,7 +9,6 @@ using Gsemac.Net.WebBrowsers;
 using Newtonsoft.Json;
 using System;
 using System.IO;
-using System.Net;
 using System.Threading;
 
 namespace Gsemac.Net.WebDrivers {
@@ -16,7 +16,6 @@ namespace Gsemac.Net.WebDrivers {
     public abstract class WebDriverUpdaterBase :
          IWebDriverUpdater {
 
-        public event LogEventHandler Log;
         public event DownloadFileProgressChangedEventHandler DownloadFileProgressChanged;
         public event DownloadFileCompletedEventHandler DownloadFileCompleted;
 
@@ -30,7 +29,7 @@ namespace Gsemac.Net.WebDrivers {
             if (!IsSupportedWebBrowser(webBrowserInfo))
                 throw new ArgumentException(string.Format(Properties.ExceptionMessages.UnsupportedWebBrowserWithBrowserName, webBrowserInfo.Name), nameof(webBrowserInfo));
 
-            OnLog.Info($"Checking for web driver updates");
+            logger.Info($"Checking for web driver updates");
 
             IWebDriverInfo webDriverInfo = GetWebDriverInfo();
 
@@ -39,7 +38,7 @@ namespace Gsemac.Net.WebDrivers {
 
             if (updateRequired) {
 
-                OnLog.Info($"Updating web driver to version {webBrowserInfo.Version}");
+                logger.Info($"Updating web driver to version {webBrowserInfo.Version}");
 
                 if (DownloadWebDriver(webBrowserInfo, cancellationToken)) {
 
@@ -54,7 +53,7 @@ namespace Gsemac.Net.WebDrivers {
 
             }
             else
-                OnLog.Info($"Web driver is up to date ({webBrowserInfo.Version})");
+                logger.Info($"Web driver is up to date ({webBrowserInfo.Version})");
 
             return webDriverInfo;
 
@@ -62,17 +61,39 @@ namespace Gsemac.Net.WebDrivers {
 
         // Protected members
 
-        protected LogEventHandlerWrapper OnLog => new LogEventHandlerWrapper(Log, "Web Driver Updater");
+        protected WebDriverUpdaterBase() :
+            this(Logger.Null) {
+        }
+        protected WebDriverUpdaterBase(ILogger logger) :
+            this(WebDriverUpdaterOptions.Default, logger) {
+        }
+        protected WebDriverUpdaterBase(IWebDriverUpdaterOptions webDriverUpdaterOptions) :
+            this(webDriverUpdaterOptions, Logger.Null) {
+        }
+        protected WebDriverUpdaterBase(IWebDriverUpdaterOptions webDriverUpdaterOptions, ILogger logger) :
+            this(HttpWebRequestFactory.Default, webDriverUpdaterOptions, logger) {
+        }
+        protected WebDriverUpdaterBase(IHttpWebRequestFactory webRequestFactory, IWebDriverUpdaterOptions webDriverUpdaterOptions) :
+            this(webRequestFactory, webDriverUpdaterOptions, Logger.Null) {
+        }
+        protected WebDriverUpdaterBase(IHttpWebRequestFactory webRequestFactory, IWebDriverUpdaterOptions webDriverUpdaterOptions, ILogger logger) {
 
-        protected WebDriverUpdaterBase(WebBrowserId webBrowserId, IHttpWebRequestFactory webRequestFactory, IWebDriverUpdaterOptions webDriverUpdaterOptions) {
+            if (webRequestFactory is null)
+                throw new ArgumentNullException(nameof(webRequestFactory));
 
-            this.webBrowserId = webBrowserId;
+            if (webRequestFactory is null)
+                throw new ArgumentNullException(nameof(webDriverUpdaterOptions));
+
+            if (logger is null)
+                throw new ArgumentNullException(nameof(logger));
+
             this.webRequestFactory = webRequestFactory;
             this.webDriverUpdaterOptions = webDriverUpdaterOptions;
+            this.logger = new NamedLogger(logger, nameof(WebDriverUpdaterBase));
 
         }
 
-        protected abstract Uri GetWebDriverUri(IWebBrowserInfo webBrowserInfo, IHttpWebRequestFactory webRequestFactory);
+        protected abstract Uri GetWebDriverUri(IWebBrowserInfo webBrowserInfo);
         protected abstract string GetWebDriverExecutablePath();
 
         protected void OnDownloadFileProgressChanged(object sender, DownloadFileProgressChangedEventArgs e) {
@@ -88,9 +109,9 @@ namespace Gsemac.Net.WebDrivers {
 
         // Private members
 
-        private readonly WebBrowserId webBrowserId;
         private readonly IHttpWebRequestFactory webRequestFactory;
         private readonly IWebDriverUpdaterOptions webDriverUpdaterOptions;
+        private readonly ILogger logger;
 
         private string GetWebDriverExecutablePathInternal() {
 
@@ -132,7 +153,9 @@ namespace Gsemac.Net.WebDrivers {
 
         protected bool IsSupportedWebBrowser(IWebBrowserInfo webBrowserInfo) {
 
-            return webBrowserId == WebBrowserId.Unidentified ||
+            WebBrowserId webBrowserId = webDriverUpdaterOptions.WebBrowserId;
+
+            return webBrowserId == WebBrowserId.Unknown ||
                 webBrowserId.Equals(webBrowserInfo.Id);
 
         }
@@ -140,14 +163,14 @@ namespace Gsemac.Net.WebDrivers {
 
             string webDriverExecutablePath = GetWebDriverExecutablePathInternal();
 
-            OnLog.Info("Getting web driver download url");
+            logger.Info("Getting web driver download url");
 
-            Uri webDriverDownloadUri = GetWebDriverUri(webBrowserInfo, webRequestFactory);
+            Uri webDriverDownloadUri = GetWebDriverUri(webBrowserInfo);
             string downloadFilePath = PathUtilities.SetFileExtension(Path.GetTempFileName(), ".zip");
 
             if (webDriverDownloadUri is object) {
 
-                OnLog.Info($"Downloading {webDriverDownloadUri}");
+                logger.Info($"Downloading {webDriverDownloadUri}");
 
                 using (IWebClient webClient = webRequestFactory.ToWebClientFactory().Create()) {
 
@@ -162,14 +185,14 @@ namespace Gsemac.Net.WebDrivers {
 
                     string filePathInArchive = PathUtilities.GetFileName(webDriverExecutablePath);
 
-                    OnLog.Info($"Extracting {filePathInArchive}");
+                    logger.Info($"Extracting {filePathInArchive}");
 
                     ArchiveUtilities.ExtractFile(downloadFilePath, filePathInArchive, webDriverExecutablePath);
 
                 }
                 catch (Exception ex) {
 
-                    OnLog.Error(ex.ToString());
+                    logger.Error(ex.ToString());
 
                     throw ex;
 

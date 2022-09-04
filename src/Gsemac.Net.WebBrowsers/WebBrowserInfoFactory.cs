@@ -145,7 +145,7 @@ namespace Gsemac.Net.WebBrowsers {
             if (productName.Equals("vivaldi", StringComparison.OrdinalIgnoreCase))
                 return WebBrowserId.Vivaldi;
 
-            return WebBrowserId.Unidentified;
+            return WebBrowserId.Unknown;
 
         }
         private static System.Version GetBrowserVersion(FileVersionInfo versionInfo) {
@@ -164,7 +164,7 @@ namespace Gsemac.Net.WebBrowsers {
 
         private IWebBrowserInfo GetWebBrowserInfoFromUserChoiceKey() {
 
-            WebBrowserId id = WebBrowserId.Unidentified;
+            WebBrowserId id = WebBrowserId.Unknown;
 
             using (RegistryKey userChoiceKey = Registry.CurrentUser.OpenSubKey(@"Software\Microsoft\Windows\Shell\Associations\UrlAssociations\http\UserChoice", writable: false)) {
 
@@ -201,7 +201,7 @@ namespace Gsemac.Net.WebBrowsers {
                                 break;
 
                             default:
-                                id = WebBrowserId.Unidentified;
+                                id = WebBrowserId.Unknown;
                                 break;
 
                         }
@@ -212,7 +212,7 @@ namespace Gsemac.Net.WebBrowsers {
 
             }
 
-            return id == WebBrowserId.Unidentified ? null : GetInfo(id);
+            return id == WebBrowserId.Unknown ? null : GetInfo(id);
 
         }
         private IWebBrowserInfo GetWebBrowserInfoFromClassesRootCommandKey() {

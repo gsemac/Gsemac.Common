@@ -1,7 +1,7 @@
 ﻿namespace Gsemac.Net.WebBrowsers {
 
     public enum WebBrowserId {
-        Unidentified = 0,
+        Unknown = 0,
         Chrome,
         Edge,
         Firefox,

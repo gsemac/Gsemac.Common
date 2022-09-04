@@ -1,4 +1,6 @@
 ﻿using Gsemac.IO.Logging;
+using Gsemac.IO.Logging.Extensions;
+using Gsemac.Net.Http;
 using Gsemac.Net.WebBrowsers;
 using Gsemac.Net.WebDrivers.Extensions;
 using Gsemac.Net.WebDrivers.Properties;
@@ -24,36 +26,57 @@ namespace Gsemac.Net.WebDrivers {
             add => baseFactory.DownloadFileCompleted += value;
             remove => baseFactory.DownloadFileCompleted -= value;
         }
-        public event LogEventHandler Log;
 
         public PooledWebDriverFactory() :
-            this(PooledWebDriverFactoryOptions.Default) {
+            this(WebDriverOptions.Default) {
+        }
+        public PooledWebDriverFactory(ILogger logger) :
+            this(WebDriverOptions.Default, logger) {
         }
         public PooledWebDriverFactory(IWebDriverOptions webDriverOptions) :
             this(webDriverOptions, PooledWebDriverFactoryOptions.Default) {
         }
-        public PooledWebDriverFactory(IPooledWebDriverFactoryOptions options) :
-            this(new WebDriverFactory(options), options) {
+        public PooledWebDriverFactory(IWebDriverOptions webDriverOptions, ILogger logger) :
+          this(webDriverOptions, PooledWebDriverFactoryOptions.Default, logger) {
         }
-        public PooledWebDriverFactory(IWebDriverFactoryOptions options) :
-          this(new WebDriverFactory(options), options) {
+        public PooledWebDriverFactory(IPooledWebDriverFactoryOptions webDriverFactoryOptions) :
+            this(WebDriverOptions.Default, webDriverFactoryOptions) {
         }
-        public PooledWebDriverFactory(IWebDriverOptions webDriverOptions, IPooledWebDriverFactoryOptions options) :
-            this(new WebDriverFactory(webDriverOptions, options), disposeFactory: true, options) {
+        public PooledWebDriverFactory(IPooledWebDriverFactoryOptions webDriverFactoryOptions, ILogger logger) :
+           this(WebDriverOptions.Default, webDriverFactoryOptions, logger) {
         }
-        public PooledWebDriverFactory(IWebDriverOptions webDriverOptions, IWebDriverFactoryOptions options) :
-            this(webDriverOptions, new PooledWebDriverFactoryOptions(options)) {
+        public PooledWebDriverFactory(IWebDriverOptions webDriverOptions, IPooledWebDriverFactoryOptions webDriverFactoryOptions) :
+            this(HttpWebRequestFactory.Default, webDriverOptions, webDriverFactoryOptions) {
         }
-        public PooledWebDriverFactory(IWebDriverFactory baseFactory, IPooledWebDriverFactoryOptions options) :
-            this(baseFactory, disposeFactory: false, options) {
+        public PooledWebDriverFactory(IWebDriverOptions webDriverOptions, IPooledWebDriverFactoryOptions webDriverFactoryOptions, ILogger logger) :
+            this(HttpWebRequestFactory.Default, webDriverOptions, webDriverFactoryOptions, logger) {
         }
-        public PooledWebDriverFactory(IWebDriverFactory baseFactory, IWebDriverFactoryOptions options) :
-            this(baseFactory, new PooledWebDriverFactoryOptions(options)) {
+        public PooledWebDriverFactory(IHttpWebRequestFactory webRequestFactory, IWebDriverOptions webDriverOptions, IPooledWebDriverFactoryOptions webDriverFactoryOptions) :
+            this(webRequestFactory, webDriverOptions, webDriverFactoryOptions, Logger.Null) {
+        }
+        public PooledWebDriverFactory(IHttpWebRequestFactory webRequestFactory, IWebDriverOptions webDriverOptions, IPooledWebDriverFactoryOptions webDriverFactoryOptions, ILogger logger) {
+
+            if (webDriverOptions is null)
+                throw new ArgumentNullException(nameof(webDriverOptions));
+
+            if (webDriverFactoryOptions is null)
+                throw new ArgumentNullException(nameof(webDriverFactoryOptions));
+
+            if (webRequestFactory is null)
+                throw new ArgumentNullException(nameof(webRequestFactory));
+
+            if (logger is null)
+                throw new ArgumentNullException(nameof(logger));
+
+            this.logger = new NamedLogger(logger, nameof(PooledWebDriverFactory));
+
+            baseFactory = new WebDriverFactory(webRequestFactory, webDriverOptions, webDriverFactoryOptions, logger);
+
         }
 
         public IWebDriver Create() {
 
-            return CreateInternal(webBrowserInfo: options.DefaultWebBrowser);
+            return CreateInternal(webBrowserInfo: options.DefaultWebBrowserInfo);
 
         }
         public IWebDriver Create(IWebBrowserInfo webBrowserInfo) {
@@ -189,10 +212,9 @@ namespace Gsemac.Net.WebDrivers {
 
         }
 
-        private LogEventHandlerWrapper OnLog => new LogEventHandlerWrapper(Log, "Web Driver Factory");
-
         private readonly IPooledWebDriverFactoryOptions options;
         private readonly IWebDriverFactory baseFactory;
+        private readonly ILogger logger;
         private readonly bool disposeFactory;
         private readonly List<PoolItem> pool = new List<PoolItem>();
         private readonly List<PoolItem> spawnedDrivers = new List<PoolItem>();
@@ -213,10 +235,6 @@ namespace Gsemac.Net.WebDrivers {
             if (options.PoolSize < 1)
                 throw new ArgumentOutOfRangeException(nameof(options), ExceptionMessages.PoolSizeMustBeAtLeast1);
 
-            // A lambda is used instead of adding OnLog.Log directly so event handlers added after this point are still invoked.
-
-            baseFactory.Log += (sender, e) => OnLog.Log(e.Message);
-
         }
 
         private IWebDriver CreateInternal(IWebBrowserInfo webBrowserInfo) {
@@ -229,7 +247,7 @@ namespace Gsemac.Net.WebDrivers {
 
             if (webDriver is null && !isDisposed && poolAccessWaiter is object) {
 
-                OnLog.Info($"Thread {Thread.CurrentThread.ManagedThreadId} waiting to take web driver from the pool");
+                logger.Info($"Thread {Thread.CurrentThread.ManagedThreadId} waiting to take web driver from the pool");
 
                 if (poolAccessWaiter.WaitOne(options.Timeout))
                     webDriver = TakeWebDriverFromPool(webBrowserInfo);
@@ -263,7 +281,7 @@ namespace Gsemac.Net.WebDrivers {
 
                         spawnedDrivers.Remove(webDriverItem);
 
-                        OnLog.Info($"Removed web driver {webDriverItem.Id} from the pool");
+                        logger.Info($"Removed web driver {webDriverItem.Id} from the pool");
 
                     }
                     else {
@@ -274,7 +292,7 @@ namespace Gsemac.Net.WebDrivers {
 
                         pool.Add(webDriverItem);
 
-                        OnLog.Info($"Returned web driver {webDriverItem.Id} to the pool");
+                        logger.Info($"Returned web driver {webDriverItem.Id} to the pool");
 
                     }
 
@@ -309,14 +327,14 @@ namespace Gsemac.Net.WebDrivers {
 
                     IWebDriver webDriver = webBrowserInfo is null ? baseFactory.Create() : baseFactory.Create(webBrowserInfo);
 
-                    webDriverItem = new PoolItem(currentWebDriverId++, webBrowserInfo?.Id ?? WebBrowserId.Unidentified, webDriver);
+                    webDriverItem = new PoolItem(currentWebDriverId++, webBrowserInfo?.Id ?? WebBrowserId.Unknown, webDriver);
 
                     spawnedDrivers.Add(webDriverItem);
 
                     if (webBrowserInfo is null)
-                        OnLog.Info($"Spawned new web driver with ID {webDriverItem.Id}");
+                        logger.Info($"Spawned new web driver with ID {webDriverItem.Id}");
                     else
-                        OnLog.Info($"Spawned new web driver with ID {webDriverItem.Id} ({webBrowserInfo})");
+                        logger.Info($"Spawned new web driver with ID {webDriverItem.Id} ({webBrowserInfo})");
 
                 }
 
@@ -333,7 +351,7 @@ namespace Gsemac.Net.WebDrivers {
 
                     if (pool.Count() > 0) {
 
-                        PoolItem webDriverItem = pool.FirstOrDefault(item => (webBrowserInfo?.Id ?? WebBrowserId.Unidentified) == item.WebBrowserId);
+                        PoolItem webDriverItem = pool.FirstOrDefault(item => (webBrowserInfo?.Id ?? WebBrowserId.Unknown) == item.WebBrowserId);
 
                         if (webDriverItem is object) {
 
@@ -341,7 +359,7 @@ namespace Gsemac.Net.WebDrivers {
 
                             pool.Remove(webDriverItem);
 
-                            OnLog.Info($"Took web driver {webDriverItem.Id} from the pool");
+                            logger.Info($"Took web driver {webDriverItem.Id} from the pool");
 
                             return webDriverItem.WebDriver;
 

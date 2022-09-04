@@ -1,8 +1,8 @@
-﻿using Gsemac.Net.Http;
+﻿using Gsemac.IO.Logging;
+using Gsemac.Net.Http;
 using Gsemac.Net.Http.Extensions;
 using Gsemac.Net.WebBrowsers;
 using System;
-using System.Net;
 
 namespace Gsemac.Net.WebDrivers {
 
@@ -12,18 +12,33 @@ namespace Gsemac.Net.WebDrivers {
         // Public members
 
         public ChromeWebDriverUpdater() :
-            this(WebDriverUpdaterOptions.Default) {
+            this(Logger.Null) {
+        }
+        public ChromeWebDriverUpdater(ILogger logger) :
+            this(WebDriverUpdaterOptions.Default, logger) {
         }
         public ChromeWebDriverUpdater(IWebDriverUpdaterOptions webDriverUpdaterOptions) :
-            this(new HttpWebRequestFactory(), webDriverUpdaterOptions) {
+            this(webDriverUpdaterOptions, Logger.Null) {
+        }
+        public ChromeWebDriverUpdater(IWebDriverUpdaterOptions webDriverUpdaterOptions, ILogger logger) :
+            this(HttpWebRequestFactory.Default, webDriverUpdaterOptions, logger) {
         }
         public ChromeWebDriverUpdater(IHttpWebRequestFactory webRequestFactory, IWebDriverUpdaterOptions webDriverUpdaterOptions) :
-            base(WebBrowserId.Chrome, webRequestFactory, webDriverUpdaterOptions) {
+            this(webRequestFactory, webDriverUpdaterOptions, Logger.Null) {
+        }
+        public ChromeWebDriverUpdater(IHttpWebRequestFactory webRequestFactory, IWebDriverUpdaterOptions webDriverUpdaterOptions, ILogger logger) :
+            base(webRequestFactory, new WebDriverUpdaterOptions(webDriverUpdaterOptions) { WebBrowserId = WebBrowserId.Edge }, logger) {
+
+            this.webRequestFactory = webRequestFactory;
+
         }
 
         // Protected members
 
-        protected override Uri GetWebDriverUri(IWebBrowserInfo webBrowserInfo, IHttpWebRequestFactory webRequestFactory) {
+        protected override Uri GetWebDriverUri(IWebBrowserInfo webBrowserInfo) {
+
+            if (webBrowserInfo is null)
+                throw new ArgumentNullException(nameof(webBrowserInfo));
 
             Uri versionUri = new Uri("https://chromedriver.storage.googleapis.com/LATEST_RELEASE");
 
@@ -64,6 +79,8 @@ namespace Gsemac.Net.WebDrivers {
         }
 
         // Private members
+
+        private readonly IHttpWebRequestFactory webRequestFactory;
 
         private string GetPlatformOS() {
 

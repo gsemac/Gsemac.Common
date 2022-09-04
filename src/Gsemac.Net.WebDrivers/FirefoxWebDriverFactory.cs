@@ -1,4 +1,5 @@
-﻿using Gsemac.Net.Extensions;
+﻿using Gsemac.IO.Logging;
+using Gsemac.Net.Extensions;
 using Gsemac.Net.Http;
 using Gsemac.Net.WebBrowsers;
 using OpenQA.Selenium;
@@ -15,17 +16,37 @@ namespace Gsemac.Net.WebDrivers {
         public FirefoxWebDriverFactory() :
             this(WebDriverOptions.Default) {
         }
+        public FirefoxWebDriverFactory(ILogger logger) :
+         this(WebDriverOptions.Default, logger) {
+        }
         public FirefoxWebDriverFactory(IWebDriverOptions webDriverOptions) :
             this(webDriverOptions, WebDriverFactoryOptions.Default) {
+        }
+        public FirefoxWebDriverFactory(IWebDriverOptions webDriverOptions, ILogger logger) :
+          this(webDriverOptions, WebDriverFactoryOptions.Default, logger) {
         }
         public FirefoxWebDriverFactory(IWebDriverFactoryOptions webDriverFactoryOptions) :
             this(WebDriverOptions.Default, webDriverFactoryOptions) {
         }
+        public FirefoxWebDriverFactory(IWebDriverFactoryOptions webDriverFactoryOptions, ILogger logger) :
+           this(WebDriverOptions.Default, webDriverFactoryOptions, logger) {
+        }
         public FirefoxWebDriverFactory(IWebDriverOptions webDriverOptions, IWebDriverFactoryOptions webDriverFactoryOptions) :
-            this(new HttpWebRequestFactory(), webDriverOptions, webDriverFactoryOptions) {
+            this(HttpWebRequestFactory.Default, webDriverOptions, webDriverFactoryOptions) {
+        }
+        public FirefoxWebDriverFactory(IWebDriverOptions webDriverOptions, IWebDriverFactoryOptions webDriverFactoryOptions, ILogger logger) :
+            this(HttpWebRequestFactory.Default, webDriverOptions, webDriverFactoryOptions, logger) {
         }
         public FirefoxWebDriverFactory(IHttpWebRequestFactory webRequestFactory, IWebDriverOptions webDriverOptions, IWebDriverFactoryOptions webDriverFactoryOptions) :
-            base(WebBrowserId.Firefox, webRequestFactory, webDriverOptions, webDriverFactoryOptions) {
+            this(webRequestFactory, webDriverOptions, webDriverFactoryOptions, Logger.Null) {
+        }
+        public FirefoxWebDriverFactory(IHttpWebRequestFactory webRequestFactory, IWebDriverOptions webDriverOptions, IWebDriverFactoryOptions webDriverFactoryOptions, ILogger logger) :
+            base(webRequestFactory, webDriverOptions, new WebDriverFactoryOptions(webDriverFactoryOptions) { WebBrowserId = WebBrowserId.Firefox }, logger) {
+
+            this.webRequestFactory = webRequestFactory;
+            this.webDriverFactoryOptions = webDriverFactoryOptions;
+            this.logger = new NamedLogger(logger, nameof(FirefoxWebDriverFactory));
+
         }
 
         // Protected members
@@ -56,13 +77,19 @@ namespace Gsemac.Net.WebDrivers {
             return WebDriverUtilities.GeckoDriverExecutablePath;
 
         }
-        protected override IWebDriverUpdater GetUpdater(IHttpWebRequestFactory httpWebRequestFactory, IWebDriverUpdaterOptions webDriverUpdaterOptions) {
+        protected override IWebDriverUpdater GetUpdater() {
 
-            return new FirefoxWebDriverUpdater(httpWebRequestFactory, webDriverUpdaterOptions);
+            return new FirefoxWebDriverUpdater(webRequestFactory, new WebDriverUpdaterOptions() {
+                WebDriverDirectoryPath = webDriverFactoryOptions.WebDriverDirectoryPath,
+            });
 
         }
 
         // Private members
+
+        private readonly IHttpWebRequestFactory webRequestFactory;
+        private readonly IWebDriverFactoryOptions webDriverFactoryOptions;
+        private readonly ILogger logger;
 
         private void ConfigureDriverService(FirefoxDriverService service) {
 
@@ -120,7 +147,7 @@ namespace Gsemac.Net.WebDrivers {
 
             driver.Manage().Window.Position = webDriverOptions.WindowPosition;
 
-            
+
 
         }
 

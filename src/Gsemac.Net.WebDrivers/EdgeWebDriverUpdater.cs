@@ -1,11 +1,11 @@
 ﻿using Gsemac.Collections;
+using Gsemac.IO.Logging;
 using Gsemac.Net.Http;
 using Gsemac.Net.Http.Extensions;
 using Gsemac.Net.WebBrowsers;
 using System;
 using System.Globalization;
 using System.Linq;
-using System.Net;
 using System.Text.RegularExpressions;
 
 namespace Gsemac.Net.WebDrivers {
@@ -16,18 +16,33 @@ namespace Gsemac.Net.WebDrivers {
         // Public members
 
         public EdgeWebDriverUpdater() :
-            this(WebDriverUpdaterOptions.Default) {
+            this(Logger.Null) {
+        }
+        public EdgeWebDriverUpdater(ILogger logger) :
+            this(WebDriverUpdaterOptions.Default, logger) {
         }
         public EdgeWebDriverUpdater(IWebDriverUpdaterOptions webDriverUpdaterOptions) :
-            this(new HttpWebRequestFactory(), webDriverUpdaterOptions) {
+            this(webDriverUpdaterOptions, Logger.Null) {
+        }
+        public EdgeWebDriverUpdater(IWebDriverUpdaterOptions webDriverUpdaterOptions, ILogger logger) :
+            this(HttpWebRequestFactory.Default, webDriverUpdaterOptions, logger) {
         }
         public EdgeWebDriverUpdater(IHttpWebRequestFactory webRequestFactory, IWebDriverUpdaterOptions webDriverUpdaterOptions) :
-            base(WebBrowserId.Edge, webRequestFactory, webDriverUpdaterOptions) {
+            this(webRequestFactory, webDriverUpdaterOptions, Logger.Null) {
+        }
+        public EdgeWebDriverUpdater(IHttpWebRequestFactory webRequestFactory, IWebDriverUpdaterOptions webDriverUpdaterOptions, ILogger logger) :
+            base(webRequestFactory, new WebDriverUpdaterOptions(webDriverUpdaterOptions) { WebBrowserId = WebBrowserId.Edge }, logger) {
+
+            this.webRequestFactory = webRequestFactory;
+
         }
 
         // Protected members
 
-        protected override Uri GetWebDriverUri(IWebBrowserInfo webBrowserInfo, IHttpWebRequestFactory webRequestFactory) {
+        protected override Uri GetWebDriverUri(IWebBrowserInfo webBrowserInfo) {
+
+            if (webBrowserInfo is null)
+                throw new ArgumentNullException(nameof(webBrowserInfo));
 
             // Note that Edge and EdgeHTML use different web drivers-- MicrosoftEdgeDriver.exe and msedgedriver.exe, respectively.
             // The latest version of EdgeHTML is 18.19041, so that can be used to determine which web driver to download.
@@ -64,6 +79,8 @@ namespace Gsemac.Net.WebDrivers {
         }
 
         // Private members
+
+        private readonly IHttpWebRequestFactory webRequestFactory;
 
         private int CountMatchingRevisions(string versionString1, string versionString2) {
 

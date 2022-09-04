@@ -1,4 +1,5 @@
 ﻿using Gsemac.IO.Logging;
+using Gsemac.IO.Logging.Extensions;
 using Gsemac.Net.Http;
 using Gsemac.Net.WebBrowsers;
 using OpenQA.Selenium;
@@ -15,12 +16,13 @@ namespace Gsemac.Net.WebDrivers {
 
         public event DownloadFileProgressChangedEventHandler DownloadFileProgressChanged;
         public event DownloadFileCompletedEventHandler DownloadFileCompleted;
-        public event LogEventHandler Log;
 
         public IWebDriver Create() {
 
-            IWebBrowserInfo webBrowserInfo = webDriverFactoryOptions.DefaultWebBrowser ??
-                (webBrowserId != WebBrowserId.Unidentified ? WebBrowserInfoFactory.Default.GetInfo(webBrowserId) : WebBrowserInfoFactory.Default.GetDefaultWebBrowser());
+            WebBrowserId webBrowserId = webDriverFactoryOptions.WebBrowserId;
+
+            IWebBrowserInfo webBrowserInfo = webDriverFactoryOptions.DefaultWebBrowserInfo ??
+                (webBrowserId != WebBrowserId.Unknown ? WebBrowserInfoFactory.Default.GetInfo(webBrowserId) : WebBrowserInfoFactory.Default.GetDefaultWebBrowser());
 
             return Create(webBrowserInfo);
 
@@ -30,12 +32,14 @@ namespace Gsemac.Net.WebDrivers {
             if (webBrowserInfo is null)
                 throw new ArgumentNullException(nameof(webBrowserInfo));
 
-            if (webBrowserId != WebBrowserId.Unidentified && webBrowserInfo.Id != webBrowserId)
+            WebBrowserId webBrowserId = webDriverFactoryOptions.WebBrowserId;
+
+            if (webBrowserId != WebBrowserId.Unknown && webBrowserInfo.Id != webBrowserId)
                 throw new ArgumentException(string.Format(Properties.ExceptionMessages.UnsupportedWebBrowserWithBrowserName, webBrowserInfo.Name), nameof(webBrowserInfo));
 
             // Get the web driver executable path.
 
-            OnLog.Info($"Creating web driver ({webBrowserInfo})");
+            logger.Info($"Creating web driver ({webBrowserInfo})");
 
             string webDriverExecutablePath = Path.GetFullPath(GetDriverExecutablePathInternal(webBrowserInfo));
 
@@ -57,25 +61,62 @@ namespace Gsemac.Net.WebDrivers {
 
         // Protected members
 
-        protected LogEventHandlerWrapper OnLog => new LogEventHandlerWrapper(Log, "Web Driver Factory");
+        protected WebDriverFactoryBase() :
+            this(WebDriverOptions.Default) {
+        }
+        protected WebDriverFactoryBase(ILogger logger) :
+         this(WebDriverOptions.Default, logger) {
+        }
+        protected WebDriverFactoryBase(IWebDriverOptions webDriverOptions) :
+            this(webDriverOptions, WebDriverFactoryOptions.Default) {
+        }
+        protected WebDriverFactoryBase(IWebDriverOptions webDriverOptions, ILogger logger) :
+          this(webDriverOptions, WebDriverFactoryOptions.Default, logger) {
+        }
+        protected WebDriverFactoryBase(IWebDriverFactoryOptions webDriverFactoryOptions) :
+            this(WebDriverOptions.Default, webDriverFactoryOptions) {
+        }
+        protected WebDriverFactoryBase(IWebDriverFactoryOptions webDriverFactoryOptions, ILogger logger) :
+           this(WebDriverOptions.Default, webDriverFactoryOptions, logger) {
+        }
+        protected WebDriverFactoryBase(IWebDriverOptions webDriverOptions, IWebDriverFactoryOptions webDriverFactoryOptions) :
+            this(HttpWebRequestFactory.Default, webDriverOptions, webDriverFactoryOptions) {
+        }
+        protected WebDriverFactoryBase(IWebDriverOptions webDriverOptions, IWebDriverFactoryOptions webDriverFactoryOptions, ILogger logger) :
+            this(HttpWebRequestFactory.Default, webDriverOptions, webDriverFactoryOptions, logger) {
+        }
+        protected WebDriverFactoryBase(IHttpWebRequestFactory webRequestFactory, IWebDriverOptions webDriverOptions, IWebDriverFactoryOptions webDriverFactoryOptions) :
+            this(webRequestFactory, webDriverOptions, webDriverFactoryOptions, Logger.Null) {
+        }
+        protected WebDriverFactoryBase(IHttpWebRequestFactory webRequestFactory, IWebDriverOptions webDriverOptions, IWebDriverFactoryOptions webDriverFactoryOptions, ILogger logger) {
 
-        protected WebDriverFactoryBase(WebBrowserId webBrowserId, IHttpWebRequestFactory httpWebRequestFactory, IWebDriverOptions webDriverOptions, IWebDriverFactoryOptions webDriverFactoryOptions) {
+            if (webDriverOptions is null)
+                throw new ArgumentNullException(nameof(webDriverOptions));
 
-            this.webBrowserId = webBrowserId;
-            this.httpWebRequestFactory = httpWebRequestFactory;
+            if (webDriverFactoryOptions is null)
+                throw new ArgumentNullException(nameof(webDriverFactoryOptions));
+
+            if (webRequestFactory is null)
+                throw new ArgumentNullException(nameof(webRequestFactory));
+
+            if (logger is null)
+                throw new ArgumentNullException(nameof(logger));
+
+            this.webRequestFactory = webRequestFactory;
             this.webDriverOptions = webDriverOptions;
             this.webDriverFactoryOptions = webDriverFactoryOptions;
+            this.logger = new NamedLogger(logger, nameof(WebDriverFactoryBase));
 
         }
 
         protected abstract IWebDriver GetWebDriver(IWebBrowserInfo webBrowserInfo, IWebDriverOptions webDriverOptions);
         protected abstract string GetWebDriverExecutablePath();
-
-        protected virtual IWebDriverUpdater GetUpdater(IHttpWebRequestFactory httpWebRequestFactory, IWebDriverUpdaterOptions webDriverUpdaterOptions) {
+        protected virtual IWebDriverUpdater GetUpdater() {
 
             return null;
 
         }
+
         protected virtual void Dispose(bool disposing) {
 
             if (disposing && !isDisposed) {
@@ -85,7 +126,7 @@ namespace Gsemac.Net.WebDrivers {
 
                 if (webDriverFactoryOptions.KillWebDriverProcessesOnDispose) {
 
-                    OnLog.Info($"Killing web driver processes");
+                    logger.Info($"Killing web driver processes");
 
                     WebDriverUtilities.KillWebDriverProcesses(GetDriverExecutablePathInternal(null));
 
@@ -110,10 +151,10 @@ namespace Gsemac.Net.WebDrivers {
 
         // Private members
 
-        private readonly WebBrowserId webBrowserId;
-        private readonly IHttpWebRequestFactory httpWebRequestFactory;
+        private readonly IHttpWebRequestFactory webRequestFactory;
         private readonly IWebDriverOptions webDriverOptions;
         private readonly IWebDriverFactoryOptions webDriverFactoryOptions;
+        private readonly ILogger logger;
         private readonly CancellationTokenSource updaterCancellationTokenSource = new CancellationTokenSource();
         private bool isDisposed = false;
 
@@ -138,13 +179,12 @@ namespace Gsemac.Net.WebDrivers {
                     }
                     catch (Exception ex) {
 
-                        OnLog.Error(ex.ToString());
+                        logger.Error(ex.ToString());
 
                         if (!webDriverFactoryOptions.IgnoreUpdateErrors)
                             throw ex;
 
                     }
-
 
                 }
 
@@ -158,13 +198,9 @@ namespace Gsemac.Net.WebDrivers {
         }
         private IWebDriverUpdater GetUpdaterInternal() {
 
-            IWebDriverUpdater updater = GetUpdater(httpWebRequestFactory, new WebDriverUpdaterOptions() {
-                WebDriverDirectoryPath = webDriverFactoryOptions.WebDriverDirectoryPath
-            });
+            IWebDriverUpdater updater = GetUpdater();
 
             if (updater is object) {
-
-                updater.Log += OnLog.Log;
 
                 updater.DownloadFileProgressChanged += OnDownloadFileProgressChanged;
                 updater.DownloadFileCompleted += OnDownloadFileCompleted;

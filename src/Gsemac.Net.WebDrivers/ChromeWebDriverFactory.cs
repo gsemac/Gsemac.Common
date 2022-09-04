@@ -1,4 +1,6 @@
-﻿using Gsemac.Net.Extensions;
+﻿using Gsemac.IO.Logging;
+using Gsemac.IO.Logging.Extensions;
+using Gsemac.Net.Extensions;
 using Gsemac.Net.Http;
 using Gsemac.Net.WebBrowsers;
 using Gsemac.Net.WebDrivers.Extensions;
@@ -16,17 +18,37 @@ namespace Gsemac.Net.WebDrivers {
         public ChromeWebDriverFactory() :
             this(WebDriverOptions.Default) {
         }
+        public ChromeWebDriverFactory(ILogger logger) :
+         this(WebDriverOptions.Default, logger) {
+        }
         public ChromeWebDriverFactory(IWebDriverOptions webDriverOptions) :
             this(webDriverOptions, WebDriverFactoryOptions.Default) {
+        }
+        public ChromeWebDriverFactory(IWebDriverOptions webDriverOptions, ILogger logger) :
+          this(webDriverOptions, WebDriverFactoryOptions.Default, logger) {
         }
         public ChromeWebDriverFactory(IWebDriverFactoryOptions webDriverFactoryOptions) :
             this(WebDriverOptions.Default, webDriverFactoryOptions) {
         }
+        public ChromeWebDriverFactory(IWebDriverFactoryOptions webDriverFactoryOptions, ILogger logger) :
+           this(WebDriverOptions.Default, webDriverFactoryOptions, logger) {
+        }
         public ChromeWebDriverFactory(IWebDriverOptions webDriverOptions, IWebDriverFactoryOptions webDriverFactoryOptions) :
-            this(new HttpWebRequestFactory(), webDriverOptions, webDriverFactoryOptions) {
+            this(HttpWebRequestFactory.Default, webDriverOptions, webDriverFactoryOptions) {
+        }
+        public ChromeWebDriverFactory(IWebDriverOptions webDriverOptions, IWebDriverFactoryOptions webDriverFactoryOptions, ILogger logger) :
+            this(HttpWebRequestFactory.Default, webDriverOptions, webDriverFactoryOptions, logger) {
         }
         public ChromeWebDriverFactory(IHttpWebRequestFactory webRequestFactory, IWebDriverOptions webDriverOptions, IWebDriverFactoryOptions webDriverFactoryOptions) :
-            base(WebBrowserId.Chrome, webRequestFactory, webDriverOptions, webDriverFactoryOptions) {
+            this(webRequestFactory, webDriverOptions, webDriverFactoryOptions, Logger.Null) {
+        }
+        public ChromeWebDriverFactory(IHttpWebRequestFactory webRequestFactory, IWebDriverOptions webDriverOptions, IWebDriverFactoryOptions webDriverFactoryOptions, ILogger logger) :
+            base(webRequestFactory, webDriverOptions, new WebDriverFactoryOptions(webDriverFactoryOptions) { WebBrowserId = WebBrowserId.Chrome }, logger) {
+
+            this.webRequestFactory = webRequestFactory;
+            this.webDriverFactoryOptions = webDriverFactoryOptions;
+            this.logger = new NamedLogger(logger, nameof(ChromeWebDriverFactory));
+
         }
 
         // Protected members
@@ -41,13 +63,19 @@ namespace Gsemac.Net.WebDrivers {
             return WebDriverUtilities.ChromeDriverExecutablePath;
 
         }
-        protected override IWebDriverUpdater GetUpdater(IHttpWebRequestFactory httpWebRequestFactory, IWebDriverUpdaterOptions webDriverUpdaterOptions) {
+        protected override IWebDriverUpdater GetUpdater() {
 
-            return new ChromeWebDriverUpdater(httpWebRequestFactory, webDriverUpdaterOptions);
+            return new ChromeWebDriverUpdater(webRequestFactory, new WebDriverUpdaterOptions() {
+                WebDriverDirectoryPath = webDriverFactoryOptions.WebDriverDirectoryPath,
+            });
 
         }
 
         // Private members
+
+        private readonly IHttpWebRequestFactory webRequestFactory;
+        private readonly IWebDriverFactoryOptions webDriverFactoryOptions;
+        private readonly ILogger logger;
 
         private IWebDriver GetWebDriverInternal(IWebBrowserInfo webBrowserInfo, IWebDriverOptions webDriverOptions, string overriddenUserAgent) {
 
@@ -142,7 +170,7 @@ namespace Gsemac.Net.WebDrivers {
 
                 if (userAgent.Contains("HeadlessChrome/")) {
 
-                    OnLog.Info("HeadlessChrome detected; patching user agent");
+                    logger.Info("HeadlessChrome detected; patching user agent");
 
                     string newUserAgent = userAgent.Replace("HeadlessChrome/", "Chrome/");
 
