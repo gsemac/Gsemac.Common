@@ -4,7 +4,7 @@
 
     public interface ILogger {
 
-        event LogEventHandler Logged;
+        event LogEventHandler MessageLogged;
 
         bool Enabled { get; set; }
         string Name { get; }

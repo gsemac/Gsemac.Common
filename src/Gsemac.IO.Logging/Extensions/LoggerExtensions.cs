@@ -123,14 +123,6 @@
 
         }
 
-        public static ILogger AddEventSource(this ILogger logger, ILogEventSource source) {
-
-            source.Log += logger.CreateEventHandler();
-
-            return logger;
-
-        }
-
     }
 
 }

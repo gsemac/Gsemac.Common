@@ -5,7 +5,7 @@
 
         // Public members
 
-        public event LogEventHandler Logged;
+        public event LogEventHandler MessageLogged;
 
         public bool Enabled { get; set; } = true;
         public string Name { get; }
@@ -21,7 +21,7 @@
 
             baseLogger.Log(message);
 
-            Logged?.Invoke(this, new LogEventArgs(message));
+            MessageLogged?.Invoke(this, new LogEventArgs(message));
 
         }
 

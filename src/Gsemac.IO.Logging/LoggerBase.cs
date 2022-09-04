@@ -10,7 +10,7 @@ namespace Gsemac.IO.Logging {
 
         // Public members
 
-        public event LogEventHandler Logged {
+        public event LogEventHandler MessageLogged {
             add {
 
                 lock (loggedEventMutex) {
