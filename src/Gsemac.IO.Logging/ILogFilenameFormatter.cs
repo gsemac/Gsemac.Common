@@ -1,13 +1,11 @@
-﻿using System;
+﻿namespace Gsemac.IO.Logging {
 
-namespace Gsemac.IO.Logging {
+    public interface ILogFileNameFormatter {
 
-    public interface ILogFilenameFormatter {
+        string Name { get; }
+        string FileExtension { get; }
 
-        string Name { get; set; }
-        string FileExtension { get; set; }
-
-        string Format(DateTimeOffset timestamp);
+        string GetFileName();
 
     }
 

@@ -1,7 +1,6 @@
 ﻿using Gsemac.IO;
 using Gsemac.IO.Compression;
 using Gsemac.IO.Logging;
-using Gsemac.IO.Logging.Extensions;
 using Gsemac.Net.Extensions;
 using Gsemac.Net.Http;
 using Gsemac.Net.Http.Extensions;

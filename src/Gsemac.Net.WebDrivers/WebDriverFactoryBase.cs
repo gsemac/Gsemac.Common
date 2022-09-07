@@ -1,5 +1,4 @@
 ﻿using Gsemac.IO.Logging;
-using Gsemac.IO.Logging.Extensions;
 using Gsemac.Net.Http;
 using Gsemac.Net.WebBrowsers;
 using OpenQA.Selenium;

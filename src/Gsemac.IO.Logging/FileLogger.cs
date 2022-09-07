@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 
 namespace Gsemac.IO.Logging {
 
@@ -10,54 +11,57 @@ namespace Gsemac.IO.Logging {
         public FileLogger() :
             this(LoggerOptions.Default) {
         }
-        public FileLogger(ILoggerOptions options) :
-            this(true, options) {
+        public FileLogger(string fileName) :
+            this(new LoggerOptions() {
+                FilenameFormatter = new LogFileNameFormatter(fileName),
+            }) {
         }
-        public FileLogger(bool enabled, ILoggerOptions options) :
-            base(false, options) {
+        public FileLogger(ILoggerOptions options) :
+            base(new LoggerOptions(options) { Enabled = false }) {
+
+            // Headers are written as soon as the logger is instantiated, but we haven't set the "options" member yet, so we won't have the right path.
+            // The logger is temporarily disabled, and then re-enabled after assigning to the member, which causes the headers to be written to the correct path.
 
             this.options = options;
 
-            // Enable the logger after initializing the filename formatter so the headers are written to the correct path.
-
-            Enabled = enabled;
+            Enabled = options.Enabled;
 
         }
 
         // Protected members
 
-        protected override void Log(ILogMessage logMessage, string formattedMessage) {
-
-            CreateLogDirectory();
+        protected override void Log(ILogMessage message, string formattedMessage) {
 
             CreateLogFile();
 
             ExecuteLogRetentionPolicy();
 
-            string logFilePath = currentFilename;
+            string fullLogFilePath = logFilePath;
 
             if (!string.IsNullOrWhiteSpace(options.LogDirectoryPath))
-                logFilePath = System.IO.Path.Combine(options.LogDirectoryPath, logFilePath);
+                fullLogFilePath = Path.Combine(options.LogDirectoryPath, fullLogFilePath);
 
-            System.IO.File.AppendAllText(logFilePath, formattedMessage);
+            File.AppendAllText(fullLogFilePath, formattedMessage);
 
         }
 
         // Private members
 
         private readonly ILoggerOptions options;
-        private string currentFilename = string.Empty;
+        private string logFilePath = string.Empty;
 
         private void CreateLogDirectory() {
 
-            if (!string.IsNullOrWhiteSpace(options.LogDirectoryPath) && !System.IO.Directory.Exists(options.LogDirectoryPath))
-                System.IO.Directory.CreateDirectory(options.LogDirectoryPath);
+            if (!string.IsNullOrWhiteSpace(options.LogDirectoryPath) && !Directory.Exists(options.LogDirectoryPath))
+                Directory.CreateDirectory(options.LogDirectoryPath);
 
         }
         private void CreateLogFile() {
 
-            if (string.IsNullOrWhiteSpace(currentFilename))
-                currentFilename = options.FilenameFormatter.Format(DateTime.Now);
+            CreateLogDirectory();
+
+            if (string.IsNullOrWhiteSpace(logFilePath))
+                logFilePath = options.FilenameFormatter.GetFileName();
 
         }
         private void ExecuteLogRetentionPolicy() {

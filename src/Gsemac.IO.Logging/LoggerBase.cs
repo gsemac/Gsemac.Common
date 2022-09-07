@@ -68,18 +68,16 @@ namespace Gsemac.IO.Logging {
         // Protected members
 
         protected LoggerBase() :
-            this(true) {
+            this(LoggerOptions.Default) {
         }
-        protected LoggerBase(ILoggerOptions options) :
-           this(true, options) {
-        }
-        protected LoggerBase(bool enabled) :
-            this(enabled, LoggerOptions.Default) {
-        }
-        protected LoggerBase(bool enabled, ILoggerOptions options) {
+        protected LoggerBase(ILoggerOptions options) {
+
+            if (options is null)
+                throw new ArgumentNullException(nameof(options));
 
             this.options = options;
-            this.enabled = enabled;
+
+            enabled = options.Enabled;
 
             if (enabled)
                 WriteHeaders();
@@ -112,7 +110,7 @@ namespace Gsemac.IO.Logging {
 
         }
 
-        protected abstract void Log(ILogMessage logMessage, string formattedMessage);
+        protected abstract void Log(ILogMessage message, string formattedMessage);
 
         protected virtual void WriteHeaders() {
 
@@ -125,7 +123,6 @@ namespace Gsemac.IO.Logging {
             wroteHeaders = true;
 
         }
-
         protected virtual void WriteHeaders(LogEventHandler eventHandler) {
 
             // Keys are copied into an array so we don't run into trouble if the headers are modified in another thread.
@@ -175,8 +172,8 @@ namespace Gsemac.IO.Logging {
 
         private readonly object loggedEventMutex = new object();
         private readonly ILoggerOptions options;
-        private bool enabled = true;
         private LogEventHandler loggedEvent;
+        private bool enabled = false;
         private bool wroteHeaders = false;
 
     }

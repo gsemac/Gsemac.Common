@@ -10,44 +10,26 @@ namespace Gsemac.IO.Logging {
         public ConsoleLogger() :
             this(LoggerOptions.Default) {
         }
-        public ConsoleLogger(ILoggerOptions options) {
+        public ConsoleLogger(ILoggerOptions options) :
+            base(options) {
         }
-        public ConsoleLogger(bool enabled) :
-            base(enabled) {
-        }
-
 
         // Protected members
 
-        protected override void Log(ILogMessage logMessage, string formattedMessage) {
+        protected override void Log(ILogMessage message, string formattedMessage) {
 
-            ConsoleColor? color = GetLogLevelColor(logMessage.LogLevel);
+#if DEBUG
 
-            if (color.HasValue)
-                Console.ForegroundColor = color.Value;
+            if (message is null)
+                throw new ArgumentNullException(nameof(message));
+
+#endif
+
+            Console.ForegroundColor = LoggerUtilities.GetLogLevelColor(message.LogLevel);
 
             Console.Write(formattedMessage);
 
             Console.ResetColor();
-
-        }
-
-        // Private members
-
-        private ConsoleColor? GetLogLevelColor(LogLevel logLevel) {
-
-            switch (logLevel) {
-
-                case LogLevel.Warning:
-                    return ConsoleColor.Yellow;
-
-                case LogLevel.Error:
-                    return ConsoleColor.Red;
-
-                default:
-                    return null;
-
-            }
 
         }
 

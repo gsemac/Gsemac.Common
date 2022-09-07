@@ -1,4 +1,12 @@
-﻿namespace Gsemac.IO.Logging.Extensions {
+﻿/* Unmerged change from project 'Gsemac.IO.Logging (netstandard2.0)'
+Before:
+namespace Gsemac.IO.Logging.Extensions {
+After:
+namespace Gsemac.IO.Logging.IO.Logging;
+using Gsemac.IO.Logging.Extensions {
+*/
+
+namespace Gsemac.IO.Logging {
 
     public static class LoggerExtensions {
 
@@ -11,7 +19,7 @@
         }
         public static void Log(this ILogger logger, LogLevel logLevel, string source, object obj) {
 
-            Log(logger, logLevel, source, obj.ToString());
+            logger.Log(logLevel, source, obj.ToString());
 
         }
         public static void Log(this ILogger logger, string message) {
@@ -26,12 +34,12 @@
         }
         public static void Log(this ILogger logger, object obj) {
 
-            Log(logger, obj.ToString());
+            logger.Log(obj.ToString());
 
         }
         public static void Log(this ILogger logger, LogLevel logLevel, object obj) {
 
-            Log(logger, logLevel, logger.Name, obj.ToString());
+            logger.Log(logLevel, logger.Name, obj.ToString());
 
         }
 
@@ -42,7 +50,7 @@
         }
         public static void Debug(this ILogger logger, string source, object obj) {
 
-            Debug(logger, source, obj.ToString());
+            logger.Debug(source, obj.ToString());
 
         }
         public static void Debug(this ILogger logger, string message) {
@@ -52,7 +60,7 @@
         }
         public static void Debug(this ILogger logger, object obj) {
 
-            Debug(logger, obj.ToString());
+            logger.Debug(obj.ToString());
 
         }
 
@@ -63,7 +71,7 @@
         }
         public static void Info(this ILogger logger, string source, object obj) {
 
-            Info(logger, source, obj.ToString());
+            logger.Info(source, obj.ToString());
 
         }
         public static void Info(this ILogger logger, string message) {
@@ -73,7 +81,7 @@
         }
         public static void Info(this ILogger logger, object obj) {
 
-            Info(logger, obj.ToString());
+            logger.Info(obj.ToString());
 
         }
         public static void Warning(this ILogger logger, string source, string message) {
@@ -83,7 +91,7 @@
         }
         public static void Warning(this ILogger logger, string source, object obj) {
 
-            Warning(logger, source, obj.ToString());
+            logger.Warning(source, obj.ToString());
 
         }
         public static void Warning(this ILogger logger, string message) {
@@ -93,7 +101,7 @@
         }
         public static void Warning(this ILogger logger, object obj) {
 
-            Warning(logger, obj.ToString());
+            logger.Warning(obj.ToString());
 
         }
         public static void Error(this ILogger logger, string source, string message) {
@@ -103,7 +111,7 @@
         }
         public static void Error(this ILogger logger, string source, object obj) {
 
-            Error(logger, source, obj.ToString());
+            logger.Error(source, obj.ToString());
 
         }
         public static void Error(this ILogger logger, string message) {
@@ -113,7 +121,7 @@
         }
         public static void Error(this ILogger logger, object obj) {
 
-            Error(logger, obj.ToString());
+            logger.Error(obj.ToString());
 
         }
 

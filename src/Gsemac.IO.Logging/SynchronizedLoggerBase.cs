@@ -5,9 +5,9 @@
 
         // Public members
 
-        public override void Log(ILogMessage message) {
+        public sealed override void Log(ILogMessage message) {
 
-            lock (lockObject) {
+            lock (mutex) {
 
                 base.Log(message);
 
@@ -17,21 +17,16 @@
 
         // Protected members
 
-        public SynchronizedLoggerBase() {
+        public SynchronizedLoggerBase() :
+            this(LoggerOptions.Default) {
         }
         public SynchronizedLoggerBase(ILoggerOptions options) :
             base(options) {
         }
-        public SynchronizedLoggerBase(bool enabled) :
-            base(enabled) {
-        }
-        public SynchronizedLoggerBase(bool enabled, ILoggerOptions options) :
-          base(enabled, options) {
-        }
 
         // Private members
 
-        private readonly object lockObject = new object();
+        private readonly object mutex = new object();
 
     }
 

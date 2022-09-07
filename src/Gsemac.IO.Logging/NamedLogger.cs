@@ -19,6 +19,9 @@
 
         public void Log(ILogMessage message) {
 
+            if (!Enabled)
+                return;
+
             baseLogger.Log(message);
 
             MessageLogged?.Invoke(this, new LogEventArgs(message));
