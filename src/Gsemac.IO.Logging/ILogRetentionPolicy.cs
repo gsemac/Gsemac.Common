@@ -2,7 +2,7 @@
 
     public interface ILogRetentionPolicy {
 
-        void ExecutePolicy(string directoryPath, string searchPattern = "*");
+        void ExecutePolicy(string directoryPath, string searchPattern = "");
 
     }
 

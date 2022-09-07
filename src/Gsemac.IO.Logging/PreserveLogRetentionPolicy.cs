@@ -1,9 +1,9 @@
 ﻿namespace Gsemac.IO.Logging {
 
-    public class NeverDeleteLogRetentionPolicy :
+    public class PreserveLogRetentionPolicy :
         ILogRetentionPolicy {
 
-        public void ExecutePolicy(string directoryPath, string searchPattern = "*") {
+        public void ExecutePolicy(string directoryPath, string searchPattern) {
 
             // Do nothing; all log files are preserved.
 

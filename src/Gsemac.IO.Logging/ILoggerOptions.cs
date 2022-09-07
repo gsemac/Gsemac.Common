@@ -3,11 +3,11 @@
     public interface ILoggerOptions {
 
         bool Enabled { get; }
-        string LogDirectoryPath { get; set; }
+        string DirectoryPath { get; }
         ILogHeaderCollection Headers { get; }
         bool IgnoreExceptions { get; }
         ILogMessageFormatter MessageFormatter { get; }
-        ILogFileNameFormatter FilenameFormatter { get; }
+        ILogFileNameFormatter FileNameFormatter { get; }
         ILogRetentionPolicy RetentionPolicy { get; }
 
     }

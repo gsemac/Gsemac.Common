@@ -43,13 +43,30 @@ namespace Gsemac.IO.Logging {
             }
         }
         public virtual string Name => AssemblyInfo.EntryAssembly.Name;
+        public ILogRetentionPolicy RetentionPolicy {
+            get => retentionPolicy;
+            set {
+
+                retentionPolicy = value;
+
+                // Execute the updated retention policy.
+
+                ExecuteRetentionPolicy();
+
+            }
+        }
 
         public virtual void Log(ILogMessage message) {
 
             try {
 
-                if (Enabled)
+                if (Enabled) {
+
+                    ExecuteRetentionPolicy();
+
                     Log(message, options.MessageFormatter.Format(message));
+
+                }
 
                 // Event handlers are always invoked, even when the logger is disabled.
 
@@ -78,6 +95,7 @@ namespace Gsemac.IO.Logging {
             this.options = options;
 
             enabled = options.Enabled;
+            retentionPolicy = options.RetentionPolicy;
 
             if (enabled)
                 WriteHeaders();
@@ -112,7 +130,16 @@ namespace Gsemac.IO.Logging {
 
         protected abstract void Log(ILogMessage message, string formattedMessage);
 
-        protected virtual void WriteHeaders() {
+        // Private members
+
+        private readonly object loggedEventMutex = new object();
+        private readonly ILoggerOptions options;
+        private LogEventHandler loggedEvent;
+        private bool wroteHeaders = false;
+        private bool enabled = false;
+        private ILogRetentionPolicy retentionPolicy;
+
+        private void WriteHeaders() {
 
             // These headers should be written as soon as the logger is enabled.
             // This will not trigger the event handlers, and they will have headers written separately (when they add event handlers).
@@ -123,7 +150,7 @@ namespace Gsemac.IO.Logging {
             wroteHeaders = true;
 
         }
-        protected virtual void WriteHeaders(LogEventHandler eventHandler) {
+        private void WriteHeaders(LogEventHandler eventHandler) {
 
             // Keys are copied into an array so we don't run into trouble if the headers are modified in another thread.
 
@@ -168,13 +195,29 @@ namespace Gsemac.IO.Logging {
 
         }
 
-        // Private members
+        private void ExecuteRetentionPolicy() {
 
-        private readonly object loggedEventMutex = new object();
-        private readonly ILoggerOptions options;
-        private LogEventHandler loggedEvent;
-        private bool enabled = false;
-        private bool wroteHeaders = false;
+            if (RetentionPolicy is object) {
+
+                try {
+
+                    string searchPattern = options.FileNameFormatter is object && !string.IsNullOrWhiteSpace(options.FileNameFormatter.FileExtension) ?
+                        $"*.{options.FileNameFormatter.FileExtension.TrimStart('.')}" :
+                        string.Empty;
+
+                    RetentionPolicy.ExecutePolicy(options.DirectoryPath, searchPattern);
+
+                }
+                catch (Exception ex) {
+
+                    if (!options.IgnoreExceptions)
+                        throw ex;
+
+                }
+
+            }
+
+        }
 
     }
 

@@ -1,4 +1,7 @@
-﻿namespace Gsemac.IO.Logging {
+﻿using Gsemac.IO.Logging.Properties;
+using System;
+
+namespace Gsemac.IO.Logging {
 
     public class NamedLogger :
          ILogger {
@@ -9,6 +12,10 @@
 
         public bool Enabled { get; set; } = true;
         public string Name { get; }
+        public ILogRetentionPolicy RetentionPolicy {
+            get => baseLogger.RetentionPolicy;
+            set => throw new NotSupportedException(string.Format(ExceptionMessages.ClassDoesNotSupportRetentionPolicies, nameof(NamedLogger)));
+        }
 
         public NamedLogger(ILogger baseLogger, string name) {
 

@@ -2,18 +2,21 @@
 
 namespace Gsemac.IO.Logging {
 
-    public class DeleteOldLogRetentionPolicy :
+    public class DeleteOlderLogRetentionPolicy :
         ILogRetentionPolicy {
 
         // Public members
 
-        public DeleteOldLogRetentionPolicy(TimeSpan deleteOlderThan) {
+        public DeleteOlderLogRetentionPolicy(TimeSpan deleteOlderThan) {
 
             this.deleteOlderThan = deleteOlderThan;
 
         }
 
-        public void ExecutePolicy(string directoryPath, string searchPattern = "*") {
+        public void ExecutePolicy(string directoryPath, string searchPattern) {
+
+            if (string.IsNullOrEmpty(searchPattern))
+                return;
 
             TimeSpan timeSinceLastExecution = DateTimeOffset.Now - lastExecutionTime;
 

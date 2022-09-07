@@ -1,5 +1,4 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 
 namespace Gsemac.IO.Logging {
 
@@ -13,7 +12,7 @@ namespace Gsemac.IO.Logging {
         }
         public FileLogger(string fileName) :
             this(new LoggerOptions() {
-                FilenameFormatter = new LogFileNameFormatter(fileName),
+                FileNameFormatter = new LogFileNameFormatter(fileName),
             }) {
         }
         public FileLogger(ILoggerOptions options) :
@@ -34,12 +33,10 @@ namespace Gsemac.IO.Logging {
 
             CreateLogFile();
 
-            ExecuteLogRetentionPolicy();
-
             string fullLogFilePath = logFilePath;
 
-            if (!string.IsNullOrWhiteSpace(options.LogDirectoryPath))
-                fullLogFilePath = Path.Combine(options.LogDirectoryPath, fullLogFilePath);
+            if (!string.IsNullOrWhiteSpace(options.DirectoryPath))
+                fullLogFilePath = Path.Combine(options.DirectoryPath, fullLogFilePath);
 
             File.AppendAllText(fullLogFilePath, formattedMessage);
 
@@ -52,8 +49,8 @@ namespace Gsemac.IO.Logging {
 
         private void CreateLogDirectory() {
 
-            if (!string.IsNullOrWhiteSpace(options.LogDirectoryPath) && !Directory.Exists(options.LogDirectoryPath))
-                Directory.CreateDirectory(options.LogDirectoryPath);
+            if (!string.IsNullOrWhiteSpace(options.DirectoryPath) && !Directory.Exists(options.DirectoryPath))
+                Directory.CreateDirectory(options.DirectoryPath);
 
         }
         private void CreateLogFile() {
@@ -61,25 +58,7 @@ namespace Gsemac.IO.Logging {
             CreateLogDirectory();
 
             if (string.IsNullOrWhiteSpace(logFilePath))
-                logFilePath = options.FilenameFormatter.GetFileName();
-
-        }
-        private void ExecuteLogRetentionPolicy() {
-
-            bool executeRetentionPolicy = Enabled && options.RetentionPolicy is object;
-
-            try {
-
-                if (executeRetentionPolicy)
-                    options.RetentionPolicy.ExecutePolicy(options.LogDirectoryPath, $"*{options.FilenameFormatter.FileExtension}");
-
-            }
-            catch (Exception ex) {
-
-                if (!options.IgnoreExceptions)
-                    throw ex;
-
-            }
+                logFilePath = options.FileNameFormatter.GetFileName();
 
         }
 

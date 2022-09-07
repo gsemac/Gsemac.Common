@@ -8,6 +8,7 @@
 
         bool Enabled { get; set; }
         string Name { get; }
+        ILogRetentionPolicy RetentionPolicy { get; }
 
         void Log(ILogMessage message);
 
