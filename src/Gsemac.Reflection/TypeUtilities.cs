@@ -209,7 +209,7 @@ namespace Gsemac.Reflection {
                     }
                     else if (newType.IsEnum) {
 
-                        success = EnumUtilities.TryParse(obj, newType, new EnumParseOptions() { IgnoreCase = true, }, out result);
+                        success = EnumUtilities.TryParse(obj, newType, new EnumParsingOptions() { IgnoreCase = true, }, out result);
 
                     }
                     else {

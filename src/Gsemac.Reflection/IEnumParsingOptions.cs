@@ -1,6 +1,6 @@
 ﻿namespace Gsemac.Reflection {
 
-    public interface IEnumParseOptions {
+    public interface IEnumParsingOptions {
 
         bool IgnoreCase { get; }
 
