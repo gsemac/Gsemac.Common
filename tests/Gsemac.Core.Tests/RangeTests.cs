@@ -182,10 +182,40 @@ namespace Gsemac.Core.Tests {
 
         }
         [TestMethod]
+        public void TestTryParseSucceedsWithSingleNegativeValue() {
+
+            Assert.IsTrue(Range<int>.TryParse("-1", out var result));
+            Assert.AreEqual(Range.Create(-1), result);
+
+        }
+        [TestMethod]
         public void TestTryParseSucceedsWithDashedIntegerValues() {
 
-            Assert.IsTrue(Range<int>.TryParse("1-3", out var result));
+            Assert.IsTrue(Range<int>.TryParse("1-3", new RangeParsingOptions() {
+                AllowDashedRanges = true,
+            }, out var result));
+
             Assert.AreEqual(Range.Create(1, 3), result);
+
+        }
+        [TestMethod]
+        public void TestTryParseSucceedsWithBoundedNegativeIntegerValues() {
+
+            Assert.IsTrue(Range<int>.TryParse("[-5, -1)", new RangeParsingOptions() {
+                AllowDashedRanges = true,
+            }, out var result));
+
+            Assert.AreEqual(Range.Create(-5, startInclusive: true, -1, endInclusive: false), result);
+
+        }
+        [TestMethod]
+        public void TestTryParseSucceedsWithDashedNegativeIntegerValues() {
+
+            Assert.IsTrue(Range<int>.TryParse("-5--1", new RangeParsingOptions() {
+                AllowDashedRanges = true,
+            }, out var result));
+
+            Assert.AreEqual(Range.Create(-5, -1), result);
 
         }
         [TestMethod]
@@ -210,6 +240,61 @@ namespace Gsemac.Core.Tests {
         public void TestTryParseFailsWithNullString() {
 
             Assert.IsFalse(Range<int>.TryParse(null, out _));
+
+        }
+
+        // Combine
+
+        [TestMethod]
+        public void TestCombineRangesWithOverlappingRangesReturnsRangeContainingAllCommonValues() {
+
+            var combinedRange = Range.Combine(Range.Create(1, 5), Range.Create(10, 3));
+
+            Assert.AreEqual(Range.Create(1, 10), combinedRange);
+
+        }
+        [TestMethod]
+        public void TestCombineRangesPreservesInclusivity() {
+
+            var combinedRange = Range.Combine(Range.Create(1, 5), Range.Create(10, startInclusive: false, 3, endInclusive: true));
+
+            Assert.AreEqual(Range.Create(1, startInclusive: true, 10, endInclusive: false), combinedRange);
+
+        }
+
+        // Subtract
+
+        [TestMethod]
+        public void TestSubtractRangesWithOverlappingRangesWitLhsRangeBeforeRhsRange() {
+
+            Assert.AreEqual(Range.Create(1, startInclusive: true, 4, endInclusive: false), Range.Subtract(Range.Create(1, 5), Range.Create(4, 8)));
+
+        }
+        [TestMethod]
+        public void TestSubtractRangesWithOverlappingRangesWitLhsRangeAfterRhsRange() {
+
+            Assert.AreEqual(Range.Create(5, startInclusive: false, 8, endInclusive: true), Range.Subtract(Range.Create(4, 8), Range.Create(1, 5)));
+
+        }
+        [TestMethod]
+        public void TestSubtractRangesWithEqualRanges() {
+
+            Assert.AreEqual(Range.Create(1, startInclusive: false, 1, endInclusive: false), Range.Subtract(Range.Create(1, 5), Range.Create(1, 5)));
+
+        }
+        [TestMethod]
+        public void TestSubtractRangesWithNonOverlappingRanges() {
+
+            Assert.AreEqual(Range.Create(1, 5), Range.Subtract(Range.Create(1, 5), Range.Create(6, 10)));
+
+        }
+
+        // Normalize
+
+        [TestMethod]
+        public void TestNormalizeWithDescendingRangeReturnsEquivalentAscendingRange() {
+
+            Assert.AreEqual(Range<int>.Parse("[4, 10)"), Range.Normalize(Range<int>.Parse("(10,4]")));
 
         }
 

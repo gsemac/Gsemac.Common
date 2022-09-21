@@ -7,6 +7,8 @@
         public static IRangeFormatter Bounded => new BoundedRangeFormatter();
         public static IRangeFormatter Dashed => new DashedRangeFormatter();
 
+        public static IRangeFormatter Default => Bounded;
+
     }
 
 }

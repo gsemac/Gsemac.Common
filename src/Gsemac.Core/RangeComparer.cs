@@ -9,6 +9,8 @@ namespace Gsemac.Core {
 
         // Public members
 
+        public static RangeComparer<T> Default => new RangeComparer<T>();
+
         public int Compare(IRange<T> x, IRange<T> y) {
 
             if (x is null)

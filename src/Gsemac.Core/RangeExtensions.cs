@@ -19,7 +19,7 @@ namespace Gsemac.Core {
                 throw new ArgumentNullException(nameof(range));
 
             if (formatter is null)
-                return range.ToString();
+                formatter = RangeFormatter.Default;
 
             return formatter.Format(range, options);
 
