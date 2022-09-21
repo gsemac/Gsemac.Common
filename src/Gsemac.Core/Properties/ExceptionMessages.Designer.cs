@@ -19,7 +19,7 @@ namespace Gsemac.Core.Properties {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class ExceptionMessages {
@@ -66,6 +66,24 @@ namespace Gsemac.Core.Properties {
         internal static string CannotCastTypeToTypeWithTypeAndType {
             get {
                 return ResourceManager.GetString("CannotCastTypeToTypeWithTypeAndType", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The range string was not in the correct format: &quot;{0}&quot;.
+        /// </summary>
+        internal static string InvalidRangeString {
+            get {
+                return ResourceManager.GetString("InvalidRangeString", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The version string was not in the correct format: &quot;{0}&quot;.
+        /// </summary>
+        internal static string InvalidVersionString {
+            get {
+                return ResourceManager.GetString("InvalidVersionString", resourceCulture);
             }
         }
         

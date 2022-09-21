@@ -1,4 +1,4 @@
-﻿using Gsemac.Core.Extensions;
+﻿using Gsemac.Core;
 using System;
 using System.Drawing;
 

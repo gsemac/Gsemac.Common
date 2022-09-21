@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Gsemac.Core.Properties;
+using System;
 using System.Linq;
 using System.Text.RegularExpressions;
 
@@ -44,7 +45,7 @@ namespace Gsemac.Core {
                 throw new ArgumentNullException(nameof(input));
 
             if (!TryParse(input, strict, out IVersion result))
-                throw new FormatException("The version string was not in the correct format.");
+                throw new FormatException(string.Format(ExceptionMessages.InvalidVersionString, input));
 
             return result;
 

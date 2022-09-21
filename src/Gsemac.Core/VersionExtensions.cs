@@ -1,6 +1,6 @@
 ﻿using System.Linq;
 
-namespace Gsemac.Core.Extensions {
+namespace Gsemac.Core {
 
     public static class VersionExtensions {
 

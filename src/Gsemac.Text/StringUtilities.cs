@@ -1,4 +1,4 @@
-﻿using Gsemac.Core.Extensions;
+﻿using Gsemac.Core;
 using Gsemac.Text.Properties;
 using System;
 using System.Collections.Generic;

@@ -1,4 +1,4 @@
-﻿using Gsemac.Core.Extensions;
+﻿using Gsemac.Core;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Gsemac.Text.Tests {

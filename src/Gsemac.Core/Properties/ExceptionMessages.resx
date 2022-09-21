@@ -120,6 +120,12 @@
   <data name="CannotCastTypeToTypeWithTypeAndType" xml:space="preserve">
     <value>Cannot cast type '{0}' to type '{1}'.</value>
   </data>
+  <data name="InvalidRangeString" xml:space="preserve">
+    <value>The range string was not in the correct format: "{0}"</value>
+  </data>
+  <data name="InvalidVersionString" xml:space="preserve">
+    <value>The version string was not in the correct format: "{0}"</value>
+  </data>
   <data name="NonNegativeNumberRequired" xml:space="preserve">
     <value>Non-negative number required.</value>
   </data>

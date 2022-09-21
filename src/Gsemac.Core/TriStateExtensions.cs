@@ -1,4 +1,4 @@
-﻿namespace Gsemac.Core.Extensions {
+﻿namespace Gsemac.Core {
 
     public static class TriStateExtensions {
 
