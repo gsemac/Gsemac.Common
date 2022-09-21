@@ -70,6 +70,15 @@ namespace Gsemac.Core.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The range collection string was not in the correct format: &quot;{0}&quot;.
+        /// </summary>
+        internal static string InvalidRangeCollectionString {
+            get {
+                return ResourceManager.GetString("InvalidRangeCollectionString", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The range string was not in the correct format: &quot;{0}&quot;.
         /// </summary>
         internal static string InvalidRangeString {
