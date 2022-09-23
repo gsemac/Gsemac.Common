@@ -3,7 +3,7 @@
 using Gsemac.Drawing.Extensions;
 using System.Drawing;
 
-namespace Gsemac.Drawing.Imaging {
+namespace Gsemac.Drawing.Imaging.Filters {
 
     public class ColorOverlayImageFilter :
         IImageFilter {

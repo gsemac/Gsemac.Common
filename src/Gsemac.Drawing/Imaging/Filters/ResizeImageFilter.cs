@@ -4,7 +4,7 @@ using Gsemac.Drawing.Extensions;
 using System;
 using System.Drawing;
 
-namespace Gsemac.Drawing.Imaging {
+namespace Gsemac.Drawing.Imaging.Filters {
 
     public class ResizeImageFilter :
         IImageFilter {

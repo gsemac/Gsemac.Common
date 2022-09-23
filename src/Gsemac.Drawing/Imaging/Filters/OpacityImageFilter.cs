@@ -1,11 +1,10 @@
 ﻿#if NETFRAMEWORK
 
 using Gsemac.Drawing.Extensions;
-using System;
 using System.Drawing;
 using System.Drawing.Imaging;
 
-namespace Gsemac.Drawing.Imaging {
+namespace Gsemac.Drawing.Imaging.Filters {
 
     public class OpacityImageFilter :
         IImageFilter {

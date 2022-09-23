@@ -1,4 +1,4 @@
-﻿namespace Gsemac.Drawing.Imaging {
+﻿namespace Gsemac.Drawing.Imaging.Filters {
 
     public interface IImageFilter {
 

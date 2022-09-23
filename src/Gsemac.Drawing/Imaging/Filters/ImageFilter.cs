@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Gsemac.Drawing.Imaging {
+namespace Gsemac.Drawing.Imaging.Filters {
 
     public static class ImageFilter {
 
