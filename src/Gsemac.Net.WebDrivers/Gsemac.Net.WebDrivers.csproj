@@ -36,7 +36,7 @@
 	<Choose>
 		<When Condition="$(DefineConstants.Contains('NET45_OR_GREATER')) Or $(DefineConstants.Contains('NETCOREAPP')) Or $(DefineConstants.Contains('NETSTANDARD'))">
 			<ItemGroup>
-				<PackageReference Include="Selenium.WebDriver" Version="4.3.0" />
+				<PackageReference Include="Selenium.WebDriver" Version="4.6.0" />
 			</ItemGroup>
 			<PropertyGroup>
 				<DefineConstants>$(DefineConstants);EXECUTE_CDP_COMMAND_AVAILABLE</DefineConstants>
@@ -44,6 +44,7 @@
 		</When>
 		<Otherwise>
 			<ItemGroup>
+				<!-- The last version of the Selenium.WebDriver package supporting .NET Framework 4.0 is version 3.141.0. -->
 				<PackageReference Include="Selenium.WebDriver" Version="3.141.0" />
 			</ItemGroup>
 		</Otherwise>
