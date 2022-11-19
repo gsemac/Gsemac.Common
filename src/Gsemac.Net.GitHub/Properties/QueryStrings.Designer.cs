@@ -19,7 +19,7 @@ namespace Gsemac.Net.GitHub.Properties {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class QueryStrings {
@@ -61,7 +61,7 @@ namespace Gsemac.Net.GitHub.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .//summary[contains(.,&apos;Assets&apos;)]/following-sibling::div//li.
+        ///   Looks up a localized string similar to .//ul//li.
         /// </summary>
         internal static string ReleaseAssetsXPath {
             get {

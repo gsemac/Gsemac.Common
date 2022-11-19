@@ -141,20 +141,43 @@ namespace Gsemac.Net.GitHub {
         }
         private IRelease ParseRelease(HtmlNode releaseNode) {
 
+            // Read the release metadata.
+
             DateTimeOffset.TryParse(releaseNode.SelectNodes(Properties.QueryStrings.ReleaseDateTimeXPath)?.FirstOrDefault()?.GetAttributeValue("datetime", string.Empty), CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTimeOffset creationTime);
 
-            string description = releaseNode.SelectNodes(Properties.QueryStrings.ReleaseDescriptionXPath)?.FirstOrDefault()?.InnerText?.Trim() ?? "";
-            string tag = releaseNode.SelectNodes(Properties.QueryStrings.ReleaseTagXPath)?.FirstOrDefault()?.InnerText?.Trim() ?? "";
-            string title = releaseNode.SelectNodes(Properties.QueryStrings.ReleaseTitleXPath)?.FirstOrDefault()?.InnerText?.Trim() ?? "";
-            string url = releaseNode.SelectNodes(Properties.QueryStrings.ReleaseTitleXPath)?.FirstOrDefault()?.GetAttributeValue("href", string.Empty);
+            string description = releaseNode.SelectNodes(Properties.QueryStrings.ReleaseDescriptionXPath)?.FirstOrDefault()?.InnerText?.Trim() ?? string.Empty;
+            string tag = releaseNode.SelectNodes(Properties.QueryStrings.ReleaseTagXPath)?.FirstOrDefault()?.InnerText?.Trim() ?? string.Empty;
+            string title = releaseNode.SelectNodes(Properties.QueryStrings.ReleaseTitleXPath)?.FirstOrDefault()?.InnerText?.Trim() ?? string.Empty;
+            string relativeUrl = releaseNode.SelectNodes(Properties.QueryStrings.ReleaseTitleXPath)?.FirstOrDefault()?.GetAttributeValue("href", string.Empty);
+            string url = Url.Combine(Properties.GitHub.RootUrl, relativeUrl);
+            IEnumerable<IReleaseAsset> assets = Enumerable.Empty<IReleaseAsset>();
+
+            // Read the asset metadata.
+            // We need to make an additional request to get the release assets.
+
+            if (!string.IsNullOrWhiteSpace(url)) {
+
+                string assetsUrl = url.Replace("/tag/", "/expanded_assets/");
+
+                using (IWebClient webClient = CreateWebClient()) {
+
+                    HtmlDocument htmlDocument = new HtmlDocument();
+
+                    htmlDocument.LoadHtml(webClient.DownloadString(assetsUrl));
+
+                    assets = ParseReleaseAssets(htmlDocument.DocumentNode);
+
+                }
+
+            }
 
             return new Release() {
                 Published = creationTime,
                 Description = Uri.UnescapeDataString(description),
                 Tag = tag,
                 Title = Uri.UnescapeDataString(title),
-                Url = Url.Combine(Properties.GitHub.RootUrl, url),
-                Assets = ParseReleaseAssets(releaseNode),
+                Url = url,
+                Assets = assets,
             };
 
         }
