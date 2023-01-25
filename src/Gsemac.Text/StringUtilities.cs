@@ -475,8 +475,10 @@ namespace Gsemac.Text {
         }
         public static string ComputeMD5Hash(string input, Encoding encoding = null) {
 
+            // Treat null strings the same as empty strings.
+
             if (input is null)
-                throw new ArgumentNullException(nameof(input));
+                input = string.Empty;
 
             encoding = encoding ?? Encoding.UTF8;
 

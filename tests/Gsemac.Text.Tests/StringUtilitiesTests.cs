@@ -643,6 +643,32 @@ namespace Gsemac.Text.Tests {
 
         }
 
+        // ComputeMD5Hash
+
+        [TestMethod]
+        public void TestComputeMD5HashWithEmptyString() {
+
+            // The MD5 hash of "nothing" is known to be "d41d8cd98f00b204e9800998ecf8427e".
+            // https://stackoverflow.com/a/10910079/5383169
+
+            Assert.AreEqual("d41d8cd98f00b204e9800998ecf8427e", StringUtilities.ComputeMD5Hash(string.Empty));
+
+        }
+        [TestMethod]
+        public void TestComputeMD5HashWithNullString() {
+
+            // Null strings should be treated the same as empty stringss.
+
+            Assert.AreEqual("d41d8cd98f00b204e9800998ecf8427e", StringUtilities.ComputeMD5Hash(null));
+
+        }
+        [TestMethod]
+        public void TestComputeMD5HashWithString() {
+
+            Assert.AreEqual("fc3ff98e8c6a0d3087d515c0473f8677", StringUtilities.ComputeMD5Hash("hello world!"));
+
+        }
+
     }
 
 }
