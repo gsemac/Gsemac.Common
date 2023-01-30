@@ -83,6 +83,11 @@ namespace Gsemac.Text {
             }
 
         }
+        public static bool IsVowel(char value) {
+
+            return "aeiou".Contains(char.ToLowerInvariant(value));
+
+        }
 
         // Private members
 
