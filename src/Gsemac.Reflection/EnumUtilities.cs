@@ -9,10 +9,10 @@ namespace Gsemac.Reflection {
 
         public static object Parse(object obj, Type enumType) {
 
-            return Parse(obj, enumType, EnumParsingOptions.Default);
+            return Parse(obj, enumType, EnumParseOptions.Default);
 
         }
-        public static object Parse(object obj, Type enumType, EnumParsingOptions options) {
+        public static object Parse(object obj, Type enumType, EnumParseOptions options) {
 
             if (!enumType.IsEnum)
                 throw new ArgumentException(Properties.ExceptionMessages.TypeMustBeAnEnum, nameof(enumType));
@@ -39,10 +39,10 @@ namespace Gsemac.Reflection {
         }
         public static bool TryParse(object obj, Type enumType, out object result) {
 
-            return TryParse(obj, enumType, EnumParsingOptions.Default, out result);
+            return TryParse(obj, enumType, EnumParseOptions.Default, out result);
 
         }
-        public static bool TryParse(object obj, Type enumType, EnumParsingOptions options, out object result) {
+        public static bool TryParse(object obj, Type enumType, EnumParseOptions options, out object result) {
 
             if (!enumType.IsEnum)
                 throw new ArgumentException(Properties.ExceptionMessages.TypeMustBeAnEnum, nameof(enumType));
@@ -68,20 +68,20 @@ namespace Gsemac.Reflection {
 
         public static EnumT Parse<EnumT>(object obj) where EnumT : Enum {
 
-            return Parse<EnumT>(obj, EnumParsingOptions.Default);
+            return Parse<EnumT>(obj, EnumParseOptions.Default);
 
         }
-        public static EnumT Parse<EnumT>(object obj, EnumParsingOptions options) where EnumT : Enum {
+        public static EnumT Parse<EnumT>(object obj, EnumParseOptions options) where EnumT : Enum {
 
             return (EnumT)Parse(obj, typeof(EnumT), options);
 
         }
         public static bool TryParse<EnumT>(object obj, out EnumT result) where EnumT : Enum {
 
-            return TryParse(obj, EnumParsingOptions.Default, out result);
+            return TryParse(obj, EnumParseOptions.Default, out result);
 
         }
-        public static bool TryParse<EnumT>(object obj, EnumParsingOptions options, out EnumT result) where EnumT : Enum {
+        public static bool TryParse<EnumT>(object obj, EnumParseOptions options, out EnumT result) where EnumT : Enum {
 
             result = default;
 
