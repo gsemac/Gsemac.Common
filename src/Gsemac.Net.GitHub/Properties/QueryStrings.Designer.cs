@@ -97,7 +97,7 @@ namespace Gsemac.Net.GitHub.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .//div[div[@*[contains(.,&apos;release-card&apos;)]]].
+        ///   Looks up a localized string similar to //section[h2[contains(@class,&quot;sr-only&quot;)]].
         /// </summary>
         internal static string ReleasesXPath {
             get {

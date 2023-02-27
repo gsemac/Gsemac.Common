@@ -130,7 +130,7 @@
     <value>.//div[@*[contains(.,'body-content')]]</value>
   </data>
   <data name="ReleasesXPath" xml:space="preserve">
-    <value>.//div[div[@*[contains(.,'release-card')]]]</value>
+    <value>//section[h2[contains(@class,"sr-only")]]</value>
   </data>
   <data name="ReleaseTagXPath" xml:space="preserve">
     <value>.//svg[contains(@class,'octicon-tag')]/following-sibling::span</value>
