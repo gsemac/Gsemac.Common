@@ -2,7 +2,6 @@
 
 	<PropertyGroup>
 		<TargetFramework>net48</TargetFramework>
-
 		<IsPackable>false</IsPackable>
 	</PropertyGroup>
 
@@ -11,14 +10,14 @@
 		<PackageReference Include="MSTest.TestAdapter" Version="3.0.2" />
 		<PackageReference Include="MSTest.TestFramework" Version="3.0.2" />
 		<PackageReference Include="coverlet.collector" Version="3.2.0">
-		  <PrivateAssets>all</PrivateAssets>
-		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
 	</ItemGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="..\..\src\Gsemac.Drawing.Imaging.WebP\Gsemac.Drawing.Imaging.WebP.csproj" />
-	  <ProjectReference Include="..\..\src\Gsemac.Drawing\Gsemac.Drawing.csproj" />
+		<ProjectReference Include="..\..\src\Gsemac.Drawing.Imaging.WebP\Gsemac.Drawing.Imaging.WebP.csproj" />
+		<ProjectReference Include="..\..\src\Gsemac.Drawing\Gsemac.Drawing.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>

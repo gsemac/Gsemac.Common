@@ -1,8 +1,7 @@
 ﻿<Project Sdk="MSBuild.Sdk.Extras/3.0.44">
 
 	<PropertyGroup>
-		<TargetFramework>net5.0</TargetFramework>
-
+		<TargetFramework>net6.0</TargetFramework>
 		<IsPackable>false</IsPackable>
 	</PropertyGroup>
 
@@ -11,8 +10,8 @@
 		<PackageReference Include="MSTest.TestAdapter" Version="3.0.2" />
 		<PackageReference Include="MSTest.TestFramework" Version="3.0.2" />
 		<PackageReference Include="coverlet.collector" Version="3.2.0">
-		  <PrivateAssets>all</PrivateAssets>
-		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
 	</ItemGroup>
 
@@ -21,9 +20,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Compile Update="Properties\SamplePaths.Designer.cs">
-	    <DesignTime>True</DesignTime>
-	  </Compile>
+		<Compile Update="Properties\SamplePaths.Designer.cs">
+			<DesignTime>True</DesignTime>
+		</Compile>
 	</ItemGroup>
 
 	<Target Name="PreBuild" BeforeTargets="PreBuildEvent">

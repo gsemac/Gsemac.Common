@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFrameworks>net48;net5.0</TargetFrameworks>
+		<TargetFrameworks>net48;net6.0</TargetFrameworks>
 		<IsPackable>false</IsPackable>
 	</PropertyGroup>
 
@@ -16,7 +16,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="..\..\src\Gsemac.Data\Gsemac.Data.csproj" />
+		<ProjectReference Include="..\..\src\Gsemac.Data\Gsemac.Data.csproj" />
 	</ItemGroup>
 
 </Project>

@@ -1,7 +1,7 @@
 ﻿<Project Sdk="MSBuild.Sdk.Extras/3.0.44">
 
 	<PropertyGroup>
-		<TargetFramework>net5.0</TargetFramework>
+		<TargetFramework>net6.0</TargetFramework>
 		<IsPackable>false</IsPackable>
 	</PropertyGroup>
 
@@ -16,7 +16,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="..\..\src\Gsemac.Text.Json\Gsemac.Text.Json.csproj" />
+		<ProjectReference Include="..\..\src\Gsemac.Text.Json\Gsemac.Text.Json.csproj" />
 	</ItemGroup>
 
 </Project>
