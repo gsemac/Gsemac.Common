@@ -161,8 +161,9 @@ namespace Gsemac.Data.ValueConversion {
 
             // The color "rebeccapurple" (#663399) was added in CSS4.
             // https://en.wikipedia.org/wiki/Eric_A._Meyer#Personal_life
+            // If we're compiling against .NET 6.0 or later, it will already be present in the dictionary.
 
-            result.Add("rebeccapurple", Color.FromArgb(102, 51, 153));
+            result["rebeccapurple"] = Color.FromArgb(102, 51, 153);
 
             return result;
 
