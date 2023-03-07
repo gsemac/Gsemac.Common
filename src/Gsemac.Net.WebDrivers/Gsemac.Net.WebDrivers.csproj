@@ -4,7 +4,7 @@
 		<TargetFrameworks>net40-client;netstandard2.0</TargetFrameworks>
 		<Company />
 		<Authors>gsemac</Authors>
-		<Version>0.13.10</Version>
+		<Version>0.14.0</Version>
 		<GenerateDocumentationFile>true</GenerateDocumentationFile>
 		<GeneratePackageOnBuild>false</GeneratePackageOnBuild>
 		<PackageProjectUrl>https://github.com/gsemac/Gsemac.Common</PackageProjectUrl>
