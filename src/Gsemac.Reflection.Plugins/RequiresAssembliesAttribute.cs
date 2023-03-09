@@ -32,7 +32,7 @@ namespace Gsemac.Reflection.Plugins {
 
             }
 
-            IAssemblyResolver assemblyResolver = (IAssemblyResolver)serviceProvider.GetService(typeof(IAssemblyResolver)) ??
+            IAssemblyResolver assemblyResolver = (IAssemblyResolver)serviceProvider?.GetService(typeof(IAssemblyResolver)) ??
                 AssemblyResolver.Default;
 
             foreach (string assemblyName in requiredAssemblyNames) {
