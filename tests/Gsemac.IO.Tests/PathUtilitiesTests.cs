@@ -1,5 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using System.IO;
 using System.Linq;
 
 namespace Gsemac.IO.Tests {
@@ -511,6 +512,23 @@ namespace Gsemac.IO.Tests {
         public void TestSetFileExtensionWithFileExtensionWithoutLeadingDot() {
 
             Assert.AreEqual("path/file.jpg", PathUtilities.SetFileExtension("path/file", "jpg"));
+
+        }
+
+        // GetTemporaryDirectoryPath
+
+        [TestMethod]
+        public void TestGetTemporaryDirectoryPathWithEnsureUniqueEnabledCreatesDirectory() {
+
+            // The temporary directory path will be created when "ensure unique" is enabled.
+
+            string temporaryDirectoryPath = PathUtilities.GetTemporaryDirectoryPath(new TemporaryPathOptions() {
+                EnsureUnique = true,
+            });
+
+            Assert.IsTrue(Directory.Exists(temporaryDirectoryPath));
+
+            Directory.Delete(temporaryDirectoryPath);
 
         }
 

@@ -315,7 +315,7 @@ namespace Gsemac.IO {
 
                 do {
 
-                    result = GetTemporaryFilePath(options);
+                    result = GetTemporaryFilePath();
 
                 } while (Directory.Exists(result));
 
