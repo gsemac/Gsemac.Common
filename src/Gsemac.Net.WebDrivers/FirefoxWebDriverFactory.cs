@@ -8,7 +8,7 @@ using System.IO;
 
 namespace Gsemac.Net.WebDrivers {
 
-    class FirefoxWebDriverFactory :
+    public sealed class FirefoxWebDriverFactory :
          WebDriverFactoryBase {
 
         // Public members

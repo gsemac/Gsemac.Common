@@ -14,7 +14,7 @@ namespace Gsemac.Net.WebDrivers {
         public PooledWebDriverFactoryOptions(IWebDriverFactoryOptions options) {
 
             AutoUpdateEnabled = options.AutoUpdateEnabled;
-            DefaultWebBrowserInfo = options.DefaultWebBrowserInfo;
+            WebBrowser = options.WebBrowser;
             KillWebDriverProcessesOnDispose = options.KillWebDriverProcessesOnDispose;
             WebDriverDirectoryPath = options.WebDriverDirectoryPath;
 

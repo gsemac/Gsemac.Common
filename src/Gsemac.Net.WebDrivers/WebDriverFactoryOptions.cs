@@ -10,8 +10,21 @@ namespace Gsemac.Net.WebDrivers {
 
         public bool AutoUpdateEnabled { get; set; } = true;
         public bool IgnoreUpdateErrors { get; set; } = true;
-        public WebBrowserId WebBrowserId { get; set; } = WebBrowserId.Unknown;
-        public IWebBrowserInfo DefaultWebBrowserInfo { get; set; }
+        public WebBrowserId WebBrowserId {
+            get => webBrowserId;
+            set => webBrowserId = value;
+        }
+        public IWebBrowserInfo WebBrowser {
+            get => webBrowserInfo;
+            set {
+
+                webBrowserInfo = value;
+
+                if (webBrowserInfo is object)
+                    WebBrowserId = webBrowserInfo.Id;
+
+            }
+        }
         public bool KillWebDriverProcessesOnDispose { get; set; } = false;
         public string WebDriverDirectoryPath { get; set; }
 
@@ -26,11 +39,16 @@ namespace Gsemac.Net.WebDrivers {
             AutoUpdateEnabled = options.AutoUpdateEnabled;
             IgnoreUpdateErrors = options.IgnoreUpdateErrors;
             WebBrowserId = options.WebBrowserId;
-            DefaultWebBrowserInfo = options.DefaultWebBrowserInfo;
+            WebBrowser = options.WebBrowser;
             KillWebDriverProcessesOnDispose = options.KillWebDriverProcessesOnDispose;
             WebDriverDirectoryPath = options.WebDriverDirectoryPath;
 
         }
+
+        // Private members
+
+        private WebBrowserId webBrowserId = WebBrowserId.Unknown;
+        private IWebBrowserInfo webBrowserInfo;
 
     }
 

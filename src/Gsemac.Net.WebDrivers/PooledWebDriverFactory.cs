@@ -75,7 +75,7 @@ namespace Gsemac.Net.WebDrivers {
 
         public IWebDriver Create() {
 
-            return CreateInternal(webBrowserInfo: options.DefaultWebBrowserInfo);
+            return CreateInternal(webBrowserInfo: options.WebBrowser);
 
         }
         public IWebDriver Create(IWebBrowserInfo webBrowserInfo) {

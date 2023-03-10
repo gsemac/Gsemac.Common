@@ -20,7 +20,7 @@ namespace Gsemac.Net.WebDrivers {
 
             WebBrowserId webBrowserId = webDriverFactoryOptions.WebBrowserId;
 
-            IWebBrowserInfo webBrowserInfo = webDriverFactoryOptions.DefaultWebBrowserInfo ??
+            IWebBrowserInfo webBrowserInfo = webDriverFactoryOptions.WebBrowser ??
                 (webBrowserId != WebBrowserId.Unknown ? WebBrowserInfoFactory.Default.GetInfo(webBrowserId) : WebBrowserInfoFactory.Default.GetDefaultWebBrowser());
 
             return Create(webBrowserInfo);

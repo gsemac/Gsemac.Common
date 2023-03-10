@@ -7,7 +7,7 @@ using System.IO;
 
 namespace Gsemac.Net.WebDrivers {
 
-    public class EdgeWebDriverFactory :
+    public sealed class EdgeWebDriverFactory :
          WebDriverFactoryBase {
 
         // Public members
