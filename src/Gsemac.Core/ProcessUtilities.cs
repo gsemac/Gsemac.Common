@@ -12,6 +12,9 @@ namespace Gsemac.Core {
 
         public static IEnumerable<Process> GetProcessesByFileName(string fileName) {
 
+            // TODO: It might be better to check the path associated with the process and compare the file name instead of the process name.
+            // This approach tends to work in practice, but I don't know if the process name always matches the filename.
+
             if (string.IsNullOrWhiteSpace(fileName))
                 return Enumerable.Empty<Process>();
 
@@ -40,9 +43,25 @@ namespace Gsemac.Core {
             if (string.IsNullOrWhiteSpace(filePath))
                 return false;
 
-            string processExecutablePath = process.MainModule.FileName;
+            string processPath = process.MainModule.FileName;
 
-            return !string.IsNullOrWhiteSpace(processExecutablePath) && processExecutablePath.Equals(filePath);
+            if (string.IsNullOrWhiteSpace(processPath))
+                return false;
+
+            // Normalize the directory separators before doing the path comparison.
+
+            return NormalizeProcessPath(filePath)
+                .Equals(NormalizeProcessPath(processPath));
+
+
+        }
+        private static string NormalizeProcessPath(string processPath) {
+
+            if (string.IsNullOrWhiteSpace(processPath))
+                return processPath;
+
+            return Path.GetFullPath(processPath)
+                .Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar);
 
         }
 
