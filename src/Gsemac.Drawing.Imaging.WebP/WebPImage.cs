@@ -32,28 +32,16 @@ namespace Gsemac.Drawing.Imaging {
 
         }
 
-        public WebPImage(IImage image, WebP decoder, byte[] webPData) {
+        public WebPImage(IImage image, int frameCount, int animationIterations, TimeSpan animationDelay) {
+
+            if (image is null)
+                throw new ArgumentNullException(nameof(image));
 
             this.image = image;
 
-            // Get the animation info.
-
-            decoder.GetInfo(webPData, out _, out _, out _, out bool hasAnimation, out string _);
-
-            if (hasAnimation) {
-
-                using (IWebPDemuxer demuxer = new WebPDemuxer(webPData)) {
-
-                    FrameCount = demuxer.GetI(WebPFormatFeature.FrameCount);
-                    AnimationIterations = demuxer.GetI(WebPFormatFeature.LoopCount);
-
-                    IWebPFrame frame = demuxer.GetFrame(1); // WebP frame indices are 1-based
-
-                    AnimationDelay = frame.Duration;
-
-                }
-
-            }
+            FrameCount = frameCount;
+            AnimationIterations = animationIterations;
+            AnimationDelay = animationDelay;
 
         }
 

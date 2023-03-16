@@ -61,6 +61,15 @@ namespace Gsemac.Drawing.Imaging.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to This decoder does not support decoding animated WebP images..
+        /// </summary>
+        internal static string CannotDecodeAnimatedWebPImage {
+            get {
+                return ResourceManager.GetString("CannotDecodeAnimatedWebPImage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Index was out of range. Must be non-negative and less than the size of the collection..
         /// </summary>
         internal static string IndexOutOfRange {

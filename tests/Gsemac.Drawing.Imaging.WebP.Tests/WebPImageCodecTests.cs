@@ -1,5 +1,4 @@
 using Gsemac.Drawing.Extensions;
-using Gsemac.Drawing.Imaging.Extensions;
 using Gsemac.Drawing.Imaging.WebP.Tests.Properties;
 using Gsemac.IO;
 using Gsemac.IO.Extensions;
@@ -18,7 +17,11 @@ namespace Gsemac.Drawing.Imaging.WebP.Tests {
         [TestMethod]
         public void TestAnimationInfoIsValidWithAnimatedWebP() {
 
-            using (IImage image = ImageFromFile("animated.webp")) {
+            IImageDecoderOptions options = new ImageDecoderOptions() {
+                Mode = ImageDecoderMode.Metadata,
+            };
+
+            using (IImage image = ImageFromFile("animated.webp", options)) {
 
                 Assert.IsNotNull(image);
 
@@ -44,6 +47,15 @@ namespace Gsemac.Drawing.Imaging.WebP.Tests {
 
         }
         [TestMethod]
+        public void TestAttemptingToDecodeAnimatedWebPThrowsException() {
+
+            // Animaed WebP images are are currently unsupported by WebPWrapper.
+
+            Assert.ThrowsException<FileFormatException>(() => ImageFromFile("animated.webp"));
+
+        }
+
+        [TestMethod]
         public void TestConvertWebPToDifferentImageFormat() {
 
             using (IImage image = ImageFromFile("static.webp"))
@@ -61,10 +73,18 @@ namespace Gsemac.Drawing.Imaging.WebP.Tests {
 
         private static IImage ImageFromFile(string fileName) {
 
+            return ImageFromFile(fileName, ImageDecoderOptions.Default);
+
+        }
+        private static IImage ImageFromFile(string fileName, IImageDecoderOptions options) {
+
+            if (options is null)
+                throw new ArgumentNullException(nameof(options));
+
             IImageCodec codec = new WebPImageCodec();
 
             using (Stream stream = File.OpenRead(Path.Combine(SamplePaths.ImagesSamplesDirectoryPath, fileName)))
-                return codec.Decode(stream);
+                return codec.Decode(stream, options);
 
         }
 

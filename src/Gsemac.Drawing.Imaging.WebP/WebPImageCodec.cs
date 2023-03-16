@@ -1,10 +1,12 @@
 ﻿#if NETFRAMEWORK
 
 using Gsemac.Drawing.Extensions;
+using Gsemac.Drawing.Imaging.Properties;
 using Gsemac.IO;
 using Gsemac.IO.Extensions;
 using Gsemac.IO.FileFormats;
 using Gsemac.Reflection.Plugins;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
@@ -42,7 +44,36 @@ namespace Gsemac.Drawing.Imaging {
 
                 IImage image = ImageFactory.Default.FromBitmap(decodedWebPBitmap, format: ImageFormat.WebP, codec: this);
 
-                return new WebPImage(image, decoder, webPData);
+                int frameCount = 1;
+                int animationIterations = 0;
+                TimeSpan animationDelay = TimeSpan.Zero;
+
+                // Decode the animation data.
+
+                decoder.GetInfo(webPData, out _, out _, out _, out bool hasAnimation, out string _);
+
+                if (hasAnimation) {
+
+                    // TODO: WebPWrapper doesn't support decoding animated images
+                    // Fail on animated images if we're attempting to read anything more than metadata.
+
+                    if (options.Mode != ImageDecoderMode.Metadata)
+                        throw new FileFormatException(ExceptionMessages.CannotDecodeAnimatedWebPImage);
+
+                    using (IWebPDemuxer demuxer = new WebPDemuxer(webPData)) {
+
+                        frameCount = demuxer.GetI(WebPFormatFeature.FrameCount);
+                        animationIterations = demuxer.GetI(WebPFormatFeature.LoopCount);
+
+                        IWebPFrame frame = demuxer.GetFrame(1); // WebP frame indices are 1-based
+
+                        animationDelay = frame.Duration;
+
+                    }
+
+                }
+
+                return new WebPImage(image, frameCount, animationIterations, animationDelay);
 
             }
 
