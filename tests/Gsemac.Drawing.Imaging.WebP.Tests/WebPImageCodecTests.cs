@@ -1,4 +1,3 @@
-using Gsemac.Drawing.Extensions;
 using Gsemac.Drawing.Imaging.WebP.Tests.Properties;
 using Gsemac.IO;
 using Gsemac.IO.Extensions;

@@ -1,4 +1,3 @@
-using Gsemac.Drawing.Extensions;
 using Gsemac.Drawing.Imaging.Extensions;
 using Gsemac.Drawing.Imaging.ImageMagick.Tests.Properties;
 using Gsemac.IO;

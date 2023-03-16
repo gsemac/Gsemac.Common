@@ -1,9 +1,9 @@
 ﻿#if NETFRAMEWORK
 
-using Gsemac.Drawing.Extensions;
 using System.Drawing;
 
-namespace Gsemac.Drawing.Imaging.Filters {
+namespace Gsemac.Drawing.Imaging.Filters
+{
 
     public class WatermarkImageFilter :
         IImageFilter {

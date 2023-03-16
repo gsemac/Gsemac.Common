@@ -1,22 +1,26 @@
-﻿using Gsemac.Drawing.Imaging;
+﻿using Gsemac.Drawing;
+using Gsemac.Drawing.Imaging;
 using Gsemac.IO;
 using Gsemac.IO.Extensions;
 using System;
 using System.Drawing;
 using System.IO;
 
-namespace Gsemac.Drawing.Extensions {
+namespace Gsemac.Drawing {
 
-    public static class ImageFactoryExtensions {
+    public static class ImageFactoryExtensions
+    {
 
         // Public members
 
-        public static IImage FromFile(this IImageFactory imageFactory, string filePath) {
+        public static IImage FromFile(this IImageFactory imageFactory, string filePath)
+        {
 
-            return FromFile(imageFactory, filePath, ImageDecoderOptions.Default);
+            return imageFactory.FromFile(filePath, ImageDecoderOptions.Default);
 
         }
-        public static IImage FromFile(this IImageFactory imageFactory, string filePath, IImageDecoderOptions options) {
+        public static IImage FromFile(this IImageFactory imageFactory, string filePath, IImageDecoderOptions options)
+        {
 
             if (imageFactory is null)
                 throw new ArgumentNullException(nameof(imageFactory));
@@ -24,9 +28,11 @@ namespace Gsemac.Drawing.Extensions {
             if (options is null)
                 throw new ArgumentNullException(nameof(options));
 
-            if (options.Format is null) {
+            if (options.Format is null)
+            {
 
-                options = new ImageDecoderOptions(options) {
+                options = new ImageDecoderOptions(options)
+                {
                     Format = FileFormatFactory.Default.FromFile(filePath),
                 };
 
@@ -36,7 +42,8 @@ namespace Gsemac.Drawing.Extensions {
                 return imageFactory.FromStream(stream, options);
 
         }
-        public static IImage FromStream(this IImageFactory imageFactory, Stream stream) {
+        public static IImage FromStream(this IImageFactory imageFactory, Stream stream)
+        {
 
             if (imageFactory is null)
                 throw new ArgumentNullException(nameof(imageFactory));
@@ -48,7 +55,8 @@ namespace Gsemac.Drawing.Extensions {
 
         }
 
-        public static IImage FromBitmap(this IImageFactory imageFactory, Image image) {
+        public static IImage FromBitmap(this IImageFactory imageFactory, Image image)
+        {
 
             if (imageFactory is null)
                 throw new ArgumentNullException(nameof(imageFactory));
@@ -59,7 +67,8 @@ namespace Gsemac.Drawing.Extensions {
             return imageFactory.FromBitmap(image, null, null);
 
         }
-        public static IImage FromBitmap(this IImageFactory imageFactory, Image image, IFileFormat format, IImageCodec codec) {
+        public static IImage FromBitmap(this IImageFactory imageFactory, Image image, IFileFormat format, IImageCodec codec)
+        {
 
             // The "format" and "codec" arguments are allowed to be null, and will be set to defaults by GdiImage's constructor.
 
