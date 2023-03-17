@@ -39,6 +39,26 @@ namespace Gsemac.Forms {
 
         }
 
+        public static string EscapeLabelText(string text) {
+
+            // The "UseMnemonic" property can be set to "false" instead of escaping the text.
+            // However, this property is not available on the ToolStripLabel control.
+
+            if (string.IsNullOrWhiteSpace(text))
+                return text;
+
+            return text.Replace("&", "&&");
+
+        }
+        public static string UnescapeLabelText(string text) {
+
+            if (string.IsNullOrWhiteSpace(text))
+                return text;
+
+            return text.Replace("&&", "&");
+
+        }
+
         public static TextFormatFlags GetTextFormatFlags(ContentAlignment contentAlignment) {
 
             TextFormatFlags flags = TextFormatFlags.Default;
