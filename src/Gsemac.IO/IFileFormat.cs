@@ -10,7 +10,7 @@ namespace Gsemac.IO {
 
         IEnumerable<string> Extensions { get; }
         IEnumerable<IFileSignature> Signatures { get; }
-        IMimeType MimeType { get; }
+        IEnumerable<IMimeType> MimeTypes { get; }
 
     }
 

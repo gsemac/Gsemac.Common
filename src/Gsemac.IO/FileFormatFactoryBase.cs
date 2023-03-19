@@ -16,7 +16,7 @@ namespace Gsemac.IO {
                 throw new ArgumentNullException(nameof(mimeType));
 
             IFileFormat fileFormat = GetKnownFileFormats()
-                .Where(format => format.MimeType.Equals(mimeType))
+                .Where(format => format.MimeTypes.Any(m => m.Equals(mimeType)))
                 .FirstOrDefault();
 
             return fileFormat;
@@ -39,8 +39,12 @@ namespace Gsemac.IO {
             else
                 ext = PathUtilities.NormalizeFileExtension(ext);
 
+            // Find formats with a matching extension, prioritizing more restrictive formats (fewer overall file extensions).
+            // For example, if a file has the ".webm" extension, it's more likely to be a WebM than an generic MKV.
+
             IFileFormat fileFormat = GetKnownFileFormats()
                 .Where(format => format.Extensions.Any(formatExt => formatExt.Equals(ext, StringComparison.OrdinalIgnoreCase)))
+                .OrderBy(format => format.Extensions.Count())
                 .FirstOrDefault();
 
             return fileFormat;
@@ -55,10 +59,14 @@ namespace Gsemac.IO {
 
                 streamBytes.SetLength(stream.Read(streamBytes.GetBuffer(), 0, bufferSize));
 
+                // Find formats with a matching signature, prioritizing less restrictive formats (more overall file extensions).
+                // For example, if a file has an MKV signature, we can't know for certain if it's a WebM or not without analyzing the contents.
+
                 IFileFormat fileFormat = GetKnownFileFormats()
                     .Where(format => format.Signatures.Any())
                     .OrderByDescending(format => format.Signatures.Max(sig => sig.Length))
                     .Where(format => FormatIsMatch(format, stream))
+                    .OrderByDescending(format => format.Extensions.Count())
                     .FirstOrDefault();
 
                 return fileFormat;

@@ -5,12 +5,16 @@ namespace Gsemac.IO.FileFormats {
     public class SwfFileFormat :
         FileFormatBase {
 
-        public override IEnumerable<string> Extensions => new string[] { ".swf" };
-        public override IEnumerable<IFileSignature> Signatures => new IFileSignature[] {
+        public override IEnumerable<string> Extensions => new[] {
+            ".swf"
+        };
+        public override IEnumerable<IFileSignature> Signatures => new[] {
             new FileSignature(0x43, 0x57, 0x53), // CWS
             new FileSignature(0x46, 0x57, 0x53), // FWS
         };
-        public override IMimeType MimeType => new MimeType("application/x-shockwave-flash");
+        public override IEnumerable<IMimeType> MimeTypes => new[] {
+            new MimeType("application/x-shockwave-flash")
+        };
 
     }
 

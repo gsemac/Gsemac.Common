@@ -11,7 +11,7 @@ namespace Gsemac.IO {
 
         public abstract IEnumerable<string> Extensions { get; }
         public virtual IEnumerable<IFileSignature> Signatures => Enumerable.Empty<IFileSignature>();
-        public abstract IMimeType MimeType { get; }
+        public abstract IEnumerable<IMimeType> MimeTypes { get; }
 
         public int CompareTo(object other) {
 
@@ -73,12 +73,17 @@ namespace Gsemac.IO {
 
         public override int GetHashCode() {
 
-            return (MimeType.ToString().ToLowerInvariant() ?? Extensions?.FirstOrDefault()?.ToLowerInvariant()).GetHashCode();
+            string fileTypeStr = GetMimeTypeString(this)?.ToLowerInvariant();
+
+            if (string.IsNullOrWhiteSpace(fileTypeStr))
+                fileTypeStr = Extensions?.FirstOrDefault()?.ToLowerInvariant();
+
+            return (fileTypeStr ?? string.Empty).GetHashCode();
 
         }
         public override string ToString() {
 
-            return MimeType?.ToString();
+            return MimeTypes?.FirstOrDefault()?.ToString();
 
         }
 
@@ -120,7 +125,7 @@ namespace Gsemac.IO {
 
         private static string GetMimeTypeString(IFileFormat fileFormat) {
 
-            return (fileFormat?.MimeType?.ToString() ?? "").ToLowerInvariant();
+            return (fileFormat?.MimeTypes?.FirstOrDefault()?.ToString() ?? string.Empty).ToLowerInvariant();
 
         }
 
