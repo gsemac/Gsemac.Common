@@ -16,6 +16,7 @@ namespace Gsemac.IO.FileFormats {
             new MimeType("image/x-icon"),
             new MimeType("image/ico"),
         };
+        public override string Name => "Icon";
 
     }
 

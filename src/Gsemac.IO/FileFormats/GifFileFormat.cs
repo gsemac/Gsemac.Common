@@ -15,6 +15,7 @@ namespace Gsemac.IO.FileFormats {
         public override IEnumerable<IMimeType> MimeTypes => new[] {
             new MimeType("image/gif")
         };
+        public override string Name => "GIF Image";
 
     }
 

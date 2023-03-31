@@ -15,6 +15,7 @@ namespace Gsemac.IO.FileFormats {
         public override IEnumerable<IMimeType> MimeTypes => new[] {
             new MimeType("image/jxl")
         };
+        public override string Name => "JPEG XL Image";
 
     }
 

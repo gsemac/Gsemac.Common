@@ -14,6 +14,7 @@ namespace Gsemac.IO.FileFormats {
         public override IEnumerable<IMimeType> MimeTypes => new[] {
             new MimeType("image/webp")
         };
+        public override string Name => "WebP Image";
 
     }
 

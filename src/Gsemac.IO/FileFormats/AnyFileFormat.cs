@@ -13,6 +13,7 @@ namespace Gsemac.IO.FileFormats {
         public override IEnumerable<IMimeType> MimeTypes => new[] {
             new MimeType("*/*")
         };
+        public override string Name => "Any";
 
     }
 

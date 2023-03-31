@@ -16,6 +16,7 @@ namespace Gsemac.IO.FileFormats {
         public override IEnumerable<IMimeType> MimeTypes => new[] {
             new MimeType("video/mp4")
         };
+        public override string Name => "MP4 Video";
 
     }
 

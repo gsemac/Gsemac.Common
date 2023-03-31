@@ -14,6 +14,7 @@ namespace Gsemac.IO.FileFormats {
         public override IEnumerable<IMimeType> MimeTypes => new[] {
             new MimeType("image/wmf")
         };
+        public override string Name => "Windows Metafile";
 
     }
 

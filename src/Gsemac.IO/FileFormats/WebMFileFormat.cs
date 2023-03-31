@@ -19,6 +19,7 @@ namespace Gsemac.IO.FileFormats {
             new MimeType("video/webm"),
             new MimeType("audio/webm"),
         };
+        public override string Name => "WebM Video";
 
     }
 

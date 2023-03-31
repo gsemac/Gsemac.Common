@@ -16,6 +16,7 @@ namespace Gsemac.IO.FileFormats {
         public override IEnumerable<IMimeType> MimeTypes => new[] {
             new MimeType("application/x-rar-compressed")
         };
+        public override string Name => "RAR Archive";
 
     }
 

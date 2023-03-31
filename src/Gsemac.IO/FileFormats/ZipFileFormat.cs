@@ -18,6 +18,7 @@ namespace Gsemac.IO.FileFormats {
         public override IEnumerable<IMimeType> MimeTypes => new[] {
             new MimeType("application/zip")
         };
+        public override string Name => "ZIP Archive";
 
     }
 

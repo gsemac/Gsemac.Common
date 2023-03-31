@@ -18,6 +18,7 @@ namespace Gsemac.IO.FileFormats {
         public override IEnumerable<IMimeType> MimeTypes => new[] {
             new MimeType("image/jpeg")
         };
+        public override string Name => "JPEG Image";
 
     }
 

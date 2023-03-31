@@ -13,8 +13,10 @@ namespace Gsemac.IO.FileFormats {
             new FileSignature(0x46, 0x57, 0x53), // FWS
         };
         public override IEnumerable<IMimeType> MimeTypes => new[] {
-            new MimeType("application/x-shockwave-flash")
+            new MimeType("application/x-shockwave-flash"),
+            new MimeType("application/vnd.adobe.flash.movie"),
         };
+        public override string Name => "Adobe Flash";
 
     }
 

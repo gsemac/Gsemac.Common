@@ -15,6 +15,7 @@ namespace Gsemac.IO.FileFormats {
         public override IEnumerable<IMimeType> MimeTypes => new[] {
             new MimeType("application/x-7z-compressed")
         };
+        public override string Name => "7z Archive";
 
     }
 

@@ -11,6 +11,7 @@ namespace Gsemac.IO {
         IEnumerable<string> Extensions { get; }
         IEnumerable<IFileSignature> Signatures { get; }
         IEnumerable<IMimeType> MimeTypes { get; }
+        string Name { get; }
 
     }
 

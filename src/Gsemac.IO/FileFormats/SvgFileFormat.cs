@@ -14,6 +14,7 @@ namespace Gsemac.IO.FileFormats {
         public override IEnumerable<IMimeType> MimeTypes => new[] {
             new MimeType("image/svg+xml")
         };
+        public override string Name => "SVG Graphics";
 
     }
 

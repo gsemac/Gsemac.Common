@@ -16,6 +16,7 @@ namespace Gsemac.IO.FileFormats {
         public override IEnumerable<IMimeType> MimeTypes => new[] {
             new MimeType("text/html")
         };
+        public override string Name => "HTML Document";
 
     }
 

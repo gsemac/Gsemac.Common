@@ -22,6 +22,7 @@ namespace Gsemac.IO.FileFormats {
             new MimeType("video/x-matroska"),
             new MimeType("audio/x-matroska"),
         };
+        public override string Name => "Matroska Video";
 
     }
 

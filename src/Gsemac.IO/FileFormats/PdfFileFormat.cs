@@ -14,6 +14,7 @@ namespace Gsemac.IO.FileFormats {
         public override IEnumerable<IMimeType> MimeTypes => new[] {
             new MimeType("application/pdf")
         };
+        public override string Name => "PDF Document";
 
     }
 
