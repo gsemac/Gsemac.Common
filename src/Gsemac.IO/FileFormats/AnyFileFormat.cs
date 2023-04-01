@@ -8,7 +8,7 @@ namespace Gsemac.IO.FileFormats {
         // Public members
 
         public override IEnumerable<string> Extensions => new[] {
-            "*"
+            ".*"
         };
         public override IEnumerable<IMimeType> MimeTypes => new[] {
             new MimeType("*/*")
