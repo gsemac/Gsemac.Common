@@ -144,12 +144,12 @@ namespace Gsemac.Forms {
 
         }
 
-        public static int GetScrollBarPosition(Control control) {
+        public static int GetScrollPosition(Control control) {
 
-            return GetScrollBarPosition(control, ScrollBars.Vertical);
+            return GetScrollPosition(control, ScrollBars.Vertical);
 
         }
-        public static int GetScrollBarPosition(Control control, ScrollBars scrollBar) {
+        public static int GetScrollPosition(Control control, ScrollBars scrollBar) {
 
             if (control is null)
                 throw new ArgumentNullException(nameof(control));
@@ -167,12 +167,12 @@ namespace Gsemac.Forms {
             return User32.GetScrollPos(control.Handle, scrollBarNum);
 
         }
-        public static void SetScrollBarPosition(Control control, int position) {
+        public static void SetScrollPosition(Control control, int position) {
 
-            SetScrollBarPosition(control, ScrollBars.Vertical, position);
+            SetScrollPosition(control, ScrollBars.Vertical, position);
 
         }
-        public static void SetScrollBarPosition(Control control, ScrollBars scrollBar, int position) {
+        public static void SetScrollPosition(Control control, ScrollBars scrollBar, int position) {
 
             if (control is null)
                 throw new ArgumentNullException(nameof(control));
