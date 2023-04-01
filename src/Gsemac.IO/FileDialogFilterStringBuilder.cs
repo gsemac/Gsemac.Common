@@ -16,7 +16,7 @@ namespace Gsemac.IO {
             if (format is null)
                 throw new ArgumentNullException(nameof(format));
 
-            if (format.Equals(new AnyFileFormat())) {
+            if (format.Equals(FileFormat.Any)) {
 
                 showAllFilesOption = true;
 

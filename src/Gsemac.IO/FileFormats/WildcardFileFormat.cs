@@ -2,7 +2,7 @@
 
 namespace Gsemac.IO.FileFormats {
 
-    public sealed class AnyFileFormat :
+    public sealed class WildcardFileFormat :
         FileFormatBase {
 
         // Public members

@@ -48,7 +48,7 @@ namespace Gsemac.IO {
         private static IEnumerable<IFileFormat> InitializeKnownFileFormats() {
 
             return TypeUtilities.GetTypesImplementingInterface<IFileFormat>()
-                .Where(type => type != typeof(AnyFileFormat))
+                .Where(type => type != typeof(WildcardFileFormat))
                 .Where(type => type.IsDefaultConstructable())
                 .Select(type => Activator.CreateInstance(type))
                 .OfType<IFileFormat>();

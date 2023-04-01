@@ -4,7 +4,7 @@ namespace Gsemac.IO {
 
     public static class FileFormat {
 
-        public static IFileFormat Any => new AnyFileFormat();
+        public static IFileFormat Any => new WildcardFileFormat();
 
     }
 
