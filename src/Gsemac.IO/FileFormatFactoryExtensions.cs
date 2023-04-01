@@ -9,11 +9,26 @@ namespace Gsemac.IO {
 
         public static IFileFormat FromFile(this IFileFormatFactory fileFormatFactory, string filePath) {
 
-            using (Stream stream = File.OpenRead(filePath))
-                return fileFormatFactory.FromStream(stream) ?? fileFormatFactory.FromFileExtension(filePath);
+            if (fileFormatFactory is null)
+                throw new ArgumentNullException(nameof(fileFormatFactory));
+
+            if (File.Exists(filePath)) {
+
+                using (Stream stream = File.OpenRead(filePath))
+                    return fileFormatFactory.FromStream(stream) ?? fileFormatFactory.FromFileExtension(filePath);
+
+            }
+            else {
+
+                return fileFormatFactory.FromFileExtension(filePath);
+
+            }
 
         }
         public static IFileFormat FromMimeType(this IFileFormatFactory fileFormatFactory, string mimeType) {
+
+            if (fileFormatFactory is null)
+                throw new ArgumentNullException(nameof(fileFormatFactory));
 
             return fileFormatFactory.FromMimeType(new MimeType(mimeType));
 
@@ -21,15 +36,33 @@ namespace Gsemac.IO {
 
         public static IFileFormat FromStream(this IFileFormatFactory fileFormatFactory, Stream stream) {
 
+            if (fileFormatFactory is null)
+                throw new ArgumentNullException(nameof(fileFormatFactory));
+
+            if (stream is null)
+                throw new ArgumentNullException(nameof(stream));
+
             return fileFormatFactory.FromStream(stream, FileFormatFactory.DefaultReadBufferSize);
 
         }
         public static Stream FromStream(this IFileFormatFactory fileFormatFactory, Stream stream, out IFileFormat fileFormat) {
 
+            if (fileFormatFactory is null)
+                throw new ArgumentNullException(nameof(fileFormatFactory));
+
+            if (stream is null)
+                throw new ArgumentNullException(nameof(stream));
+
             return fileFormatFactory.FromStream(stream, bufferSize: FileFormatFactory.DefaultReadBufferSize, out fileFormat);
 
         }
         public static Stream FromStream(this IFileFormatFactory fileFormatFactory, Stream stream, int bufferSize, out IFileFormat fileFormat) {
+
+            if (fileFormatFactory is null)
+                throw new ArgumentNullException(nameof(fileFormatFactory));
+
+            if (stream is null)
+                throw new ArgumentNullException(nameof(stream));
 
             // Read the file signature from the stream into a buffer, which is then concatenated with the original stream.
             // This allows us to read the file signature from streams that don't support seeking.
