@@ -1,6 +1,5 @@
 ﻿using Gsemac.Drawing.Imaging;
 using Gsemac.IO;
-using Gsemac.IO.Extensions;
 using System;
 using System.Collections.Generic;
 using System.IO;

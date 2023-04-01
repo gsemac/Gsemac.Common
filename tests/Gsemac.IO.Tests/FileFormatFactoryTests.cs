@@ -1,5 +1,4 @@
-﻿using Gsemac.IO.Extensions;
-using Gsemac.IO.FileFormats;
+﻿using Gsemac.IO.FileFormats;
 using Gsemac.IO.Tests.Properties;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.IO;

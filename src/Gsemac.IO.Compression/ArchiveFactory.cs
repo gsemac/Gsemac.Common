@@ -1,5 +1,4 @@
-﻿using Gsemac.IO.Extensions;
-using Gsemac.Polyfills.Microsoft.Extensions.DependencyInjection;
+﻿using Gsemac.Polyfills.Microsoft.Extensions.DependencyInjection;
 using Gsemac.Reflection.Plugins;
 using System;
 using System.Collections.Generic;

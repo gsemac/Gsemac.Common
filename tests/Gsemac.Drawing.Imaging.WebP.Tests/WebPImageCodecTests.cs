@@ -1,6 +1,5 @@
 using Gsemac.Drawing.Imaging.WebP.Tests.Properties;
 using Gsemac.IO;
-using Gsemac.IO.Extensions;
 using Gsemac.IO.FileFormats;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;

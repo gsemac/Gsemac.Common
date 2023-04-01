@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 
-namespace Gsemac.IO.Extensions {
+namespace Gsemac.IO {
 
     public static class FileFormatFactoryExtensions {
 
@@ -26,7 +26,7 @@ namespace Gsemac.IO.Extensions {
         }
         public static Stream FromStream(this IFileFormatFactory fileFormatFactory, Stream stream, out IFileFormat fileFormat) {
 
-            return FromStream(fileFormatFactory, stream, bufferSize: FileFormatFactory.DefaultReadBufferSize, out fileFormat);
+            return fileFormatFactory.FromStream(stream, bufferSize: FileFormatFactory.DefaultReadBufferSize, out fileFormat);
 
         }
         public static Stream FromStream(this IFileFormatFactory fileFormatFactory, Stream stream, int bufferSize, out IFileFormat fileFormat) {
