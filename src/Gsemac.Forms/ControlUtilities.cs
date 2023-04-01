@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Gsemac.Win32.Native;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
@@ -140,6 +141,70 @@ namespace Gsemac.Forms {
                 scrollBars |= ScrollBars.Horizontal;
 
             return scrollBars;
+
+        }
+
+        public static int GetScrollBarPosition(Control control) {
+
+            return GetScrollBarPosition(control, ScrollBars.Vertical);
+
+        }
+        public static int GetScrollBarPosition(Control control, ScrollBars scrollBar) {
+
+            if (control is null)
+                throw new ArgumentNullException(nameof(control));
+
+            if (scrollBar == ScrollBars.Both)
+                throw new ArgumentOutOfRangeException(nameof(scrollBar));
+
+            if (scrollBar == ScrollBars.None)
+                return 0;
+
+            int scrollBarNum = scrollBar == ScrollBars.Horizontal ?
+                Defines.SB_HORZ :
+                Defines.SB_VERT;
+
+            return User32.GetScrollPos(control.Handle, scrollBarNum);
+
+        }
+        public static void SetScrollBarPosition(Control control, int position) {
+
+            SetScrollBarPosition(control, ScrollBars.Vertical, position);
+
+        }
+        public static void SetScrollBarPosition(Control control, ScrollBars scrollBar, int position) {
+
+            if (control is null)
+                throw new ArgumentNullException(nameof(control));
+
+            if (scrollBar == ScrollBars.None)
+                return;
+
+            int scrollBarNum = Defines.SB_VERT;
+            int scrollBarDirection = Defines.WM_VSCROLL;
+
+            if (scrollBar == ScrollBars.Both) {
+
+                // TODO: What direction should be set here?
+
+                scrollBarNum = Defines.SB_BOTH;
+
+            }
+            else if (scrollBar == ScrollBars.Horizontal) {
+
+                scrollBarNum = Defines.SB_HORZ;
+                scrollBarDirection = Defines.WM_HSCROLL;
+
+            }
+
+            User32.SetScrollPos(control.Handle, scrollBarNum, position, true);
+
+            // We need to adjust the position before using SendMessage.
+            // https://stackoverflow.com/a/39027122/5383169
+
+            IntPtr msgPosition = new IntPtr((position << 16) + 4);
+
+            User32.SendMessage(control.Handle, scrollBarDirection, msgPosition, IntPtr.Zero);
 
         }
 

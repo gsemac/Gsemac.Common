@@ -79,6 +79,23 @@
 
         public const int SHTDN_REASON_MAJOR_OTHER = 0x00000000;
 
+        /// <summary>
+        /// Sets the position of the scroll box in a window's standard horizontal scroll bar.
+        /// </summary>
+        public const int SB_HORZ = 0;
+        /// <summary>
+        /// Sets the position of the scroll box in a window's standard vertical scroll bar.
+        /// </summary>
+        public const int SB_VERT = 1;
+        /// <summary>
+        /// Sets the position of the scroll box in a scroll bar control. The hwnd parameter must be the handle to the scroll bar control.
+        /// </summary>
+        public const int SB_CTL = 2;
+        public const int SB_BOTH = 3;
+
+        public const int WM_HSCROLL = 0x0114;
+        public const int WM_VSCROLL = 0x0115;
+
     }
 
 }

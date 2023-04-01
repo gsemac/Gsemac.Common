@@ -22,6 +22,16 @@ namespace Gsemac.Win32.Native {
             return ExitWindowsExNative(uFlags, dwReason);
 
         }
+        public static int GetScrollPos(IntPtr hWnd, int nBar) {
+
+            return GetScrollPosNative(hWnd, nBar);
+
+        }
+        public static bool LockWindowUpdate(IntPtr hWndLock) {
+
+            return LockWindowUpdateNative(hWndLock);
+
+        }
         public static bool LockWorkStation() {
 
             return LockWorkStationNative();
@@ -47,6 +57,11 @@ namespace Gsemac.Win32.Native {
             return SendMessageNative(hWnd, wMsg, wParam, ref lParam);
 
         }
+        public static int SetScrollPos(IntPtr hWnd, int nBar, int nPos, bool bRedraw) {
+
+            return SetScrollPosNative(hWnd, nBar, nPos, bRedraw);
+
+        }
         public static bool SetWindowPos(IntPtr hWnd, int hWndInsertAfter, int x, int y, int cX, int cY, int uFlags) {
 
             return SetWindowPosNative(hWnd, hWndInsertAfter, x, y, cX, cY, uFlags);
@@ -66,6 +81,10 @@ namespace Gsemac.Win32.Native {
         private static extern bool DestroyIconNative(IntPtr hIcon);
         [DllImport("user32", EntryPoint = "ExitWindowsEx", SetLastError = true)]
         private static extern bool ExitWindowsExNative(uint uFlags, uint dwReason);
+        [DllImport("user32", EntryPoint = "GetScrollPos", SetLastError = true)]
+        private static extern int GetScrollPosNative(IntPtr hWnd, int nBar);
+        [DllImport("user32", EntryPoint = "LockWindowUpdate", SetLastError = true)]
+        private static extern bool LockWindowUpdateNative(IntPtr hWndLock);
         [DllImport("user32", EntryPoint = "LockWorkStation", SetLastError = true)]
         private static extern bool LockWorkStationNative();
         [DllImport("user32", EntryPoint = "ReleaseCapture")]
@@ -75,11 +94,13 @@ namespace Gsemac.Win32.Native {
         [DllImport("user32", EntryPoint = "SendMessage", SetLastError = true)]
         private static extern IntPtr SendMessageNative(IntPtr hWnd, int wMsg, IntPtr wParam, IntPtr lParam);
         [DllImport("user32", EntryPoint = "SendMessage", SetLastError = true)]
-        public static extern IntPtr SendMessageNative(IntPtr hWnd, int wMsg, IntPtr wParam, ref HDItemA lParam);
+        private static extern IntPtr SendMessageNative(IntPtr hWnd, int wMsg, IntPtr wParam, ref HDItemA lParam);
+        [DllImport("user32", EntryPoint = "SetScrollPos", SetLastError = true)]
+        private static extern int SetScrollPosNative(IntPtr hWnd, int nBar, int nPos, bool bRedraw);
         [DllImport("user32", EntryPoint = "SetWindowPos", SetLastError = true)]
-        public static extern bool SetWindowPosNative(IntPtr hWnd, int hWndInsertAfter, int x, int y, int cX, int cY, int uFlags);
+        private static extern bool SetWindowPosNative(IntPtr hWnd, int hWndInsertAfter, int x, int y, int cX, int cY, int uFlags);
         [DllImport("user32", EntryPoint = "ShowWindow", SetLastError = true)]
-        public static extern bool ShowWindowNative(IntPtr hWnd, int nCmdShow);
+        private static extern bool ShowWindowNative(IntPtr hWnd, int nCmdShow);
 
     }
 
