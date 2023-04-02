@@ -1,6 +1,6 @@
 ﻿using System.IO;
 
-namespace Gsemac.Text {
+namespace Gsemac.Core {
 
     public interface ISerializer {
 

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 
-namespace Gsemac.Text {
+namespace Gsemac.Core {
 
     public abstract class SerializerBase<T> :
         ISerializer<T> {
@@ -13,10 +13,13 @@ namespace Gsemac.Text {
 
         public virtual void Serialize(Stream outputStream, object data) {
 
+            if (outputStream is null)
+                throw new ArgumentNullException(nameof(outputStream));
+
             if (data is T dataT)
                 Serialize(outputStream, dataT);
             else
-                throw new ArgumentException($"Cannot serialize objects of type `{data.GetType().Name}`.", nameof(data));
+                throw new ArgumentException($"Attempted to serialize object of type `{data.GetType().Name}`. This serializer can only serialize objects of type `{typeof(T).Name}`.", nameof(data));
 
         }
         object ISerializer.Deserialize(Stream inputStream) {
