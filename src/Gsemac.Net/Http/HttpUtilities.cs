@@ -1,4 +1,6 @@
-﻿using System.Linq;
+﻿using Gsemac.Polyfills.System.Net;
+using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 
 namespace Gsemac.Net.Http {
@@ -277,11 +279,33 @@ namespace Gsemac.Net.Http {
 
         }
 
+        public static string GetAcceptEncodingString(DecompressionMethods decompressionMethods) {
+
+            return GetAcceptEncodingString((DecompressionMethodsEx)decompressionMethods);
+
+        }
+
         // Private members
 
         private static string GetFirstHeaderName(WebHeaderCollection headers) {
 
             return headers.AllKeys.Single();
+
+        }
+        private static string GetAcceptEncodingString(DecompressionMethodsEx decompressionMethods) {
+
+            List<string> methodStrings = new List<string>();
+
+            if (decompressionMethods.HasFlag(DecompressionMethodsEx.All) || decompressionMethods.HasFlag(DecompressionMethodsEx.GZip))
+                methodStrings.Add("gzip");
+
+            if (decompressionMethods.HasFlag(DecompressionMethodsEx.All) || decompressionMethods.HasFlag(DecompressionMethodsEx.Deflate))
+                methodStrings.Add("deflate");
+
+            if (decompressionMethods.HasFlag(DecompressionMethodsEx.All) || decompressionMethods.HasFlag(DecompressionMethodsEx.Brotli))
+                methodStrings.Add("br");
+
+            return string.Join(", ", methodStrings);
 
         }
 

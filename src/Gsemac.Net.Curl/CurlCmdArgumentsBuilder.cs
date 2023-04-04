@@ -1,5 +1,6 @@
 ﻿using Gsemac.Core;
 using Gsemac.Net.Extensions;
+using Gsemac.Net.Http;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -19,15 +20,7 @@ namespace Gsemac.Net.Curl {
 
                 WithArgument("--compressed");
 
-                List<string> headerValues = new List<string>();
-
-                if (decompressionMethods.HasFlag(DecompressionMethods.GZip))
-                    headerValues.Add("gzip");
-
-                if (decompressionMethods.HasFlag(DecompressionMethods.Deflate))
-                    headerValues.Add("deflate");
-
-                string headerValue = string.Join(",", headerValues);
+                string headerValue = HttpUtilities.GetAcceptEncodingString(decompressionMethods);
 
                 if (!string.IsNullOrEmpty(headerValue))
                     WithArgument("--header", $"Accept-Encoding: {headerValue}");
