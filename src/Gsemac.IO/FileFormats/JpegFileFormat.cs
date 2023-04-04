@@ -6,12 +6,12 @@ namespace Gsemac.IO.FileFormats {
         FileFormatBase {
 
         public override IEnumerable<string> Extensions => new[] {
-            ".jpeg",
+            ".jpg",
             ".jfi",
             ".jfif",
             ".jif",
             ".jpe",
-            ".jpg",
+            ".jpeg",
         };
         public override IEnumerable<IFileSignature> Signatures => new[] {
             new FileSignature(0xFF, 0xD8, 0xFF, 0xD8),
