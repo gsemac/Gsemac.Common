@@ -68,7 +68,7 @@ namespace Gsemac.Net.WebDrivers {
                 throw new ArgumentNullException(nameof(logger));
 
             this.logger = new NamedLogger(logger, nameof(PooledWebDriverFactory));
-
+            options = webDriverFactoryOptions;
             baseFactory = new WebDriverFactory(webRequestFactory, webDriverOptions, webDriverFactoryOptions, logger);
 
         }
