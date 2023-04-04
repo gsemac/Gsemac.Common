@@ -19,7 +19,7 @@ namespace Gsemac.Net.Properties {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class DefaultHeaders {
@@ -61,7 +61,7 @@ namespace Gsemac.Net.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8.
+        ///   Looks up a localized string similar to text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7.
         /// </summary>
         internal static string Accept {
             get {
@@ -70,7 +70,16 @@ namespace Gsemac.Net.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to en-US,en;q=0.5.
+        ///   Looks up a localized string similar to gzip, deflate.
+        /// </summary>
+        internal static string AcceptEncoding {
+            get {
+                return ResourceManager.GetString("AcceptEncoding", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to en-US,en;q=0.9.
         /// </summary>
         internal static string AcceptLanguage {
             get {
@@ -79,7 +88,7 @@ namespace Gsemac.Net.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.45 Safari/537.36.
+        ///   Looks up a localized string similar to Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/111.0.0.0 Safari/537.36.
         /// </summary>
         internal static string UserAgent {
             get {

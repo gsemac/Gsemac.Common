@@ -118,12 +118,15 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="Accept" xml:space="preserve">
-    <value>text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8</value>
+    <value>text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7</value>
+  </data>
+  <data name="AcceptEncoding" xml:space="preserve">
+    <value>gzip, deflate</value>
   </data>
   <data name="AcceptLanguage" xml:space="preserve">
-    <value>en-US,en;q=0.5</value>
+    <value>en-US,en;q=0.9</value>
   </data>
   <data name="UserAgent" xml:space="preserve">
-    <value>Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.45 Safari/537.36</value>
+    <value>Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/111.0.0.0 Safari/537.36</value>
   </data>
 </root>
