@@ -40,7 +40,7 @@ namespace Gsemac.Net.WebDrivers {
             this(webRequestFactory, webDriverOptions, webDriverFactoryOptions, Logger.Null) {
         }
         public EdgeWebDriverFactory(IHttpWebRequestFactory webRequestFactory, IWebDriverOptions webDriverOptions, IWebDriverFactoryOptions webDriverFactoryOptions, ILogger logger) :
-            base(webRequestFactory, webDriverOptions, new WebDriverFactoryOptions(webDriverFactoryOptions) { WebBrowserId = WebBrowserId.Edge }, logger) {
+            base(webRequestFactory, webDriverOptions, new WebDriverFactoryOptions(webDriverFactoryOptions) { WebBrowserId = BrowserId.Edge }, logger) {
 
             this.webRequestFactory = webRequestFactory;
             this.webDriverFactoryOptions = webDriverFactoryOptions;
@@ -50,7 +50,7 @@ namespace Gsemac.Net.WebDrivers {
 
         // Protected members
 
-        protected override IWebDriver GetWebDriver(IWebBrowserInfo webBrowserInfo, IWebDriverOptions webDriverOptions) {
+        protected override IWebDriver GetWebDriver(IBrowserInfo webBrowserInfo, IWebDriverOptions webDriverOptions) {
 
             string webDriverDirectoryPath = Path.GetDirectoryName(webDriverOptions.WebDriverExecutablePath);
 

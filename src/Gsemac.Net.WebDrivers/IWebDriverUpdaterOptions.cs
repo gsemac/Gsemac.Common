@@ -4,7 +4,7 @@ namespace Gsemac.Net.WebDrivers {
 
     public interface IWebDriverUpdaterOptions {
 
-        WebBrowserId WebBrowserId { get; }
+        BrowserId WebBrowserId { get; }
         string WebDriverDirectoryPath { get; }
 
     }

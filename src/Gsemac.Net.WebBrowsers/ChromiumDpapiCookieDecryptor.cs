@@ -1,21 +1,25 @@
-﻿using System;
+﻿using Gsemac.Net.WebBrowsers.Properties;
+using System;
 using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
 
 namespace Gsemac.Net.WebBrowsers {
 
-    internal class DpapiChromeCookieDecryptor :
-        ICookieDecryptor {
+    internal sealed class ChromiumDpapiCookieDecryptor :
+        IBrowserCookieDecryptor {
 
         // Public members
 
         public byte[] DecryptCookie(byte[] encryptedBytes) {
 
+            if (encryptedBytes is null)
+                throw new ArgumentNullException(nameof(encryptedBytes));
+
             using (MemoryStream stream = new MemoryStream(encryptedBytes)) {
 
                 if (!CheckSignature(signatureBytes))
-                    throw new FormatException("Encrypted value is not in the correct format.");
+                    throw new FormatException(ExceptionMessages.EncryptedDataIsMalformed);
 
                 return ProtectedData.Unprotect(encryptedBytes, null, DataProtectionScope.CurrentUser);
 
@@ -25,6 +29,9 @@ namespace Gsemac.Net.WebBrowsers {
         public bool TryDecryptCookie(byte[] encryptedBytes, out byte[] decryptedBytes) {
 
             decryptedBytes = null;
+
+            if (encryptedBytes is null)
+                return false;
 
             if (!CheckSignature(encryptedBytes))
                 return false;

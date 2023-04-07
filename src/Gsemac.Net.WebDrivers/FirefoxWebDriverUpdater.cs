@@ -29,7 +29,7 @@ namespace Gsemac.Net.WebDrivers {
             this(webRequestFactory, webDriverUpdaterOptions, Logger.Null) {
         }
         public FirefoxWebDriverUpdater(IHttpWebRequestFactory webRequestFactory, IWebDriverUpdaterOptions webDriverUpdaterOptions, ILogger logger) :
-            base(webRequestFactory, new WebDriverUpdaterOptions(webDriverUpdaterOptions) { WebBrowserId = WebBrowserId.Firefox }, logger) {
+            base(webRequestFactory, new WebDriverUpdaterOptions(webDriverUpdaterOptions) { WebBrowserId = BrowserId.Firefox }, logger) {
 
             this.webRequestFactory = webRequestFactory;
 
@@ -37,7 +37,7 @@ namespace Gsemac.Net.WebDrivers {
 
         // Protected members
 
-        protected override Uri GetWebDriverUri(IWebBrowserInfo webBrowserInfo) {
+        protected override Uri GetWebDriverUri(IBrowserInfo webBrowserInfo) {
 
             string releasesUrl = "https://github.com/mozilla/geckodriver/releases/latest";
 

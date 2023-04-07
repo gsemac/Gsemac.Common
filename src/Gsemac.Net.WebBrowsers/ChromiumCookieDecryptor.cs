@@ -1,18 +1,19 @@
-﻿using System;
+﻿using Gsemac.Net.WebBrowsers.Properties;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace Gsemac.Net.WebBrowsers {
 
-    public class ChromeCookieDecryptor :
-        ICookieDecryptor {
+    internal sealed class ChromiumCookieDecryptor :
+        IBrowserCookieDecryptor {
 
         // Public members
 
-        public ChromeCookieDecryptor() {
+        public ChromiumCookieDecryptor(string userDataDirectoryPath) {
 
-            decryptors.Add(new Aes256GcmChromeCookieDecryptor());
-            decryptors.Add(new DpapiChromeCookieDecryptor());
+            decryptors.Add(new ChromiumAes256GcmCookieDecryptor(userDataDirectoryPath));
+            decryptors.Add(new ChromiumDpapiCookieDecryptor());
 
         }
 
@@ -21,7 +22,7 @@ namespace Gsemac.Net.WebBrowsers {
             if (TryDecryptCookie(encryptedBytes, out byte[] decryptedBytes))
                 return decryptedBytes;
 
-            throw new FormatException("Encrypted value is not in the correct format.");
+            throw new FormatException(ExceptionMessages.EncryptedDataIsMalformed);
 
         }
         public bool TryDecryptCookie(byte[] encryptedBytes, out byte[] decryptedBytes) {
@@ -36,7 +37,7 @@ namespace Gsemac.Net.WebBrowsers {
 
         // Private members
 
-        private readonly IList<ICookieDecryptor> decryptors = new List<ICookieDecryptor>();
+        private readonly IList<IBrowserCookieDecryptor> decryptors = new List<IBrowserCookieDecryptor>();
 
     }
 

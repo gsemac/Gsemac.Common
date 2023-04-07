@@ -42,7 +42,7 @@ namespace Gsemac.Net.WebDrivers {
             this(webRequestFactory, webDriverOptions, webDriverFactoryOptions, Logger.Null) {
         }
         public ChromeWebDriverFactory(IHttpWebRequestFactory webRequestFactory, IWebDriverOptions webDriverOptions, IWebDriverFactoryOptions webDriverFactoryOptions, ILogger logger) :
-            base(webRequestFactory, webDriverOptions, new WebDriverFactoryOptions(webDriverFactoryOptions) { WebBrowserId = WebBrowserId.Chrome }, logger) {
+            base(webRequestFactory, webDriverOptions, new WebDriverFactoryOptions(webDriverFactoryOptions) { WebBrowserId = BrowserId.Chrome }, logger) {
 
             this.webRequestFactory = webRequestFactory;
             this.webDriverFactoryOptions = webDriverFactoryOptions;
@@ -52,7 +52,7 @@ namespace Gsemac.Net.WebDrivers {
 
         // Protected members
 
-        protected override IWebDriver GetWebDriver(IWebBrowserInfo webBrowserInfo, IWebDriverOptions webDriverOptions) {
+        protected override IWebDriver GetWebDriver(IBrowserInfo webBrowserInfo, IWebDriverOptions webDriverOptions) {
 
             return GetWebDriverInternal(webBrowserInfo, webDriverOptions, overriddenUserAgent: string.Empty);
 
@@ -76,7 +76,7 @@ namespace Gsemac.Net.WebDrivers {
         private readonly IWebDriverFactoryOptions webDriverFactoryOptions;
         private readonly ILogger logger;
 
-        private IWebDriver GetWebDriverInternal(IWebBrowserInfo webBrowserInfo, IWebDriverOptions webDriverOptions, string overriddenUserAgent) {
+        private IWebDriver GetWebDriverInternal(IBrowserInfo webBrowserInfo, IWebDriverOptions webDriverOptions, string overriddenUserAgent) {
 
             string webDriverDirectoryPath = Path.GetDirectoryName(webDriverOptions.WebDriverExecutablePath);
 
@@ -159,7 +159,7 @@ namespace Gsemac.Net.WebDrivers {
 
         }
 
-        private IWebDriver OverrideHeadlessUserAgent(IWebDriver webDriver, IWebBrowserInfo webBrowserInfo, IWebDriverOptions webDriverOptions) {
+        private IWebDriver OverrideHeadlessUserAgent(IWebDriver webDriver, IBrowserInfo webBrowserInfo, IWebDriverOptions webDriverOptions) {
 
             if (webDriverOptions.Stealth && webDriverOptions.Headless && string.IsNullOrWhiteSpace(webDriverOptions.UserAgent)) {
 

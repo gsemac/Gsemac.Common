@@ -5,9 +5,9 @@ namespace Gsemac.Net.WebDrivers.Extensions {
 
     public static class WebDriverFactoryExtensions {
 
-        public static IWebDriver Create(this IWebDriverFactory webDriverFactory, WebBrowserId webBrowserId) {
+        public static IWebDriver Create(this IWebDriverFactory webDriverFactory, BrowserId webBrowserId) {
 
-            return webDriverFactory.Create(WebBrowserInfoFactory.Default.GetInfo(webBrowserId));
+            return webDriverFactory.Create(BrowserInfoFactory.Default.GetBrowserInfo(webBrowserId));
 
         }
 

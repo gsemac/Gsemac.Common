@@ -8,7 +8,7 @@ namespace Gsemac.Net.WebDrivers {
         event DownloadFileProgressChangedEventHandler DownloadFileProgressChanged;
         event DownloadFileCompletedEventHandler DownloadFileCompleted;
 
-        IWebDriverInfo Update(IWebBrowserInfo webBrowserInfo, CancellationToken cancellationToken);
+        IWebDriverInfo Update(IBrowserInfo webBrowserInfo, CancellationToken cancellationToken);
 
     }
 

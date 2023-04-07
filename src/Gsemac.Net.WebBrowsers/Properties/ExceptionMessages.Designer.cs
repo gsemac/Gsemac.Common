@@ -61,11 +61,47 @@ namespace Gsemac.Net.WebBrowsers.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The decryption key is malformed..
+        /// </summary>
+        internal static string DecryptionKeyIsMalformed {
+            get {
+                return ResourceManager.GetString("DecryptionKeyIsMalformed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The encrypted data is malformed..
+        /// </summary>
+        internal static string EncryptedDataIsMalformed {
+            get {
+                return ResourceManager.GetString("EncryptedDataIsMalformed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The given string is not a valid URL..
         /// </summary>
         internal static string StringIsNotAValidUrl {
             get {
                 return ResourceManager.GetString("StringIsNotAValidUrl", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unable to find browser profiles in &apos;{0}&apos;..
+        /// </summary>
+        internal static string UnableToFindBrowserProfilesInDirectory {
+            get {
+                return ResourceManager.GetString("UnableToFindBrowserProfilesInDirectory", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unable to locate local state file in &apos;{0}&apos;..
+        /// </summary>
+        internal static string UnableToFindLocalStateFile {
+            get {
+                return ResourceManager.GetString("UnableToFindLocalStateFile", resourceCulture);
             }
         }
     }

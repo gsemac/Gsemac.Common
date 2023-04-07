@@ -117,7 +117,19 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="DecryptionKeyIsMalformed" xml:space="preserve">
+    <value>The decryption key is malformed.</value>
+  </data>
+  <data name="EncryptedDataIsMalformed" xml:space="preserve">
+    <value>The encrypted data is malformed.</value>
+  </data>
   <data name="StringIsNotAValidUrl" xml:space="preserve">
     <value>The given string is not a valid URL.</value>
+  </data>
+  <data name="UnableToFindBrowserProfilesInDirectory" xml:space="preserve">
+    <value>Unable to find browser profiles in '{0}'.</value>
+  </data>
+  <data name="UnableToFindLocalStateFile" xml:space="preserve">
+    <value>Unable to locate local state file in '{0}'.</value>
   </data>
 </root>
