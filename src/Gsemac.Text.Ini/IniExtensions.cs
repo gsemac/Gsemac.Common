@@ -63,20 +63,20 @@ namespace Gsemac.Text.Ini {
 
         }
 
-        public static bool Contains(this IIni ini, string propertyName) {
+        public static bool ContainsKey(this IIni ini, string propertyName) {
 
             if (ini is null)
                 throw new ArgumentNullException(nameof(ini));
 
-            return ini.Global.Properties.Contains(propertyName);
+            return ini.Global.Properties.ContainsKey(propertyName);
 
         }
-        public static bool Contains(this IIni ini, string sectionName, string propertyName) {
+        public static bool ContainsKey(this IIni ini, string sectionName, string propertyName) {
 
             if (ini is null)
                 throw new ArgumentNullException(nameof(ini));
 
-            return ini[sectionName].Properties.Contains(propertyName);
+            return ini[sectionName].Properties.ContainsKey(propertyName);
 
         }
 

@@ -48,8 +48,8 @@ namespace Gsemac.Text.Ini.Tests {
                 new IniProperty("key", "value"),
             };
 
-            Assert.IsTrue(items.Contains("key"));
-            Assert.IsTrue(items.Contains("KEY"));
+            Assert.IsTrue(items.ContainsKey("key"));
+            Assert.IsTrue(items.ContainsKey("KEY"));
 
         }
         [TestMethod]
@@ -59,8 +59,8 @@ namespace Gsemac.Text.Ini.Tests {
                 new IniProperty("key", "value"),
             };
 
-            Assert.IsTrue(items.Contains("key"));
-            Assert.IsFalse(items.Contains("KEY"));
+            Assert.IsTrue(items.ContainsKey("key"));
+            Assert.IsFalse(items.ContainsKey("KEY"));
 
         }
 

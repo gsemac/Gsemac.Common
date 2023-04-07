@@ -22,11 +22,11 @@ namespace Gsemac.Text.Ini.Tests {
             foreach (IIni ini in new[] { ini1, ini2 })
                 ini.SetValue("key", "value");
 
-            Assert.IsTrue(ini1.Contains("key"));
-            Assert.IsFalse(ini1.Contains("KEY"));
+            Assert.IsTrue(ini1.ContainsKey("key"));
+            Assert.IsFalse(ini1.ContainsKey("KEY"));
 
-            Assert.IsTrue(ini2.Contains("key"));
-            Assert.IsTrue(ini2.Contains("KEY"));
+            Assert.IsTrue(ini2.ContainsKey("key"));
+            Assert.IsTrue(ini2.ContainsKey("KEY"));
 
         }
 

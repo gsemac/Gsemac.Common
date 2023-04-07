@@ -26,4 +26,8 @@
 		<ProjectReference Include="..\Gsemac.Text\Gsemac.Text.csproj" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <Folder Include="Extensions\" />
+	</ItemGroup>
+
 </Project>

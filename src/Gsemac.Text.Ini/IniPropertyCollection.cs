@@ -81,9 +81,9 @@ namespace Gsemac.Text.Ini {
                 property.Equals(item);
 
         }
-        public bool Contains(string name) {
+        public bool ContainsKey(string propertyName) {
 
-            return properties.ContainsKey(FormatPropertyName(name));
+            return properties.ContainsKey(FormatPropertyName(propertyName));
 
         }
 

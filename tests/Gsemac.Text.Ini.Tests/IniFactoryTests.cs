@@ -1,10 +1,10 @@
-﻿using Gsemac.Text.Ini.Extensions;
-using Gsemac.Text.Ini.Tests.Properties;
+﻿using Gsemac.Text.Ini.Tests.Properties;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.IO;
 using System.Linq;
 
-namespace Gsemac.Text.Ini.Tests {
+namespace Gsemac.Text.Ini.Tests
+{
 
     [TestClass]
     public class IniFactoryTests {
@@ -122,8 +122,8 @@ namespace Gsemac.Text.Ini.Tests {
                 EnableComments = false,
             });
 
-            Assert.IsTrue(ini.Contains("[section] ; comment"));
-            Assert.IsTrue(ini.Contains("; comment"));
+            Assert.IsTrue(ini.ContainsKey("[section] ; comment"));
+            Assert.IsTrue(ini.ContainsKey("; comment"));
 
             Assert.AreEqual("value ; comment", ini.GetValue("key"));
 
@@ -164,7 +164,7 @@ namespace Gsemac.Text.Ini.Tests {
             Assert.AreEqual(@"val\", ini.GetValue(sectionName, "key3"));
             Assert.AreEqual("value4", ini.GetValue(sectionName, @"\;key4"));
 
-            Assert.IsTrue(ini.Contains(sectionName, "ue3"));
+            Assert.IsTrue(ini.ContainsKey(sectionName, "ue3"));
 
         }
 

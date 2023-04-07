@@ -2,7 +2,7 @@
 using System.IO;
 using System.Text;
 
-namespace Gsemac.Text.Ini.Extensions {
+namespace Gsemac.Text.Ini {
 
     public static class IniFactoryExtensions {
 
@@ -13,7 +13,7 @@ namespace Gsemac.Text.Ini.Extensions {
             if (iniFactory is null)
                 throw new ArgumentNullException(nameof(iniFactory));
 
-            return Parse(iniFactory, iniString, IniOptions.Default);
+            return iniFactory.Parse(iniString, IniOptions.Default);
 
         }
         public static IIni Parse(this IIniFactory iniFactory, string iniString, IIniOptions options) {
@@ -33,7 +33,7 @@ namespace Gsemac.Text.Ini.Extensions {
             if (iniFactory is null)
                 throw new ArgumentNullException(nameof(iniFactory));
 
-            return FromFile(iniFactory, filePath, IniOptions.Default);
+            return iniFactory.FromFile(filePath, IniOptions.Default);
 
         }
         public static IIni FromFile(this IIniFactory iniFactory, string filePath, IIniOptions options) {

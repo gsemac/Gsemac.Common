@@ -10,7 +10,7 @@ namespace Gsemac.Text.Ini {
         void Add(string name, string value);
         bool Remove(string name);
 
-        bool Contains(string name);
+        bool ContainsKey(string name);
 
     }
 
