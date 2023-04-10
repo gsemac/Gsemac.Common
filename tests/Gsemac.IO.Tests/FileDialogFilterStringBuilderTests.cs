@@ -15,7 +15,7 @@ namespace Gsemac.IO.Tests {
                 .WithAllFilesOption()
                 .Build();
 
-            Assert.AreEqual("PNG Images (*.png)|(*.png)|JPEG Images (*.jpeg;*.jfi;*.jfif;*.jif;*.jpe;*.jpg)|(*.jpeg;*.jfi;*.jfif;*.jif;*.jpe;*.jpg)|All Files (*.*)|*.*", filterString);
+            Assert.AreEqual("PNG Images (*.png)|(*.png)|JPEG Images (*.jpg;*.jfi;*.jfif;*.jif;*.jpe;*.jpeg)|(*.jpg;*.jfi;*.jfif;*.jif;*.jpe;*.jpeg)|All Files (*.*)|*.*", filterString);
 
         }
         [TestMethod]
@@ -29,7 +29,7 @@ namespace Gsemac.IO.Tests {
                 .WithAllFilesOption()
                 .Build();
 
-            Assert.AreEqual("JPEG Images (*.jpeg;*.jfi;*.jfif;*.jif;*.jpe;*.jpg)|(*.jpeg;*.jfi;*.jfif;*.jif;*.jpe;*.jpg)|All Files (*.*)|*.*", filterString);
+            Assert.AreEqual("JPEG Images (*.jpg;*.jfi;*.jfif;*.jif;*.jpe;*.jpeg)|(*.jpg;*.jfi;*.jfif;*.jif;*.jpe;*.jpeg)|All Files (*.*)|*.*", filterString);
 
         }
 
