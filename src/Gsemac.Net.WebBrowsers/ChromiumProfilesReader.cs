@@ -51,7 +51,7 @@ namespace Gsemac.Net.WebBrowsers {
 
                         profiles.Add(new BrowserProfile(new ChromiumCookiesReader()) {
                             Name = name,
-                            IsDefaultProfile = identifier.Equals(lastUsedProfileIdentifier) || profileTokens.Count() == 1,
+                            IsDefault = identifier.Equals(lastUsedProfileIdentifier) || profileTokens.Count() == 1,
                             DirectoryPath = directoryPath,
                         });
 
@@ -62,7 +62,7 @@ namespace Gsemac.Net.WebBrowsers {
             }
 
             return profiles.Where(profile => Directory.Exists(profile.DirectoryPath))
-                .OrderByDescending(profile => profile.IsDefaultProfile);
+                .OrderByDescending(profile => profile.IsDefault);
 
         }
 

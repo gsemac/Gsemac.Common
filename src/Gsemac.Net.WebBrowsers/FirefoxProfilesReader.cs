@@ -57,7 +57,7 @@ namespace Gsemac.Net.WebBrowsers {
 
                         profiles.Add(new BrowserProfile(new FirefoxCookiesReader()) {
                             Name = name,
-                            IsDefaultProfile = defaultProfileDirectoryPaths.Contains(directoryPath),
+                            IsDefault = defaultProfileDirectoryPaths.Contains(directoryPath),
                             DirectoryPath = Path.Combine(userDataDirectoryPath, directoryPath),
                         });
 
@@ -68,7 +68,7 @@ namespace Gsemac.Net.WebBrowsers {
             }
 
             return profiles.Where(profile => Directory.Exists(profile.DirectoryPath))
-                .OrderByDescending(profile => profile.IsDefaultProfile)
+                .OrderByDescending(profile => profile.IsDefault)
                 .ThenByDescending(profile => profile.Name.EndsWith("-release"));
 
         }

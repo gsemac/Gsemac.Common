@@ -13,6 +13,15 @@ namespace Gsemac.Net.WebBrowsers {
             return webBrowserInfoFactory.GetBrowserInfo(webBrowserId, BrowserInfoOptions.Default);
 
         }
+
+        public static IBrowserInfo GetDefaultBrowser(this IBrowserInfoFactory webBrowserInfoFactory) {
+
+            if (webBrowserInfoFactory is null)
+                throw new ArgumentNullException(nameof(webBrowserInfoFactory));
+
+            return webBrowserInfoFactory.GetDefaultBrowser(BrowserInfoOptions.Default);
+
+        }
         public static IEnumerable<IBrowserInfo> GetInstalledBrowsers(this IBrowserInfoFactory webBrowserInfoFactory) {
 
             if (webBrowserInfoFactory is null)

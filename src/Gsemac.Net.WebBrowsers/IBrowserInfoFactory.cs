@@ -4,10 +4,10 @@ namespace Gsemac.Net.WebBrowsers {
 
     public interface IBrowserInfoFactory {
 
-        IBrowserInfo GetBrowserInfo(string webBrowserExecutablePath);
-        IBrowserInfo GetBrowserInfo(BrowserId webBrowserId, IBrowserInfoOptions options);
+        IBrowserInfo GetBrowserInfo(string browserExecutablePath);
+        IBrowserInfo GetBrowserInfo(BrowserId browserId, IBrowserInfoOptions options);
 
-        IBrowserInfo GetDefaultBrowser();
+        IBrowserInfo GetDefaultBrowser(IBrowserInfoOptions options);
         IEnumerable<IBrowserInfo> GetInstalledBrowsers(IBrowserInfoOptions options);
 
     }

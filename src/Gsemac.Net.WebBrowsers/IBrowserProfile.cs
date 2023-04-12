@@ -6,7 +6,7 @@ namespace Gsemac.Net.WebBrowsers {
     public interface IBrowserProfile {
 
         string Name { get; }
-        bool IsDefaultProfile { get; }
+        bool IsDefault { get; }
         string DirectoryPath { get; }
 
         IEnumerable<Cookie> GetCookies();

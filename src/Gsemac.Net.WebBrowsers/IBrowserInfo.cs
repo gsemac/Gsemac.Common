@@ -10,6 +10,7 @@ namespace Gsemac.Net.WebBrowsers {
         string ExecutablePath { get; }
         string UserDataDirectoryPath { get; }
         bool Is64Bit { get; }
+        bool IsDefault { get; }
         BrowserId Id { get; }
 
         IEnumerable<IBrowserProfile> GetProfiles();

@@ -10,7 +10,7 @@ namespace Gsemac.Net.WebBrowsers {
         // Public members
 
         public string Name { get; set; }
-        public bool IsDefaultProfile { get; set; }
+        public bool IsDefault { get; set; }
         public string DirectoryPath { get; set; }
 
         public BrowserProfile(IBrowserCookiesReader cookiesReader) {

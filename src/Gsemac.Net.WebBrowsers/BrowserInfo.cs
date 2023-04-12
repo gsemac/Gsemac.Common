@@ -14,6 +14,7 @@ namespace Gsemac.Net.WebBrowsers {
         public string ExecutablePath { get; set; }
         public string UserDataDirectoryPath { get; set; }
         public bool Is64Bit { get; set; }
+        public bool IsDefault { get; set; }
         public BrowserId Id { get; set; }
 
         public BrowserInfo() :
