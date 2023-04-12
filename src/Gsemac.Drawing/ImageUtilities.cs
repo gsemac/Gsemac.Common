@@ -152,6 +152,15 @@ namespace Gsemac.Drawing {
 
             }
 
+            // Don't allow any dimension to be reduced to 0, because we'll get an exception.
+            // TODO: Add a unit test for this.
+
+            if (newWidth == 0)
+                newWidth = 1;
+
+            if (newHeight == 0)
+                newHeight = 1;
+
             Bitmap resultImage = new Bitmap(image, new Size(newWidth, newHeight));
 
             return resultImage;
