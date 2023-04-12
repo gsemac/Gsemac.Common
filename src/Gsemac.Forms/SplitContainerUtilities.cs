@@ -6,20 +6,20 @@ namespace Gsemac.Forms {
 
         // Public members
 
-        public static void SetRealTimeResizingEnabled(SplitContainer splitContainer, bool value) {
+        public static void SetSmoothResizingEnabled(SplitContainer splitContainer, bool value) {
 
             if (value) {
 
-                splitContainer.MouseDown += RealTimeResizingMouseDownEventHandler;
-                splitContainer.MouseUp += RealTimeResizingMouseUpEventHandler;
-                splitContainer.MouseMove += RealTimeResizingMouseMoveEventHandler;
+                splitContainer.MouseDown += SmoothResizingMouseDownEventHandler;
+                splitContainer.MouseUp += SmoothResizingMouseUpEventHandler;
+                splitContainer.MouseMove += SmoothResizingMouseMoveEventHandler;
 
             }
             else {
 
-                splitContainer.MouseDown -= RealTimeResizingMouseDownEventHandler;
-                splitContainer.MouseUp -= RealTimeResizingMouseUpEventHandler;
-                splitContainer.MouseMove -= RealTimeResizingMouseMoveEventHandler;
+                splitContainer.MouseDown -= SmoothResizingMouseDownEventHandler;
+                splitContainer.MouseUp -= SmoothResizingMouseUpEventHandler;
+                splitContainer.MouseMove -= SmoothResizingMouseMoveEventHandler;
 
             }
 
@@ -27,7 +27,7 @@ namespace Gsemac.Forms {
 
         // Private members
 
-        private static void RealTimeResizingMouseDownEventHandler(object sender, MouseEventArgs e) {
+        private static void SmoothResizingMouseDownEventHandler(object sender, MouseEventArgs e) {
 
             // Temporarily disable normal resizing behavior.
 
@@ -35,7 +35,7 @@ namespace Gsemac.Forms {
                 splitContainer.IsSplitterFixed = true;
 
         }
-        private static void RealTimeResizingMouseUpEventHandler(object sender, MouseEventArgs e) {
+        private static void SmoothResizingMouseUpEventHandler(object sender, MouseEventArgs e) {
 
             // Restore normal resizing behavior.
 
@@ -43,7 +43,7 @@ namespace Gsemac.Forms {
                 splitContainer.IsSplitterFixed = false;
 
         }
-        private static void RealTimeResizingMouseMoveEventHandler(object sender, MouseEventArgs e) {
+        private static void SmoothResizingMouseMoveEventHandler(object sender, MouseEventArgs e) {
 
             if (sender is SplitContainer splitContainer && splitContainer.IsSplitterFixed) {
 

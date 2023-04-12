@@ -118,20 +118,20 @@ namespace Gsemac.Forms {
 
         }
 
-        public static void SetRealTimeResizingEnabled(DataGridView dataGridView, bool enabled) {
+        public static void SetSmoothResizingEnabled(DataGridView dataGridView, bool enabled) {
 
             if (enabled) {
 
-                dataGridView.MouseDown += DataGridViewRealTimeResizingMouseDownHandler;
-                dataGridView.MouseMove += DataGridViewRealTimeResizingMouseMoveHandler;
-                dataGridView.MouseUp += DataGridViewRealTimeResizingMouseUpHandler;
+                dataGridView.MouseDown += DataGridViewSmoothResizingMouseDownHandler;
+                dataGridView.MouseMove += DataGridViewSmoothResizingMouseMoveHandler;
+                dataGridView.MouseUp += DataGridViewSmoothResizingMouseUpHandler;
 
             }
             else {
 
-                dataGridView.MouseDown -= DataGridViewRealTimeResizingMouseDownHandler;
-                dataGridView.MouseMove -= DataGridViewRealTimeResizingMouseMoveHandler;
-                dataGridView.MouseUp -= DataGridViewRealTimeResizingMouseUpHandler;
+                dataGridView.MouseDown -= DataGridViewSmoothResizingMouseDownHandler;
+                dataGridView.MouseMove -= DataGridViewSmoothResizingMouseMoveHandler;
+                dataGridView.MouseUp -= DataGridViewSmoothResizingMouseUpHandler;
 
             }
 
@@ -146,7 +146,7 @@ namespace Gsemac.Forms {
         private static int columnOffset = 0;
         private static int columnWidth = 0;
 
-        private static void DataGridViewRealTimeResizingMouseDownHandler(object sender, MouseEventArgs e) {
+        private static void DataGridViewSmoothResizingMouseDownHandler(object sender, MouseEventArgs e) {
 
             try {
 
@@ -176,7 +176,7 @@ namespace Gsemac.Forms {
             catch (Exception) { }
 
         }
-        private static void DataGridViewRealTimeResizingMouseMoveHandler(object sender, MouseEventArgs e) {
+        private static void DataGridViewSmoothResizingMouseMoveHandler(object sender, MouseEventArgs e) {
 
             if (sender is DataGridView dataGridView && columnResizing) {
 
@@ -188,7 +188,7 @@ namespace Gsemac.Forms {
             }
 
         }
-        private static void DataGridViewRealTimeResizingMouseUpHandler(object sender, MouseEventArgs e) {
+        private static void DataGridViewSmoothResizingMouseUpHandler(object sender, MouseEventArgs e) {
 
             if (Cursor.Current == Cursors.SizeWE) {
 
