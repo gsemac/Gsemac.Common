@@ -118,6 +118,86 @@ namespace Gsemac.Forms {
 
         }
 
+        public static void SetRealTimeResizingEnabled(DataGridView dataGridView, bool enabled) {
+
+            if (enabled) {
+
+                dataGridView.MouseDown += DataGridViewRealTimeResizingMouseDownHandler;
+                dataGridView.MouseMove += DataGridViewRealTimeResizingMouseMoveHandler;
+                dataGridView.MouseUp += DataGridViewRealTimeResizingMouseUpHandler;
+
+            }
+            else {
+
+                dataGridView.MouseDown -= DataGridViewRealTimeResizingMouseDownHandler;
+                dataGridView.MouseMove -= DataGridViewRealTimeResizingMouseMoveHandler;
+                dataGridView.MouseUp -= DataGridViewRealTimeResizingMouseUpHandler;
+
+            }
+
+        }
+
+        // Private members
+
+        // These variables will be used globally for all DataGridViews that have real-time resizing enabled
+
+        private static bool columnResizing = false;
+        private static int columnResized = 0;
+        private static int columnOffset = 0;
+        private static int columnWidth = 0;
+
+        private static void DataGridViewRealTimeResizingMouseDownHandler(object sender, MouseEventArgs e) {
+
+            try {
+
+                if (sender is DataGridView dataGridView && Cursor.Current == Cursors.SizeWE) {
+
+                    DataGridView.HitTestInfo ht = dataGridView.HitTest(e.X, e.Y);
+
+                    columnResized = ht.ColumnIndex;
+
+                    // If within 8 pixels of the left-side column, assume that it is the left-side column that is being resized.
+
+                    if (e.X < dataGridView.GetCellDisplayRectangle(columnResized, 0, false).Left + 8) {
+
+                        ht = dataGridView.HitTest(e.X - 8, e.Y);
+
+                        columnResized = ht.ColumnIndex;
+
+                    }
+
+                    columnOffset = e.X;
+                    columnWidth = dataGridView.Columns[columnResized].Width;
+                    columnResizing = true;
+
+                }
+
+            }
+            catch (Exception) { }
+
+        }
+        private static void DataGridViewRealTimeResizingMouseMoveHandler(object sender, MouseEventArgs e) {
+
+            if (sender is DataGridView dataGridView && columnResizing) {
+
+                if (e.X > columnOffset)
+                    dataGridView.Columns[columnResized].Width = columnWidth + (e.X - columnOffset);
+                else
+                    dataGridView.Columns[columnResized].Width = columnWidth - (columnOffset - e.X);
+
+            }
+
+        }
+        private static void DataGridViewRealTimeResizingMouseUpHandler(object sender, MouseEventArgs e) {
+
+            if (Cursor.Current == Cursors.SizeWE) {
+
+                columnResizing = false;
+
+            }
+
+        }
+
     }
 
 }
