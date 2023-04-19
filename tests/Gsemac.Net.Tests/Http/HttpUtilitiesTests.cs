@@ -109,6 +109,29 @@ namespace Gsemac.Net.Http.Tests {
 
         }
         [TestMethod]
+        public void TestParseCookiesWithMultipleCookiesWithAttributes() {
+
+            Cookie[] cookies = HttpUtilities.ParseCookies("Name1=Value1; path=/,Name2=Value2; expires=Sat, 29-Apr-2023 08:39:22 GMT; path=/; domain=www.example.com,Name3=Value3; expires=Thu, 18-Apr-2024 08:39:22 GMT; path=/; domain=.example.com")
+                .ToArray();
+
+            Assert.AreEqual(3, cookies.Count());
+
+            Assert.AreEqual("Name1", cookies[0].Name);
+            Assert.AreEqual("Value1", cookies[0].Value);
+            Assert.AreEqual("/", cookies[0].Path);
+
+            Assert.AreEqual("Name2", cookies[1].Name);
+            Assert.AreEqual("Value2", cookies[1].Value);
+            Assert.AreEqual("/", cookies[1].Path);
+            Assert.AreEqual("www.example.com", cookies[1].Domain);
+
+            Assert.AreEqual("Name3", cookies[2].Name);
+            Assert.AreEqual("Value3", cookies[2].Value);
+            Assert.AreEqual("/", cookies[2].Path);
+            Assert.AreEqual(".example.com", cookies[2].Domain);
+
+        }
+        [TestMethod]
         public void TestParseCookiesIgnoresWhitespaceAroundValues() {
 
             Cookie cookie = HttpUtilities.ParseCookies("  Name    =   Value  ")

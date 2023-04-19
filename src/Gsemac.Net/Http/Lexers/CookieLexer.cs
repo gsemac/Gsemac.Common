@@ -4,6 +4,7 @@ using Gsemac.Text.Lexers;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 
 namespace Gsemac.Net.Http.Lexers {
 
@@ -63,8 +64,11 @@ namespace Gsemac.Net.Http.Lexers {
 
                     if (ReadName(tokens, CookieLexerTokenType.AttributeName)) {
 
+                        bool isExpiresAttribute = tokens.LastOrDefault()?.
+                            Value.Equals("expires", System.StringComparison.OrdinalIgnoreCase) ?? false;
+
                         if (ReadSeparator(tokens, AttributeValueSeparator, CookieLexerTokenType.AttributeValueSeparator))
-                            ReadAttributeValue(tokens);
+                            ReadAttributeValue(tokens, isExpiresAttribute);
 
                     }
 
@@ -127,16 +131,23 @@ namespace Gsemac.Net.Http.Lexers {
             return true;
 
         }
-        private bool ReadAttributeValue(Queue<CookieLexerToken> tokens) {
+        private bool ReadAttributeValue(Queue<CookieLexerToken> tokens, bool isExpiresAttribute) {
 
             // Values are allowed to be empty.
-            // Attribute values are allowed to contain commas (e.g. the "expires" attribute).
+            // Only the "expires" attribute is allowed to contain commas.
 
             Reader.SkipWhiteSpace();
 
-            string value = Reader.ReadLine(new[] {
-                AttributeSeparator,
-            }, new ReadLineOptions() {
+            char[] separators = isExpiresAttribute ?
+                new[] {
+                    AttributeSeparator,
+                } :
+                new[] {
+                    AttributeSeparator,
+                    CookieSeparator,
+                };
+
+            string value = Reader.ReadLine(separators, new ReadLineOptions() {
                 ConsumeDelimiter = false,
             }).Trim();
 
