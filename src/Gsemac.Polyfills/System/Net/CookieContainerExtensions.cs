@@ -9,6 +9,12 @@ namespace Gsemac.Polyfills.System.Net {
 
         // Public members
 
+        /// <summary>
+        /// Gets a <see cref="CookieCollection"/> that contains all of the <see cref="Cookie"/> instances in the container.
+        /// </summary>
+        /// <param name="cookieContainer"></param>
+        /// <returns>A <see cref="CookieCollection"/> that contains all of the <see cref="Cookie"/> instances in the container.</returns>
+        /// <exception cref="ArgumentNullException"></exception>
         public static CookieCollection GetAllCookies(this CookieContainer cookieContainer) {
 
             // Adapted from https://stackoverflow.com/a/50548676/5383169 (JJS)
