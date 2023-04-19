@@ -121,8 +121,12 @@ namespace Gsemac.Net.Curl {
 
                     // Get cookies.
 
-                    if (Headers.TryGetHeader(HttpResponseHeader.SetCookie, out string setCookieHeader))
-                        cookies.SetCookies(responseUri, setCookieHeader);
+                    if (Headers.TryGetHeader(HttpResponseHeader.SetCookie, out string setCookieHeader)) {
+
+                        foreach (Cookie cookie in HttpUtilities.ParseCookies(responseUri, setCookieHeader))
+                            cookies.Add(cookie);
+
+                    }
 
                     // Update the response URI.
                     // This is done after reading the "set-cookie" header so that the cookies are applied to the original domain instead of the new one.
