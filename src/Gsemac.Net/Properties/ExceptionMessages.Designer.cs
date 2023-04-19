@@ -124,6 +124,15 @@ namespace Gsemac.Net.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The date header &apos;{0}&apos; was malformed..
+        /// </summary>
+        internal static string MalformedDateHeader {
+            get {
+                return ResourceManager.GetString("MalformedDateHeader", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The URL was malformed..
         /// </summary>
         internal static string MalformedUrl {

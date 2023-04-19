@@ -35,7 +35,7 @@ namespace Gsemac.Net.Http.Extensions {
                     break;
 
                 case "date":
-                    httpWebRequest.Date = DateUtilities.ParseHttpHeader(value).DateTime;
+                    httpWebRequest.Date = HttpUtilities.ParseDate(value).DateTime;
                     break;
 
                 case "expect":
@@ -47,7 +47,7 @@ namespace Gsemac.Net.Http.Extensions {
                     break;
 
                 case "if-modified-since":
-                    httpWebRequest.IfModifiedSince = DateUtilities.ParseHttpHeader(value).DateTime;
+                    httpWebRequest.IfModifiedSince = HttpUtilities.ParseDate(value).DateTime;
                     break;
 
                 case "range":

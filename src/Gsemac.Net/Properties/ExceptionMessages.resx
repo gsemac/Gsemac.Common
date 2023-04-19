@@ -138,6 +138,9 @@
   <data name="MalformedDataUrl" xml:space="preserve">
     <value>The data URL was malformed.</value>
   </data>
+  <data name="MalformedDateHeader" xml:space="preserve">
+    <value>The date header '{0}' was malformed.</value>
+  </data>
   <data name="MalformedUrl" xml:space="preserve">
     <value>The URL was malformed.</value>
   </data>

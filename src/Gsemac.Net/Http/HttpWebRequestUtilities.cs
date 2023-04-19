@@ -282,7 +282,7 @@ namespace Gsemac.Net.Http {
 
                 using (WebResponse webResponse = httpWebRequest.GetResponse()) {
 
-                    if (webResponse.Headers.TryGetHeader(HttpResponseHeader.Date, out string date) && DateUtilities.TryParseHttpHeader(date, out DateTimeOffset parsedDate))
+                    if (webResponse.Headers.TryGetHeader(HttpResponseHeader.Date, out string date) && HttpUtilities.TryParseDate(date, out DateTimeOffset parsedDate))
                         return parsedDate;
 
                 }

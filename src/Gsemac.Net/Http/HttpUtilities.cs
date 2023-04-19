@@ -1,7 +1,14 @@
-﻿using Gsemac.Polyfills.System.Net;
+﻿using Gsemac.IO;
+using Gsemac.Net.Http.Lexers;
+using Gsemac.Net.Properties;
+using Gsemac.Polyfills.System.Net;
+using System;
 using System.Collections.Generic;
+using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Net;
+using System.Text;
 
 namespace Gsemac.Net.Http {
 
@@ -25,6 +32,136 @@ namespace Gsemac.Net.Http {
             // That said, this method is useful for sanitizing cookies before adding them to a Net.CookieContainer, which will throw on invalid characters.
 
             return new[] { ',', ';' };
+
+        }
+
+        public static IEnumerable<Cookie> ParseCookies(string cookieHeader) {
+
+            List<Cookie> cookies = new List<Cookie>();
+
+            if (!string.IsNullOrWhiteSpace(cookieHeader)) {
+
+                using (Stream stream = new MemoryStream(Encoding.UTF8.GetBytes(cookieHeader)))
+                using (CookieLexer lexer = new CookieLexer(stream)) {
+
+                    Cookie currentCookie = null;
+                    string currentAttributeName = string.Empty;
+
+                    foreach (CookieLexerToken token in lexer) {
+
+                        switch (token.Type) {
+
+                            case CookieLexerTokenType.Name:
+
+                                if (currentCookie is object)
+                                    cookies.Add(currentCookie);
+
+                                currentCookie = new Cookie {
+                                    Name = token.Value
+                                };
+
+                                break;
+
+                            case CookieLexerTokenType.Value:
+
+                                if (currentCookie is object)
+                                    currentCookie.Value = token.Value;
+
+                                break;
+
+                            case CookieLexerTokenType.AttributeName:
+
+                                if (currentCookie is object) {
+
+                                    switch (token.Value.ToLowerInvariant()) {
+
+                                        case "httponly":
+                                            currentCookie.HttpOnly = true;
+                                            break;
+
+                                        case "secure":
+                                            currentCookie.Secure = true;
+                                            break;
+
+                                        default:
+                                            currentAttributeName = token.Value;
+                                            break;
+
+                                    }
+
+                                }
+
+                                break;
+
+                            case CookieLexerTokenType.AttributeValue:
+
+                                if (currentCookie is object && !string.IsNullOrWhiteSpace(currentAttributeName)) {
+
+                                    switch (currentAttributeName.ToLowerInvariant()) {
+
+                                        case "domain":
+                                            currentCookie.Domain = token.Value.Trim();
+                                            break;
+
+                                        case "expires":
+
+                                            if (TryParseDate(token.Value, out DateTimeOffset parsedDate))
+                                                currentCookie.Expires = parsedDate.DateTime;
+
+                                            break;
+
+                                        case "path":
+                                            currentCookie.Path = token.Value.Trim();
+                                            break;
+
+                                    }
+
+                                }
+
+                                break;
+
+                        }
+
+                    }
+
+                    if (currentCookie is object)
+                        cookies.Add(currentCookie);
+
+                }
+
+
+            }
+
+            return cookies;
+
+        }
+        public static IEnumerable<Cookie> ParseCookies(Uri uri, string cookieHeader) {
+
+            if (uri is null)
+                throw new ArgumentNullException(nameof(uri));
+
+            IEnumerable<Cookie> cookies = ParseCookies(cookieHeader);
+
+            string hostname = Url.GetHostname(uri.AbsoluteUri);
+
+            // The path should have a leading directory separator, but not a trailing one.
+            // This is in line with the behavior of CookieContainer's SetCookies method.
+
+            string path = PathUtilities.TrimRightDirectorySeparators(PathUtilities.GetPath(uri.AbsoluteUri, new PathInfo() { IsUrl = true }));
+
+            foreach (Cookie cookie in cookies) {
+
+                // Apply the URI to the cookies that don't have a domain set yet.
+
+                if (string.IsNullOrWhiteSpace(cookie.Domain))
+                    cookie.Domain = hostname;
+
+                if (string.IsNullOrWhiteSpace(cookie.Path))
+                    cookie.Path = path;
+
+            }
+
+            return cookies;
 
         }
 
@@ -282,6 +419,34 @@ namespace Gsemac.Net.Http {
         public static string GetAcceptEncodingString(DecompressionMethods decompressionMethods) {
 
             return GetAcceptEncodingString((DecompressionMethodsEx)decompressionMethods);
+
+        }
+
+        public static DateTimeOffset ParseDate(string dateHeader) {
+
+            if (TryParseDate(dateHeader, out DateTimeOffset result))
+                return result;
+
+            throw new FormatException(ExceptionMessages.MalformedDateHeader);
+
+        }
+        public static bool TryParseDate(string dateHeader, out DateTimeOffset result) {
+
+            result = default;
+
+            // The dashed date format is specified in RFC 2109, while the former without dashes is specified in RFC 6265.
+            // We will accommodate both cases, because older web servers can sometmes use the latter (e.g. in the "set-cookies" header).
+
+            string[] formats = new[] {
+                "ddd, dd MMM yyyy HH:mm:ss 'GMT'",
+                "ddd, dd-MMM-yyyy HH:mm:ss 'GMT'",
+            };
+
+            foreach (string format in formats)
+                if (DateTimeOffset.TryParseExact(dateHeader, formats, CultureInfo.InvariantCulture.DateTimeFormat, DateTimeStyles.AssumeUniversal, out result))
+                    return true;
+
+            return false;
 
         }
 

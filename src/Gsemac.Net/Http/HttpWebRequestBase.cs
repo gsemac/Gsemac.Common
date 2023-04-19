@@ -69,7 +69,7 @@ namespace Gsemac.Net.Http {
         }
         public CookieContainer CookieContainer { get; set; } = new CookieContainer();
         public DateTime Date {
-            get => DateUtilities.ParseHttpHeader(Headers[HttpRequestHeader.Date]).DateTime;
+            get => HttpUtilities.ParseDate(Headers[HttpRequestHeader.Date]).DateTime;
             set => SetOrRemoveHeader(HttpRequestHeader.Date, value);
         }
         public string Expect {
@@ -82,7 +82,7 @@ namespace Gsemac.Net.Http {
             set => SetOrRemoveHeader(HttpRequestHeader.Host, value);
         }
         public DateTime IfModifiedSince {
-            get => DateUtilities.ParseHttpHeader(Headers[HttpRequestHeader.IfModifiedSince]).DateTime;
+            get => HttpUtilities.ParseDate(Headers[HttpRequestHeader.IfModifiedSince]).DateTime;
             set => SetOrRemoveHeader(HttpRequestHeader.IfModifiedSince, value);
         }
         public bool KeepAlive { get; set; } = true;
