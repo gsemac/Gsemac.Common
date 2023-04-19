@@ -6,6 +6,8 @@
         public bool? IsUrl { get; set; }
         public bool? IsRooted { get; set; }
 
+        public static PathInfo Default => new PathInfo();
+
     }
 
 }

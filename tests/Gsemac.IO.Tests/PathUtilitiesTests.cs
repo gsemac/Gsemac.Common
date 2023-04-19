@@ -17,6 +17,18 @@ namespace Gsemac.IO.Tests {
 
         }
         [TestMethod]
+        public void TestGetPathWithUrlWithQueryString() {
+
+            Assert.AreEqual("/questions/", PathUtilities.GetPath(@"https://stackoverflow.com/questions/?name=value"));
+
+        }
+        [TestMethod]
+        public void TestGetPathWithUrlWithFragment() {
+
+            Assert.AreEqual("/questions/", PathUtilities.GetPath(@"https://stackoverflow.com/questions/#fragment"));
+
+        }
+        [TestMethod]
         public void TestGetPathWithDriveLetter() {
 
             Assert.AreEqual(@"windows\", PathUtilities.GetPath(@"C:\windows\"));

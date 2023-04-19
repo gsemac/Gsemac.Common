@@ -23,13 +23,31 @@ namespace Gsemac.IO {
 
         public static string GetPath(string path) {
 
+            return GetPath(path, PathInfo.Default);
+
+        }
+        public static string GetPath(string path, IPathInfo pathInfo) {
+
+            if (pathInfo is null)
+                throw new ArgumentNullException(nameof(pathInfo));
+
             string relativePath = path;
 
             if (!string.IsNullOrWhiteSpace(relativePath))
                 relativePath = path.Substring(GetRootPath(path).Length);
 
-            if (!IsUrl(path))
+            if ((pathInfo.IsUrl ?? false) || IsUrl(path)) {
+
+                // Strip query and fragment strings.
+
+                relativePath = StringUtilities.BeforeLast(StringUtilities.BeforeLast(relativePath, "?"), "#");
+
+            }
+            else {
+
                 relativePath = TrimLeftDirectorySeparators(relativePath);
+
+            }
 
             return relativePath;
 
@@ -91,7 +109,7 @@ namespace Gsemac.IO {
 
         public static string GetRootPath(string path) {
 
-            return GetRootPath(path, new PathInfo());
+            return GetRootPath(path, PathInfo.Default);
 
         }
         public static string GetRootPath(string path, IPathInfo pathInfo) {
@@ -137,7 +155,7 @@ namespace Gsemac.IO {
 
         public static string GetParentPath(string path) {
 
-            return GetParentPath(path, new PathInfo());
+            return GetParentPath(path, PathInfo.Default);
 
         }
         public static string GetParentPath(string path, IPathInfo pathInfo) {
@@ -196,7 +214,7 @@ namespace Gsemac.IO {
 
         public static string GetFileName(string path) {
 
-            return GetFileName(path, new PathInfo());
+            return GetFileName(path, PathInfo.Default);
 
         }
         public static string GetFileName(string path, IPathInfo pathInfo) {
@@ -486,7 +504,7 @@ namespace Gsemac.IO {
 
         public static string NormalizeDirectorySeparators(string path) {
 
-            return NormalizeDirectorySeparators(path, new PathInfo());
+            return NormalizeDirectorySeparators(path, PathInfo.Default);
 
         }
         public static string NormalizeDirectorySeparators(string path, char directorySeparatorChar) {
@@ -529,7 +547,7 @@ namespace Gsemac.IO {
 
         public static string NormalizeDotSegments(string path) {
 
-            return NormalizeDotSegments(path, new PathInfo());
+            return NormalizeDotSegments(path, PathInfo.Default);
 
         }
         public static string NormalizeDotSegments(string path, IPathInfo pathInfo) {
@@ -634,7 +652,7 @@ namespace Gsemac.IO {
 
         public static bool IsPathRooted(string path) {
 
-            return IsPathRooted(path, new PathInfo());
+            return IsPathRooted(path, PathInfo.Default);
 
         }
         public static bool IsPathRooted(string path, IPathInfo pathInfo) {
