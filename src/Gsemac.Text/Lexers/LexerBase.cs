@@ -2,14 +2,44 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 namespace Gsemac.Text.Lexers {
 
-    public abstract class LexerBase<T> :
-         ILexer<T> {
+    public abstract class LexerBase<LexerTokenT> :
+         ILexer<LexerTokenT> {
 
-        public abstract bool Read(out T token);
-        public abstract T Peek();
+        // Public members
+
+        public bool Read(out LexerTokenT token) {
+
+            if (!tokens.Any())
+                ReadNext(tokens);
+
+            if (tokens.Any()) {
+
+                token = tokens.Dequeue();
+
+                return true;
+
+            }
+            else {
+
+                token = default;
+
+                return false;
+
+            }
+
+        }
+        public LexerTokenT Peek() {
+
+            if (!tokens.Any())
+                ReadNext(tokens);
+
+            return tokens.Any() ? tokens.Peek() : default;
+
+        }
 
         public void Dispose() {
 
@@ -17,9 +47,9 @@ namespace Gsemac.Text.Lexers {
 
         }
 
-        public IEnumerator<T> GetEnumerator() {
+        public IEnumerator<LexerTokenT> GetEnumerator() {
 
-            while (Read(out T token))
+            while (Read(out LexerTokenT token))
                 yield return token;
 
         }
@@ -45,6 +75,8 @@ namespace Gsemac.Text.Lexers {
 
         }
 
+        protected abstract void ReadNext(Queue<LexerTokenT> tokens);
+
         protected virtual void Dispose(bool disposing) {
 
             if (!disposedValue) {
@@ -63,6 +95,7 @@ namespace Gsemac.Text.Lexers {
         // Private members
 
         private bool disposedValue = false;
+        private readonly Queue<LexerTokenT> tokens = new Queue<LexerTokenT>();
 
     }
 

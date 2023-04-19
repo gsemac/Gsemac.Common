@@ -3,12 +3,12 @@ using System.Collections.Generic;
 
 namespace Gsemac.Text.Lexers {
 
-    public interface ILexer<T> :
-        IEnumerable<T>,
+    public interface ILexer<LexerTokenT> :
+        IEnumerable<LexerTokenT>,
         IDisposable {
 
-        bool Read(out T token);
-        T Peek();
+        bool Read(out LexerTokenT token);
+        LexerTokenT Peek();
 
     }
 

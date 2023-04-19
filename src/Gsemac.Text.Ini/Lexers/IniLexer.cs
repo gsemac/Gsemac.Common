@@ -5,7 +5,6 @@ using Gsemac.Text.Lexers;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using static Gsemac.Text.Ini.IniConstants;
 
 namespace Gsemac.Text.Ini.Lexers {
@@ -41,46 +40,11 @@ namespace Gsemac.Text.Ini.Lexers {
 
         }
 
-        public override IIniLexerToken Peek() {
-
-            if (!tokens.Any())
-                ReadNextTokens();
-
-            return tokens.Any() ? tokens.Peek() : null;
-
-        }
-        public override bool Read(out IIniLexerToken token) {
-
-            if (!tokens.Any())
-                ReadNextTokens();
-
-            if (tokens.Any()) {
-
-                token = tokens.Dequeue();
-
-                return true;
-
-            }
-            else {
-
-                token = null;
-
-                return false;
-
-            }
-
-        }
-
         // Protected members
 
         new protected LookaheadTextReader Reader => (LookaheadTextReader)base.Reader;
 
-        // Private members
-
-        private readonly Queue<IIniLexerToken> tokens = new Queue<IIniLexerToken>();
-        private readonly IIniOptions options = new IniOptions();
-
-        private void ReadNextTokens() {
+        protected override void ReadNext(Queue<IIniLexerToken> tokens) {
 
             Reader.SkipWhiteSpace();
 
@@ -88,17 +52,17 @@ namespace Gsemac.Text.Ini.Lexers {
 
                 if (Reader.IsNext(SectionNameStart)) {
 
-                    ReadSection(Reader);
+                    ReadSection(tokens, Reader);
 
                 }
                 else if (options.CommentMarker.Length > 0 && options.EnableComments && Reader.IsNext(options.CommentMarker)) {
 
-                    ReadComment(Reader);
+                    ReadComment(tokens, Reader);
 
                 }
                 else {
 
-                    ReadProperty(Reader);
+                    ReadProperty(tokens, Reader);
 
                 }
 
@@ -106,7 +70,11 @@ namespace Gsemac.Text.Ini.Lexers {
 
         }
 
-        private bool ReadSectionName(LookaheadTextReader reader) {
+        // Private members
+
+        private readonly IIniOptions options = new IniOptions();
+
+        private bool ReadSectionName(Queue<IIniLexerToken> tokens, LookaheadTextReader reader) {
 
             // A section name must appear on its own line, followed by whitespace or an inline comment (if enabled).
             // If we read an invalid section name, it will be treated as a property instead (with or without a value, depending on how it's formatted).
@@ -144,15 +112,14 @@ namespace Gsemac.Text.Ini.Lexers {
                 // The section name is invalid, so reinterpret it as a property.
 
                 using (LookaheadTextReader propertyReader = new LookaheadTextReader(value))
-                    ReadProperty(propertyReader);
+                    ReadProperty(tokens, propertyReader);
 
             }
 
             return sectionNameIsValid;
 
         }
-
-        private void ReadCommentMarker(LookaheadTextReader reader) {
+        private void ReadCommentMarker(Queue<IIniLexerToken> tokens, LookaheadTextReader reader) {
 
             if (reader.EndOfText() || options.CommentMarker.Length <= 0)
                 return;
@@ -162,7 +129,7 @@ namespace Gsemac.Text.Ini.Lexers {
             tokens.Enqueue(new IniLexerToken(IniLexerTokenType.CommentMarker, reader.ReadString(options.CommentMarker.Length)));
 
         }
-        private void ReadCommentContent(LookaheadTextReader reader) {
+        private void ReadCommentContent(Queue<IIniLexerToken> tokens, LookaheadTextReader reader) {
 
             string value = reader.ReadLine();
 
@@ -171,8 +138,7 @@ namespace Gsemac.Text.Ini.Lexers {
             tokens.Enqueue(new IniLexerToken(IniLexerTokenType.Comment, value.Trim()));
 
         }
-
-        private bool ReadPropertyName(LookaheadTextReader reader) {
+        private bool ReadPropertyName(Queue<IIniLexerToken> tokens, LookaheadTextReader reader) {
 
             string[] delimiters = options.EnableInlineComments ?
                 new[] { options.NameValueSeparator, options.CommentMarker } :
@@ -196,7 +162,7 @@ namespace Gsemac.Text.Ini.Lexers {
             return true;
 
         }
-        private bool ReadNameValueSeparator(LookaheadTextReader reader) {
+        private bool ReadNameValueSeparator(Queue<IIniLexerToken> tokens, LookaheadTextReader reader) {
 
             if (reader.EndOfText())
                 return false;
@@ -222,7 +188,7 @@ namespace Gsemac.Text.Ini.Lexers {
             return true;
 
         }
-        private bool ReadPropertyValue(LookaheadTextReader reader) {
+        private bool ReadPropertyValue(Queue<IIniLexerToken> tokens, LookaheadTextReader reader) {
 
             string[] delimiters = options.EnableInlineComments ?
                 new string[] { options.CommentMarker } :
@@ -241,23 +207,22 @@ namespace Gsemac.Text.Ini.Lexers {
             return true;
 
         }
+        private bool ReadSection(Queue<IIniLexerToken> tokens, LookaheadTextReader reader) {
 
-        private bool ReadSection(LookaheadTextReader reader) {
-
-            return ReadSectionName(reader);
-
-        }
-        private void ReadComment(LookaheadTextReader reader) {
-
-            ReadCommentMarker(reader);
-            ReadCommentContent(reader);
+            return ReadSectionName(tokens, reader);
 
         }
-        private bool ReadProperty(LookaheadTextReader reader) {
+        private void ReadComment(Queue<IIniLexerToken> tokens, LookaheadTextReader reader) {
 
-            return ReadPropertyName(reader) &&
-                ReadNameValueSeparator(reader) &&
-                ReadPropertyValue(reader);
+            ReadCommentMarker(tokens, reader);
+            ReadCommentContent(tokens, reader);
+
+        }
+        private bool ReadProperty(Queue<IIniLexerToken> tokens, LookaheadTextReader reader) {
+
+            return ReadPropertyName(tokens, reader) &&
+                ReadNameValueSeparator(tokens, reader) &&
+                ReadPropertyValue(tokens, reader);
 
         }
 
