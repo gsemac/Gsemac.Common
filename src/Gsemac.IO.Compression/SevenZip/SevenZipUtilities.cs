@@ -1,8 +1,5 @@
-﻿using Gsemac.Reflection;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.IO;
-using System.Linq;
 
 namespace Gsemac.IO.Compression.SevenZip {
 
@@ -12,7 +9,7 @@ namespace Gsemac.IO.Compression.SevenZip {
 
         public static string SevenZipDirectoryPath => GetSevenZipDirectoryPath();
         public static string SevenZipExecutablePath => sevenZipExecutablePath.Value;
-        public static string SevenZipExecutableFilename => "7z.exe";
+        public static string SevenZipExecutableFileName => "7z.exe";
 
         // Private members
 
@@ -30,20 +27,7 @@ namespace Gsemac.IO.Compression.SevenZip {
         }
         private static string GetSevenZipExecutablePath() {
 
-            IFileSystemAssemblyResolver resolver = new FileSystemAssemblyResolver() {
-                AddExtension = false,
-            };
-
-            IEnumerable<string> probingPaths = new[] {
-                Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles),
-                Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86),
-            }.Where(path => !string.IsNullOrWhiteSpace(path))
-            .Select(path => Path.Combine(path, "7-Zip"));
-
-            foreach (string probingPath in probingPaths.Distinct())
-                resolver.ProbingPaths.Add(probingPath);
-
-            return resolver.GetAssemblyPath(SevenZipExecutableFilename);
+            return ArchiveFactoryUtilities.GetProgramExecutablePath("7-Zip", SevenZipExecutableFileName);
 
         }
 

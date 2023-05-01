@@ -1,0 +1,71 @@
+﻿using Gsemac.IO.Extensions;
+using Gsemac.IO.FileFormats;
+using Gsemac.Reflection.Plugins;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+
+namespace Gsemac.IO.Compression.Winrar {
+
+    [RequiresWinrarExe]
+    public class WinrarExeArchiveFactory :
+        PluginBase,
+        IArchiveFactory {
+
+        // Public members
+
+        public WinrarExeArchiveFactory() :
+            this(WinrarExeArchiveFactoryOptions.Default) {
+        }
+        public WinrarExeArchiveFactory(IWinrarExeArchiveFactoryOptions options) {
+
+            if (options is null)
+                throw new ArgumentNullException(nameof(options));
+
+            this.options = options;
+
+        }
+
+        public IEnumerable<ICodecCapabilities> GetSupportedFileFormats() {
+
+            // While WinRAR supports numerous archive formats, the command-line programs ("Rar.exe" and "UnRAR.exe") only support RAR archives.
+            // As well, only the former is capable of writing to archives.
+
+            bool canWrite = WinrarUtilities.GetWinrarExecutablePath(options.WinrarDirectoryPath)
+                .EndsWith(WinrarUtilities.WinrarExecutableFileName);
+
+            return new IFileFormat[] {
+                ArchiveFormat.Rar,
+            }
+            .OrderBy(f => f.Extensions.First())
+            .Distinct()
+            .Select(f => new CodecCapabilities(f, canRead: true, canWrite: canWrite));
+
+        }
+
+        public IArchive Open(Stream stream, IFileFormat archiveFormat, IArchiveOptions archiveOptions) {
+
+            if (stream is null)
+                throw new ArgumentNullException(nameof(stream));
+
+            if (archiveFormat is null)
+                stream = FileFormatFactory.Default.FromStream(stream, out archiveFormat);
+
+            if (archiveOptions is null)
+                archiveOptions = ArchiveOptions.Default;
+
+            if (!this.IsSupportedFileFormat(archiveFormat))
+                throw new UnsupportedFileFormatException(archiveFormat);
+
+            return new WinrarExeArchive(stream, options.WinrarDirectoryPath, archiveFormat, archiveOptions);
+
+        }
+
+        // Private members
+
+        private readonly IWinrarExeArchiveFactoryOptions options;
+
+    }
+
+}

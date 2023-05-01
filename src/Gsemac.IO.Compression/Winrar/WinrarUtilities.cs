@@ -1,8 +1,5 @@
-﻿using Gsemac.Reflection;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.IO;
-using System.Linq;
 
 namespace Gsemac.IO.Compression.Winrar {
 
@@ -10,40 +7,50 @@ namespace Gsemac.IO.Compression.Winrar {
 
         // Public members
 
-        public static string WinrarDirectoryPath => GetWinrarDirectoryPath();
-        public static string WinrarExecutablePath => winrarExecutablePath.Value;
-        public static string WinrarExecutableFilename => "Rar.exe";
+        public static string WinrarExecutableFileName => "Rar.exe";
+        public static string UnrarExecutableFileName => "UnRAR.exe";
+
+        public static string GetWinrarExecutablePath(string directoryPath) {
+
+            if (!string.IsNullOrWhiteSpace(directoryPath)) {
+
+                // Attempt to find either command-line executable inside of the given directory.
+
+                string executableFilePath = Path.Combine(directoryPath, WinrarExecutableFileName);
+
+                if (File.Exists(executableFilePath))
+                    return executableFilePath;
+
+                executableFilePath = Path.Combine(directoryPath, UnrarExecutableFileName);
+
+                if (File.Exists(executableFilePath))
+                    return executableFilePath;
+
+            }
+            else {
+
+                return winrarExecutablePath.Value;
+
+            }
+
+            // We were unable to find the executable.
+
+            return string.Empty;
+
+        }
 
         // Private members
 
-        private static readonly Lazy<string> winrarExecutablePath = new Lazy<string>(GetWinrarExecutablePath);
+        private static readonly Lazy<string> winrarExecutablePath = new Lazy<string>(GetWinrarExecutablePathInternal);
 
-        private static string GetWinrarDirectoryPath() {
+        private static string GetWinrarExecutablePathInternal() {
 
-            string filePath = winrarExecutablePath.Value;
+            string winrarExecutablePath = ArchiveFactoryUtilities.GetProgramExecutablePath("WinRAR", WinrarExecutableFileName);
 
-            if (!string.IsNullOrWhiteSpace(filePath))
-                filePath = Path.GetDirectoryName(filePath);
+            if (string.IsNullOrWhiteSpace(winrarExecutablePath))
+                winrarExecutablePath = ArchiveFactoryUtilities.GetProgramExecutablePath("WinRAR", UnrarExecutableFileName);
 
-            return filePath;
-
-        }
-        private static string GetWinrarExecutablePath() {
-
-            IFileSystemAssemblyResolver resolver = new FileSystemAssemblyResolver() {
-                AddExtension = false,
-            };
-
-            IEnumerable<string> probingPaths = new[] {
-                Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles),
-                Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86),
-            }.Where(path => !string.IsNullOrWhiteSpace(path))
-            .Select(path => Path.Combine(path, "WinRAR"));
-
-            foreach (string probingPath in probingPaths.Distinct())
-                resolver.ProbingPaths.Add(probingPath);
-
-            return resolver.GetAssemblyPath(WinrarExecutableFilename);
+            return winrarExecutablePath;
 
         }
 

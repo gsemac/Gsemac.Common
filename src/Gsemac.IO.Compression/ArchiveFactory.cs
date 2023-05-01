@@ -1,5 +1,4 @@
-﻿using Gsemac.Polyfills.Microsoft.Extensions.DependencyInjection;
-using Gsemac.Reflection.Plugins;
+﻿using Gsemac.Reflection.Plugins;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -15,26 +14,12 @@ namespace Gsemac.IO.Compression {
         public static ArchiveFactory Default => new ArchiveFactory();
 
         public ArchiveFactory() :
-            this(ArchiveFactoryOptions.Default) {
+            this(null) {
 
         }
-        public ArchiveFactory(IPluginLoader pluginLoader) :
-            this(pluginLoader, ArchiveFactoryOptions.Default) {
-        }
-        public ArchiveFactory(IArchiveFactoryOptions options) :
-            this(null, options) {
-        }
-        public ArchiveFactory(IPluginLoader pluginLoader, IArchiveFactoryOptions options) {
+        public ArchiveFactory(IServiceProvider serviceProvider) {
 
-            if (options is null)
-                throw new ArgumentNullException(nameof(options));
-
-            if (pluginLoader is null)
-                this.pluginLoader = new Lazy<IPluginLoader>(CreateDefaultPluginLoader);
-            else
-                this.pluginLoader = new Lazy<IPluginLoader>(() => pluginLoader);
-
-            this.options = options;
+            pluginLoader = CreatePluginLoader(serviceProvider);
 
         }
 
@@ -62,12 +47,14 @@ namespace Gsemac.IO.Compression {
 
             // Get an archive factory capable of opening this archive according to the file access option.
 
+            var a = GetArchiveFactories();
 
+            var b = a.SelectMany(f => f.GetSupportedFileFormats());
 
             IArchiveFactory archiveFactory = GetArchiveFactories()
                 .Where(decoder => decoder.GetSupportedFileFormats()
                     .Where(f => (archiveOptions.FileAccess == FileAccess.Write && f.CanWrite) || f.CanRead)
-                    .Any(format => format.Equals(archiveFormat)))
+                    .Any(f => f.Format.Equals(archiveFormat)))
                 .FirstOrDefault();
 
             if (archiveFactory is object) {
@@ -87,12 +74,11 @@ namespace Gsemac.IO.Compression {
 
         // Private members
 
-        private readonly Lazy<IPluginLoader> pluginLoader;
-        private readonly IArchiveFactoryOptions options;
+        private readonly IPluginLoader pluginLoader;
 
         private IEnumerable<IArchiveFactory> GetArchiveFactories() {
 
-            return pluginLoader.Value.GetPlugins<IArchiveFactory>();
+            return pluginLoader.GetPlugins<IArchiveFactory>();
 
         }
         private IEnumerable<ICodecCapabilities> GetSupportedArchiveFormats() {
@@ -102,11 +88,7 @@ namespace Gsemac.IO.Compression {
 
         }
 
-        private IPluginLoader CreateDefaultPluginLoader() {
-
-            IServiceProvider serviceProvider = new ServiceCollection()
-                .AddSingleton(options)
-                .BuildServiceProvider();
+        private IPluginLoader CreatePluginLoader(IServiceProvider serviceProvider) {
 
             return new PluginLoader<IArchiveFactory>(serviceProvider, new PluginLoaderOptions() {
                 PluginSearchPattern = "Gsemac.IO.Compression.*.dll",

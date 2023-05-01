@@ -6,21 +6,26 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Text.RegularExpressions;
 
-namespace Gsemac.IO.Compression.SevenZip {
+namespace Gsemac.IO.Compression.Winrar {
 
-    internal sealed class BinSevenZipArchive :
+    internal sealed class WinrarExeArchive :
         DeferredCreationArchiveBase {
 
         // Public members
 
+        public override string Comment {
+            get => newComment is null ? existingComment.Value : newComment;
+            set => newComment = value;
+        }
         public override CompressionLevel CompressionLevel {
             get => throw new NotSupportedException(Properties.ExceptionMessages.ArchiveDoesNotSupportGettingCompressionLevel);
             set => compressionLevel = value;
         }
 
-        public BinSevenZipArchive(Stream stream, string sevenZipDirectoryPath, IFileFormat archiveFormat, IArchiveOptions options) :
+        public WinrarExeArchive(Stream stream, string winrarDirectoryPath, IFileFormat archiveFormat, IArchiveOptions options) :
             base(options) {
 
             if (stream is null)
@@ -29,18 +34,12 @@ namespace Gsemac.IO.Compression.SevenZip {
             if (archiveFormat is null)
                 throw new ArgumentNullException(nameof(archiveFormat));
 
-            if (string.IsNullOrWhiteSpace(sevenZipDirectoryPath))
-                sevenZipDirectoryPath = SevenZipUtilities.SevenZipDirectoryPath;
+            this.winrarDirectoryPath = winrarDirectoryPath;
 
-            this.sevenZipDirectoryPath = sevenZipDirectoryPath;
-
-            if (!File.Exists(GetSevenZipExecutablePath()))
-                throw new FileNotFoundException(Properties.ExceptionMessages.SevenZipExecutableNotFound, sevenZipDirectoryPath);
+            if (!File.Exists(GetWinrarExecutablePath()))
+                throw new FileNotFoundException(Properties.ExceptionMessages.WinrarExecutableNotFound, winrarDirectoryPath);
 
             if (stream is FileStream fileStream) {
-
-                // When interfacing with 7-Zip using the command line interface, we need to work file paths (I couldn't get the "-si" flag to work).
-                // We'll extract the file information from the FileStream object to pass to 7-Zip.             
 
                 if (options is null) {
 
@@ -61,9 +60,13 @@ namespace Gsemac.IO.Compression.SevenZip {
                 this.filePath = Path.GetFullPath(fileStream.Name);
                 this.archiveFormat = archiveFormat;
                 this.options = options;
+                this.existingComment = new Lazy<string>(ReadArchiveComment);
                 this.compressionLevel = options.CompressionLevel;
 
-                // We must close the file stream to ensure that 7-Zip can access the archive.
+                if (options.Comment is object)
+                    newComment = options.Comment;
+
+                // We must close the file stream to ensure that WinRAR can access the archive.
 
                 fileStream.Close();
 
@@ -104,15 +107,13 @@ namespace Gsemac.IO.Compression.SevenZip {
 
                 ProcessStartInfo processStartInfo = CreateProcessStartInfo();
 
-                ICommandLineArgumentsBuilder argumentsBuilder = new CmdArgumentsBuilder()
-                    .WithArgument("e")
+                processStartInfo.Arguments = new CmdArgumentsBuilder()
+                    .WithArgument("p")
+                    .WithArgument("-inul") // disable header and progress bar
                     .WithArgument(filePath)
-                    .WithArgument("-so")
-                    .WithArgument(SanitizeEntryName(entry.Name));
-
-                AddPasswordArguments(argumentsBuilder);
-
-                processStartInfo.Arguments = argumentsBuilder.ToString();
+                    .WithArgument(GetPasswordArgument())
+                    .WithArgument(SanitizeEntryName(entry.Name))
+                    .ToString();
 
                 using (Stream processStream = new ProcessStream(processStartInfo, new ProcessStreamOptions(redirectStandardOutput: true)))
                     processStream.CopyTo(outputStream);
@@ -131,25 +132,19 @@ namespace Gsemac.IO.Compression.SevenZip {
 
                 ProcessStartInfo processStartInfo = CreateProcessStartInfo();
 
-                ICommandLineArgumentsBuilder argumentsBuilder = new CmdArgumentsBuilder()
+                processStartInfo.Arguments = new CmdArgumentsBuilder()
                     .WithArgument("l")
                     .WithArgument(filePath)
-                    .WithArgument("-sccUTF-8"); // output filenames in UTF-8 instead of Windows' default charset
-
-                // Include an empty password if no password has been specified to prevent 7-Zip from prompting for a password.
-                // This trick doesn't work for other operations (for example, when adding files, it will always prompt for a password),
-                // so we rely on this method always being called before other operations.
-
-                AddPasswordArguments(argumentsBuilder, includeEmptyPassword: true);
-
-                processStartInfo.Arguments = argumentsBuilder.ToString();
+                    .WithArgument("-scf") // output filenames in UTF-8 instead of Windows' default charset
+                    .WithArgument(GetPasswordArgument(includeEmptyPassword: true))
+                    .ToString();
 
                 using (Stream processStream = new ProcessStream(processStartInfo, new ProcessStreamOptions(redirectStandardOutput: true, redirectStandardError: true) { RedirectStandardErrorToStandardOutput = true }))
                 using (StreamReader streamReader = new StreamReader(processStream)) {
 
                     string output = streamReader.ReadToEnd();
 
-                    foreach (Match match in Regex.Matches(output, @"(?<date>\d{4}-\d{2}-\d{2}\s+\d{2}:\d{2}:\d{2})\s+(?<attr>[\w\.]{5})\s+(?<size>\d+)\s+(?<compressed>\d*)\s+(?<name>.+?)$", RegexOptions.Multiline)) {
+                    foreach (Match match in Regex.Matches(output, @"(?<attr>[\w\.]{7})\s+(?<compressed>\d+)\s+(?<date>\d{4}-\d{2}-\d{2}\s+\d{2}:\d{2})\s+(?<name>.+?)$", RegexOptions.Multiline)) {
 
                         if (match.Groups["attr"].Value.Contains("D"))
                             continue;
@@ -158,20 +153,21 @@ namespace Gsemac.IO.Compression.SevenZip {
                             Name = SanitizeEntryName(match.Groups["name"].Value.Trim()),
                         };
 
-                        if (DateTimeOffset.TryParseExact(match.Groups["date"].Value, "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture, DateTimeStyles.AssumeLocal, out DateTimeOffset date))
+                        if (DateTimeOffset.TryParseExact(match.Groups["date"].Value, "yyyy-MM-dd HH:mm", CultureInfo.InvariantCulture, DateTimeStyles.AssumeLocal, out DateTimeOffset date))
                             entry.LastModified = date;
-
-                        if (int.TryParse(match.Groups["size"].Value, out int size))
-                            entry.Size = size;
 
                         if (int.TryParse(match.Groups["compressed"].Value, out int compressed))
                             entry.CompressedSize = compressed;
+
+                        // We have no means of getting the original file size.
+
+                        entry.Size = entry.CompressedSize;
 
                         items.Add(entry);
 
                     }
 
-                    if (!items.Any() && output.Contains("Wrong password?"))
+                    if (!items.Any() && output.Contains("Incorrect password"))
                         throw new PasswordException();
 
                 }
@@ -197,20 +193,64 @@ namespace Gsemac.IO.Compression.SevenZip {
 
             CommitNewEntries(processStartInfo, newEntries);
 
+            // Update archive comment.
+
+            CommitComment(processStartInfo);
+
         }
 
         // Private members
 
         private readonly string filePath;
-        private readonly string sevenZipDirectoryPath;
+        private readonly string winrarDirectoryPath;
         private readonly IFileFormat archiveFormat;
         private readonly IArchiveOptions options;
+        private readonly Lazy<string> existingComment;
         private CompressionLevel compressionLevel = CompressionLevel.Maximum;
+        private string newComment;
+
+        private static string ConvertToEp3Path(string filePath) {
+
+            return Regex.Replace(filePath, @"^\/+|:", m => "".PadLeft(m.Length, '_'));
+
+        }
+
+        private string ReadArchiveComment() {
+
+            if (!File.Exists(filePath) || FileUtilities.GetFileSize(filePath) <= 0)
+                return string.Empty;
+
+            ProcessStartInfo processStartInfo = CreateProcessStartInfo();
+
+            processStartInfo.Arguments = new CmdArgumentsBuilder()
+                .WithArgument("cw")
+                .WithArgument(filePath)
+                .WithArgument(GetPasswordArgument(includeEmptyPassword: true))
+                .WithArgument(GetEncodingArgument())
+                .ToString();
+
+            using (Stream processStream = new ProcessStream(processStartInfo, new ProcessStreamOptions(redirectStandardOutput: true)))
+            using (StreamReader streamReader = new StreamReader(processStream, options.Encoding)) {
+
+                string output = streamReader.ReadToEnd().Trim();
+
+                if (output.Contains("Program aborted"))
+                    throw new PasswordException();
+
+                // Skip the first two lines that are displayed before the comment content.
+
+                output = string.Join(Environment.NewLine, output.Split(new[] { Environment.NewLine }, StringSplitOptions.None).Skip(2));
+
+                return output;
+
+            }
+
+        }
 
         private ProcessStartInfo CreateProcessStartInfo() {
 
             ProcessStartInfo processStartInfo = new ProcessStartInfo() {
-                FileName = GetSevenZipExecutablePath(),
+                FileName = GetWinrarExecutablePath(),
                 UseShellExecute = false,
                 CreateNoWindow = true,
                 WindowStyle = ProcessWindowStyle.Hidden,
@@ -219,17 +259,36 @@ namespace Gsemac.IO.Compression.SevenZip {
             return processStartInfo;
 
         }
-        private string GetSevenZipExecutablePath() {
+        private string GetWinrarExecutablePath() {
 
-            string executablePath = Path.Combine(sevenZipDirectoryPath, "7z.exe");
+            string executablePath = WinrarUtilities.GetWinrarExecutablePath(winrarDirectoryPath);
 
             if (!File.Exists(executablePath))
-                throw new FileNotFoundException(Properties.ExceptionMessages.SevenZipExecutableNotFound, executablePath);
+                throw new FileNotFoundException(Properties.ExceptionMessages.WinrarExecutableNotFound, executablePath);
 
             return executablePath;
 
         }
 
+        private void AddCompressionLevelArguments(ICommandLineArgumentsBuilder argumentsBuilder) {
+
+            switch (compressionLevel) {
+
+                case CompressionLevel.Store:
+
+                    argumentsBuilder.WithArgument("-m0");
+
+                    break;
+
+                case CompressionLevel.Maximum:
+
+                    argumentsBuilder.WithArgument("-m5");
+
+                    break;
+
+            }
+
+        }
         private void AddTypeArgument(ICommandLineArgumentsBuilder argumentsBuilder) {
 
             if (archiveFormat.Equals(ArchiveFormat.Zip)) {
@@ -244,66 +303,76 @@ namespace Gsemac.IO.Compression.SevenZip {
             }
 
         }
-        private void AddCompressionLevelArguments(ICommandLineArgumentsBuilder argumentsBuilder) {
+        private string GetEncodingArgument() {
 
-            switch (compressionLevel) {
+            if (options.Encoding.Equals(Encoding.Unicode)) {
 
-                case CompressionLevel.Store:
+                return "-scu";
 
-                    argumentsBuilder.WithArgument("-mx0");
+            }
+            else if (options.Encoding.Equals(Encoding.ASCII)) {
 
-                    if (archiveFormat.Equals(ArchiveFormat.Zip)) {
+                return "-sca";
 
-                        argumentsBuilder.WithArgument("-mmCopy");
+            }
+            else {
 
-                    }
+                // Default to UTF-8.
 
-                    break;
-
-                case CompressionLevel.Maximum:
-
-                    // https://superuser.com/a/742034 (kenorb)
-
-                    argumentsBuilder.WithArgument("-mx9");
-
-                    if (archiveFormat.Equals(ArchiveFormat.Zip)) {
-
-                        argumentsBuilder.WithArgument("-mm=Deflate")
-                            .WithArgument("-mfb=258")
-                            .WithArgument("-mpass=15");
-
-                    }
-                    else if (archiveFormat.Equals(ArchiveFormat.SevenZip)) {
-
-                        argumentsBuilder.WithArgument("-m0=lzma")
-                            .WithArgument("-mfb=64")
-                            .WithArgument("-md=32m");
-
-                    }
-
-                    break;
+                return "-scf";
 
             }
 
         }
-        private void AddPasswordArguments(ICommandLineArgumentsBuilder argumentsBuilder, bool includeEmptyPassword = false) {
+        private string GetPasswordArgument(bool includeEmptyPassword = false) {
 
-            // A default password can optionally be included to prevent 7-Zip from prompting for one.
+            // A default password can optionally be included to prevent WinRAR from prompting for one.
             // This should only be enabled for non-constructive operations like reading files from the archive.
 
-            if (!string.IsNullOrEmpty(options.Password) || includeEmptyPassword) {
+            if (string.IsNullOrEmpty(options.Password) && !includeEmptyPassword)
+                return "";
 
-                string password = string.IsNullOrEmpty(options.Password) ? "_" : options.Password;
+            string switchStr = options.EncryptHeaders ? "hp" : "p";
+            string password = string.IsNullOrEmpty(options.Password) ? "_" : options.Password;
 
-                argumentsBuilder.WithArgument($"-p{password}");
+            return $"-{switchStr}{password}";
 
-                if (options.EncryptHeaders)
-                    argumentsBuilder.WithArgument("-mhe");
+        }
+
+        private void CommitComment(ProcessStartInfo processStartInfo) {
+
+            if (newComment is object) {
+
+                // WinRAR will read the new comment from stdin, but I need to get that working properly with ProcessStream first.
+                // For now, save the comment to a temporary file and add the comment from there.
+
+                string tempFilePath = PathUtilities.GetTemporaryFilePath(new TemporaryPathOptions() { EnsureUnique = true, });
+
+                try {
+
+                    File.WriteAllText(tempFilePath, newComment, options.Encoding);
+
+                    processStartInfo.Arguments = new CmdArgumentsBuilder()
+                         .WithArgument("c")
+                         .WithArgument(GetPasswordArgument(includeEmptyPassword: true))
+                         .WithArgument(GetEncodingArgument())
+                         .WithArgument($"-z{tempFilePath}")
+                         .WithArgument(filePath)
+                         .ToString();
+
+                    using (Process process = Process.Start(processStartInfo))
+                        process.WaitForExit();
+
+                }
+                finally {
+
+                    File.Delete(tempFilePath);
+
+                }
 
             }
 
         }
-
         private void CommitDeletedEntries(ProcessStartInfo processStartInfo, IEnumerable<IArchiveEntry> deletedEntries) {
 
             if (deletedEntries.Any()) {
@@ -318,14 +387,13 @@ namespace Gsemac.IO.Compression.SevenZip {
 
                     File.WriteAllText(tempFilePath, string.Join(Environment.NewLine, deletedEntries.Select(entry => entry.Name)));
 
-                    ICommandLineArgumentsBuilder argumentsBuilder = new CmdArgumentsBuilder()
+                    processStartInfo.Arguments = new CmdArgumentsBuilder()
                         .WithArgument("d")
                         .WithArgument(filePath)
-                        .WithArgument($"@{tempFilePath}");
-
-                    AddPasswordArguments(argumentsBuilder);
-
-                    processStartInfo.Arguments = argumentsBuilder.ToString();
+                        .WithArgument(GetPasswordArgument())
+                        .WithArgument(GetEncodingArgument()) // We must specify the encoding for the list file
+                        .WithArgument($"@{tempFilePath}")
+                        .ToString();
 
                     using (Process process = Process.Start(processStartInfo))
                         process.WaitForExit();
@@ -355,7 +423,7 @@ namespace Gsemac.IO.Compression.SevenZip {
                     tempFilePath = PathUtilities.GetTemporaryFilePath(new TemporaryPathOptions() { EnsureUnique = true, });
 
                     // Add the entries to the archive.
-                    // 7-Zip does not allow us to add a file to the archive and rename it in one action.
+                    // WinRAR does not allow us to add a file to the archive and rename it in one action.
 
                     // Start by adding the files that don't need to be renamed.
 
@@ -370,9 +438,11 @@ namespace Gsemac.IO.Compression.SevenZip {
 
                         AddTypeArgument(argumentsBuilder);
                         AddCompressionLevelArguments(argumentsBuilder);
-                        AddPasswordArguments(argumentsBuilder);
 
                         argumentsBuilder.WithArgument(filePath)
+                            .WithArgument("-ep") // Add files to root of archive
+                            .WithArgument(GetPasswordArgument())
+                            .WithArgument(GetEncodingArgument()) // We must specify the encoding for the list file
                             .WithArgument($"@{tempFilePath}");
 
                         processStartInfo.Arguments = argumentsBuilder.ToString();
@@ -396,10 +466,11 @@ namespace Gsemac.IO.Compression.SevenZip {
 
                         AddTypeArgument(argumentsBuilder);
                         AddCompressionLevelArguments(argumentsBuilder);
-                        AddPasswordArguments(argumentsBuilder);
 
                         argumentsBuilder.WithArgument(filePath)
-                            .WithArgument("-spf") // use fully-qualified path
+                            .WithArgument("-ep3") // use fully-qualified path
+                            .WithArgument(GetPasswordArgument())
+                            .WithArgument(GetEncodingArgument())
                             .WithArgument($"@{tempFilePath}");
 
                         processStartInfo.Arguments = argumentsBuilder.ToString();
@@ -408,18 +479,17 @@ namespace Gsemac.IO.Compression.SevenZip {
                             process.WaitForExit();
 
                         // Finally, rename the files that need to be renamed.
-                        // The listfile format has the old name followed by the new name on the following line for each file to be renamed.
-                        // https://sourceforge.net/p/sevenzip/discussion/45798/thread/3a1961c0/#453b
 
-                        File.WriteAllText(tempFilePath, string.Join(Environment.NewLine, newEntries.Where(entry => entry.RenameRequired).Select(entry => entry.FilePath + Environment.NewLine + entry.Name)));
+                        File.WriteAllText(tempFilePath, string.Join(Environment.NewLine, newEntries.Where(entry => entry.RenameRequired).Select(entry => ConvertToEp3Path(entry.FilePath) + Environment.NewLine + entry.Name)));
 
                         argumentsBuilder = new CmdArgumentsBuilder()
                            .WithArgument("rn");
 
                         AddTypeArgument(argumentsBuilder);
-                        AddPasswordArguments(argumentsBuilder);
 
                         argumentsBuilder.WithArgument(filePath)
+                            .WithArgument(GetPasswordArgument())
+                            .WithArgument(GetEncodingArgument())
                             .WithArgument($"@{tempFilePath}");
 
                         processStartInfo.Arguments = argumentsBuilder.ToString();

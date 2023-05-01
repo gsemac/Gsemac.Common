@@ -48,6 +48,19 @@
 		</Otherwise>
 	</Choose>
 
+	<Choose>
+		<When Condition="$(DefineConstants.Contains('NETFRAMEWORK'))">
+		</When>
+		<Otherwise>
+			<ItemGroup>
+				<!-- On versions after .NET Framework, we need this package for CP437, which is used by ZipStorer as specified in the ZIP spec. -->
+				<PackageReference Include="System.Text.Encoding.CodePages">
+					<Version>7.0.0</Version>
+				</PackageReference>
+			</ItemGroup>
+		</Otherwise>
+	</Choose>
+
 	<ItemGroup>
 		<Content Include="Gsemac.IO.Compression.targets" PackagePath="build/Gsemac.IO.Compression.targets" />
 		<Content Include="licenses\*" Pack="true" PackagePath="contentFiles\licenses" />

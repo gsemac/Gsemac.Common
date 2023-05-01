@@ -7,7 +7,7 @@ using System.Linq;
 
 namespace Gsemac.IO.Compression.SevenZip {
 
-    public sealed class RequiresSevenZipAttribute :
+    public sealed class RequiresSevenZipExeAttribute :
         RequirementAttributeBase {
 
         // Public members
@@ -16,10 +16,10 @@ namespace Gsemac.IO.Compression.SevenZip {
 
             List<string> candidatePaths = new List<string>();
 
-            IArchiveFactoryOptions archiveFactoryOptions = serviceProvider?.GetService<IArchiveFactoryOptions>();
+            ISevenZipExeArchiveFactoryOptions archiveFactoryOptions = serviceProvider?.GetService<ISevenZipExeArchiveFactoryOptions>();
 
             if (archiveFactoryOptions is object && !string.IsNullOrWhiteSpace(archiveFactoryOptions.SevenZipDirectoryPath))
-                candidatePaths.Add(Path.Combine(archiveFactoryOptions.SevenZipDirectoryPath, SevenZipUtilities.SevenZipExecutableFilename));
+                candidatePaths.Add(Path.Combine(archiveFactoryOptions.SevenZipDirectoryPath, SevenZipUtilities.SevenZipExecutableFileName));
 
             candidatePaths.Add(SevenZipUtilities.SevenZipExecutablePath);
 

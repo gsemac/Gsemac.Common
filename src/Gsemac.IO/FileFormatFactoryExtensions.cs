@@ -64,29 +64,48 @@ namespace Gsemac.IO {
             if (stream is null)
                 throw new ArgumentNullException(nameof(stream));
 
-            // Read the file signature from the stream into a buffer, which is then concatenated with the original stream.
-            // This allows us to read the file signature from streams that don't support seeking.
+            if (stream.CanSeek) {
 
-            MemoryStream fileSignatureBuffer = new MemoryStream(new byte[bufferSize], 0, count: bufferSize, writable: true, publiclyVisible: true);
+                // If the stream is seekable, we can read directly from the stream and then seek back.
 
-            try {
+                long initialPosition = stream.Position;
 
-                int bytesRead = stream.Read(fileSignatureBuffer.GetBuffer(), 0, FileFormatFactory.DefaultReadBufferSize);
+                fileFormat = fileFormatFactory.FromStream(stream);
 
-                fileSignatureBuffer.SetLength(bytesRead);
+                stream.Seek(initialPosition, SeekOrigin.Begin);
 
-                fileFormat = fileFormatFactory.FromStream(fileSignatureBuffer);
-
-                fileSignatureBuffer.Seek(0, SeekOrigin.Begin);
-
-                return new ConcatStream(fileSignatureBuffer, stream);
+                return stream;
 
             }
-            catch (Exception) {
+            else {
 
-                fileSignatureBuffer.Dispose();
+                // Read the file signature from the stream into a buffer, which is then concatenated with the original stream.
+                // This allows us to read the file signature from streams that don't support seeking.
 
-                throw;
+                MemoryStream fileSignatureBuffer = new MemoryStream(new byte[bufferSize], 0, count: bufferSize, writable: true, publiclyVisible: true);
+
+                try {
+
+                    int bytesRead = stream.Read(fileSignatureBuffer.GetBuffer(), 0, FileFormatFactory.DefaultReadBufferSize);
+
+                    fileSignatureBuffer.SetLength(bytesRead);
+
+                    fileFormat = fileFormatFactory.FromStream(fileSignatureBuffer);
+
+                    fileSignatureBuffer.Seek(0, SeekOrigin.Begin);
+
+                    return new ConcatStream(fileSignatureBuffer, stream);
+
+                }
+                catch (Exception) {
+
+                    // The buffer is ONLY disposed if we fail to return a ConcatStream instance.
+
+                    fileSignatureBuffer.Dispose();
+
+                    throw;
+
+                }
 
             }
 
