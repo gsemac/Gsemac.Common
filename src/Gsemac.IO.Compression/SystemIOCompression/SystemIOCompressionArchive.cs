@@ -188,21 +188,6 @@ namespace Gsemac.IO.Compression.SystemIOCompression {
 
         }
 
-        //private void SaveTo(Stream outputStream) {
-
-        //    if (outputStream is null)
-        //        throw new ArgumentNullException(nameof(outputStream));
-
-        //    long position = stream.Position;
-
-        //    stream.Seek(0, SeekOrigin.Begin);
-
-        //    stream.CopyTo(outputStream);
-
-        //    stream.Seek(position, SeekOrigin.Begin);
-
-        //}
-
     }
 
 }

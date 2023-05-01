@@ -19,12 +19,12 @@ namespace Gsemac.IO.Compression.Tests.IntegrationTests {
 
         [TestMethod]
         [DataRow(null, "archive.zip")]
-        [DataRow(typeof(ZipStorerArchiveFactory), "archive.zip")]
-        [DataRow(typeof(SystemIOCompressionArchiveFactory), "archive.zip")]
-        [DataRow(typeof(SevenZipExeArchiveFactory), "archive.zip")]
         [DataRow(typeof(SevenZipExeArchiveFactory), "archive.7z")]
+        [DataRow(typeof(SevenZipExeArchiveFactory), "archive.zip")]
+        [DataRow(typeof(SystemIOCompressionArchiveFactory), "archive.zip")]
         [DataRow(typeof(WinrarExeArchiveFactory), "archive.rar")]
-        public void TestReadFilesFromArchive(Type archiveFactoryType, string archiveFilePath) {
+        [DataRow(typeof(ZipStorerArchiveFactory), "archive.zip")]
+        public void TestFilesReadMatchFilesInArchive(Type archiveFactoryType, string archiveFilePath) {
 
             IArchiveFactory archiveFactory = archiveFactoryType is null ?
                 ArchiveFactory.Default :
@@ -34,8 +34,73 @@ namespace Gsemac.IO.Compression.Tests.IntegrationTests {
             using (IArchive archive = archiveFactory.Open(stream)) {
 
                 Assert.AreEqual(2, archive.GetEntries().Count());
+
                 Assert.IsTrue(archive.ContainsEntry("file1.txt"));
                 Assert.IsTrue(archive.ContainsEntry("file2.txt"));
+
+            }
+
+        }
+
+        [TestMethod]
+        [DataRow(null, "archive.zip")]
+        [DataRow(typeof(SevenZipExeArchiveFactory), "archive.7z")]
+        [DataRow(typeof(SevenZipExeArchiveFactory), "archive.zip")]
+        [DataRow(typeof(SystemIOCompressionArchiveFactory), "archive.zip")]
+        [DataRow(typeof(WinrarExeArchiveFactory), "archive.rar")]
+        [DataRow(typeof(ZipStorerArchiveFactory), "archive.zip")]
+        public void TestAddingFilesToNewArchiveProducesAValidArchive(Type archiveFactoryType, string archiveFilePath) {
+
+            // Archives will be created in the temporary directory and deleted afterwards.
+
+            string tempDirectoryPath = PathUtilities.GetTemporaryDirectoryPath();
+
+            Assert.IsTrue(Directory.Exists(tempDirectoryPath));
+            Assert.IsTrue(DirectoryUtilities.IsDirectoryEmpty(tempDirectoryPath));
+
+            try {
+
+                IArchiveFactory archiveFactory = archiveFactoryType is null ?
+                    ArchiveFactory.Default :
+                    (IArchiveFactory)Activator.CreateInstance(archiveFactoryType);
+
+                // Add files to the archive.
+
+                File.WriteAllText(Path.Combine(tempDirectoryPath, "file1.txt"), "hello world");
+                File.WriteAllText(Path.Combine(tempDirectoryPath, "file2.txt"), "hello world again");
+
+                string fullArchiveFilePath = Path.Combine(tempDirectoryPath, archiveFilePath);
+
+                using (IArchive archive = archiveFactory.Open(fullArchiveFilePath)) {
+
+                    archive.AddFile(Path.Combine(tempDirectoryPath, "file1.txt"));
+                    archive.AddFile(Path.Combine(tempDirectoryPath, "file2.txt"));
+
+                    Assert.AreEqual(2, archive.GetEntries().Count());
+
+                    Assert.IsTrue(archive.ContainsEntry("file1.txt"));
+                    Assert.IsTrue(archive.ContainsEntry("file2.txt"));
+
+                }
+
+                Assert.IsTrue(File.Exists(fullArchiveFilePath));
+
+                // Reopen the archive and verify that files are inside.
+
+                using (IArchive archive = archiveFactory.OpenRead(fullArchiveFilePath)) {
+
+                    Assert.AreEqual(2, archive.GetEntries().Count());
+
+                    Assert.IsTrue(archive.ContainsEntry("file1.txt"));
+                    Assert.IsTrue(archive.ContainsEntry("file2.txt"));
+
+                }
+
+            }
+            finally {
+
+                if (Directory.Exists(tempDirectoryPath))
+                    Directory.Delete(tempDirectoryPath, recursive: true);
 
             }
 

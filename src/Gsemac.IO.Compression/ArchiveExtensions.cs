@@ -18,7 +18,22 @@ namespace Gsemac.IO.Compression {
             if (!overwrite && archive.ContainsEntry(entryName))
                 return false;
 
-            archive.AddEntry(File.OpenRead(filePath), entryName);
+            Stream stream = File.OpenRead(filePath);
+
+            try {
+
+                archive.AddEntry(stream, entryName);
+
+            }
+            catch (Exception) {
+
+                // If we fail to add the entry, make sure we close the stream we opened.
+
+                stream.Close();
+
+                throw;
+
+            }
 
             return true;
 

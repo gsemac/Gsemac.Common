@@ -42,7 +42,7 @@ namespace Gsemac.IO.Compression {
 
             Dispose(disposing: true);
 
-            System.GC.SuppressFinalize(this);
+            GC.SuppressFinalize(this);
 
         }
 

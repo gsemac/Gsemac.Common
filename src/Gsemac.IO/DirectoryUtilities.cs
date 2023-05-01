@@ -1,29 +1,31 @@
 ﻿using System;
 using System.Diagnostics;
+using System.IO;
+using System.Linq;
 
 namespace Gsemac.IO {
 
     public static class DirectoryUtilities {
 
-        public static string FindFileByFilename(string directoryPath, string filename, FindFileOptions options = FindFileOptions.Default) {
+        public static string FindFileByFileName(string directoryPath, string fileName, FindFileOptions options = FindFileOptions.Default) {
 
             string fullPath = string.Empty;
 
-            if (!string.IsNullOrEmpty(filename) && System.IO.Directory.Exists(directoryPath)) {
+            if (!string.IsNullOrEmpty(fileName) && Directory.Exists(directoryPath)) {
 
                 if (options.HasFlag(FindFileOptions.IgnoreCase))
-                    filename = filename.ToLowerInvariant();
+                    fileName = fileName.ToLowerInvariant();
 
-                foreach (string filePath in System.IO.Directory.EnumerateFiles(directoryPath, "*", System.IO.SearchOption.AllDirectories)) {
+                foreach (string filePath in Directory.EnumerateFiles(directoryPath, "*", SearchOption.AllDirectories)) {
 
                     string candidateFileName = options.HasFlag(FindFileOptions.IgnoreExtension) ?
-                        System.IO.Path.GetFileNameWithoutExtension(filePath) :
-                        System.IO.Path.GetFileName(filePath);
+                        Path.GetFileNameWithoutExtension(filePath) :
+                        Path.GetFileName(filePath);
 
                     if (options.HasFlag(FindFileOptions.IgnoreCase))
                         candidateFileName = candidateFileName.ToLowerInvariant();
 
-                    if (candidateFileName.Equals(filename)) {
+                    if (candidateFileName.Equals(fileName)) {
 
                         fullPath = filePath;
 
@@ -43,8 +45,8 @@ namespace Gsemac.IO {
 
             try {
 
-                if (!System.IO.Directory.Exists(directoryPath))
-                    System.IO.Directory.CreateDirectory(directoryPath);
+                if (!Directory.Exists(directoryPath))
+                    Directory.CreateDirectory(directoryPath);
 
                 return true;
 
@@ -54,6 +56,14 @@ namespace Gsemac.IO {
                 return false;
 
             }
+
+        }
+        public static bool IsDirectoryEmpty(string directoryPath) {
+
+            if (string.IsNullOrWhiteSpace(directoryPath) || !Directory.Exists(directoryPath))
+                return true;
+
+            return !Directory.EnumerateFileSystemEntries(directoryPath).Any();
 
         }
 
@@ -67,14 +77,14 @@ namespace Gsemac.IO {
 
             bool isFilePath = PathUtilities.IsFilePath(path, true);
 
-            if (isFilePath || System.IO.Directory.Exists(path))
-                path = System.IO.Path.GetFullPath(path);
+            if (isFilePath || Directory.Exists(path))
+                path = Path.GetFullPath(path);
 
             string explorerArguments = isFilePath ?
                 $"/select, \"{path}\"" :
                 $"\"{path}\"";
 
-            if (isFilePath || options.HasFlag(OpenDirectoryOptions.NewWindow) || !System.IO.Directory.Exists(path)) {
+            if (isFilePath || options.HasFlag(OpenDirectoryOptions.NewWindow) || !Directory.Exists(path)) {
 
                 // We choose this option if the path doesn't exist since it avoids an exception being thrown by Process.Start.
                 // It will simply open a default directory.
@@ -95,7 +105,7 @@ namespace Gsemac.IO {
         }
         public static void OpenDirectory(string path, string defaultPath, OpenDirectoryOptions options = OpenDirectoryOptions.None) {
 
-            if (System.IO.Directory.Exists(path) || System.IO.File.Exists(path))
+            if (Directory.Exists(path) || File.Exists(path))
                 OpenDirectory(path, options);
             else
                 OpenDirectory(defaultPath, options);
