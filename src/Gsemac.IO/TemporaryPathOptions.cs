@@ -5,7 +5,7 @@
 
         // Public members
 
-        public bool EnsureUnique { get; set; } = false;
+        public bool EnsureUnique { get; set; } = true;
 
         public static TemporaryPathOptions Default => new TemporaryPathOptions();
 

@@ -333,7 +333,11 @@ namespace Gsemac.IO {
 
                 do {
 
-                    result = GetTemporaryFilePath();
+                    // "EnsureUnique" is set to false so that a file isn't created, which would prevent us from creating the directory.
+
+                    result = GetTemporaryFilePath(new TemporaryPathOptions() {
+                        EnsureUnique = false,
+                    });
 
                 } while (Directory.Exists(result));
 
