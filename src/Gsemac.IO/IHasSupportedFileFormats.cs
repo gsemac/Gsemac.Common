@@ -4,7 +4,7 @@ namespace Gsemac.IO {
 
     public interface IHasSupportedFileFormats {
 
-        IEnumerable<IFileFormat> GetSupportedFileFormats();
+        IEnumerable<ICodecCapabilities> GetSupportedFileFormats();
 
     }
 

@@ -3,6 +3,7 @@ using Gsemac.IO.FileFormats;
 using Gsemac.Reflection.Plugins;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 namespace Gsemac.IO.Compression {
 
@@ -13,19 +14,14 @@ namespace Gsemac.IO.Compression {
 
         // Public members
 
-        public IEnumerable<IFileFormat> GetSupportedFileFormats() {
+        public IEnumerable<ICodecCapabilities> GetSupportedFileFormats() {
 
-            return new IFileFormat[] {
-                ArchiveFormat.Zip,
-                ArchiveFormat.SevenZip,
+            List<ICodecCapabilities> codecCapabilities = new List<ICodecCapabilities> {
+                new CodecCapabilities(ArchiveFormat.Zip, canRead: true, canWrite: true),
+                new CodecCapabilities(ArchiveFormat.SevenZip, canRead: true, canWrite: false),
             };
 
-        }
-        public IEnumerable<IFileFormat> GetWritableFileFormats() {
-
-            return new IFileFormat[] {
-                ArchiveFormat.Zip,
-            };
+            return codecCapabilities.OrderBy(f => f.Format.Extensions.First());
 
         }
 

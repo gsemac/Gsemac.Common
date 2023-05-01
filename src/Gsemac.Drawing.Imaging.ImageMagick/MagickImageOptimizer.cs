@@ -1,5 +1,4 @@
 ﻿using Gsemac.IO;
-using Gsemac.Reflection;
 using Gsemac.Reflection.Plugins;
 using System.Collections.Generic;
 using System.IO;
@@ -11,7 +10,7 @@ namespace Gsemac.Drawing.Imaging {
         PluginBase,
         IImageOptimizer {
 
-        public IEnumerable<IFileFormat> GetSupportedFileFormats() {
+        public IEnumerable<ICodecCapabilities> GetSupportedFileFormats() {
 
             return new MagickImageCodec().GetSupportedFileFormats();
 

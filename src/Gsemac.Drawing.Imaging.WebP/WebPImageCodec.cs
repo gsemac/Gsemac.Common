@@ -22,7 +22,7 @@ namespace Gsemac.Drawing.Imaging {
 
         // Public members
 
-        public IEnumerable<IFileFormat> GetSupportedFileFormats() {
+        public IEnumerable<ICodecCapabilities> GetSupportedFileFormats() {
 
             return GetSupportedImageFormats();
 
@@ -80,11 +80,14 @@ namespace Gsemac.Drawing.Imaging {
 
         // Private members
 
-        private IEnumerable<IFileFormat> GetSupportedImageFormats() {
+        private IEnumerable<ICodecCapabilities> GetSupportedImageFormats() {
 
             return new[] {
                 ImageFormat.WebP,
-            };
+            }
+            .OrderBy(f => f.Extensions.First())
+            .Distinct()
+            .Select(f => new CodecCapabilities(f, canRead: true, canWrite: true));
 
         }
 

@@ -38,14 +38,9 @@ namespace Gsemac.IO.Compression {
 
         }
 
-        public IEnumerable<IFileFormat> GetSupportedFileFormats() {
+        public IEnumerable<ICodecCapabilities> GetSupportedFileFormats() {
 
             return GetSupportedArchiveFormats();
-
-        }
-        public IEnumerable<IFileFormat> GetWritableFileFormats() {
-
-            return GetSupportedWritableArchiveFormats();
 
         }
 
@@ -65,8 +60,14 @@ namespace Gsemac.IO.Compression {
 
             List<Exception> exceptions = new List<Exception>();
 
+            // Get an archive factory capable of opening this archive according to the file access option.
+
+
+
             IArchiveFactory archiveFactory = GetArchiveFactories()
-                .Where(decoder => (archiveOptions.FileAccess.HasFlag(FileAccess.Write) ? decoder.GetWritableFileFormats() : decoder.GetSupportedFileFormats()).Any(format => format.Equals(archiveFormat)))
+                .Where(decoder => decoder.GetSupportedFileFormats()
+                    .Where(f => (archiveOptions.FileAccess == FileAccess.Write && f.CanWrite) || f.CanRead)
+                    .Any(format => format.Equals(archiveFormat)))
                 .FirstOrDefault();
 
             if (archiveFactory is object) {
@@ -94,18 +95,10 @@ namespace Gsemac.IO.Compression {
             return pluginLoader.Value.GetPlugins<IArchiveFactory>();
 
         }
-        private IEnumerable<IFileFormat> GetSupportedArchiveFormats() {
+        private IEnumerable<ICodecCapabilities> GetSupportedArchiveFormats() {
 
-            return GetArchiveFactories().SelectMany(decoder => decoder.GetSupportedFileFormats())
-                .OrderBy(type => type)
-                .Distinct();
-
-        }
-        private IEnumerable<IFileFormat> GetSupportedWritableArchiveFormats() {
-
-            return GetArchiveFactories().SelectMany(decoder => decoder.GetWritableFileFormats())
-                .OrderBy(type => type)
-                .Distinct();
+            return CodecCapabilities.Flatten(GetArchiveFactories().SelectMany(decoder => decoder.GetSupportedFileFormats()))
+                .OrderBy(format => format.Format);
 
         }
 

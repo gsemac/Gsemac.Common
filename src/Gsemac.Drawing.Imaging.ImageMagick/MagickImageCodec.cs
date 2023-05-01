@@ -35,7 +35,7 @@ namespace Gsemac.Drawing.Imaging {
 
         }
 
-        public IEnumerable<IFileFormat> GetSupportedFileFormats() {
+        public IEnumerable<ICodecCapabilities> GetSupportedFileFormats() {
 
             return GetSupportedImageFormats();
 
@@ -99,7 +99,7 @@ namespace Gsemac.Drawing.Imaging {
 
         private readonly IFileFormat imageFormat;
 
-        private static IEnumerable<IFileFormat> GetSupportedImageFormats() {
+        private static IEnumerable<ICodecCapabilities> GetSupportedImageFormats() {
 
             return new[] {
                 ".avif",
@@ -116,7 +116,8 @@ namespace Gsemac.Drawing.Imaging {
                 ".webp",
             }.OrderBy(ext => ext)
             .Select(ext => FileFormatFactory.Default.FromFileExtension(ext))
-            .Distinct();
+            .Distinct()
+            .Select(format => new CodecCapabilities(format, canRead: true, canWrite: true));
 
         }
         private static MagickFormat GetMagickFormatForFileExtension(string fileExtension) {

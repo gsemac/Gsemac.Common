@@ -1,22 +1,29 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 
 namespace Gsemac.IO.Extensions {
 
     public static class HasSupportedFileFormatsExtensions {
 
-        public static bool IsSupportedFileFormat(this IHasSupportedFileFormats obj, string filePath) {
+        public static bool IsSupportedFileFormat(this IHasSupportedFileFormats hasSupportedFileFormats, string filePath) {
+
+            if (hasSupportedFileFormats is null)
+                throw new ArgumentNullException(nameof(hasSupportedFileFormats));
 
             string ext = PathUtilities.GetFileExtension(filePath).ToLowerInvariant();
 
             if (string.IsNullOrWhiteSpace(ext))
                 return false;
 
-            return obj.IsSupportedFileFormat(FileFormatFactory.Default.FromFileExtension(ext));
+            return hasSupportedFileFormats.IsSupportedFileFormat(FileFormatFactory.Default.FromFileExtension(ext));
 
         }
-        public static bool IsSupportedFileFormat(this IHasSupportedFileFormats obj, IFileFormat fileFormat) {
+        public static bool IsSupportedFileFormat(this IHasSupportedFileFormats hasSupportedFileFormats, IFileFormat fileFormat) {
 
-            return obj.GetSupportedFileFormats().Any(supportedFileFormat => supportedFileFormat.Equals(fileFormat));
+            if (hasSupportedFileFormats is null)
+                throw new ArgumentNullException(nameof(hasSupportedFileFormats));
+
+            return hasSupportedFileFormats.GetSupportedFileFormats().Any(supportedFileFormat => supportedFileFormat.Format.Equals(fileFormat));
 
         }
 

@@ -26,7 +26,7 @@ namespace Gsemac.Drawing.Imaging {
 
         }
 
-        public IEnumerable<IFileFormat> GetSupportedFileFormats() {
+        public IEnumerable<ICodecCapabilities> GetSupportedFileFormats() {
 
             return GetSupportedImageFormats();
 
@@ -54,10 +54,9 @@ namespace Gsemac.Drawing.Imaging {
             return GetImageCodecs(null);
 
         }
-        private IEnumerable<IFileFormat> GetSupportedImageFormats() {
+        private IEnumerable<ICodecCapabilities> GetSupportedImageFormats() {
 
-            return GetImageCodecs().SelectMany(codec => codec.GetSupportedFileFormats())
-                .Distinct()
+            return CodecCapabilities.Flatten(GetImageCodecs().SelectMany(codec => codec.GetSupportedFileFormats()))
                 .OrderBy(type => type);
 
         }

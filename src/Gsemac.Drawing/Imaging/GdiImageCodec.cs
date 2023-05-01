@@ -85,7 +85,7 @@ namespace Gsemac.Drawing.Imaging {
 
         }
 
-        public IEnumerable<IFileFormat> GetSupportedFileFormats() {
+        public IEnumerable<ICodecCapabilities> GetSupportedFileFormats() {
 
             return GetNativelySupportedImageFormats();
 
@@ -192,7 +192,7 @@ namespace Gsemac.Drawing.Imaging {
 
         }
 
-        private static IEnumerable<IFileFormat> GetNativelySupportedImageFormats() {
+        private static IEnumerable<ICodecCapabilities> GetNativelySupportedImageFormats() {
 
             return new List<string>(new[]{
                 ".bmp",
@@ -207,7 +207,8 @@ namespace Gsemac.Drawing.Imaging {
                 ".wmf",
             }).OrderBy(type => type)
             .Select(ext => FileFormatFactory.Default.FromFileExtension(ext))
-            .Distinct();
+            .Distinct()
+            .Select(format => new CodecCapabilities(format, canRead: true, canWrite: true));
 
         }
         private static ImageFormat GetImageFormatFromFileExtension(string fileExtension) {

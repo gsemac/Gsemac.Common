@@ -1,4 +1,5 @@
 ﻿using Gsemac.IO.Compression.Extensions;
+using Gsemac.IO.Extensions;
 using System.IO;
 
 namespace Gsemac.IO.Compression {
@@ -33,7 +34,18 @@ namespace Gsemac.IO.Compression {
 
         }
 
-        public static void Extract(string filePath, bool extractToNewFolder = true) {
+        public static void Extract(string filePath) {
+
+            Extract(filePath, extractToNewFolder: true);
+
+        }
+        public static void Extract(string filePath, string directoryPath) {
+
+            using (IArchive archive = Open(filePath, FileAccess.Read))
+                archive.ExtractAllEntries(directoryPath);
+
+        }
+        public static void Extract(string filePath, bool extractToNewFolder) {
 
             string outputPath = Path.GetDirectoryName(filePath);
 
@@ -41,12 +53,6 @@ namespace Gsemac.IO.Compression {
                 outputPath = Path.Combine(outputPath, PathUtilities.GetFileNameWithoutExtension(filePath));
 
             Extract(filePath, outputPath);
-
-        }
-        public static void Extract(string filePath, string directoryPath) {
-
-            using (IArchive archive = Open(filePath, FileAccess.Read))
-                archive.ExtractAllEntries(directoryPath);
 
         }
 

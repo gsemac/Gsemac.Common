@@ -3,6 +3,7 @@ using Gsemac.IO.FileFormats;
 using Gsemac.Reflection.Plugins;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 namespace Gsemac.IO.Compression.Winrar {
 
@@ -22,17 +23,15 @@ namespace Gsemac.IO.Compression.Winrar {
 
         }
 
-        public IEnumerable<IFileFormat> GetSupportedFileFormats() {
+        public IEnumerable<ICodecCapabilities> GetSupportedFileFormats() {
 
             return new IFileFormat[] {
-                new ZipFileFormat(),
-                new RarFileFormat(),
-            };
-
-        }
-        public IEnumerable<IFileFormat> GetWritableFileFormats() {
-
-            return GetSupportedFileFormats();
+                ArchiveFormat.Zip,
+                ArchiveFormat.Rar,
+            }
+            .OrderBy(f => f.Extensions.First())
+            .Distinct()
+            .Select(f => new CodecCapabilities(f, canRead: true, canWrite: true));
 
         }
 

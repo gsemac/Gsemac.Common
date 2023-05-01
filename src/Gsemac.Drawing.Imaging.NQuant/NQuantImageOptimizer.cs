@@ -5,6 +5,7 @@ using nQuant;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 
 namespace Gsemac.Drawing.Imaging {
 
@@ -18,7 +19,7 @@ namespace Gsemac.Drawing.Imaging {
 
         public NQuantImageOptimizer() { }
 
-        public IEnumerable<IFileFormat> GetSupportedFileFormats() {
+        public IEnumerable<ICodecCapabilities> GetSupportedFileFormats() {
 
             return GetSupportedImageFormats();
 
@@ -53,11 +54,14 @@ namespace Gsemac.Drawing.Imaging {
 
         // Private members
 
-        private IEnumerable<IFileFormat> GetSupportedImageFormats() {
+        private IEnumerable<ICodecCapabilities> GetSupportedImageFormats() {
 
             return new[] {
                 ImageFormat.Png,
-            };
+            }
+            .OrderBy(f => f.Extensions.First())
+            .Distinct()
+            .Select(f => new CodecCapabilities(f, canRead: true, canWrite: true));
 
         }
 

@@ -11,7 +11,7 @@ namespace Gsemac.Drawing {
 
         // Public members
 
-        public IEnumerable<IFileFormat> GetSupportedFileFormats() {
+        public IEnumerable<ICodecCapabilities> GetSupportedFileFormats() {
 
             return imageCodecFactory.GetSupportedFileFormats();
 
