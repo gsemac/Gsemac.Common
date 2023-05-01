@@ -7,7 +7,7 @@ using System.Text;
 
 namespace Gsemac.Net.Curl {
 
-    public class BinCurlHttpWebRequest :
+    public class CurlExeHttpWebRequest :
         HttpWebRequestBase {
 
         // Public members
@@ -17,13 +17,13 @@ namespace Gsemac.Net.Curl {
         /// </summary>
         public string CurlArguments => GetCurlArguments();
 
-        public BinCurlHttpWebRequest(Uri requestUri, ICurlWebRequestOptions options = null) :
+        public CurlExeHttpWebRequest(Uri requestUri, ICurlWebRequestOptions options = null) :
             base(requestUri) {
 
             this.options = options ?? CurlWebRequestOptions.Default;
 
         }
-        public BinCurlHttpWebRequest(string requestUri, ICurlWebRequestOptions options = null) :
+        public CurlExeHttpWebRequest(string requestUri, ICurlWebRequestOptions options = null) :
            this(new Uri(requestUri), options) {
         }
 
@@ -31,14 +31,14 @@ namespace Gsemac.Net.Curl {
 
         public override WebResponse GetResponse() {
 
-            BinCurlProcessStream stream = new BinCurlProcessStream(options.CurlExecutablePath, CurlArguments) {
+            CurlExeProcessStream stream = new CurlExeProcessStream(options.CurlExecutablePath, CurlArguments) {
                 ReadTimeout = ReadWriteTimeout,
                 WriteTimeout = ReadWriteTimeout
             };
 
             HaveResponse = true;
 
-            return new BinCurlHttpWebResponse(this, stream);
+            return new CurlExeHttpWebResponse(this, stream);
 
         }
 

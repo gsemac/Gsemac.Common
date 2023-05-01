@@ -6,16 +6,16 @@ using System.Text.RegularExpressions;
 
 namespace Gsemac.Net.Curl {
 
-    public class BinCurlProcessStream :
+    public class CurlExeProcessStream :
         ProcessStream {
 
         // Public members
 
-        public BinCurlProcessStream(string filename, IProcessStreamOptions options = null) :
+        public CurlExeProcessStream(string filename, IProcessStreamOptions options = null) :
             base(filename, options ?? ProcessStreamOptions.Default) { }
-        public BinCurlProcessStream(string filename, string arguments, IProcessStreamOptions options = null) :
+        public CurlExeProcessStream(string filename, string arguments, IProcessStreamOptions options = null) :
             base(filename, arguments, options ?? ProcessStreamOptions.Default) { }
-        public BinCurlProcessStream(ProcessStartInfo startInfo, IProcessStreamOptions options = null) :
+        public CurlExeProcessStream(ProcessStartInfo startInfo, IProcessStreamOptions options = null) :
             base(startInfo, options ?? ProcessStreamOptions.Default) { }
 
         public override void Close() {

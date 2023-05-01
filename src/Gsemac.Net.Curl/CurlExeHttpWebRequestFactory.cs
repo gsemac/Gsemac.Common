@@ -5,32 +5,32 @@ using System;
 
 namespace Gsemac.Net.Curl {
 
-    public class BinCurlHttpWebRequestFactory :
+    public class CurlExeHttpWebRequestFactory :
         IHttpWebRequestFactory {
 
         // Public members
 
-        public BinCurlHttpWebRequestFactory() :
+        public CurlExeHttpWebRequestFactory() :
             this(HttpWebRequestOptions.Default) {
         }
-        public BinCurlHttpWebRequestFactory(ICurlWebRequestOptions curlOptions) :
+        public CurlExeHttpWebRequestFactory(ICurlWebRequestOptions curlOptions) :
             this() {
 
             this.curlOptions = curlOptions;
 
         }
-        public BinCurlHttpWebRequestFactory(IHttpWebRequestOptions options) :
+        public CurlExeHttpWebRequestFactory(IHttpWebRequestOptions options) :
             this(new HttpWebRequestOptionsFactory(options)) {
         }
-        public BinCurlHttpWebRequestFactory(IHttpWebRequestOptions options, ICurlWebRequestOptions curlOptions) :
+        public CurlExeHttpWebRequestFactory(IHttpWebRequestOptions options, ICurlWebRequestOptions curlOptions) :
             this(new HttpWebRequestOptionsFactory(options), curlOptions) {
         }
-        public BinCurlHttpWebRequestFactory(IHttpWebRequestOptionsFactory optionsFactory) {
+        public CurlExeHttpWebRequestFactory(IHttpWebRequestOptionsFactory optionsFactory) {
 
             this.optionsFactory = optionsFactory;
 
         }
-        public BinCurlHttpWebRequestFactory(IHttpWebRequestOptionsFactory optionsFactory, ICurlWebRequestOptions curlOptions) :
+        public CurlExeHttpWebRequestFactory(IHttpWebRequestOptionsFactory optionsFactory, ICurlWebRequestOptions curlOptions) :
             this(optionsFactory) {
 
             this.curlOptions = curlOptions;
@@ -40,8 +40,8 @@ namespace Gsemac.Net.Curl {
         public IHttpWebRequest Create(Uri requestUri) {
 
             return (string.IsNullOrWhiteSpace(curlOptions.CurlExecutablePath) ?
-                new BinCurlHttpWebRequest(requestUri) :
-                new BinCurlHttpWebRequest(requestUri, curlOptions))
+                new CurlExeHttpWebRequest(requestUri) :
+                new CurlExeHttpWebRequest(requestUri, curlOptions))
                 .WithOptions(optionsFactory.Create(requestUri));
 
         }

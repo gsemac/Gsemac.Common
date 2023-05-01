@@ -2,15 +2,15 @@
 
 namespace Gsemac.Net.Curl {
 
-    internal class BinCurlHttpWebResponse :
+    internal class CurlExeHttpWebResponse :
         CurlHttpWebResponseBase {
 
         // Public members
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="BinCurlHttpWebResponse"/> class.
+        /// Initializes a new instance of the <see cref="CurlExeHttpWebResponse"/> class.
         /// </summary>
-        internal BinCurlHttpWebResponse(IHttpWebRequest parentRequest, BinCurlProcessStream responseStream) :
+        internal CurlExeHttpWebResponse(IHttpWebRequest parentRequest, CurlExeProcessStream responseStream) :
             base(parentRequest, responseStream) {
 
             ReadHeadersFromResponseStream();
