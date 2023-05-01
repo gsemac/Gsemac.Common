@@ -2,7 +2,7 @@
 using System.IO;
 using System.Linq;
 
-namespace Gsemac.IO.Compression.Extensions {
+namespace Gsemac.IO.Compression {
 
     public static class ArchiveExtensions {
 
@@ -100,7 +100,7 @@ namespace Gsemac.IO.Compression.Extensions {
 
             IArchiveEntry entry = archive.GetEntry(entryName);
 
-            ExtractEntry(archive, entry, filePath);
+            archive.ExtractEntry(entry, filePath);
 
         }
         public static void ExtractEntry(this IArchive archive, string entryName, Stream outputStream) {
@@ -141,7 +141,7 @@ namespace Gsemac.IO.Compression.Extensions {
         }
         public static void ExtractAllEntries(this IArchive archive) {
 
-            ExtractAllEntries(archive, Directory.GetCurrentDirectory());
+            archive.ExtractAllEntries(Directory.GetCurrentDirectory());
 
         }
 

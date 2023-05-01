@@ -1,6 +1,4 @@
-﻿using Gsemac.IO.Compression.Extensions;
-using Gsemac.IO.Extensions;
-using System.IO;
+﻿using System.IO;
 
 namespace Gsemac.IO.Compression {
 

@@ -1,12 +1,12 @@
 ﻿using System.IO;
 
-namespace Gsemac.IO.Compression.Extensions {
+namespace Gsemac.IO.Compression {
 
     public static class ArchiveFactoryExtensions {
 
         public static IArchive Open(this IArchiveFactory archiveFactory, Stream stream) {
 
-            return Open(archiveFactory, stream, ArchiveOptions.Default);
+            return archiveFactory.Open(stream, ArchiveOptions.Default);
 
         }
         public static IArchive Open(this IArchiveFactory archiveFactory, Stream stream, IArchiveOptions archiveOptions) {
@@ -30,19 +30,19 @@ namespace Gsemac.IO.Compression.Extensions {
 
         public static IArchive Open(this IArchiveFactory archiveFactory, string filePath) {
 
-            return Open(archiveFactory, filePath, archiveOptions: null);
+            return archiveFactory.Open(filePath, archiveOptions: null);
 
         }
         public static IArchive Open(this IArchiveFactory archiveFactory, string filePath, FileAccess fileAccess) {
 
-            return Open(archiveFactory, filePath, new ArchiveOptions() {
+            return archiveFactory.Open(filePath, new ArchiveOptions() {
                 FileAccess = fileAccess,
             });
 
         }
         public static IArchive Open(this IArchiveFactory archiveFactory, string filePath, IArchiveOptions archiveOptions) {
 
-            return Open(archiveFactory, filePath, null, archiveOptions);
+            return archiveFactory.Open(filePath, null, archiveOptions);
 
         }
         public static IArchive Open(this IArchiveFactory archiveFactory, string filePath, IFileFormat archiveFormat, IArchiveOptions archiveOptions) {
@@ -71,12 +71,12 @@ namespace Gsemac.IO.Compression.Extensions {
 
         public static IArchive OpenRead(this IArchiveFactory archiveFactory, string filePath) {
 
-            return Open(archiveFactory, filePath, FileAccess.Read);
+            return archiveFactory.Open(filePath, FileAccess.Read);
 
         }
         public static IArchive OpenWrite(this IArchiveFactory archiveFactory, string filePath) {
 
-            return Open(archiveFactory, filePath, FileAccess.Write);
+            return archiveFactory.Open(filePath, FileAccess.Write);
 
         }
 
