@@ -92,24 +92,44 @@ namespace Gsemac.IO.Compression.ZipStorer {
         // Static CRC32 Table
         private static readonly uint[] CrcTable = null;
         // Default filename encoder
-        private static readonly Encoding DefaultEncoding = Encoding.GetEncoding(437);
+        private static readonly Encoding DefaultEncoding;
         #endregion
 
         #region Public methods
         // Static constructor. Just invoked once in order to create the CRC32 lookup table.
         static ZipStorer() {
+
+            // Set the default encoding.
+            // CP437 isn't available by default after .NET Framework, so we need to register the code page.
+
+#if !NETFRAMEWORK
+
+            CodePagesEncodingProvider.Instance.GetEncoding(437);
+            Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+
+#endif
+
+            DefaultEncoding = Encoding.GetEncoding(437);
+
             // Generate CRC32 table
+
             CrcTable = new uint[256];
+
             for (int i = 0; i < CrcTable.Length; i++) {
+
                 uint c = (uint)i;
+
                 for (int j = 0; j < 8; j++) {
+
                     if ((c & 1) != 0)
                         c = 3988292384 ^ c >> 1;
                     else
                         c >>= 1;
                 }
+
                 CrcTable[i] = c;
             }
+
         }
         /// <summary>
         /// Method to create a new storage file
@@ -205,7 +225,7 @@ namespace Gsemac.IO.Compression.ZipStorer {
         public ZipFileEntry AddStream(Compression _method, string _filenameInZip, Stream _source, DateTime _modTime, string _comment = null) {
 #if NOASYNC
             return AddStreamAsync(_method, _filenameInZip, _source, _modTime, _comment);
-#else            
+#else
             return Task.Run(() => AddStreamAsync(_method, _filenameInZip, _source, _modTime, _comment)).Result;
 #endif
         }
@@ -419,7 +439,7 @@ namespace Gsemac.IO.Compression.ZipStorer {
         public bool ExtractFile(ZipFileEntry _zfe, Stream _stream) {
 #if NOASYNC
             return ExtractFileAsync(_zfe, _stream);
-#else                
+#else
             return Task.Run(() => ExtractFileAsync(_zfe, _stream)).Result;
 #endif
         }
@@ -686,7 +706,7 @@ namespace Gsemac.IO.Compression.ZipStorer {
         // Copies all source file into storage file
 #if NOASYNC
         private Compression
-#else                
+#else
         private async Task<Compression>
 #endif
         Store(ZipFileEntry _zfe, Stream _source) {
