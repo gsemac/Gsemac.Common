@@ -1,4 +1,4 @@
-﻿using Gsemac.Drawing.Imaging;
+﻿using System;
 
 namespace Gsemac.Drawing {
 
@@ -9,11 +9,9 @@ namespace Gsemac.Drawing {
 
         public static ImageFactory Default => new ImageFactory();
 
-        public ImageFactory() :
-            this(ImageCodecFactory.Default) {
-        }
-        public ImageFactory(IImageCodecFactory imageCodecFactory) :
-            base(imageCodecFactory) {
+        public ImageFactory() { }
+        public ImageFactory(IServiceProvider serviceProvider) :
+            base(serviceProvider) {
         }
 
     }

@@ -17,12 +17,9 @@ namespace Gsemac.Drawing.Imaging {
         public ImageCodecFactory() :
             this(null) {
         }
-        public ImageCodecFactory(IPluginLoader pluginLoader) {
+        public ImageCodecFactory(IServiceProvider serviceProvider) {
 
-            if (pluginLoader is null)
-                this.pluginLoader = new Lazy<IPluginLoader>(CreateDefaultPluginLoader);
-            else
-                this.pluginLoader = new Lazy<IPluginLoader>(() => pluginLoader);
+            pluginLoader = CreatePluginLoader(serviceProvider);
 
         }
 
@@ -40,11 +37,11 @@ namespace Gsemac.Drawing.Imaging {
 
         // Private members
 
-        private readonly Lazy<IPluginLoader> pluginLoader;
+        private readonly IPluginLoader pluginLoader;
 
-        private IPluginLoader CreateDefaultPluginLoader() {
+        private IPluginLoader CreatePluginLoader(IServiceProvider serviceProvider) {
 
-            return new PluginLoader<IImageCodec>(new PluginLoaderOptions() {
+            return new PluginLoader<IImageCodec>(serviceProvider, new PluginLoaderOptions() {
                 PluginSearchPattern = "Gsemac.Drawing.Imaging.*.dll",
             });
 
@@ -64,7 +61,7 @@ namespace Gsemac.Drawing.Imaging {
 
             List<IImageCodec> imageCodecs = new List<IImageCodec>();
 
-            foreach (IImageCodec imageCodec in pluginLoader.Value.GetPlugins<IImageCodec>()) {
+            foreach (IImageCodec imageCodec in pluginLoader.GetPlugins<IImageCodec>()) {
 
                 IImageCodec nextImageCodec = imageCodec;
                 Type nextImageCodecType = imageCodec.GetType();

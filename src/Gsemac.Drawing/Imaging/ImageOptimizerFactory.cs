@@ -17,12 +17,9 @@ namespace Gsemac.Drawing.Imaging {
         public ImageOptimizerFactory() :
            this(null) {
         }
-        public ImageOptimizerFactory(IPluginLoader pluginLoader) {
+        public ImageOptimizerFactory(IServiceProvider serviceProvider) {
 
-            if (pluginLoader is null)
-                this.pluginLoader = new Lazy<IPluginLoader>(CreateDefaultPluginLoader);
-            else
-                this.pluginLoader = new Lazy<IPluginLoader>(() => pluginLoader);
+            pluginLoader = CreatePluginLoader(serviceProvider);
 
         }
 
@@ -40,11 +37,11 @@ namespace Gsemac.Drawing.Imaging {
 
         // Private members
 
-        private readonly Lazy<IPluginLoader> pluginLoader;
+        private readonly IPluginLoader pluginLoader;
 
-        private IPluginLoader CreateDefaultPluginLoader() {
+        private IPluginLoader CreatePluginLoader(IServiceProvider serviceProvider) {
 
-            return new PluginLoader<IImageOptimizer>(new PluginLoaderOptions() {
+            return new PluginLoader<IImageOptimizer>(serviceProvider, new PluginLoaderOptions() {
                 PluginSearchPattern = "Gsemac.Drawing.Imaging.*.dll",
             });
 
@@ -62,7 +59,7 @@ namespace Gsemac.Drawing.Imaging {
         }
         private IEnumerable<IImageOptimizer> GetImageOptimizersInternal() {
 
-            return pluginLoader.Value.GetPlugins<IImageOptimizer>();
+            return pluginLoader.GetPlugins<IImageOptimizer>();
 
         }
 

@@ -41,12 +41,12 @@ namespace Gsemac.Drawing {
 
         // Protected members
 
-        protected ImageFactoryBase(IImageCodecFactory imageCodecFactory) {
+        protected ImageFactoryBase() :
+            this(null) {
+        }
+        protected ImageFactoryBase(IServiceProvider serviceProvider) {
 
-            if (imageCodecFactory is null)
-                throw new ArgumentNullException(nameof(imageCodecFactory));
-
-            this.imageCodecFactory = imageCodecFactory;
+            imageCodecFactory = new ImageCodecFactory(serviceProvider);
 
         }
 
