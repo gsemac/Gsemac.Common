@@ -420,30 +420,35 @@ namespace Gsemac.Text {
             return double.TryParse(input, styles, CultureInfo.InvariantCulture, out _);
 
         }
-        public static string PadDigits(string input, int numberOfDigits) {
+        public static string PadDigits(string num, int numberOfDigits) {
 
             // Trim all existing leading zeros.
 
-            input = (input ?? "").TrimStart('0');
+            num = (num ?? "").TrimStart('0');
 
             // Make sure the string contains at least one (whole) digit.
 
-            if (input.Length <= 0 || input.StartsWith("."))
-                input = "0" + input;
+            if (num.Length <= 0 || num.StartsWith("."))
+                num = "0" + num;
 
             // Pad the string with zeros so that the leading digits have a length of /at least/ the desired number of digits.
             // If there are already more leading digits than desired, no padding is added.
 
-            int currentLeadingDigits = input.IndexOf(".");
+            int currentLeadingDigits = num.IndexOf(".");
 
             if (currentLeadingDigits < 0)
-                currentLeadingDigits = input.Length;
+                currentLeadingDigits = num.Length;
 
             int paddingLength = Math.Max(numberOfDigits - currentLeadingDigits, 0);
 
-            input = "".PadLeft(paddingLength, '0') + input;
+            num = "".PadLeft(paddingLength, '0') + num;
 
-            return input;
+            return num;
+
+        }
+        public static string PadDigits(int num, int numberOfDigits) {
+
+            return PadDigits(num.ToString(CultureInfo.InvariantCulture), numberOfDigits);
 
         }
 

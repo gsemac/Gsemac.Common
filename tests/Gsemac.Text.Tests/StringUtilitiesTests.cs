@@ -642,6 +642,12 @@ namespace Gsemac.Text.Tests {
             Assert.AreEqual("123", StringUtilities.PadDigits("123", 2));
 
         }
+        [TestMethod]
+        public void TestPadDigitsWithIntegerLiteral() {
+
+            Assert.AreEqual("001", StringUtilities.PadDigits(1, 3));
+
+        }
 
         // ComputeMD5Hash
 
