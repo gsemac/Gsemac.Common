@@ -22,8 +22,23 @@
 
 	<ItemGroup>
 		<PackageReference Include="JavaScriptEngineSwitcher.Core" Version="3.21.0" />
-		<PackageReference Include="JavaScriptEngineSwitcher.Jint" Version="3.1.0" />
 	</ItemGroup>
+
+	<Choose>
+		<When Condition="$(DefineConstants.Contains('NET45_OR_GREATER')) Or $(DefineConstants.Contains('NETCOREAPP')) Or $(DefineConstants.Contains('NETSTANDARD'))">
+			<ItemGroup>
+				<PackageReference Include="JavaScriptEngineSwitcher.Jint" Version="3.21.2" />
+			</ItemGroup>
+		</When>
+		<Otherwise>
+			<!--
+				JavaScriptEngineSwitcher.Jint 3.1.0 is the last version that supports .NET Framework 4.0.
+			-->
+			<ItemGroup>
+				<PackageReference Include="JavaScriptEngineSwitcher.Jint" Version="3.1.0" />
+			</ItemGroup>
+		</Otherwise>
+	</Choose>
 
 	<ItemGroup>
 		<ProjectReference Include="..\Gsemac.Reflection\Gsemac.Reflection.csproj" />
