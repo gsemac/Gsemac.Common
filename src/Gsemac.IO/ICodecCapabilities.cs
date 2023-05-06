@@ -1,6 +1,10 @@
-﻿namespace Gsemac.IO {
+﻿using System;
 
-    public interface ICodecCapabilities {
+namespace Gsemac.IO {
+
+    public interface ICodecCapabilities :
+        IComparable,
+        IComparable<ICodecCapabilities> {
 
         IFileFormat Format { get; }
         bool CanRead { get; }

@@ -24,6 +24,24 @@ namespace Gsemac.IO {
 
         }
 
+        public int CompareTo(object obj) {
+
+            if (obj is null)
+                throw new ArgumentNullException(nameof(obj));
+
+            if (obj is ICodecCapabilities codecCapabilities)
+                return CompareTo(codecCapabilities);
+
+            throw new ArgumentException(string.Format(Core.Properties.ExceptionMessages.ObjectIsNotAnInstanceOfWithType, nameof(ICodecCapabilities)), nameof(obj));
+
+        }
+        public int CompareTo(ICodecCapabilities other) {
+
+            return Format.CompareTo(other.Format);
+
+
+        }
+
         public static IEnumerable<ICodecCapabilities> Flatten(IEnumerable<ICodecCapabilities> formatCapabilities) {
 
             if (formatCapabilities is null)
