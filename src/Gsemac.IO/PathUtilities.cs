@@ -752,17 +752,26 @@ namespace Gsemac.IO {
 
         public static bool AreEqual(string path1, string path2, StringComparison stringComparison = StringComparison.OrdinalIgnoreCase) {
 
-            // Consider the paths equal if they are both null.
+            // On both Windows and Unix-based systems, trailing directory separators are irrelevant.
+            // Trailing directory separators are typically used to denote directory paths, but we cannot have a directory and file with the same name.
+            // For this reason, the two paths must be equivalent to each other.
+            // https://unix.stackexchange.com/q/22447
+
+            path1 = path1?.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+            path2 = path2?.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+
+            // Consider the paths equal if they are both empty.
 
             if (string.IsNullOrEmpty(path1) && string.IsNullOrEmpty(path2))
                 return true;
 
-            // If only one of the paths is null, the paths are not equal.
+            // If only one of the paths is empty, the paths are not equal.
 
             if (string.IsNullOrEmpty(path1) || string.IsNullOrEmpty(path2))
                 return false;
 
-            // Directory separators are ignored when comparing paths.
+            // On Windows systems, we should normalize directory separators because "/" and "\" are equivalent.
+            // However, on Unix systems, the only valid directory separator is "/". Should we account for this?
 
             path1 = NormalizeDirectorySeparators(path1);
             path2 = NormalizeDirectorySeparators(path2);

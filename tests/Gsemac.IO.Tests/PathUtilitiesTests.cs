@@ -944,9 +944,38 @@ namespace Gsemac.IO.Tests {
 
         }
         [TestMethod]
+        public void TestAreEqualWithEqualPathsWithAndWithoutEndingDirectorySeparator() {
+
+            // On both Windows and Unix-based systems, trailing directory separators are irrelevant.
+            // Trailing directory separators are typically used to denote directory paths, but we cannot have a directory and file with the same name.
+            // For this reason, the two paths must be equivalent to each other.
+            // https://unix.stackexchange.com/q/22447
+
+            Assert.IsTrue(PathUtilities.AreEqual(@"C:/path/to/directory", @"C:/path/to/directory/"));
+
+        }
+        [TestMethod]
+        public void TestAreEqualWithEqualPathsWithOnlySlashes() {
+
+            // On Windows systems, "/" and "\" refer to the same path (the root of the C: drive).
+            // On Unix systems, these paths should not be considered equal because only "/" is used for directories.
+
+            Assert.IsTrue(PathUtilities.AreEqual(@"/", @"\"));
+
+        }
+        [TestMethod]
         public void TestAreEqualWithEqualPathsWithMixedCase() {
 
             Assert.IsTrue(PathUtilities.AreEqual(@"C:\path\TO\directory\", @"C:\path\to\DIRECTORY\"));
+
+        }
+        [TestMethod]
+        public void TestAreEqualWithUnequalPathsWithRepeatingSlashes() {
+
+            // Paths with repeating slashes do not refer to the same directory on any platform.
+            // Some web servers will treat repeating slashes as equivalent to a single slash, but this is not a rule.
+
+            Assert.IsFalse(PathUtilities.AreEqual(@"C:/path/to/directory", @"C:/path/to//directory"));
 
         }
         [TestMethod]
@@ -959,6 +988,12 @@ namespace Gsemac.IO.Tests {
         public void TestAreEqualWithBothPathsEmpty() {
 
             Assert.IsTrue(PathUtilities.AreEqual(string.Empty, string.Empty));
+
+        }
+        [TestMethod]
+        public void TestAreEqualWithBothPathsNull() {
+
+            Assert.IsTrue(PathUtilities.AreEqual(null, null));
 
         }
         [TestMethod]
