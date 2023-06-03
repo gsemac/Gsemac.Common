@@ -169,7 +169,7 @@ namespace Gsemac.Text.Tests {
 
             string str = "1,2,3,,";
             string[] expected = { "1", "2", "3", };
-            IEnumerable<string> actual = StringUtilities.Split(str, ',', StringSplitOptions.RemoveEmptyEntries);
+            IEnumerable<string> actual = StringUtilities.Split(str, ',', StringSplitOptionsEx.RemoveEmptyEntries);
 
             CollectionAssert.AreEqual(expected, actual.ToArray());
 
@@ -179,7 +179,7 @@ namespace Gsemac.Text.Tests {
 
             string str = "1,   2,       3,        , ";
             string[] expected = { "1", "2", "3", "", "", };
-            IEnumerable<string> actual = StringUtilities.Split(str, ',', StringSplitOptions.TrimEntries);
+            IEnumerable<string> actual = StringUtilities.Split(str, ',', StringSplitOptionsEx.TrimEntries);
 
             CollectionAssert.AreEqual(expected, actual.ToArray());
 
@@ -189,7 +189,7 @@ namespace Gsemac.Text.Tests {
 
             string str = "a/b/c";
             string[] expected = { "a", "/b", "/c" };
-            IEnumerable<string> actual = StringUtilities.Split(str, '/', StringSplitOptions.PrependDelimiter);
+            IEnumerable<string> actual = StringUtilities.Split(str, '/', StringSplitOptionsEx.PrependDelimiter);
 
             CollectionAssert.AreEqual(expected, actual.ToArray());
 
@@ -199,7 +199,7 @@ namespace Gsemac.Text.Tests {
 
             string str = "a/b/c";
             string[] expected = { "a/", "b/", "c" };
-            IEnumerable<string> actual = StringUtilities.Split(str, '/', StringSplitOptions.AppendDelimiter);
+            IEnumerable<string> actual = StringUtilities.Split(str, '/', StringSplitOptionsEx.AppendDelimiter);
 
             CollectionAssert.AreEqual(expected, actual.ToArray());
 
@@ -209,7 +209,7 @@ namespace Gsemac.Text.Tests {
 
             string str = "/a/b/c";
             string[] expected = { "/", "a/", "b/", "c" };
-            IEnumerable<string> actual = StringUtilities.Split(str, '/', StringSplitOptions.AppendDelimiter);
+            IEnumerable<string> actual = StringUtilities.Split(str, '/', StringSplitOptionsEx.AppendDelimiter);
 
             CollectionAssert.AreEqual(expected, actual.ToArray());
 
@@ -219,7 +219,7 @@ namespace Gsemac.Text.Tests {
 
             string str = "a/b/c/";
             string[] expected = { "a/", "b/", "c/", "" };
-            IEnumerable<string> actual = StringUtilities.Split(str, '/', StringSplitOptions.AppendDelimiter);
+            IEnumerable<string> actual = StringUtilities.Split(str, '/', StringSplitOptionsEx.AppendDelimiter);
 
             CollectionAssert.AreEqual(expected, actual.ToArray());
 
@@ -229,7 +229,7 @@ namespace Gsemac.Text.Tests {
 
             string str = "1,2,3,,4,5,,6";
             string[] expected = { "1,", "2,", "3,", "4,", "5,", "6" };
-            IEnumerable<string> actual = StringUtilities.Split(str, ',', StringSplitOptions.AppendDelimiter | StringSplitOptions.RemoveEmptyEntries);
+            IEnumerable<string> actual = StringUtilities.Split(str, ',', StringSplitOptionsEx.AppendDelimiter | StringSplitOptionsEx.RemoveEmptyEntries);
 
             CollectionAssert.AreEqual(expected, actual.ToArray());
 
@@ -239,7 +239,7 @@ namespace Gsemac.Text.Tests {
 
             string str = "[1,2,3],(4,5,[6,7]),\"8,9\"";
             string[] expected = { "[1,2,3]", "(4,5,[6,7])", "\"8,9\"" };
-            IEnumerable<string> actual = StringUtilities.Split(str, ',', StringSplitOptions.RespectEnclosingPunctuation);
+            IEnumerable<string> actual = StringUtilities.Split(str, ',', StringSplitOptionsEx.RespectEnclosingPunctuation);
 
             CollectionAssert.AreEqual(expected, actual.ToArray());
 
@@ -249,7 +249,7 @@ namespace Gsemac.Text.Tests {
 
             string str = "item 1,item 2,item 3";
             string[] expected = { "item 1", "item 2", "item 3" };
-            IEnumerable<string> actual = StringUtilities.Split(str, ',', StringSplitOptions.RespectEnclosingPunctuation);
+            IEnumerable<string> actual = StringUtilities.Split(str, ',', StringSplitOptionsEx.RespectEnclosingPunctuation);
 
             CollectionAssert.AreEqual(expected, actual.ToArray());
 
@@ -259,7 +259,7 @@ namespace Gsemac.Text.Tests {
 
             string str = "1,(2,3";
             string[] expected = { "1", "(2", "3" };
-            IEnumerable<string> actual = StringUtilities.Split(str, ',', StringSplitOptions.RespectEnclosingPunctuation);
+            IEnumerable<string> actual = StringUtilities.Split(str, ',', StringSplitOptionsEx.RespectEnclosingPunctuation);
 
             CollectionAssert.AreEqual(expected, actual.ToArray());
 
@@ -269,7 +269,7 @@ namespace Gsemac.Text.Tests {
 
             string str = "1,(2,((3,4)";
             string[] expected = { "1", "(2", "((3,4)" };
-            IEnumerable<string> actual = StringUtilities.Split(str, ',', StringSplitOptions.RespectEnclosingPunctuation);
+            IEnumerable<string> actual = StringUtilities.Split(str, ',', StringSplitOptionsEx.RespectEnclosingPunctuation);
 
             CollectionAssert.AreEqual(expected, actual.ToArray());
 
