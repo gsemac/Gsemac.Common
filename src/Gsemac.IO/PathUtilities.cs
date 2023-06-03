@@ -750,33 +750,89 @@ namespace Gsemac.IO {
 
         }
 
-        public static bool AreEqual(string path1, string path2, StringComparison stringComparison = StringComparison.OrdinalIgnoreCase) {
+        public static bool AreEqual(string path1, string path2) {
+
+            return AreEqual(path1, path2, StringComparison.OrdinalIgnoreCase);
+
+        }
+        public static bool AreEqual(string path1, string path2, StringComparison stringComparison) {
+
+            // This is intended to be a simple comparison between two paths that disregards equivalent path separators.
+            // For a more robust approach that considers full path equivalency, use the "AreEquivalent" method.
 
             // On both Windows and Unix-based systems, trailing directory separators are irrelevant.
             // Trailing directory separators are typically used to denote directory paths, but we cannot have a directory and file with the same name.
             // For this reason, the two paths must be equivalent to each other.
             // https://unix.stackexchange.com/q/22447
 
-            path1 = path1?.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
-            path2 = path2?.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+            // URLs with trailing slashes are not treated the same as local paths with trailing slashes.
+            // It's up to the web server to decide how to interpret them, and there are certainly cases where the two paths are not equivalent to each other.
+            // https://stackoverflow.com/q/942751
 
-            // Consider the paths equal if they are both empty.
+            if (!IsUrl(path1))
+                path1 = path1?.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
 
-            if (string.IsNullOrEmpty(path1) && string.IsNullOrEmpty(path2))
+            if (!IsUrl(path2))
+                path2 = path2?.TrimEnd(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+
+            // If the paths are both empty, consider the paths to be equal.
+
+            if (string.IsNullOrWhiteSpace(path1) && string.IsNullOrWhiteSpace(path2))
                 return true;
 
             // If only one of the paths is empty, the paths are not equal.
 
-            if (string.IsNullOrEmpty(path1) || string.IsNullOrEmpty(path2))
+            if (string.IsNullOrWhiteSpace(path1) || string.IsNullOrWhiteSpace(path2))
                 return false;
 
             // On Windows systems, we should normalize directory separators because "/" and "\" are equivalent.
-            // However, on Unix systems, the only valid directory separator is "/". Should we account for this?
+            // However, on Unix systems and in URLs, the only valid directory separator is "/". Should we account for this?
 
             path1 = NormalizeDirectorySeparators(path1);
             path2 = NormalizeDirectorySeparators(path2);
 
             return path1.Equals(path2, stringComparison);
+
+        }
+        public static bool AreEquivalent(string path1, string path2) {
+
+            return AreEquivalent(path1, path2, StringComparison.OrdinalIgnoreCase);
+
+        }
+        public static bool AreEquivalent(string path1, string path2, StringComparison stringComparison) {
+
+            // Extra slashes after the scheme are stripped by major web browsers and clients, so the two paths should point to the same location.
+            // This isn't technically correct, but is common enough behavior that most clients implement it.
+            // https://github.com/curl/curl/issues/791
+
+            if (IsUrl(path1))
+                path1 = StripRepeatedForwardSlashesAfterScheme(path1);
+
+            if (IsUrl(path2))
+                path2 = StripRepeatedForwardSlashesAfterScheme(path2);
+
+            // If the two paths are equal, consider them to also be equivalent.
+
+            if (AreEqual(path1, path2, stringComparison))
+                return true;
+
+            // To decide if two paths are equivalent, we need to fully expand them.
+            // It's possible for "GetFullPath" to throw if we pass in an invalid path.
+            // If it throws for either path, consider them not to be equivalent.
+
+            try {
+
+                path1 = Path.GetFullPath(path1);
+                path2 = Path.GetFullPath(path2);
+
+                return AreEqual(path1, path2, stringComparison);
+
+            }
+            catch (Exception) {
+
+                return false;
+
+            }
 
         }
 

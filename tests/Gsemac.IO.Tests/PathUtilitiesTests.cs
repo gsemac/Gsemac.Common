@@ -970,6 +970,18 @@ namespace Gsemac.IO.Tests {
 
         }
         [TestMethod]
+        public void TestAreEqualWithEqualUrls() {
+
+            Assert.IsTrue(PathUtilities.AreEqual(@"https://stackoverflow.com/questions/", @"https://stackoverflow.com/questions/"));
+
+        }
+        [TestMethod]
+        public void TestAreEqualWithUnequalPaths() {
+
+            Assert.IsFalse(PathUtilities.AreEqual(@"C:\path\to\", @"C:\path\to\directory\"));
+
+        }
+        [TestMethod]
         public void TestAreEqualWithUnequalPathsWithRepeatingSlashes() {
 
             // Paths with repeating slashes do not refer to the same directory on any platform.
@@ -979,9 +991,13 @@ namespace Gsemac.IO.Tests {
 
         }
         [TestMethod]
-        public void TestAreEqualWithUnequalPaths() {
+        public void TestAreEqualWithUnequalUrlsWithAndWithoutEndingDirectorySeparator() {
 
-            Assert.IsFalse(PathUtilities.AreEqual(@"C:\path\to\", @"C:\path\to\directory\"));
+            // URLs with trailing slashes are not treated the same as local paths with trailing slashes.
+            // It's up to the web server to decide how to interpret them, and there are certainly cases where the two paths are not equivalent to each other.
+            // https://stackoverflow.com/q/942751
+
+            Assert.IsFalse(PathUtilities.AreEqual(@"https://stackoverflow.com/questions", @"https://stackoverflow.com/questions/"));
 
         }
         [TestMethod]
@@ -1006,6 +1022,43 @@ namespace Gsemac.IO.Tests {
         public void TestAreEqualWithSecondPathEmpty() {
 
             Assert.IsFalse(PathUtilities.AreEqual(@"C:\path\to\directory\", string.Empty));
+
+        }
+
+        // AreEquivalent
+
+        [TestMethod]
+        public void TestAreAreEquivalentWithEquivalentPathsWithDotSeparators() {
+
+            Assert.IsTrue(PathUtilities.AreEquivalent(@"C:\path\to\..\to\directory\", @"C:\path\to\.\directory\"));
+
+        }
+        [TestMethod]
+        public void TestAreAreEquivalentWithEquivalentUrlsWithDotSeparators() {
+
+            Assert.IsTrue(PathUtilities.AreEquivalent(@"https://unix.stackexchange.com/questions/../questions/", @"https://unix.stackexchange.com/questions/./"));
+
+        }
+        [TestMethod]
+        public void TestAreEquivalentWithEqualUrlsWithRepeatedSlashesAfterProtocol() {
+
+            // Extra slashes after the scheme are stripped by major web browsers and clients, so the two paths should point to the same location.
+            // This isn't technically correct, but is common enough behavior that most clients implement it.
+            // https://github.com/curl/curl/issues/791
+
+            Assert.IsTrue(PathUtilities.AreEquivalent(@"https://///stackoverflow.com/questions/", @"https://stackoverflow.com/questions/"));
+
+        }
+        [TestMethod]
+        public void TestAreAreEquivalentWithUnequivalentPathsWithDotSeparators() {
+
+            Assert.IsFalse(PathUtilities.AreEquivalent(@"C:\path\to\..\to\..\directory\", @"C:\path\to\.\directory\"));
+
+        }
+        [TestMethod]
+        public void TestAreAreEquivalentWithUnequivalentUrlsWithDotSeparators() {
+
+            Assert.IsFalse(PathUtilities.AreEquivalent(@"https://unix.stackexchange.com/questions/../questions/../", @"https://unix.stackexchange.com/questions/./"));
 
         }
 
