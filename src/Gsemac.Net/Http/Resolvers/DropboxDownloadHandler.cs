@@ -1,5 +1,4 @@
 ﻿using Gsemac.Net.Extensions;
-using Gsemac.Net.Http;
 using Gsemac.Net.Http.Extensions;
 using System;
 using System.IO;
@@ -9,7 +8,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 
-namespace Gsemac.Net.Dropbox {
+namespace Gsemac.Net.Http.Resolvers {
 
     public class DropboxDownloadHandler :
         HttpWebRequestHandler {

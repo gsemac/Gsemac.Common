@@ -1,5 +1,4 @@
-﻿using Gsemac.Net.Http;
-using Gsemac.Net.Http.Extensions;
+﻿using Gsemac.Net.Http.Extensions;
 using Gsemac.Polyfills.System;
 using Gsemac.Text;
 using System;
@@ -10,7 +9,7 @@ using System.Net;
 using System.Text.RegularExpressions;
 using System.Threading;
 
-namespace Gsemac.Net.Google {
+namespace Gsemac.Net.Http.Resolvers {
 
     public class GoogleDriveDownloadHandler :
         HttpWebRequestHandler {
