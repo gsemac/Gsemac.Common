@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Gsemac.Collections.Properties;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -38,7 +39,7 @@ namespace Gsemac.Collections.Extensions {
         public static void InsertRange<T>(this ICollection<T> collection, int index, IEnumerable<T> items) {
 
             if (index < 0 || index > collection.Count)
-                throw new ArgumentOutOfRangeException(nameof(index), "Index was out of range. Must be non-negative and less than the size of the collection.");
+                throw new ArgumentOutOfRangeException(nameof(index), ExceptionMessages.IndexOutOfRange);
 
             if (collection is List<T> list) {
 
