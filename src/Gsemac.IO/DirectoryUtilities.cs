@@ -7,40 +7,6 @@ namespace Gsemac.IO {
 
     public static class DirectoryUtilities {
 
-        public static string FindFileByFileName(string directoryPath, string fileName, FindFileOptions options = FindFileOptions.Default) {
-
-            string fullPath = string.Empty;
-
-            if (!string.IsNullOrEmpty(fileName) && Directory.Exists(directoryPath)) {
-
-                if (options.HasFlag(FindFileOptions.IgnoreCase))
-                    fileName = fileName.ToLowerInvariant();
-
-                foreach (string filePath in Directory.EnumerateFiles(directoryPath, "*", SearchOption.AllDirectories)) {
-
-                    string candidateFileName = options.HasFlag(FindFileOptions.IgnoreExtension) ?
-                        Path.GetFileNameWithoutExtension(filePath) :
-                        Path.GetFileName(filePath);
-
-                    if (options.HasFlag(FindFileOptions.IgnoreCase))
-                        candidateFileName = candidateFileName.ToLowerInvariant();
-
-                    if (candidateFileName.Equals(fileName)) {
-
-                        fullPath = filePath;
-
-                        break;
-
-                    }
-
-                }
-
-            }
-
-            return fullPath;
-
-        }
-
         public static bool TryCreateDirectory(string directoryPath) {
 
             try {
@@ -64,6 +30,14 @@ namespace Gsemac.IO {
                 return true;
 
             return !Directory.EnumerateFileSystemEntries(directoryPath).Any();
+
+        }
+        public static bool ContainsDirectories(string directoryPath) {
+
+            if (string.IsNullOrWhiteSpace(directoryPath) || !Directory.Exists(directoryPath))
+                return false;
+
+            return Directory.EnumerateDirectories(directoryPath).Any();
 
         }
 
@@ -109,6 +83,40 @@ namespace Gsemac.IO {
                 OpenDirectory(path, options);
             else
                 OpenDirectory(defaultPath, options);
+
+        }
+
+        public static string FindFileByName(string directoryPath, string fileName, FindFileOptions options = FindFileOptions.Default) {
+
+            string fullPath = string.Empty;
+
+            if (!string.IsNullOrEmpty(fileName) && Directory.Exists(directoryPath)) {
+
+                if (options.HasFlag(FindFileOptions.IgnoreCase))
+                    fileName = fileName.ToLowerInvariant();
+
+                foreach (string filePath in Directory.EnumerateFiles(directoryPath, "*", SearchOption.AllDirectories)) {
+
+                    string candidateFileName = options.HasFlag(FindFileOptions.IgnoreExtension) ?
+                        Path.GetFileNameWithoutExtension(filePath) :
+                        Path.GetFileName(filePath);
+
+                    if (options.HasFlag(FindFileOptions.IgnoreCase))
+                        candidateFileName = candidateFileName.ToLowerInvariant();
+
+                    if (candidateFileName.Equals(fileName)) {
+
+                        fullPath = filePath;
+
+                        break;
+
+                    }
+
+                }
+
+            }
+
+            return fullPath;
 
         }
 
