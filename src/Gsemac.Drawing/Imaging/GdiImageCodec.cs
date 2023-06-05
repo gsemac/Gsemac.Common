@@ -117,7 +117,9 @@ namespace Gsemac.Drawing.Imaging {
             if (encoderOptions is null)
                 throw new ArgumentNullException(nameof(encoderOptions));
 
-            ImageFormat format = imageFormat is null ? image.RawFormat : GetImageFormatFromFileExtension(imageFormat.Extensions.FirstOrDefault());
+            ImageFormat format = imageFormat is null ?
+                image.RawFormat :
+                GetImageFormatFromFileExtension(imageFormat.Extensions.FirstOrDefault());
 
             // The Save method cannot encode WMF images.
             // https://stackoverflow.com/questions/5270763/convert-an-image-into-wmf-with-net
@@ -134,10 +136,12 @@ namespace Gsemac.Drawing.Imaging {
 
                     encoderParameters.Param[0] = qualityParameter;
 
-                    ImageCodecInfo encoder = GetEncoderFromImageFormat(format);
+                    // Default to PNG if there isn't a codec for this image format.
+                    // This is what "Image.Save" does by default.
+                    // https://learn.microsoft.com/en-us/dotnet/api/system.drawing.image.save?view=windowsdesktop-7.0#system-drawing-image-save(system-string)
 
-                    if (encoder is null)
-                        encoder = GetEncoderFromImageFormat(ImageFormat.Png);
+                    ImageCodecInfo encoder = GetEncoderFromImageFormat(format) ??
+                        GetEncoderFromImageFormat(ImageFormat.Png);
 
                     image.Save(stream, encoder, encoderParameters);
 

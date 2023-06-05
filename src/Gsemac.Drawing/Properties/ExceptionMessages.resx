@@ -121,6 +121,6 @@
     <value>The codec returned by the image's 'Codec' property does not match the image type.</value>
   </data>
   <data name="TypeCannotBeConvertedToBitmap" xml:space="preserve">
-    <value>Type '{0}' does not support conversion to type System.Drawing.Bitmap.</value>
+    <value>Type '{0}' does not support conversion to type 'System.Drawing.Bitmap'.</value>
   </data>
 </root>

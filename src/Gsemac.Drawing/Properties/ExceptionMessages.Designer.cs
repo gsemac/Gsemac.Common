@@ -70,7 +70,7 @@ namespace Gsemac.Drawing.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Type &apos;{0}&apos; does not support conversion to type System.Drawing.Bitmap..
+        ///   Looks up a localized string similar to Type &apos;{0}&apos; does not support conversion to type &apos;System.Drawing.Bitmap&apos;..
         /// </summary>
         internal static string TypeCannotBeConvertedToBitmap {
             get {

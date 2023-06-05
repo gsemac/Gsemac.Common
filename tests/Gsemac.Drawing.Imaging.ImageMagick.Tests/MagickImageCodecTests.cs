@@ -4,6 +4,7 @@ using Gsemac.IO;
 using Gsemac.IO.FileFormats;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using System.Drawing;
 using System.IO;
 
 namespace Gsemac.Drawing.Imaging.ImageMagick.Tests {
@@ -142,6 +143,29 @@ namespace Gsemac.Drawing.Imaging.ImageMagick.Tests {
             }
 
         }
+
+#if NETFRAMEWORK
+
+        [TestMethod]
+        public void TestEncodeImageDecodedWithDifferentCodecWithUnknownFormat() {
+
+            // The codec should be able to encode images that were decoded with a different codec.
+            // Furthermore, images may or may not have a format specified (e.g. the "Format" property will be null for memory bitmaps).
+
+            using (IImage image = ImageFromFile("animated.gif"))
+            using (Bitmap bitmap = image.ToBitmap())
+            using (IImage imageFromBitmap = ImageFactory.Default.FromBitmap(bitmap)) // Decoded with GdiImageCodec, format information lost
+            using (Stream stream = new MemoryStream()) {
+
+                imageFromBitmap.Save(stream, ImageFormat.Jpeg); // Attempt to save in an abitrary format, potentially unrelated to the original
+
+                Assert.IsTrue(stream.Length > 0);
+
+            }
+
+        }
+
+#endif
 
         // Private members
 

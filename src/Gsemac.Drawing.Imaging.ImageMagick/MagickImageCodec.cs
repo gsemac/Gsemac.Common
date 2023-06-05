@@ -86,7 +86,7 @@ namespace Gsemac.Drawing.Imaging {
 
                     ms.Seek(0, SeekOrigin.Begin);
 
-                    using (magickImage = new MagickImage(ms, imageFormat, this))
+                    using (magickImage = new MagickImage(ms, image.Format, this))
                         Save(magickImage.BaseImages, stream, encoderOptions);
 
                 }
