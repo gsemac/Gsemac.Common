@@ -13,15 +13,16 @@
             get => GetHeight();
             set => height = value ?? 0;
         }
-        public float? HorizontalScale {
+        public double? HorizontalScale {
             get => GetHorizontalScale();
             set => horizontalScale = value ?? 0;
         }
-        public float? VerticalScale {
+        public double? VerticalScale {
             get => GetVerticalScale();
             set => verticalScale = value ?? 0;
         }
         public ImageSizingMode SizingMode { get; set; } = ImageSizingMode.None;
+        public bool MaintainAspectRatio { get; set; } = false;
 
         public static ImageResizingOptions Default => new ImageResizingOptions();
 
@@ -29,8 +30,8 @@
 
         private int width;
         private int height;
-        private float horizontalScale;
-        private float verticalScale;
+        private double horizontalScale;
+        private double verticalScale;
 
         private int? GetWidth() {
 
@@ -48,7 +49,7 @@
             return height;
 
         }
-        private float? GetHorizontalScale() {
+        private double? GetHorizontalScale() {
 
             if (horizontalScale <= 0)
                 return null;
@@ -56,7 +57,7 @@
             return horizontalScale;
 
         }
-        private float? GetVerticalScale() {
+        private double? GetVerticalScale() {
 
             if (verticalScale <= 0)
                 return null;

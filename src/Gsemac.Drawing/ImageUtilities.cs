@@ -78,11 +78,26 @@ namespace Gsemac.Drawing {
             int? newWidth = options.Width;
             int? newHeight = options.Height;
 
+            // If new dimensions haven't been provided, then scaling takes secondary priority.
+
             if (!newWidth.HasValue && options.HorizontalScale.HasValue)
                 newWidth = (int)(image.Width * options.HorizontalScale.Value);
 
             if (!newHeight.HasValue && options.VerticalScale.HasValue)
                 newHeight = (int)(image.Height * options.VerticalScale.Value);
+
+            // Adjust one of the dimensions in order to maintain the original aspect ratio if necessary.
+
+            if (newWidth.HasValue && newHeight.HasValue && options.MaintainAspectRatio) {
+
+                double newHorizontalScale = (double)newWidth.Value / image.Width;
+                double newVerticalScale = (double)newHeight.Value / image.Height;
+                double minimumScale = Math.Min(newHorizontalScale, newVerticalScale);
+
+                newWidth = (int)(image.Width * minimumScale);
+                newHeight = (int)(image.Height * minimumScale);
+
+            }
 
             // If the image hasn't been resized at all, just return the source image.
 
@@ -100,7 +115,7 @@ namespace Gsemac.Drawing {
             });
 
         }
-        public static Image Resize(Image image, float? horizontalScale = null, float? verticalScale = null) {
+        public static Image Resize(Image image, double? horizontalScale = null, double? verticalScale = null) {
 
             return Resize(image, new ImageResizingOptions() {
                 HorizontalScale = horizontalScale,

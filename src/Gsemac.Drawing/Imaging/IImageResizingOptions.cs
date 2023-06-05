@@ -4,9 +4,10 @@
 
         int? Width { get; }
         int? Height { get; }
-        float? HorizontalScale { get; }
-        float? VerticalScale { get; }
+        double? HorizontalScale { get; }
+        double? VerticalScale { get; }
         ImageSizingMode SizingMode { get; }
+        bool MaintainAspectRatio { get; }
 
     }
 
