@@ -26,6 +26,17 @@ namespace Gsemac.IO.Tests {
             Assert.AreEqual("US-ASCII", mimeType.Parameters["charset"]);
 
         }
+        [TestMethod]
+        public void TestParseWithMultipleParameters() {
+
+            // This example data is sourced from https://en.wikipedia.org/wiki/Data_URI_scheme#Syntax
+
+            IMimeType mimeType = MimeType.Parse("text/plain;charset=UTF-8;page=21");
+
+            Assert.AreEqual("UTF-8", mimeType.Parameters["charset"]);
+            Assert.AreEqual("21", mimeType.Parameters["page"]);
+
+        }
 
         // ToString
 
