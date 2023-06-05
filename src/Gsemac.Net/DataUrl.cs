@@ -8,12 +8,14 @@ using System.Text.RegularExpressions;
 
 namespace Gsemac.Net {
 
-    public class DataUrl {
+    public class DataUrl :
+        IDataUrl {
 
         // Public members
 
         public IMimeType MimeType { get; }
         public bool IsBase64Encoded { get; } = false;
+        public int DataLength => data.Length;
 
         public DataUrl(IMimeType mimeType, byte[] data) :
             this(mimeType, data, false) {
@@ -76,7 +78,7 @@ namespace Gsemac.Net {
 
             if (!string.IsNullOrWhiteSpace(value)) {
 
-                Match match = new Regex("^data:(?<mimetype>.*?)(?<base64>;base64)?,(?<data>.+?$)")
+                Match match = new Regex("^data:(?<mimetype>.*?)(?<base64>;base64)?,(?<data>.*?$)")
                     .Match(value);
 
                 if (match.Success) {
