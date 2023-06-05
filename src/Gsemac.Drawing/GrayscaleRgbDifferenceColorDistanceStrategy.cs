@@ -3,7 +3,7 @@ using System.Drawing;
 
 namespace Gsemac.Drawing {
 
-    public class GrayscaleRgbDifferenceStrategy :
+    public class GrayscaleRgbDifferenceColorDistanceStrategy :
         IColorDistanceStrategy {
 
         public double ComputeDistance(Color first, Color second, bool normalizeResult = false) {

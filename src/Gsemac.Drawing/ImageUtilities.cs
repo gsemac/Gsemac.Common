@@ -109,6 +109,112 @@ namespace Gsemac.Drawing {
 
         }
 
+        public static Bitmap Trim(Bitmap image) {
+
+            if (image is null)
+                throw new ArgumentNullException(nameof(image));
+
+            return Trim(image, 0.0);
+
+        }
+        public static Bitmap Trim(Bitmap image, Color trimColor) {
+
+            if (image is null)
+                throw new ArgumentNullException(nameof(image));
+
+            return Trim(image, trimColor, 0.0);
+
+        }
+        public static Bitmap Trim(Bitmap image, double tolerance) {
+
+            if (image is null)
+                throw new ArgumentNullException(nameof(image));
+
+            Color trimColor = image.GetPixel(0, 0);
+
+            return Trim(image, trimColor, tolerance);
+
+        }
+        public static Bitmap Trim(Bitmap image, Color trimColor, double tolerance) {
+
+            if (image is null)
+                throw new ArgumentNullException(nameof(image));
+
+            if (image.Width > 0 && image.Height > 0) {
+
+                // Calculate the area to trim.
+
+                int left, right, top, bottom;
+
+                for (left = 0; left < image.Width; ++left)
+                    if (!ColumnIsColor(image, left, trimColor, tolerance))
+                        break;
+
+                for (right = image.Width - 1; right >= 0; --right)
+                    if (!ColumnIsColor(image, right, trimColor, tolerance))
+                        break;
+
+                for (top = 0; top < image.Height; ++top)
+                    if (!RowIsColor(image, top, trimColor, tolerance))
+                        break;
+
+                for (bottom = image.Height - 1; bottom >= 0; --bottom)
+                    if (!RowIsColor(image, bottom, trimColor, tolerance))
+                        break;
+
+                // Crop the image.
+
+                int x = left;
+                int y = top;
+                int width = right + 1 - x;
+                int height = bottom + 1 - y;
+
+                // If the cropped area is impossible (this can occur if the tolerance is too high or the image is entirely cropped), use the original dimensions.
+
+                if (width <= 0) {
+
+                    x = 0;
+                    width = image.Width;
+
+                }
+
+                if (height <= 0) {
+
+                    y = 0;
+                    height = image.Height;
+
+                }
+
+                Bitmap newImage = new Bitmap(width, height);
+
+                try {
+
+                    using (Graphics graphics = Graphics.FromImage(newImage)) {
+
+                        graphics.DrawImage(image, new Rectangle(0, 0, width, height), new Rectangle(x, y, width, height), GraphicsUnit.Pixel);
+
+                        return newImage;
+
+                    }
+
+                }
+                catch (Exception) {
+
+                    newImage.Dispose();
+
+                    throw;
+
+                }
+
+            }
+            else {
+
+                return image;
+
+            }
+
+        }
+
         // Private members
 
         private static Image ResizeInternal(Image image, int? width = null, int? height = null) {
@@ -164,6 +270,32 @@ namespace Gsemac.Drawing {
             Bitmap resultImage = new Bitmap(image, new Size(newWidth, newHeight));
 
             return resultImage;
+
+        }
+
+        private static bool ColorIsMatch(Color first, Color second, double tolerance) {
+
+            double requiredSimilarity = 1.0 - tolerance;
+
+            return ColorUtilities.ComputeSimilarity(first, second, ColorDistanceStrategy.DeltaE) >= requiredSimilarity;
+
+        }
+        private static bool RowIsColor(Bitmap bitmap, int row, Color trimColor, double tolerance) {
+
+            for (int x = 0; x < bitmap.Width; ++x)
+                if (!ColorIsMatch(bitmap.GetPixel(x, row), trimColor, tolerance))
+                    return false;
+
+            return true;
+
+        }
+        private static bool ColumnIsColor(Bitmap bitmap, int column, Color trimColor, double tolerance) {
+
+            for (int y = 0; y < bitmap.Height; ++y)
+                if (!ColorIsMatch(bitmap.GetPixel(column, y), trimColor, tolerance))
+                    return false;
+
+            return true;
 
         }
 
