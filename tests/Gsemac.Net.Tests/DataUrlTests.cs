@@ -16,7 +16,7 @@ namespace Gsemac.Net.Tests {
 
             using Stream dataStream = dataUrl.GetDataStream();
 
-            Assert.IsTrue(dataUrl.Base64Encoded);
+            Assert.IsTrue(dataUrl.IsBase64Encoded);
             Assert.AreEqual("Hello, World!", StringUtilities.StreamToString(dataStream));
             Assert.AreEqual("text/plain", dataUrl.MimeType.ToString());
 
@@ -28,9 +28,23 @@ namespace Gsemac.Net.Tests {
 
             using Stream dataStream = dataUrl.GetDataStream();
 
-            Assert.IsFalse(dataUrl.Base64Encoded);
+            Assert.IsFalse(dataUrl.IsBase64Encoded);
             Assert.AreEqual("Hello, World!", StringUtilities.StreamToString(dataStream));
             Assert.AreEqual("text/plain;charset=US-ASCII", dataUrl.MimeType.ToString());
+
+        }
+        [TestMethod]
+        public void TestParseWithMimeTypeWithMultipleParameters() {
+
+            // This example data is sourced from https://en.wikipedia.org/wiki/Data_URI_scheme#Syntax
+
+            DataUrl dataUrl = DataUrl.Parse("data:text/plain;charset=UTF-8;page=21,the%20data:1234,5678");
+
+            using Stream dataStream = dataUrl.GetDataStream();
+
+            Assert.IsFalse(dataUrl.IsBase64Encoded);
+            Assert.AreEqual("the data:1234,5678", StringUtilities.StreamToString(dataStream));
+            Assert.AreEqual("text/plain;charset=UTF-8;page=21", dataUrl.MimeType.ToString());
 
         }
         [TestMethod]
@@ -40,7 +54,7 @@ namespace Gsemac.Net.Tests {
 
             using Stream dataStream = dataUrl.GetDataStream();
 
-            Assert.IsFalse(dataUrl.Base64Encoded);
+            Assert.IsFalse(dataUrl.IsBase64Encoded);
             Assert.AreEqual("<h1>Hello, World!</h1>", StringUtilities.StreamToString(dataStream));
             Assert.AreEqual("text/html", dataUrl.MimeType.ToString());
 
@@ -52,7 +66,7 @@ namespace Gsemac.Net.Tests {
 
             using Stream dataStream = dataUrl.GetDataStream();
 
-            Assert.IsFalse(dataUrl.Base64Encoded);
+            Assert.IsFalse(dataUrl.IsBase64Encoded);
             Assert.AreEqual("<script>alert('hi');</script>", StringUtilities.StreamToString(dataStream));
             Assert.AreEqual("text/html", dataUrl.MimeType.ToString());
 

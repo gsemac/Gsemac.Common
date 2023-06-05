@@ -13,7 +13,7 @@ namespace Gsemac.Net {
         // Public members
 
         public IMimeType MimeType { get; }
-        public bool Base64Encoded { get; } = false;
+        public bool IsBase64Encoded { get; } = false;
 
         public DataUrl(IMimeType mimeType, byte[] data) :
             this(mimeType, data, false) {
@@ -29,7 +29,7 @@ namespace Gsemac.Net {
             this.data = data;
 
             MimeType = mimeType;
-            Base64Encoded = base64Encode;
+            IsBase64Encoded = base64Encode;
 
         }
 
@@ -48,12 +48,12 @@ namespace Gsemac.Net {
             if (MimeType is object)
                 sb.Append(MimeType.ToString());
 
-            if (Base64Encoded)
+            if (IsBase64Encoded)
                 sb.Append(";base64");
 
             sb.Append(',');
 
-            if (Base64Encoded)
+            if (IsBase64Encoded)
                 sb.Append(Base64.EncodeString(data));
             else
                 sb.Append(Uri.EscapeDataString(Encoding.UTF8.GetString(data)));
