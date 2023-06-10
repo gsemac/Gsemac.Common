@@ -1,4 +1,5 @@
 ﻿using Gsemac.Net.Extensions;
+using Gsemac.Net.Properties;
 using System.Net;
 
 namespace Gsemac.Net.Http {
@@ -49,9 +50,9 @@ namespace Gsemac.Net.Http {
 
         public HttpWebRequestOptions() {
 
-            Accept = Properties.DefaultHeaders.Accept;
-            AcceptLanguage = Properties.DefaultHeaders.AcceptLanguage;
-            UserAgent = Properties.DefaultHeaders.UserAgent;
+            Accept = DefaultHttpHeaders.Accept;
+            AcceptLanguage = DefaultHttpHeaders.AcceptLanguage;
+            UserAgent = DefaultHttpHeaders.UserAgent;
 
         }
         public HttpWebRequestOptions(IHttpWebRequestOptions other, bool copyIfNull = true) {

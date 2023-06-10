@@ -37,8 +37,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<Compile Update="Properties\DefaultHeaders.Designer.cs">
+		<Compile Update="Properties\DefaultHttpHeaders.Designer.cs">
 			<DesignTime>True</DesignTime>
+			<DependentUpon>DefaultHttpHeaders.resx</DependentUpon>
 		</Compile>
 		<Compile Update="Properties\ExceptionMessages.Designer.cs">
 			<DesignTime>True</DesignTime>
