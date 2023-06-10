@@ -18,17 +18,24 @@ namespace Gsemac.IO {
             set => Seek(value, SeekOrigin.Begin);
         }
 
-        public SeekableStream(Stream stream) {
+        public SeekableStream(Stream stream) :
+            this(stream, disposeStream: true) {
+        }
+        public SeekableStream(Stream stream, bool disposeStream) {
 
             if (stream is null)
                 throw new ArgumentNullException(nameof(stream));
 
             bufferStream = new MemoryStream();
             wrappedStream = stream;
+            this.disposeStream = disposeStream;
 
         }
         public SeekableStream(Stream stream, int bufferSize) :
-            this(stream) {
+            this(stream, bufferSize, disposeStream: true) {
+        }
+        public SeekableStream(Stream stream, int bufferSize, bool disposeStream) :
+            this(stream, disposeStream: disposeStream) {
 
             if (bufferSize < 0)
                 throw new ArgumentOutOfRangeException(nameof(bufferSize), Properties.ExceptionMessages.CapacityMustBePositive);
@@ -168,6 +175,34 @@ namespace Gsemac.IO {
 
         }
 
+        public override void Close() {
+
+            bufferStream.Close();
+
+            if (disposeStream)
+                wrappedStream.Close();
+
+            base.Close();
+
+        }
+
+        // Protected members
+
+        protected override void Dispose(bool disposing) {
+
+            if (disposing) {
+
+                bufferStream.Dispose();
+
+                if (disposeStream)
+                    wrappedStream.Dispose();
+
+            }
+
+            base.Dispose(disposing);
+
+        }
+
         // Private members
 
         private const int InfiniteBufferSize = -1;
@@ -176,6 +211,7 @@ namespace Gsemac.IO {
         private readonly int bufferSize = InfiniteBufferSize;
         private readonly MemoryStream bufferStream;
         private readonly Stream wrappedStream;
+        private readonly bool disposeStream;
 
         private void EatBytesFromWrappedStream(int count) {
 
