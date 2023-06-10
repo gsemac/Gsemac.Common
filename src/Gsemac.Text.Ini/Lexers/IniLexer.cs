@@ -88,7 +88,7 @@ namespace Gsemac.Text.Ini.Lexers {
             string value = reader.ReadLine(delimiters, new ReadLineOptions() {
                 BreakOnNewLine = true,
                 ConsumeDelimiter = false,
-                IgnoreEscapedDelimiters = options.EnableEscapeSequences,
+                AllowEscapedDelimiters = options.EnableEscapeSequences,
             }).Trim();
 
             // The section name is valid if it ends with an UNESCAPED section name end character ("]").
@@ -147,7 +147,7 @@ namespace Gsemac.Text.Ini.Lexers {
             string value = reader.ReadLine(delimiters, new ReadLineOptions() {
                 BreakOnNewLine = true,
                 ConsumeDelimiter = false,
-                IgnoreEscapedDelimiters = options.EnableEscapeSequences,
+                AllowEscapedDelimiters = options.EnableEscapeSequences,
             });
 
             value = IniUtilities.FormatValue(value, options, isPropertyValue: false, writingValue: false);
@@ -197,7 +197,7 @@ namespace Gsemac.Text.Ini.Lexers {
             string value = reader.ReadLine(delimiters, new ReadLineOptions() {
                 BreakOnNewLine = true,
                 ConsumeDelimiter = false,
-                IgnoreEscapedDelimiters = options.EnableEscapeSequences,
+                AllowEscapedDelimiters = options.EnableEscapeSequences,
             });
 
             value = IniUtilities.FormatValue(value, options, isPropertyValue: true, writingValue: false);

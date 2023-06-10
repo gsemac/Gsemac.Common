@@ -66,7 +66,7 @@ namespace Gsemac.IO.Extensions.Tests {
             string value = reader.ReadLine(new[] {
                 "o",
             }, new ReadLineOptions() {
-                IgnoreEscapedDelimiters = true,
+                AllowEscapedDelimiters = true,
             });
 
             Assert.AreEqual(@"hell\o w", value);
@@ -117,12 +117,12 @@ namespace Gsemac.IO.Extensions.Tests {
             using var reader = CreateReader("a\\\r\nb\r\nc");
 
             IReadLineOptions readLineOptions = new ReadLineOptions() {
-                IgnoreEscapedDelimiters = true,
+                AllowEscapedDelimiters = true,
                 BreakOnNewLine = true,
             };
 
             Assert.AreEqual("a\\\r\nb", reader.ReadLine(Array.Empty<string>(), new ReadLineOptions() {
-                IgnoreEscapedDelimiters = true,
+                AllowEscapedDelimiters = true,
                 BreakOnNewLine = true,
             }));
 

@@ -106,7 +106,7 @@ namespace Gsemac.IO.Extensions {
                 // Check if we've hit a delimiter.
 
                 char nextChar = (char)reader.Peek();
-                bool nextCharIsEscaped = insideEscapeSequence && options.IgnoreEscapedDelimiters;
+                bool nextCharIsEscaped = insideEscapeSequence && options.AllowEscapedDelimiters;
                 bool nextCharIsNewLine = nextChar.IsNewLine();
 
                 if (!nextCharIsEscaped && (delimiters.Any(c => c == nextChar) || nextCharIsNewLine && options.BreakOnNewLine)) {
@@ -205,7 +205,7 @@ namespace Gsemac.IO.Extensions {
                 // Consume the next character.
 
                 char nextChar = (char)reader.Read();
-                bool nextCharIsEscaped = insideEscapeSequence && options.IgnoreEscapedDelimiters;
+                bool nextCharIsEscaped = insideEscapeSequence && options.AllowEscapedDelimiters;
                 bool nextCharIsNewLine = nextChar.IsNewLine();
 
                 resultBuilder.Append(nextChar);

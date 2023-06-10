@@ -4,7 +4,7 @@
 
         bool BreakOnNewLine { get; }
         bool ConsumeDelimiter { get; }
-        bool IgnoreEscapedDelimiters { get; }
+        bool AllowEscapedDelimiters { get; }
 
     }
 

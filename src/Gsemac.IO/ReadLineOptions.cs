@@ -7,7 +7,7 @@
 
         public bool BreakOnNewLine { get; set; } = true;
         public bool ConsumeDelimiter { get; set; } = true;
-        public bool IgnoreEscapedDelimiters { get; set; } = false;
+        public bool AllowEscapedDelimiters { get; set; } = false;
 
         public static ReadLineOptions Default => new ReadLineOptions();
 

@@ -54,7 +54,7 @@ namespace Gsemac.IO.Extensions {
                 // Read the next character.
 
                 char nextChar = (char)reader.Peek();
-                bool nextCharIsEscaped = insideEscapeSequence && options.IgnoreEscapedDelimiters;
+                bool nextCharIsEscaped = insideEscapeSequence && options.AllowEscapedDelimiters;
                 bool nextCharIsNewLine = nextChar.IsNewLine();
 
                 if (!nextCharIsEscaped) {
