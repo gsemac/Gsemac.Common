@@ -52,7 +52,7 @@ namespace Gsemac.Net.Http {
 
                     IHttpWebRequest originatingRequest = request;
 
-                    if (IsRedirect(response)) {
+                    if (HasRedirectStatusCode(response)) {
 
                         if (response.Headers.TryGetHeader(HttpResponseHeader.Location, out string locationValue) && !string.IsNullOrWhiteSpace(locationValue)) {
 
@@ -77,7 +77,7 @@ namespace Gsemac.Net.Http {
                                     // https://smerity.com/articles/2013/where_did_all_the_http_referrers_go.html
                                     // https://serverfault.com/q/883750
 
-                                    if (ForwardRefererHeader(originatingRequest.RequestUri, locationUri))
+                                    if (ShouldForwardRefererHeader(originatingRequest.RequestUri, locationUri))
                                         request.Referer = originatingRequest.Referer;
 
                                     // Set the verb for the new request.
@@ -119,30 +119,15 @@ namespace Gsemac.Net.Http {
                         }
 
                     }
-                    else if (IsRefresh(response)) {
+                    else if (HasRefreshHeader(response)) {
+
+                        // The request had a "refresh" header.
 
                         try {
 
-                            // We encountered a refresh header.
+                            RefreshHeader refreshHeader = new RefreshHeader(response.Headers["refresh"]);
 
-                            RefreshHeader header = new RefreshHeader(response.Headers["refresh"]);
-
-                            // Wait for the timeout period, preferring the request's timeout if it is shorter.
-
-                            TimeSpan timeout = new[] {
-                                header.Timeout,
-                                TimeSpan.FromMilliseconds(originatingRequest.Timeout),
-                                MaximumRefreshTimeout,
-                            }.Min();
-
-                            Thread.Sleep(timeout);
-
-                            // Initiate a new request to the new endpoint, preserving any cookies that have been set.
-                            // Unlike regular redirects, no referer is included, and the request is treated like an entirely new GET request. 
-
-                            request = httpWebRequestFactory.Create(header.Url);
-
-                            request.CookieContainer = originatingRequest.CookieContainer;
+                            request = CreateRequestFromRefreshHeader(originatingRequest, refreshHeader);
 
                         }
                         finally {
@@ -181,21 +166,49 @@ namespace Gsemac.Net.Http {
 
         private readonly IHttpWebRequestFactory httpWebRequestFactory;
 
-        private static bool IsRedirect(IHttpWebResponse response) {
+        private IHttpWebRequest CreateRequestFromRefreshHeader(IHttpWebRequest originatingRequest, RefreshHeader refreshHeader) {
+
+            if (originatingRequest is null)
+                throw new ArgumentNullException(nameof(originatingRequest));
+
+            if (refreshHeader is null)
+                throw new ArgumentNullException(nameof(refreshHeader));
+
+            // Wait for the timeout period, preferring the request's timeout if it is shorter.
+
+            TimeSpan timeout = new[] {
+                                refreshHeader.Timeout,
+                                TimeSpan.FromMilliseconds(originatingRequest.Timeout),
+                                MaximumRefreshTimeout,
+                            }.Min();
+
+            Thread.Sleep(timeout);
+
+            // Initiate a new request to the new endpoint, preserving any cookies that have been set.
+            // Unlike regular redirects, no referer is included, and the request is treated like an entirely new GET request. 
+
+            IHttpWebRequest request = httpWebRequestFactory.Create(refreshHeader.Url);
+
+            request.CookieContainer = originatingRequest.CookieContainer;
+
+            return request;
+
+        }
+
+        private static bool HasRedirectStatusCode(IHttpWebResponse response) {
 
             return response is object &&
                 HttpUtilities.IsRedirectStatusCode(response.StatusCode);
 
         }
-        private static bool IsRefresh(IHttpWebResponse response) {
+        private static bool HasRefreshHeader(IHttpWebResponse response) {
 
             return response is object &&
                 response.Headers.TryGetHeader("refresh", out string refreshHeaderValue) &&
                 !string.IsNullOrWhiteSpace(refreshHeaderValue);
 
         }
-
-        private static bool ForwardRefererHeader(Uri sourceUri, Uri destinationUri) {
+        private static bool ShouldForwardRefererHeader(Uri sourceUri, Uri destinationUri) {
 
             // Note that schemes are not case-sensitive.
 
