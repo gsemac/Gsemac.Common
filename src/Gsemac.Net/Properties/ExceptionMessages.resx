@@ -156,4 +156,7 @@
   <data name="TooManyAutomaticRedirections" xml:space="preserve">
     <value>Too many automatic redirections were attempted.</value>
   </data>
+  <data name="WebResponseWasNotAnInstanceOfHttpWebResponse" xml:space="preserve">
+    <value>WebResponse was not an instance of HttpWebResponse.</value>
+  </data>
 </root>

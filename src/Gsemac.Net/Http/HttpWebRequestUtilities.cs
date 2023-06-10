@@ -1,5 +1,4 @@
-﻿using Gsemac.Core;
-using Gsemac.Net.Extensions;
+﻿using Gsemac.Net.Extensions;
 using System;
 using System.Globalization;
 using System.Net;

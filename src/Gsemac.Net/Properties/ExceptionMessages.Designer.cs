@@ -176,5 +176,14 @@ namespace Gsemac.Net.Properties {
                 return ResourceManager.GetString("TooManyAutomaticRedirections", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to WebResponse was not an instance of HttpWebResponse..
+        /// </summary>
+        internal static string WebResponseWasNotAnInstanceOfHttpWebResponse {
+            get {
+                return ResourceManager.GetString("WebResponseWasNotAnInstanceOfHttpWebResponse", resourceCulture);
+            }
+        }
     }
 }

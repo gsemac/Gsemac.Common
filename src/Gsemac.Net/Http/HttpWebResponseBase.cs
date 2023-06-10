@@ -20,7 +20,7 @@ namespace Gsemac.Net.Http {
 
                 // It's important to return -1 instead of 0, which lets classes like WebClient know there is still a body, just no content-length header.
 
-                return -1;
+                return DefaultContentLength;
 
             }
             set => Headers[HttpResponseHeader.ContentLength] = value.ToString();
@@ -108,6 +108,7 @@ namespace Gsemac.Net.Http {
         // Private members
 
         private const string DefaultCharacterSet = "ISO-8859-1"; // HttpWebRequest's default charset
+        private const int DefaultContentLength = -1;
 
         private readonly Uri responseUri;
         private readonly WebHeaderCollection headers = new WebHeaderCollection();

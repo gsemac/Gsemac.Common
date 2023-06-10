@@ -30,6 +30,10 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <PackageReference Include="HtmlAgilityPack" Version="1.11.46" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<ProjectReference Include="..\Gsemac.Collections\Gsemac.Collections.csproj" />
 		<ProjectReference Include="..\Gsemac.IO\Gsemac.IO.csproj" />
 		<ProjectReference Include="..\Gsemac.Polyfills\Gsemac.Polyfills.csproj" />

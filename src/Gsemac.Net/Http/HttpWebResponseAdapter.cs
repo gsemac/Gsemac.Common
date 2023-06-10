@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Gsemac.Net.Properties;
+using System;
 using System.IO;
 using System.Net;
 
@@ -20,7 +21,7 @@ namespace Gsemac.Net.Http {
             else if (webResponse is HttpWebResponseAdapter httpWebResponseWrapper)
                 this.httpWebResponse = httpWebResponseWrapper.httpWebResponse;
             else
-                throw new ArgumentException("WebResponse was not an instance of HttpWebResponse.", nameof(webResponse));
+                throw new ArgumentException(ExceptionMessages.WebResponseWasNotAnInstanceOfHttpWebResponse, nameof(webResponse));
 
         }
         public HttpWebResponseAdapter(HttpWebResponse httpWebResponse) {
