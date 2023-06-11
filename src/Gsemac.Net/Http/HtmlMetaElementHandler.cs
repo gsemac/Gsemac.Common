@@ -73,7 +73,7 @@ namespace Gsemac.Net.Http {
 
                 memoryStream.Seek(0, SeekOrigin.Begin);
 
-                response = new HttpWebResponseWrapper(response, memoryStream, declaredEncoding);
+                response = new HtmlMetaElementHandlerHttpWebResponseWrapper(response, memoryStream, declaredEncoding);
 
             }
 
@@ -83,7 +83,8 @@ namespace Gsemac.Net.Http {
 
         // Private members
 
-        private class HttpWebResponseWrapper :
+        private class HtmlMetaElementHandlerHttpWebResponseWrapper :
+            WebResponse,
             IHttpWebResponse {
 
             // Public members
@@ -100,20 +101,21 @@ namespace Gsemac.Net.Http {
                 get => baseResponse.Cookies;
                 set => baseResponse.Cookies = value;
             }
-            public bool IsFromCache => baseResponse.IsFromCache;
-            public bool IsMutuallyAuthenticated => baseResponse.IsMutuallyAuthenticated;
-            public long ContentLength {
+
+            public override bool IsFromCache => baseResponse.IsFromCache;
+            public override bool IsMutuallyAuthenticated => baseResponse.IsMutuallyAuthenticated;
+            public override long ContentLength {
                 get => baseResponse.ContentLength;
                 set => baseResponse.ContentLength = value;
             }
-            public string ContentType {
+            public override string ContentType {
                 get => baseResponse.ContentType;
                 set => baseResponse.ContentType = value;
             }
-            public Uri ResponseUri => baseResponse.ResponseUri;
-            public WebHeaderCollection Headers => baseResponse.Headers;
+            public override Uri ResponseUri => baseResponse.ResponseUri;
+            public override WebHeaderCollection Headers => baseResponse.Headers;
 
-            public HttpWebResponseWrapper(IHttpWebResponse baseResponse, Stream responseStream, string characterSet) {
+            public HtmlMetaElementHandlerHttpWebResponseWrapper(IHttpWebResponse baseResponse, Stream responseStream, string characterSet) {
 
                 if (baseResponse is null)
                     throw new ArgumentNullException(nameof(baseResponse));
@@ -127,17 +129,18 @@ namespace Gsemac.Net.Http {
 
             }
 
-            public void Close() {
-
-                baseResponse.Close();
-
-            }
             public string GetResponseHeader(string headerName) {
 
                 return baseResponse.GetResponseHeader(headerName);
 
             }
-            public Stream GetResponseStream() {
+
+            public override void Close() {
+
+                baseResponse.Close();
+
+            }
+            public override Stream GetResponseStream() {
 
                 return responseStream;
 
