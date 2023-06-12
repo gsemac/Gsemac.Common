@@ -1,11 +1,9 @@
-﻿using Gsemac.Collections;
-using Gsemac.Polyfills.System.Threading.Tasks;
+﻿using Gsemac.Polyfills.System.Threading.Tasks;
 using Gsemac.Text.PatternMatching;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace Gsemac.Net.Http {
 
@@ -77,7 +75,7 @@ namespace Gsemac.Net.Http {
 
         // Private members
 
-        private readonly ICollection<IRateLimitingRule> rules = new ConcurrentCollectionDecorator<IRateLimitingRule>(new List<IRateLimitingRule>());
+        private readonly ICollection<IRateLimitingRule> rules = new List<IRateLimitingRule>();
         private readonly IDictionary<string, DateTimeOffset> lastRequestTimes = new Dictionary<string, DateTimeOffset>();
         private readonly object globalRequestMutex = new object();
         private static readonly Random randomSource = new Random();
