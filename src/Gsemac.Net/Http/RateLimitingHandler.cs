@@ -1,4 +1,5 @@
 ﻿using Gsemac.Polyfills.System.Threading.Tasks;
+using Gsemac.Text.Extensions;
 using Gsemac.Text.PatternMatching;
 using System;
 using System.Collections.Generic;
@@ -24,7 +25,7 @@ namespace Gsemac.Net.Http {
 
             // Check if we have any rules applying to this request.
 
-            IRateLimitingRule rateLimitingRule = rules.Where(rule => new WildcardPattern(rule.Endpoint).IsMatch(request.RequestUri.AbsoluteUri))
+            IRateLimitingRule rateLimitingRule = rules.Where(rule => IsRuleMatch(request, rule))
                 .FirstOrDefault();
 
             bool rateLimitingRequired = false;
@@ -95,6 +96,55 @@ namespace Gsemac.Net.Http {
                 MaximumDelayBetweenRequests,
                 TimeSpan.FromMilliseconds(request.Timeout)
             }.Min();
+
+        }
+
+        private static bool IsRuleMatch(IHttpWebRequest request, IRateLimitingRule rateLimitingRule) {
+
+            if (request is null)
+                throw new ArgumentNullException(nameof(request));
+
+            if (rateLimitingRule is null)
+                throw new ArgumentNullException(nameof(rateLimitingRule));
+
+            // Ignore the scheme when matching rate limiting rules, unless the rule has a scheme.
+            // If the rule is just a domain name, match all requests to the domain regardless of path.
+
+            // "//example.com/" should match requests to "https://example.com/"
+            // "example.com/" should match requests to "https://example.com/"
+            // "https://example.com/" should ONLY match "https://example.com/"
+            // "example.com" should match requests to "https://example.com/some/path"
+
+            string endpointPattern = rateLimitingRule.Endpoint?.Trim();
+            string requestUri = request.RequestUri.AbsoluteUri?.Trim();
+
+            if (string.IsNullOrWhiteSpace(endpointPattern) || string.IsNullOrWhiteSpace(requestUri))
+                return false;
+
+            if (endpointPattern.StartsWith("//")) {
+
+                // Make it so both strings begin with "//".
+
+                requestUri = requestUri.After(":");
+
+            }
+            else if (!endpointPattern.Contains("://")) {
+
+                // If the pattern does not specify a scheme, we'll strip the scheme from the URI.
+
+                requestUri = requestUri.After("://");
+
+            }
+
+            // If the endpoint pattern doesn't specify a path, match all paths.
+
+            if (!endpointPattern.After("//").Contains("/")) {
+
+                endpointPattern += "/*";
+
+            }
+
+            return new WildcardPattern(endpointPattern).IsMatch(requestUri);
 
         }
 
