@@ -1,6 +1,5 @@
 ﻿using Gsemac.Polyfills.System.Threading.Tasks;
 using Gsemac.Text.Extensions;
-using Gsemac.Text.PatternMatching;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,28 +23,31 @@ namespace Gsemac.Net.Http {
                 throw new ArgumentNullException(nameof(request));
 
             // Check if we have any rules applying to this request.
+            // It's possible for multiple rules to apply to the same request, and we'll take the most restrictive.
 
-            IRateLimitingRule rateLimitingRule = rules.Where(rule => IsRuleMatch(request, rule))
-                .FirstOrDefault();
+            IEnumerable<IRateLimitingRule> rateLimitingRules = rules.Where(rule => IsRuleMatch(request, rule));
 
             bool rateLimitingRequired = false;
             TimeSpan delay = TimeSpan.Zero;
 
-            if (rateLimitingRule is object) {
+            if (rateLimitingRules.Any()) {
 
                 // We may need to rate limit this request.
 
                 DateTimeOffset currentTime = DateTimeOffset.Now;
 
-                delay = GetDelay(request, rateLimitingRule);
+                delay = GetDelay(request, rateLimitingRules);
 
                 lock (globalRequestMutex) {
 
-                    if (lastRequestTimes.TryGetValue(rateLimitingRule.Endpoint, out DateTimeOffset lastRequestTime) && lastRequestTime < currentTime + delay) {
+                    DateTimeOffset lastRequestTime = GetLastRequestTime(rateLimitingRules);
+
+                    if ((currentTime - lastRequestTime) < delay) {
 
                         // Update the request time to the time this request will end up being sent.
 
-                        lastRequestTimes[rateLimitingRule.Endpoint] = currentTime + delay;
+                        foreach (IRateLimitingRule rule in rateLimitingRules)
+                            lastRequestTimes[rule.Endpoint] = currentTime + delay;
 
                         rateLimitingRequired = true;
 
@@ -54,7 +56,8 @@ namespace Gsemac.Net.Http {
 
                         // We can make the request immediately and don't need to wait.
 
-                        lastRequestTimes[rateLimitingRule.Endpoint] = currentTime;
+                        foreach (IRateLimitingRule rule in rateLimitingRules)
+                            lastRequestTimes[rule.Endpoint] = currentTime;
 
                     }
 
@@ -81,21 +84,40 @@ namespace Gsemac.Net.Http {
         private readonly object globalRequestMutex = new object();
         private static readonly Random randomSource = new Random();
 
-        private TimeSpan GetDelay(IHttpWebRequest request, IRateLimitingRule rateLimitingRule) {
+        private TimeSpan GetDelay(IHttpWebRequest request, IEnumerable<IRateLimitingRule> rateLimitingRules) {
 
             if (request is null)
                 throw new ArgumentNullException(nameof(request));
 
-            if (rateLimitingRule is null)
-                throw new ArgumentNullException(nameof(rateLimitingRule));
+            if (rateLimitingRules is null)
+                throw new ArgumentNullException(nameof(rateLimitingRules));
 
-            TimeSpan ruleDelay = TimeSpan.FromMilliseconds(Math.Ceiling(rateLimitingRule.TimePeriod.TotalMilliseconds / rateLimitingRule.RequestsPerTimePeriod));
+            TimeSpan ruleDelay = rateLimitingRules
+                .Select(rule => TimeSpan.FromMilliseconds(Math.Ceiling(rule.TimePeriod.TotalMilliseconds / rule.RequestsPerTimePeriod)))
+                .Max();
 
             return new[] {
                 ruleDelay,
                 MaximumDelayBetweenRequests,
                 TimeSpan.FromMilliseconds(request.Timeout)
             }.Min();
+
+        }
+        private DateTimeOffset GetLastRequestTime(IEnumerable<IRateLimitingRule> rateLimitingRules) {
+
+            if (rateLimitingRules is null)
+                throw new ArgumentNullException(nameof(rateLimitingRules));
+
+            DateTimeOffset lastRequestTime = DateTimeOffset.MinValue;
+
+            foreach (IRateLimitingRule rule in rateLimitingRules) {
+
+                if (lastRequestTimes.TryGetValue(rule.Endpoint, out DateTimeOffset ruleLastRequestTime) && ruleLastRequestTime > lastRequestTime)
+                    lastRequestTime = ruleLastRequestTime;
+
+            }
+
+            return lastRequestTime;
 
         }
 
@@ -107,19 +129,21 @@ namespace Gsemac.Net.Http {
             if (rateLimitingRule is null)
                 throw new ArgumentNullException(nameof(rateLimitingRule));
 
-            // Ignore the scheme when matching rate limiting rules, unless the rule has a scheme.
-            // If the rule is just a domain name, match all requests to the domain regardless of path.
+            // We will match all paths at the depth of the given endpoint and below.
+            // The scheme is ignored unless the endpoint pattern includes a scheme.
 
-            // "//example.com/" should match requests to "https://example.com/"
-            // "example.com/" should match requests to "https://example.com/"
-            // "https://example.com/" should ONLY match "https://example.com/"
+            // "//example.com/" should match requests to "https://example.com/some/path"
+            // "example.com/" should match requests to "https://example.com/some/path"
             // "example.com" should match requests to "https://example.com/some/path"
+            // "https://example.com/" should ONLY match "https://example.com/some/path" but not "http://example.com/some/path"
 
-            string endpointPattern = rateLimitingRule.Endpoint?.Trim();
-            string requestUri = request.RequestUri.AbsoluteUri?.Trim();
-
-            if (string.IsNullOrWhiteSpace(endpointPattern) || string.IsNullOrWhiteSpace(requestUri))
+            if (string.IsNullOrWhiteSpace(rateLimitingRule.Endpoint) || string.IsNullOrWhiteSpace(request.RequestUri.AbsoluteUri))
                 return false;
+
+            string endpointPattern = rateLimitingRule.Endpoint.Trim().TrimEnd('/');
+            string requestUri = request.RequestUri.AbsoluteUri.Trim().TrimEnd('/');
+
+            // Strip the scheme from the request URI as dictated by the endpoint pattern.
 
             if (endpointPattern.StartsWith("//")) {
 
@@ -136,15 +160,8 @@ namespace Gsemac.Net.Http {
 
             }
 
-            // If the endpoint pattern doesn't specify a path, match all paths.
-
-            if (!endpointPattern.After("//").Contains("/")) {
-
-                endpointPattern += "/*";
-
-            }
-
-            return new WildcardPattern(endpointPattern).IsMatch(requestUri);
+            return requestUri.Equals(endpointPattern, StringComparison.OrdinalIgnoreCase) ||
+                requestUri.StartsWith(endpointPattern + "/");
 
         }
 
