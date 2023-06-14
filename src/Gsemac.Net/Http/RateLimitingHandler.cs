@@ -1,4 +1,5 @@
-﻿using Gsemac.Polyfills.System.Threading.Tasks;
+﻿using Gsemac.Collections.Extensions;
+using Gsemac.Polyfills.System.Threading.Tasks;
 using Gsemac.Text.Extensions;
 using System;
 using System.Collections.Generic;
@@ -14,6 +15,16 @@ namespace Gsemac.Net.Http {
 
         public TimeSpan MaximumDelayBetweenRequests { get; set; } = TimeSpan.MaxValue;
         public ICollection<IRateLimitingRule> Rules => rules;
+
+        public RateLimitingHandler() { }
+        public RateLimitingHandler(IEnumerable<IRateLimitingRule> rateLimitingRules) {
+
+            if (rateLimitingRules is null)
+                throw new ArgumentNullException(nameof(rateLimitingRules));
+
+            Rules.AddRange(rateLimitingRules);
+
+        }
 
         // Protected members
 
