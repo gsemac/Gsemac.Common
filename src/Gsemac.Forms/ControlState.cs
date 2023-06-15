@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using System;
+using System.Drawing;
 using System.Reflection;
 using System.Windows.Forms;
 
@@ -11,15 +12,35 @@ namespace Gsemac.Forms {
 
         public void Restore(Control control) {
 
-            if (layoutState != null)
-                RestoreLayoutState(control);
+            if (control is null)
+                throw new ArgumentNullException(nameof(control));
 
-            if (visualState != null)
+            // Layout state is saved before visual state, and they are restored in the opposite order.
+            // This is because visual state can affect the layout properties (e.g. the "Size" property).
+
+            if (visualState is object)
                 RestoreVisualState(control);
+
+            if (layoutState is object)
+                RestoreLayoutState(control);
 
         }
 
-        public static IControlState Save(Control control, ControlStateOptions options = ControlStateOptions.Default) {
+        public static IControlState Save(Control control) {
+
+            if (control is null)
+                throw new ArgumentNullException(nameof(control));
+
+            return Save(control, ControlStateOptions.Default);
+
+        }
+        public static IControlState Save(Control control, IControlStateOptions options) {
+
+            if (control is null)
+                throw new ArgumentNullException(nameof(control));
+
+            if (options is null)
+                throw new ArgumentNullException(nameof(options));
 
             return new ControlState(control, options);
 
@@ -290,9 +311,15 @@ namespace Gsemac.Forms {
         private readonly LayoutState layoutState = null;
         private readonly VisualState visualState = null;
 
-        private ControlState(Control control, ControlStateOptions options) {
+        private ControlState(Control control, IControlStateOptions options) {
 
-            if (options.HasFlag(ControlStateOptions.StoreLayoutProperties)) {
+            if (control is null)
+                throw new ArgumentNullException(nameof(control));
+
+            if (options is null)
+                throw new ArgumentNullException(nameof(options));
+
+            if (options.IncludeLayoutProperties) {
 
                 layoutState = new LayoutState() {
                     Anchor = control.Anchor,
@@ -302,7 +329,7 @@ namespace Gsemac.Forms {
                     Size = control.Size,
                 };
 
-                if (control.Parent != null) {
+                if (control.Parent is object) {
 
                     layoutState.BottomRightPadding = new Point(
                         control.Parent.Width - (control.Location.X + control.Width),
@@ -312,7 +339,7 @@ namespace Gsemac.Forms {
 
             }
 
-            if (options.HasFlag(ControlStateOptions.StoreVisualProperties)) {
+            if (options.IncludeVisualProperties) {
 
                 visualState = new VisualState() {
                     BackColor = control.BackColor,
@@ -382,7 +409,7 @@ namespace Gsemac.Forms {
             control.Location = layoutState.Location;
             control.Size = layoutState.Size;
 
-            if (layoutState.Dock == DockStyle.None && layoutState.BottomRightPadding.HasValue && control.Parent != null) {
+            if (layoutState.Dock == DockStyle.None && layoutState.BottomRightPadding.HasValue && control.Parent is object) {
 
                 Point bottomRightPadding = layoutState.BottomRightPadding.Value;
 
