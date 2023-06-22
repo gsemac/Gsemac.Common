@@ -106,6 +106,15 @@ namespace Gsemac.Net.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The string &apos;{0}&apos; is not a valid HTTP refresh header..
+        /// </summary>
+        internal static string InvalidHttpRefreshHeaderWithString {
+            get {
+                return ResourceManager.GetString("InvalidHttpRefreshHeaderWithString", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The given string is not a valid HTTP request line..
         /// </summary>
         internal static string InvalidHttpRequestLine {

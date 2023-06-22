@@ -132,6 +132,9 @@
   <data name="InvalidHttpHeaderWithString" xml:space="preserve">
     <value>The string '{0}' is not a valid HTTP header.</value>
   </data>
+  <data name="InvalidHttpRefreshHeaderWithString" xml:space="preserve">
+    <value>The string '{0}' is not a valid HTTP refresh header.</value>
+  </data>
   <data name="InvalidHttpRequestLine" xml:space="preserve">
     <value>The given string is not a valid HTTP request line.</value>
   </data>

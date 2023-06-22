@@ -38,7 +38,7 @@ namespace Gsemac.Net.Http {
             if (TryParse(httpHeader, out RefreshHeader result))
                 return result;
             else
-                throw new ArgumentException(string.Format(ExceptionMessages.InvalidHttpHeaderWithString, httpHeader), nameof(httpHeader));
+                throw new ArgumentException(string.Format(ExceptionMessages.InvalidHttpRefreshHeaderWithString, httpHeader), nameof(httpHeader));
 
 
         }
@@ -50,10 +50,11 @@ namespace Gsemac.Net.Http {
 
                 // Parse the parameters from the header value.
                 // The refresh header can take multiple forms with different labels and delimiters, such as:
+                // Refresh: 5
                 // Refresh: 5; url=https://www.example.com/
                 // Refresh: 3,https://www.example.com/
 
-                Match httpHeaderMatch = Regex.Match(parsedHttpHeader.Value, @"^(?<timeout>\d+)\s*[;,]\s*(?:url=)?(?<url>.+?)$", RegexOptions.IgnoreCase);
+                Match httpHeaderMatch = Regex.Match(parsedHttpHeader.Value, @"^(?<timeout>\d+)\s*[;,]?(?:\s*(?:url=)?(?<url>.+?))?$", RegexOptions.IgnoreCase);
 
                 if (httpHeaderMatch.Success) {
 
