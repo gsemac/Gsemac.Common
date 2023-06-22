@@ -127,22 +127,25 @@
     <value>The given cookie domain pattern is invalid.</value>
   </data>
   <data name="InvalidHttpHeader" xml:space="preserve">
-    <value>The given string was not a valid HTTP header.</value>
+    <value>The given string is not a valid HTTP header.</value>
+  </data>
+  <data name="InvalidHttpHeaderWithString" xml:space="preserve">
+    <value>The string '{0}' is not a valid HTTP header.</value>
   </data>
   <data name="InvalidHttpRequestLine" xml:space="preserve">
-    <value>The given string was not a valid HTTP request line.</value>
+    <value>The given string is not a valid HTTP request line.</value>
   </data>
   <data name="InvalidHttpStatusLine" xml:space="preserve">
-    <value>The given string was not a valid HTTP status line.</value>
+    <value>The given string is not a valid HTTP status line.</value>
   </data>
   <data name="MalformedDataUrl" xml:space="preserve">
-    <value>The data URL was malformed.</value>
+    <value>The data URL is malformed.</value>
   </data>
   <data name="MalformedDateHeader" xml:space="preserve">
     <value>The date header '{0}' was malformed.</value>
   </data>
   <data name="MalformedUrl" xml:space="preserve">
-    <value>The URL was malformed.</value>
+    <value>The URL is malformed.</value>
   </data>
   <data name="RequestCanceled" xml:space="preserve">
     <value>The request was aborted: The request was canceled.</value>
@@ -157,6 +160,6 @@
     <value>Too many automatic redirections were attempted.</value>
   </data>
   <data name="WebResponseWasNotAnInstanceOfHttpWebResponse" xml:space="preserve">
-    <value>WebResponse was not an instance of HttpWebResponse.</value>
+    <value>`WebResponse` is not an instance of `HttpWebResponse`.</value>
   </data>
 </root>

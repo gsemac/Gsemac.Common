@@ -88,7 +88,7 @@ namespace Gsemac.Net.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The given string was not a valid HTTP header..
+        ///   Looks up a localized string similar to The given string is not a valid HTTP header..
         /// </summary>
         internal static string InvalidHttpHeader {
             get {
@@ -97,7 +97,16 @@ namespace Gsemac.Net.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The given string was not a valid HTTP request line..
+        ///   Looks up a localized string similar to The string &apos;{0}&apos; is not a valid HTTP header..
+        /// </summary>
+        internal static string InvalidHttpHeaderWithString {
+            get {
+                return ResourceManager.GetString("InvalidHttpHeaderWithString", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The given string is not a valid HTTP request line..
         /// </summary>
         internal static string InvalidHttpRequestLine {
             get {
@@ -106,7 +115,7 @@ namespace Gsemac.Net.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The given string was not a valid HTTP status line..
+        ///   Looks up a localized string similar to The given string is not a valid HTTP status line..
         /// </summary>
         internal static string InvalidHttpStatusLine {
             get {
@@ -115,7 +124,7 @@ namespace Gsemac.Net.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The data URL was malformed..
+        ///   Looks up a localized string similar to The data URL is malformed..
         /// </summary>
         internal static string MalformedDataUrl {
             get {
@@ -133,7 +142,7 @@ namespace Gsemac.Net.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The URL was malformed..
+        ///   Looks up a localized string similar to The URL is malformed..
         /// </summary>
         internal static string MalformedUrl {
             get {
@@ -178,7 +187,7 @@ namespace Gsemac.Net.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to WebResponse was not an instance of HttpWebResponse..
+        ///   Looks up a localized string similar to `WebResponse` is not an instance of `HttpWebResponse`..
         /// </summary>
         internal static string WebResponseWasNotAnInstanceOfHttpWebResponse {
             get {

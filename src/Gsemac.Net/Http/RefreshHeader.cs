@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Gsemac.Net.Properties;
+using System;
 using System.Text.RegularExpressions;
 
 namespace Gsemac.Net.Http {
@@ -37,7 +38,7 @@ namespace Gsemac.Net.Http {
             if (TryParse(httpHeader, out RefreshHeader result))
                 return result;
             else
-                throw new ArgumentException(Properties.ExceptionMessages.InvalidHttpHeader, nameof(httpHeader));
+                throw new ArgumentException(string.Format(ExceptionMessages.InvalidHttpHeaderWithString, httpHeader), nameof(httpHeader));
 
 
         }
