@@ -119,13 +119,11 @@ namespace Gsemac.Net.Http {
                         }
 
                     }
-                    else if (HasRefreshHeader(response)) {
+                    else if (HasRefreshHeader(response) && RefreshHeader.TryParse(response.Headers["refresh"], out RefreshHeader refreshHeader)) {
 
                         // The request had a "refresh" header.
 
                         try {
-
-                            RefreshHeader refreshHeader = new RefreshHeader(response.Headers["refresh"]);
 
                             request = CreateRequestFromRefreshHeader(originatingRequest, refreshHeader);
 
