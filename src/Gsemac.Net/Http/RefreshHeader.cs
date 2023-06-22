@@ -21,8 +21,8 @@ namespace Gsemac.Net.Http {
             Url = url;
 
         }
-        public RefreshHeader(string url, int timeout) :
-            this(url, TimeSpan.FromSeconds(timeout)) {
+        public RefreshHeader(string url, int timeoutSeconds) :
+            this(url, TimeSpan.FromSeconds(timeoutSeconds)) {
         }
         public RefreshHeader(string value) {
 
@@ -62,7 +62,7 @@ namespace Gsemac.Net.Http {
                     string url = httpHeaderMatch.Groups["url"].Value;
 
                     if (int.TryParse(timeoutStr, out int timeout))
-                        result = new RefreshHeader(url, timeout);
+                        result = new RefreshHeader(url, Math.Max(0, timeout));
 
                 }
 
