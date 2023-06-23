@@ -15,7 +15,7 @@ namespace Gsemac.Net.Http {
 
         // Public members
 
-        public TimeSpan MaximumRefreshTimeout { get; set; } = TimeSpan.MaxValue;
+        public TimeSpan MaximumRefreshTimeout { get; set; } = TimeSpan.FromSeconds(5);
 
         public RedirectHandler(IHttpWebRequestFactory httpWebRequestFactory) {
 
@@ -119,9 +119,12 @@ namespace Gsemac.Net.Http {
                         }
 
                     }
-                    else if (HasRefreshHeader(response) && RefreshHeader.TryParse(response.Headers["refresh"], out RefreshHeader refreshHeader)) {
+                    else if (HasRefreshHeader(response) && RefreshHeader.TryParse(response.Headers["refresh"], out RefreshHeader refreshHeader) && !string.IsNullOrWhiteSpace(refreshHeader.Url) && !refreshHeader.Url.Equals(request.RequestUri.AbsoluteUri)) {
 
-                        // The request had a "refresh" header.
+                        // The request had a refresh header.
+
+                        // Refresh headers that either refresh the current page or redirect to the current page are ignored.
+                        // This is because some webpages are set to automatically refresh at an interval, which will keep us waiting forever.
 
                         try {
 
@@ -185,7 +188,7 @@ namespace Gsemac.Net.Http {
             // Initiate a new request to the new endpoint, preserving any cookies that have been set.
             // Unlike regular redirects, no referer is included, and the request is treated like an entirely new GET request. 
 
-            IHttpWebRequest request = httpWebRequestFactory.Create(refreshHeader.Url);
+            IHttpWebRequest request = httpWebRequestFactory.Create(Url.Combine(originatingRequest.RequestUri.AbsoluteUri, refreshHeader.Url));
 
             request.CookieContainer = originatingRequest.CookieContainer;
 
