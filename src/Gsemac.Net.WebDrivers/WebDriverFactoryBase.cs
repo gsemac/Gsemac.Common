@@ -38,7 +38,7 @@ namespace Gsemac.Net.WebDrivers {
 
             // Get the web driver executable path.
 
-            logger.Info($"Creating web driver ({webBrowserInfo})");
+            logger.Info($"Creating web driver for {webBrowserInfo}");
 
             string webDriverExecutablePath = Path.GetFullPath(GetDriverExecutablePathInternal(webBrowserInfo));
 

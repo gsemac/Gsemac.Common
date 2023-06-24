@@ -81,7 +81,7 @@ namespace Gsemac.Net.WebDrivers {
 
             return new FirefoxWebDriverUpdater(webRequestFactory, new WebDriverUpdaterOptions() {
                 WebDriverDirectoryPath = webDriverFactoryOptions.WebDriverDirectoryPath,
-            });
+            }, logger);
 
         }
 

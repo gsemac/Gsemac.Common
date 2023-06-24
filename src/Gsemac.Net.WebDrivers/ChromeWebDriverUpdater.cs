@@ -27,7 +27,7 @@ namespace Gsemac.Net.WebDrivers {
             this(webRequestFactory, webDriverUpdaterOptions, Logger.Null) {
         }
         public ChromeWebDriverUpdater(IHttpWebRequestFactory webRequestFactory, IWebDriverUpdaterOptions webDriverUpdaterOptions, ILogger logger) :
-            base(webRequestFactory, new WebDriverUpdaterOptions(webDriverUpdaterOptions) { WebBrowserId = BrowserId.Edge }, logger) {
+            base(webRequestFactory, new WebDriverUpdaterOptions(webDriverUpdaterOptions) { WebBrowserId = BrowserId.Chrome }, logger) {
 
             this.webRequestFactory = webRequestFactory;
 

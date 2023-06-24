@@ -78,7 +78,7 @@ namespace Gsemac.Net.WebDrivers {
 
             return new EdgeWebDriverUpdater(webRequestFactory, new WebDriverUpdaterOptions() {
                 WebDriverDirectoryPath = webDriverFactoryOptions.WebDriverDirectoryPath,
-            });
+            }, logger);
 
         }
 

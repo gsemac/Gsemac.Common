@@ -66,7 +66,7 @@ namespace Gsemac.Net.WebDrivers {
 
             return new ChromeWebDriverUpdater(webRequestFactory, new WebDriverUpdaterOptions() {
                 WebDriverDirectoryPath = webDriverFactoryOptions.WebDriverDirectoryPath,
-            });
+            }, logger);
 
         }
 

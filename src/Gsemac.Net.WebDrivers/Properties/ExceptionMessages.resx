@@ -124,6 +124,6 @@
     <value>The pool size must be at least 1.</value>
   </data>
   <data name="UnsupportedWebBrowserWithBrowserName" xml:space="preserve">
-    <value>`{0}` is not a supported web browser.</value>
+    <value>'{0}' is not a supported web browser.</value>
   </data>
 </root>
