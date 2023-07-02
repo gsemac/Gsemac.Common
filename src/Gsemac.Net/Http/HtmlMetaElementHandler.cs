@@ -23,15 +23,19 @@ namespace Gsemac.Net.Http {
             // If the response is HTML content, read the contents of the "head" element.
             // We will analyze the "meta" elements inside and update the response object accordingly.
 
-            if (response is object && response.ContentType.StartsWith("text/html", StringComparison.OrdinalIgnoreCase)) {
+            if (response is object && !string.IsNullOrEmpty(response.ContentType) && response.ContentType.StartsWith("text/html", StringComparison.OrdinalIgnoreCase)) {
 
                 // We could just partially read the stream and wrap the response stream in one that allows it to be reset, but this is dangerous, because the user might
                 // not call GetResponseStream and never end up closing the stream. Instead, we'll read the entire stream into memory (MemoryStream does not need to be disposed).
 
                 MemoryStream memoryStream = new MemoryStream();
 
-                using (Stream responseStream = response.GetResponseStream())
-                    responseStream.CopyTo(memoryStream);
+                using (Stream responseStream = response.GetResponseStream()) {
+
+                    if (responseStream is object)
+                        responseStream.CopyTo(memoryStream);
+
+                }
 
                 memoryStream.Seek(0, SeekOrigin.Begin);
 
