@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Gsemac.Net.Properties;
+using System;
 using System.Globalization;
 using System.IO;
 using System.Net;
@@ -26,7 +27,7 @@ namespace Gsemac.Net.Http {
         }
         public override ICredentials Credentials { get; set; }
         public override WebHeaderCollection Headers { get; set; } = new WebHeaderCollection();
-        public override string Method { get; set; } = "GET";
+        public override string Method { get; set; } = DefaultHttpHeaders.Method;
         public override IWebProxy Proxy { get; set; } = WebProxyUtilities.GetDefaultProxy();
         public override Uri RequestUri { get; }
         public override int Timeout { get; set; } = (int)TimeSpan.FromSeconds(100).TotalMilliseconds; // 100 seconds is the default for HttpWebRequest
@@ -151,7 +152,7 @@ namespace Gsemac.Net.Http {
                     Method = "POST";
 
                 if (!Method.Equals("POST", StringComparison.OrdinalIgnoreCase) && !Method.Equals("PUT", StringComparison.OrdinalIgnoreCase))
-                    throw new ProtocolViolationException("Method must be POST or PUT.");
+                    throw new ProtocolViolationException(ExceptionMessages.MethodMustBePostOrPut);
 
             }
 
@@ -180,7 +181,7 @@ namespace Gsemac.Net.Http {
         private void SetContentLength(long value) {
 
             if (value < 0)
-                throw new ArgumentException("The Content-Length value must be greater than or equal to zero.", nameof(value));
+                throw new ArgumentException(ExceptionMessages.ContentLengthMustBeGreaterThanOrEqualToZero, nameof(value));
 
             Headers[HttpRequestHeader.ContentLength] = value.ToString(CultureInfo.InvariantCulture);
 

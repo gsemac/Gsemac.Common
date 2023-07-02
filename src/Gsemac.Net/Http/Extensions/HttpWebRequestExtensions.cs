@@ -1,5 +1,4 @@
-﻿using Gsemac.Core;
-using Gsemac.Net.Extensions;
+﻿using Gsemac.Net.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -166,40 +165,43 @@ namespace Gsemac.Net.Http.Extensions {
 
         }
 
-        public static IHttpWebRequest WithOptions(this IHttpWebRequest httpWebRequest, IHttpWebRequestOptions options, bool copyIfNull = true) {
+        public static IHttpWebRequest WithOptions(this IHttpWebRequest httpWebRequest, IHttpWebRequestOptions options, bool copyNullValues = true) {
 
-            if (copyIfNull || !string.IsNullOrWhiteSpace(options.Accept))
+            if (copyNullValues || !string.IsNullOrWhiteSpace(options.Accept))
                 httpWebRequest.Accept = options.Accept;
 
-            if (copyIfNull || !string.IsNullOrWhiteSpace(options.AcceptLanguage))
+            if (copyNullValues || !string.IsNullOrWhiteSpace(options.AcceptLanguage))
                 httpWebRequest.Headers[HttpRequestHeader.AcceptLanguage] = options.AcceptLanguage;
 
-            if (copyIfNull || options.AllowAutoRedirect.HasValue)
+            if (copyNullValues || options.AllowAutoRedirect.HasValue)
                 httpWebRequest.AllowAutoRedirect = options.AllowAutoRedirect ?? httpWebRequest.AllowAutoRedirect;
 
             httpWebRequest.AutomaticDecompression = options.AutomaticDecompression;
 
-            if (copyIfNull || options.Cookies is object)
+            if (copyNullValues || options.Cookies is object)
                 httpWebRequest.CookieContainer = options.Cookies;
 
-            if (copyIfNull || options.Credentials is object)
+            if (copyNullValues || options.Credentials is object)
                 httpWebRequest.Credentials = options.Credentials;
 
             if (httpWebRequest.Headers is object && options.Headers is object)
                 httpWebRequest.WithHeaders(options.Headers);
 
-            if (copyIfNull || options.Proxy is object)
+            if (copyNullValues || !string.IsNullOrWhiteSpace(options.Method))
+                httpWebRequest.Method = options.Method;
+
+            if (copyNullValues || options.Proxy is object)
                 httpWebRequest.Proxy = options.Proxy;
 
-            if (copyIfNull || !string.IsNullOrWhiteSpace(options.UserAgent))
+            if (copyNullValues || !string.IsNullOrWhiteSpace(options.UserAgent))
                 httpWebRequest.UserAgent = options.UserAgent;
 
             return httpWebRequest;
 
         }
-        public static HttpWebRequest WithOptions(this HttpWebRequest httpWebRequest, IHttpWebRequestOptions options, bool copyIfNull = true) {
+        public static HttpWebRequest WithOptions(this HttpWebRequest httpWebRequest, IHttpWebRequestOptions options, bool copyNullValues = true) {
 
-            new HttpWebRequestAdapter(httpWebRequest).WithOptions(options, copyIfNull);
+            new HttpWebRequestAdapter(httpWebRequest).WithOptions(options, copyNullValues);
 
             return httpWebRequest;
 

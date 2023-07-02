@@ -70,6 +70,15 @@ namespace Gsemac.Net.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The Content-Length value must be greater than or equal to zero..
+        /// </summary>
+        internal static string ContentLengthMustBeGreaterThanOrEqualToZero {
+            get {
+                return ResourceManager.GetString("ContentLengthMustBeGreaterThanOrEqualToZero", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The inner handler has not been set..
         /// </summary>
         internal static string InnerHandlerHasNotBeenSet {
@@ -156,6 +165,15 @@ namespace Gsemac.Net.Properties {
         internal static string MalformedUrl {
             get {
                 return ResourceManager.GetString("MalformedUrl", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Method must be POST or PUT..
+        /// </summary>
+        internal static string MethodMustBePostOrPut {
+            get {
+                return ResourceManager.GetString("MethodMustBePostOrPut", resourceCulture);
             }
         }
         

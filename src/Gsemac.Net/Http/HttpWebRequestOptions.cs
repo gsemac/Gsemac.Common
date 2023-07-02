@@ -1,5 +1,6 @@
 ﻿using Gsemac.Net.Extensions;
 using Gsemac.Net.Properties;
+using System;
 using System.Net;
 
 namespace Gsemac.Net.Http {
@@ -25,6 +26,7 @@ namespace Gsemac.Net.Http {
             get => headers;
             set => headers = value.Clone();
         }
+        public string Method { get; set; } = DefaultHttpHeaders.Method;
         public IWebProxy Proxy { get; set; } = WebProxyUtilities.GetDefaultProxy();
         public string UserAgent {
             get => GetHeader(HttpRequestHeader.UserAgent);
@@ -41,6 +43,7 @@ namespace Gsemac.Net.Http {
                     AutomaticDecompression = DecompressionMethods.None,
                     Cookies = null,
                     Credentials = null,
+                    Method = string.Empty,
                     Proxy = null,
                     UserAgent = string.Empty,
                 };
@@ -55,13 +58,16 @@ namespace Gsemac.Net.Http {
             UserAgent = DefaultHttpHeaders.UserAgent;
 
         }
-        public HttpWebRequestOptions(IHttpWebRequestOptions other, bool copyIfNull = true) {
+        public HttpWebRequestOptions(IHttpWebRequestOptions other, bool copyNullValues = true) {
 
-            Combine(other, copyIfNull);
+            Combine(other, copyNullValues);
 
         }
 
         public static HttpWebRequestOptions FromHttpWebRequest(IHttpWebRequest httpWebRequest) {
+
+            if (httpWebRequest is null)
+                throw new ArgumentNullException(nameof(httpWebRequest));
 
             return new HttpWebRequestOptions() {
                 Accept = httpWebRequest.Accept,
@@ -71,6 +77,7 @@ namespace Gsemac.Net.Http {
                 Cookies = httpWebRequest.CookieContainer,
                 Credentials = httpWebRequest.Credentials,
                 Headers = httpWebRequest.Headers.Clone(),
+                Method = httpWebRequest.Method,
                 Proxy = httpWebRequest.Proxy,
                 UserAgent = httpWebRequest.UserAgent,
             };
@@ -82,11 +89,17 @@ namespace Gsemac.Net.Http {
 
         }
 
-        public static HttpWebRequestOptions Combine(IHttpWebRequestOptions options1, IHttpWebRequestOptions options2, bool copyIfNull = true) {
+        public static HttpWebRequestOptions Combine(IHttpWebRequestOptions options1, IHttpWebRequestOptions options2, bool copyNullValues = true) {
+
+            if (options1 is null)
+                throw new ArgumentNullException(nameof(options1));
+
+            if (options2 is null)
+                throw new ArgumentNullException(nameof(options2));
 
             HttpWebRequestOptions result = new HttpWebRequestOptions(options1);
 
-            result.Combine(options2, copyIfNull);
+            result.Combine(options2, copyNullValues);
 
             return result;
 
@@ -96,35 +109,44 @@ namespace Gsemac.Net.Http {
 
         private WebHeaderCollection headers = new WebHeaderCollection();
 
-        private void Combine(IHttpWebRequestOptions other, bool copyIfNull = true) {
+        private void Combine(IHttpWebRequestOptions other, bool copyNullValues = true) {
 
-            if (copyIfNull || !string.IsNullOrWhiteSpace(other.Accept))
+            if (copyNullValues || !string.IsNullOrWhiteSpace(other.Accept))
                 Accept = other.Accept;
 
-            if (copyIfNull || !string.IsNullOrWhiteSpace(other.AcceptLanguage))
+            if (copyNullValues || !string.IsNullOrWhiteSpace(other.AcceptLanguage))
                 AcceptLanguage = other.AcceptLanguage;
 
-            if (copyIfNull || other.AllowAutoRedirect.HasValue)
+            if (copyNullValues || other.AllowAutoRedirect.HasValue)
                 AllowAutoRedirect = other.AllowAutoRedirect;
 
-            if (copyIfNull || other.AutomaticDecompression != DecompressionMethods.None)
+            if (copyNullValues || other.AutomaticDecompression != DecompressionMethods.None)
                 AutomaticDecompression = other.AutomaticDecompression;
 
-            if (copyIfNull || other.Cookies is object)
+            if (copyNullValues || other.Cookies is object)
                 Cookies = other.Cookies;
 
-            if (copyIfNull || other.Credentials is object)
+            if (copyNullValues || other.Credentials is object)
                 Credentials = other.Credentials;
 
-            if (Headers is null)
+            if (Headers is null) {
+
                 Headers = other.Headers.Clone();
-            else if (other.Headers is object)
+
+            }
+            else if (other.Headers is object) {
+
                 other.Headers.CopyTo(Headers);
 
-            if (copyIfNull || other.Proxy is object)
+            }
+
+            if (copyNullValues || !string.IsNullOrWhiteSpace(other.Method))
+                Method = other.Method;
+
+            if (copyNullValues || other.Proxy is object)
                 Proxy = other.Proxy;
 
-            if (copyIfNull || !string.IsNullOrWhiteSpace(other.UserAgent))
+            if (copyNullValues || !string.IsNullOrWhiteSpace(other.UserAgent))
                 UserAgent = other.UserAgent;
 
         }

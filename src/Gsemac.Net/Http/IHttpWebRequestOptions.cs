@@ -11,6 +11,7 @@ namespace Gsemac.Net.Http {
         CookieContainer Cookies { get; }
         ICredentials Credentials { get; }
         WebHeaderCollection Headers { get; }
+        string Method { get; }
         IWebProxy Proxy { get; }
         string UserAgent { get; }
 

@@ -120,6 +120,9 @@
   <data name="CannotRedirectToDissimilarProtocols" xml:space="preserve">
     <value>Cannot handle redirect from HTTP/HTTPS protocols to other dissimilar ones.</value>
   </data>
+  <data name="ContentLengthMustBeGreaterThanOrEqualToZero" xml:space="preserve">
+    <value>The Content-Length value must be greater than or equal to zero.</value>
+  </data>
   <data name="InnerHandlerHasNotBeenSet" xml:space="preserve">
     <value>The inner handler has not been set.</value>
   </data>
@@ -149,6 +152,9 @@
   </data>
   <data name="MalformedUrl" xml:space="preserve">
     <value>The URL is malformed.</value>
+  </data>
+  <data name="MethodMustBePostOrPut" xml:space="preserve">
+    <value>Method must be POST or PUT.</value>
   </data>
   <data name="RequestCanceled" xml:space="preserve">
     <value>The request was aborted: The request was canceled.</value>
