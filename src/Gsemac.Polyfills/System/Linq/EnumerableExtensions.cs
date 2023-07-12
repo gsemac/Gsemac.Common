@@ -7,6 +7,15 @@ namespace Gsemac.Polyfills.System.Linq {
 
         // Public members
 
+        /// <summary>
+        /// Split the elements of a sequence into chunks of size at most <paramref name="size"/>.
+        /// </summary>
+        /// <typeparam name="TSource">The type of the elements of source.</typeparam>
+        /// <param name="source">An <see cref="IEnumerable{T}"/> whose elements to chunk.</param>
+        /// <param name="size">Maximum size of each chunk.</param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentNullException"><paramref name="source"/> is null.</exception>
+        /// <exception cref="ArgumentOutOfRangeException"><paramref name="size"/> is below 1.</exception>
         public static IEnumerable<TSource[]> Chunk<TSource>(this IEnumerable<TSource> source, int size) {
 
             if (source is null)
