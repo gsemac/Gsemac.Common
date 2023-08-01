@@ -43,6 +43,12 @@ namespace Gsemac.Net.WebBrowsers {
                             long isSecure = (long)row["isSecure"];
                             long isHttpOnly = (long)row["isHttpOnly"];
 
+                            // While cookies with empty names are technically valid and support for them varies by browser,
+                            // the constructor for Cookie will throw when given an empty name.
+
+                            if (string.IsNullOrEmpty(name))
+                                continue;
+
                             Cookie cookie = new Cookie(name, value, path, domain) {
                                 Secure = isSecure > 0,
                                 HttpOnly = isHttpOnly > 0,
