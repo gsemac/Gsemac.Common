@@ -1,7 +1,7 @@
 ﻿<Project Sdk="MSBuild.Sdk.Extras/3.0.44">
 
 	<PropertyGroup>
-		<TargetFrameworks>net40-client;net461;netstandard2.0</TargetFrameworks>
+		<TargetFrameworks>net40-client;net462;netstandard2.0</TargetFrameworks>
 		<RootNamespace>Gsemac.IO.Compression</RootNamespace>
 		<Company />
 		<Authors>gsemac</Authors>
