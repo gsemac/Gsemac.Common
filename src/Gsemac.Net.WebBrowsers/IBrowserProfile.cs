@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Net;
+﻿using System.Net;
 
 namespace Gsemac.Net.WebBrowsers {
 
@@ -9,7 +8,7 @@ namespace Gsemac.Net.WebBrowsers {
         bool IsDefault { get; }
         string DirectoryPath { get; }
 
-        IEnumerable<Cookie> GetCookies();
+        CookieContainer GetCookies();
 
     }
 

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Net;
 
 namespace Gsemac.Net.WebBrowsers {
@@ -22,7 +21,7 @@ namespace Gsemac.Net.WebBrowsers {
 
         }
 
-        public IEnumerable<Cookie> GetCookies() {
+        public CookieContainer GetCookies() {
 
             return cookiesReader.GetCookies(this);
 

@@ -14,6 +14,14 @@ namespace Gsemac.Net.WebBrowsers {
 
         // Public members
 
+        public ChromiumAes256GcmCookieDecryptor(string userDataDirectoryPath) {
+
+            this.userDataDirectoryPath = userDataDirectoryPath;
+
+            decryptionKey = new Lazy<byte[]>(GetDecryptionKey);
+
+        }
+
         public byte[] DecryptCookie(byte[] encryptedBytes) {
 
             if (encryptedBytes is null)
@@ -29,9 +37,8 @@ namespace Gsemac.Net.WebBrowsers {
 
                 byte[] nonce = reader.ReadBytes(12);
                 byte[] ciphertext = reader.ReadBytes(encryptedBytes.Length - (signatureBytes.Length + nonce.Length));
-                byte[] decryptionKey = GetDecryptionKey();
 
-                return AesGcmDecrypt(ciphertext, decryptionKey, nonce);
+                return AesGcmDecrypt(ciphertext, decryptionKey.Value, nonce);
 
             }
 
@@ -52,17 +59,11 @@ namespace Gsemac.Net.WebBrowsers {
 
         }
 
-        public ChromiumAes256GcmCookieDecryptor(string userDataDirectoryPath) {
-
-            this.userDataDirectoryPath = userDataDirectoryPath;
-
-        }
-
         // Private members
 
         private readonly string userDataDirectoryPath;
         private readonly byte[] signatureBytes = new byte[] { 0x76, 0x31, 0x30 }; // ASCII encoding of "v10" 
-        private byte[] decryptionKey;
+        private readonly Lazy<byte[]> decryptionKey;
 
         private bool CheckSignature(byte[] encryptedBytes) {
 
@@ -75,39 +76,35 @@ namespace Gsemac.Net.WebBrowsers {
             string localStatePath = Path.Combine(userDataDirectoryPath, @"Local State");
 
             if (!File.Exists(localStatePath))
-            throw new FileNotFoundException(string.Format(ExceptionMessages.UnableToFindLocalStateFile, userDataDirectoryPath), localStatePath);
+                throw new FileNotFoundException(string.Format(ExceptionMessages.UnableToFindLocalStateFile, userDataDirectoryPath), localStatePath);
 
             return localStatePath;
 
         }
         private byte[] GetDecryptionKey() {
 
-            if (decryptionKey is null) {
+            // Read encrypted decryption key from Local State.
 
-                // Read encrypted decryption key from Local State.
+            string localStatePath = GetLocalStatePath();
+            JObject localState = JObject.Parse(File.ReadAllText(localStatePath));
 
-                string localStatePath = GetLocalStatePath();
-                JObject localState = JObject.Parse(File.ReadAllText(localStatePath));
+            string encryptedKey = localState["os_crypt"]["encrypted_key"].ToString();
+            byte[] encryptedKeyBytes = Convert.FromBase64String(encryptedKey);
 
-                string encryptedKey = localState["os_crypt"]["encrypted_key"].ToString();
-                byte[] encryptedKeyBytes = Convert.FromBase64String(encryptedKey);
+            // ASCII encoding of "DPAPI"
 
-                // ASCII encoding of "DPAPI"
+            byte[] dpapiBytes = new byte[] { 0x44, 0x50, 0x41, 0x50, 0x49 };
 
-                byte[] dpapiBytes = new byte[] { 0x44, 0x50, 0x41, 0x50, 0x49 };
+            if (!encryptedKeyBytes.Take(dpapiBytes.Length).SequenceEqual(dpapiBytes))
+                throw new FormatException(ExceptionMessages.DecryptionKeyIsMalformed);
 
-                if (!encryptedKeyBytes.Take(dpapiBytes.Length).SequenceEqual(dpapiBytes))
-                    throw new FormatException(ExceptionMessages.DecryptionKeyIsMalformed);
+            encryptedKeyBytes = encryptedKeyBytes.Skip(dpapiBytes.Length).ToArray();
 
-                encryptedKeyBytes = encryptedKeyBytes.Skip(dpapiBytes.Length).ToArray();
+            // Decrypt the encrypted key.
 
-                // Decrypt the encrypted key.
+            byte[] decryptedKey = System.Security.Cryptography.ProtectedData.Unprotect(encryptedKeyBytes, null, System.Security.Cryptography.DataProtectionScope.LocalMachine);
 
-                decryptionKey = System.Security.Cryptography.ProtectedData.Unprotect(encryptedKeyBytes, null, System.Security.Cryptography.DataProtectionScope.LocalMachine);
-
-            }
-
-            return decryptionKey;
+            return decryptedKey;
 
         }
         private byte[] AesGcmDecrypt(byte[] ciphertext, byte[] decryptionKey, byte[] nonce) {

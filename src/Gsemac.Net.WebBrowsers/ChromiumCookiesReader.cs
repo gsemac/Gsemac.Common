@@ -1,7 +1,6 @@
 ﻿using Gsemac.Core;
 using Gsemac.IO;
 using System;
-using System.Collections.Generic;
 using System.Data;
 using System.Data.SQLite;
 using System.IO;
@@ -16,12 +15,14 @@ namespace Gsemac.Net.WebBrowsers {
 
         // Public members
 
-        public IEnumerable<Cookie> GetCookies(IBrowserProfile profile) {
+        public CookieContainer GetCookies(IBrowserProfile profile) {
 
             if (profile is null)
                 throw new ArgumentNullException(nameof(profile));
 
             string cookiesPath = GetCookiesFilePath(profile);
+
+            CookieContainer cookies = new CookieContainer();
 
             if (File.Exists(cookiesPath)) {
 
@@ -67,7 +68,7 @@ namespace Gsemac.Net.WebBrowsers {
                             if (expiresUtc > 0)
                                 cookie.Expires = TimestampToDateTimeUtc(expiresUtc);
 
-                            yield return cookie;
+                            cookies.Add(cookie);
 
                         }
 
@@ -76,6 +77,8 @@ namespace Gsemac.Net.WebBrowsers {
                 }
 
             }
+
+            return cookies;
 
         }
 
