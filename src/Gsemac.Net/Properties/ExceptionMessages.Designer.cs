@@ -79,6 +79,15 @@ namespace Gsemac.Net.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to HTTP listener timed out while waiting for a request..
+        /// </summary>
+        internal static string HttpListenerTimedOut {
+            get {
+                return ResourceManager.GetString("HttpListenerTimedOut", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The inner handler has not been set..
         /// </summary>
         internal static string InnerHandlerHasNotBeenSet {

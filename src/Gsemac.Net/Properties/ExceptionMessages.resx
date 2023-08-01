@@ -123,6 +123,9 @@
   <data name="ContentLengthMustBeGreaterThanOrEqualToZero" xml:space="preserve">
     <value>The Content-Length value must be greater than or equal to zero.</value>
   </data>
+  <data name="HttpListenerTimedOut" xml:space="preserve">
+    <value>HTTP listener timed out while waiting for a request.</value>
+  </data>
   <data name="InnerHandlerHasNotBeenSet" xml:space="preserve">
     <value>The inner handler has not been set.</value>
   </data>
