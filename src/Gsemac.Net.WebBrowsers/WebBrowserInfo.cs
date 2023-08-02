@@ -4,8 +4,8 @@ using System.Text;
 
 namespace Gsemac.Net.WebBrowsers {
 
-    internal class BrowserInfo :
-        IBrowserInfo {
+    internal class WebBrowserInfo :
+        IWebBrowserInfo {
 
         // Public members
 
@@ -15,12 +15,12 @@ namespace Gsemac.Net.WebBrowsers {
         public string UserDataDirectoryPath { get; set; }
         public bool Is64Bit { get; set; }
         public bool IsDefault { get; set; }
-        public BrowserId Id { get; set; }
+        public WebBrowserId Id { get; set; }
 
-        public BrowserInfo() :
-            this(new NullBrowserProfileReader()) {
+        public WebBrowserInfo() :
+            this(new NullProfileReader()) {
         }
-        public BrowserInfo(IBrowserProfilesReader profilesReader) {
+        public WebBrowserInfo(IWebBrowserProfilesReader profilesReader) {
 
             if (profilesReader is null)
                 throw new ArgumentNullException(nameof(profilesReader));
@@ -29,7 +29,7 @@ namespace Gsemac.Net.WebBrowsers {
 
         }
 
-        public IEnumerable<IBrowserProfile> GetProfiles() {
+        public IEnumerable<IWebBrowserProfile> GetProfiles() {
 
             return profilesReader.GetProfiles();
 
@@ -50,7 +50,7 @@ namespace Gsemac.Net.WebBrowsers {
 
         // Private members
 
-        private readonly IBrowserProfilesReader profilesReader;
+        private readonly IWebBrowserProfilesReader profilesReader;
 
     }
 

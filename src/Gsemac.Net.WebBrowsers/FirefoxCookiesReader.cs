@@ -9,11 +9,11 @@ using System.Net;
 namespace Gsemac.Net.WebBrowsers {
 
     internal class FirefoxCookiesReader :
-        IBrowserCookiesReader {
+        IWebBrowserCookiesReader {
 
         // Public members
 
-        public CookieContainer GetCookies(IBrowserProfile profile) {
+        public CookieContainer GetCookies(IWebBrowserProfile profile) {
 
             if (profile is null)
                 throw new ArgumentNullException(nameof(profile));
@@ -73,7 +73,7 @@ namespace Gsemac.Net.WebBrowsers {
 
         // Private members
 
-        private string GetCookiesFilePath(IBrowserProfile profile) {
+        private string GetCookiesFilePath(IWebBrowserProfile profile) {
 
             if (profile is null)
                 throw new ArgumentNullException(nameof(profile));

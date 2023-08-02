@@ -67,10 +67,10 @@ namespace Gsemac.Net.WebDrivers {
 
         public IWebDriver Create() {
 
-            return Create(webDriverFactoryOptions.WebBrowser ?? BrowserInfoFactory.Default.GetDefaultBrowser());
+            return Create(webDriverFactoryOptions.WebBrowser ?? WebBrowserInfoFactory.Default.GetDefaultWebBrowser());
 
         }
-        public IWebDriver Create(IBrowserInfo webBrowserInfo) {
+        public IWebDriver Create(IWebBrowserInfo webBrowserInfo) {
 
             if (isDisposed)
                 throw new ObjectDisposedException(nameof(WebDriverFactory));
@@ -101,10 +101,10 @@ namespace Gsemac.Net.WebDrivers {
         private readonly IWebDriverOptions webDriverOptions;
         private readonly IWebDriverFactoryOptions webDriverFactoryOptions;
         private readonly ILogger logger;
-        private readonly IDictionary<BrowserId, IWebDriverFactory> factoryDict = new Dictionary<BrowserId, IWebDriverFactory>();
+        private readonly IDictionary<WebBrowserId, IWebDriverFactory> factoryDict = new Dictionary<WebBrowserId, IWebDriverFactory>();
         private bool isDisposed = false;
 
-        private IWebDriverFactory GetOrCreateFactory(IBrowserInfo webBrowserInfo) {
+        private IWebDriverFactory GetOrCreateFactory(IWebBrowserInfo webBrowserInfo) {
 
             IWebDriverFactory factory = null;
 
@@ -114,15 +114,15 @@ namespace Gsemac.Net.WebDrivers {
 
                     switch (webBrowserInfo.Id) {
 
-                        case BrowserId.Chrome:
+                        case WebBrowserId.Chrome:
                             factoryDict[webBrowserInfo.Id] = new ChromeWebDriverFactory(webRequestFactory, webDriverOptions, webDriverFactoryOptions, logger);
                             break;
 
-                        case BrowserId.Edge:
+                        case WebBrowserId.Edge:
                             factoryDict[webBrowserInfo.Id] = new EdgeWebDriverFactory(webRequestFactory, webDriverOptions, webDriverFactoryOptions, logger);
                             break;
 
-                        case BrowserId.Firefox:
+                        case WebBrowserId.Firefox:
                             factoryDict[webBrowserInfo.Id] = new FirefoxWebDriverFactory(webRequestFactory, webDriverOptions, webDriverFactoryOptions, logger);
                             break;
 

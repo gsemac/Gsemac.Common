@@ -18,22 +18,22 @@ namespace Gsemac.Net.WebDrivers {
 
         public IWebDriver Create() {
 
-            BrowserId webBrowserId = webDriverFactoryOptions.WebBrowserId;
+            WebBrowserId webBrowserId = webDriverFactoryOptions.WebBrowserId;
 
-            IBrowserInfo webBrowserInfo = webDriverFactoryOptions.WebBrowser ??
-                (webBrowserId != BrowserId.Unknown ? BrowserInfoFactory.Default.GetBrowserInfo(webBrowserId) : BrowserInfoFactory.Default.GetDefaultBrowser());
+            IWebBrowserInfo webBrowserInfo = webDriverFactoryOptions.WebBrowser ??
+                (webBrowserId != WebBrowserId.Unknown ? WebBrowserInfoFactory.Default.GetWebBrowserInfo(webBrowserId) : WebBrowserInfoFactory.Default.GetDefaultWebBrowser());
 
             return Create(webBrowserInfo);
 
         }
-        public IWebDriver Create(IBrowserInfo webBrowserInfo) {
+        public IWebDriver Create(IWebBrowserInfo webBrowserInfo) {
 
             if (webBrowserInfo is null)
                 throw new ArgumentNullException(nameof(webBrowserInfo));
 
-            BrowserId webBrowserId = webDriverFactoryOptions.WebBrowserId;
+            WebBrowserId webBrowserId = webDriverFactoryOptions.WebBrowserId;
 
-            if (webBrowserId != BrowserId.Unknown && webBrowserInfo.Id != webBrowserId)
+            if (webBrowserId != WebBrowserId.Unknown && webBrowserInfo.Id != webBrowserId)
                 throw new ArgumentException(string.Format(Properties.ExceptionMessages.UnsupportedWebBrowserWithBrowserName, webBrowserInfo.Name), nameof(webBrowserInfo));
 
             // Get the web driver executable path.
@@ -108,7 +108,7 @@ namespace Gsemac.Net.WebDrivers {
 
         }
 
-        protected abstract IWebDriver GetWebDriver(IBrowserInfo webBrowserInfo, IWebDriverOptions webDriverOptions);
+        protected abstract IWebDriver GetWebDriver(IWebBrowserInfo webBrowserInfo, IWebDriverOptions webDriverOptions);
         protected abstract string GetWebDriverExecutablePath();
         protected virtual IWebDriverUpdater GetUpdater() {
 
@@ -157,7 +157,7 @@ namespace Gsemac.Net.WebDrivers {
         private readonly CancellationTokenSource updaterCancellationTokenSource = new CancellationTokenSource();
         private bool isDisposed = false;
 
-        private string GetDriverExecutablePathInternal(IBrowserInfo webBrowserInfo) {
+        private string GetDriverExecutablePathInternal(IWebBrowserInfo webBrowserInfo) {
 
             if (!string.IsNullOrWhiteSpace(webDriverOptions.WebDriverExecutablePath))
                 return webDriverOptions.WebDriverExecutablePath;

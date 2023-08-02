@@ -2,7 +2,7 @@
 
 namespace Gsemac.Net.WebBrowsers {
 
-    public interface IBrowserProfile {
+    public interface IWebBrowserProfile {
 
         string Name { get; }
         bool IsDefault { get; }

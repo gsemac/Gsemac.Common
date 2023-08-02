@@ -4,7 +4,7 @@ namespace Gsemac.Net.WebDrivers {
 
     public interface IWebDriverUpdaterFactory {
 
-        IWebDriverUpdater Create(IBrowserInfo webBrowserInfo);
+        IWebDriverUpdater Create(IWebBrowserInfo webBrowserInfo);
 
     }
 

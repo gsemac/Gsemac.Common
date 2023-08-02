@@ -8,7 +8,7 @@ namespace Gsemac.Net.WebDrivers {
 
         // Public members
 
-        public BrowserId WebBrowserId { get; set; } = BrowserId.Unknown;
+        public WebBrowserId WebBrowserId { get; set; } = WebBrowserId.Unknown;
         public string WebDriverDirectoryPath { get; set; }
 
         public static WebDriverUpdaterOptions Default => new WebDriverUpdaterOptions();

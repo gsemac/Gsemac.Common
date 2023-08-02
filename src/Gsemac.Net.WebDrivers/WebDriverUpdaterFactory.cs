@@ -22,20 +22,20 @@ namespace Gsemac.Net.WebDrivers {
 
         }
 
-        public IWebDriverUpdater Create(IBrowserInfo webBrowserInfo) {
+        public IWebDriverUpdater Create(IWebBrowserInfo webBrowserInfo) {
 
             if (webBrowserInfo is null)
                 throw new ArgumentNullException(nameof(webBrowserInfo));
 
             switch (webBrowserInfo.Id) {
 
-                case BrowserId.Chrome:
+                case WebBrowserId.Chrome:
                     return new ChromeWebDriverUpdater(webRequestFactory, webDriverUpdaterOptions);
 
-                case BrowserId.Edge:
+                case WebBrowserId.Edge:
                     return new EdgeWebDriverUpdater(webRequestFactory, webDriverUpdaterOptions);
 
-                case BrowserId.Firefox:
+                case WebBrowserId.Firefox:
                     return new FirefoxWebDriverUpdater(webRequestFactory, webDriverUpdaterOptions);
 
                 default:

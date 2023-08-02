@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Gsemac.Net.WebBrowsers {
 
-    public interface IBrowserInfo {
+    public interface IWebBrowserInfo {
 
         string Name { get; }
         Version Version { get; }
@@ -11,9 +11,9 @@ namespace Gsemac.Net.WebBrowsers {
         string UserDataDirectoryPath { get; }
         bool Is64Bit { get; }
         bool IsDefault { get; }
-        BrowserId Id { get; }
+        WebBrowserId Id { get; }
 
-        IEnumerable<IBrowserProfile> GetProfiles();
+        IEnumerable<IWebBrowserProfile> GetProfiles();
 
     }
 

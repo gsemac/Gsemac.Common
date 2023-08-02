@@ -11,11 +11,11 @@ using System.Text;
 namespace Gsemac.Net.WebBrowsers {
 
     internal class ChromiumCookiesReader :
-        IBrowserCookiesReader {
+        IWebBrowserCookiesReader {
 
         // Public members
 
-        public CookieContainer GetCookies(IBrowserProfile profile) {
+        public CookieContainer GetCookies(IWebBrowserProfile profile) {
 
             if (profile is null)
                 throw new ArgumentNullException(nameof(profile));
@@ -28,7 +28,7 @@ namespace Gsemac.Net.WebBrowsers {
 
                 // Chrome stores its cookies in an SQLite database.
 
-                IBrowserCookieDecryptor cookieDecryptor = new ChromiumCookieDecryptor(PathUtilities.GetParentPath(profile.DirectoryPath));
+                IWebBrowserCookieDecryptor cookieDecryptor = new ChromiumCookieDecryptor(PathUtilities.GetParentPath(profile.DirectoryPath));
 
                 using (SQLiteConnection conn = new SQLiteConnection($"Data Source={cookiesPath}")) {
                     using (SQLiteCommand cmd = new SQLiteCommand("SELECT * FROM Cookies", conn))
@@ -90,7 +90,7 @@ namespace Gsemac.Net.WebBrowsers {
 
         // Private members
 
-        private string GetCookiesFilePath(IBrowserProfile profile) {
+        private string GetCookiesFilePath(IWebBrowserProfile profile) {
 
             if (profile is null)
                 throw new ArgumentNullException(nameof(profile));

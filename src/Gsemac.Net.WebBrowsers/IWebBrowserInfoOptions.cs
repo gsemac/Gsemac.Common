@@ -1,6 +1,6 @@
 ﻿namespace Gsemac.Net.WebBrowsers {
 
-    public interface IBrowserInfoOptions {
+    public interface IWebBrowserInfoOptions {
 
         bool BypassCache { get; }
 

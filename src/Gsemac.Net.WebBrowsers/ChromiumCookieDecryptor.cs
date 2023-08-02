@@ -6,7 +6,7 @@ using System.Linq;
 namespace Gsemac.Net.WebBrowsers {
 
     internal sealed class ChromiumCookieDecryptor :
-        IBrowserCookieDecryptor {
+        IWebBrowserCookieDecryptor {
 
         // Public members
 
@@ -37,7 +37,7 @@ namespace Gsemac.Net.WebBrowsers {
 
         // Private members
 
-        private readonly IList<IBrowserCookieDecryptor> decryptors = new List<IBrowserCookieDecryptor>();
+        private readonly IList<IWebBrowserCookieDecryptor> decryptors = new List<IWebBrowserCookieDecryptor>();
 
     }
 

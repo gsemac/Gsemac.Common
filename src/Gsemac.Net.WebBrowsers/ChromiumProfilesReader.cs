@@ -7,7 +7,7 @@ using System.Linq;
 namespace Gsemac.Net.WebBrowsers {
 
     public class ChromiumProfilesReader :
-        IBrowserProfilesReader {
+        IWebBrowserProfilesReader {
 
         // Public members
 
@@ -20,9 +20,9 @@ namespace Gsemac.Net.WebBrowsers {
 
         }
 
-        public IEnumerable<IBrowserProfile> GetProfiles() {
+        public IEnumerable<IWebBrowserProfile> GetProfiles() {
 
-            List<IBrowserProfile> profiles = new List<IBrowserProfile>();
+            List<IWebBrowserProfile> profiles = new List<IWebBrowserProfile>();
 
             // Profile information is stored in the "Local State" file as JSON.
 
@@ -49,7 +49,7 @@ namespace Gsemac.Net.WebBrowsers {
                         string name = profileToken.SelectToken("..name")?.Value<string>() ?? string.Empty;
                         string directoryPath = Path.Combine(userDataDirectoryPath, identifier);
 
-                        profiles.Add(new BrowserProfile(new ChromiumCookiesReader()) {
+                        profiles.Add(new WebBrowserProfile(new ChromiumCookiesReader()) {
                             Name = name,
                             IsDefault = identifier.Equals(lastUsedProfileIdentifier) || profileTokens.Count() == 1,
                             DirectoryPath = directoryPath,

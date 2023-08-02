@@ -31,7 +31,7 @@ namespace Gsemac.Net.WebDrivers {
             this(webRequestFactory, webDriverUpdaterOptions, Logger.Null) {
         }
         public EdgeWebDriverUpdater(IHttpWebRequestFactory webRequestFactory, IWebDriverUpdaterOptions webDriverUpdaterOptions, ILogger logger) :
-            base(webRequestFactory, new WebDriverUpdaterOptions(webDriverUpdaterOptions) { WebBrowserId = BrowserId.Edge }, logger) {
+            base(webRequestFactory, new WebDriverUpdaterOptions(webDriverUpdaterOptions) { WebBrowserId = WebBrowserId.Edge }, logger) {
 
             this.webRequestFactory = webRequestFactory;
 
@@ -39,7 +39,7 @@ namespace Gsemac.Net.WebDrivers {
 
         // Protected members
 
-        protected override Uri GetWebDriverUri(IBrowserInfo webBrowserInfo) {
+        protected override Uri GetWebDriverUri(IWebBrowserInfo webBrowserInfo) {
 
             if (webBrowserInfo is null)
                 throw new ArgumentNullException(nameof(webBrowserInfo));

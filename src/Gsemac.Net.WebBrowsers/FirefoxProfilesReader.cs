@@ -9,7 +9,7 @@ using System.Text;
 namespace Gsemac.Net.WebBrowsers {
 
     public class FirefoxProfilesReader :
-        IBrowserProfilesReader {
+        IWebBrowserProfilesReader {
 
         // Public members
 
@@ -22,9 +22,9 @@ namespace Gsemac.Net.WebBrowsers {
 
         }
 
-        public IEnumerable<IBrowserProfile> GetProfiles() {
+        public IEnumerable<IWebBrowserProfile> GetProfiles() {
 
-            List<IBrowserProfile> profiles = new List<IBrowserProfile>();
+            List<IWebBrowserProfile> profiles = new List<IWebBrowserProfile>();
 
             // Profile information is stored in the "profiles.ini" file.
 
@@ -55,7 +55,7 @@ namespace Gsemac.Net.WebBrowsers {
                         string name = section["Name"];
                         string directoryPath = section["Path"];
 
-                        profiles.Add(new BrowserProfile(new FirefoxCookiesReader()) {
+                        profiles.Add(new WebBrowserProfile(new FirefoxCookiesReader()) {
                             Name = name,
                             IsDefault = defaultProfileDirectoryPaths.Contains(directoryPath),
                             DirectoryPath = Path.Combine(userDataDirectoryPath, directoryPath),

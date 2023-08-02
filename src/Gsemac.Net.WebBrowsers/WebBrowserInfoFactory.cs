@@ -10,23 +10,23 @@ using System.Text.RegularExpressions;
 
 namespace Gsemac.Net.WebBrowsers {
 
-    public class BrowserInfoFactory :
-        IBrowserInfoFactory {
+    public class WebBrowserInfoFactory :
+        IWebBrowserInfoFactory {
 
         // Public members
 
-        public static BrowserInfoFactory Default { get; } = new BrowserInfoFactory();
+        public static WebBrowserInfoFactory Default { get; } = new WebBrowserInfoFactory();
 
-        public IBrowserInfo GetBrowserInfo(string browserExecutablePath) {
+        public IWebBrowserInfo GetWebBrowserInfo(string browserExecutablePath) {
 
             if (browserExecutablePath is null)
                 throw new ArgumentNullException(nameof(browserExecutablePath));
 
             FileVersionInfo versionInfo = FileVersionInfo.GetVersionInfo(browserExecutablePath);
 
-            BrowserId browserId = GetBrowserId(versionInfo);
+            WebBrowserId browserId = GetBrowserId(versionInfo);
 
-            return new BrowserInfo(GetBrowserProfilesReader(browserId)) {
+            return new WebBrowserInfo(GetBrowserProfilesReader(browserId)) {
                 ExecutablePath = browserExecutablePath,
                 UserDataDirectoryPath = GetUserDataDirectoryPath(browserId),
                 Name = GetBrowserName(versionInfo),
@@ -37,14 +37,14 @@ namespace Gsemac.Net.WebBrowsers {
             };
 
         }
-        public IBrowserInfo GetBrowserInfo(BrowserId browserId, IBrowserInfoOptions options) {
+        public IWebBrowserInfo GetWebBrowserInfo(WebBrowserId browserId, IWebBrowserInfoOptions options) {
 
             if (options is null)
                 throw new ArgumentNullException(nameof(options));
 
             // Prefer newer, 64-bit executables.
 
-            return GetInstalledBrowsers(options)
+            return GetInstalledWebBrowsers(options)
                 .Where(info => info.Id == browserId)
                 .OrderByDescending(info => info.Version)
                 .ThenByDescending(info => info.Is64Bit)
@@ -52,12 +52,12 @@ namespace Gsemac.Net.WebBrowsers {
 
         }
 
-        public IBrowserInfo GetDefaultBrowser(IBrowserInfoOptions options) {
+        public IWebBrowserInfo GetDefaultWebBrowser(IWebBrowserInfoOptions options) {
 
-            return GetBrowserInfo(defaultBrowserIdCache.Value, options);
+            return GetWebBrowserInfo(defaultBrowserIdCache.Value, options);
 
         }
-        public IEnumerable<IBrowserInfo> GetInstalledBrowsers(IBrowserInfoOptions options) {
+        public IEnumerable<IWebBrowserInfo> GetInstalledWebBrowsers(IWebBrowserInfoOptions options) {
 
             if (options is null)
                 throw new ArgumentNullException(nameof(options));
@@ -75,8 +75,8 @@ namespace Gsemac.Net.WebBrowsers {
 
         // Private members
 
-        private readonly ResettableLazy<BrowserId> defaultBrowserIdCache = new ResettableLazy<BrowserId>(GetDefaultWebBrowserId);
-        private readonly ResettableLazy<IEnumerable<IBrowserInfo>> installedBrowsersCache = new ResettableLazy<IEnumerable<IBrowserInfo>>(GetGetInstalledBrowsersInternal);
+        private readonly ResettableLazy<WebBrowserId> defaultBrowserIdCache = new ResettableLazy<WebBrowserId>(GetDefaultWebBrowserId);
+        private readonly ResettableLazy<IEnumerable<IWebBrowserInfo>> installedBrowsersCache = new ResettableLazy<IEnumerable<IWebBrowserInfo>>(GetGetInstalledBrowsersInternal);
 
         private static IEnumerable<string> GetWebBrowserExecutablePaths() {
 
@@ -107,27 +107,27 @@ namespace Gsemac.Net.WebBrowsers {
             return webBrowserExecutablePaths.Where(path => System.IO.File.Exists(path));
 
         }
-        private static IEnumerable<IBrowserInfo> GetGetInstalledBrowsersInternal() {
+        private static IEnumerable<IWebBrowserInfo> GetGetInstalledBrowsersInternal() {
 
             return GetWebBrowserExecutablePaths()
-                .Select(path => Default.GetBrowserInfo(path))
+                .Select(path => Default.GetWebBrowserInfo(path))
                 .OrderBy(info => info.Name)
                 .ThenBy(info => info.Version)
                 .ThenBy(info => info.Is64Bit);
 
         }
 
-        private static string GetUserDataDirectoryPath(BrowserId webBrowserId) {
+        private static string GetUserDataDirectoryPath(WebBrowserId webBrowserId) {
 
             switch (webBrowserId) {
 
-                case BrowserId.Chrome:
+                case WebBrowserId.Chrome:
                     return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), @"Google\Chrome\User Data\");
 
-                case BrowserId.Edge:
+                case WebBrowserId.Edge:
                     return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), @"Microsoft\Edge\User Data\");
 
-                case BrowserId.Firefox:
+                case WebBrowserId.Firefox:
                     return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), @"Mozilla\Firefox\");
 
                 default:
@@ -141,29 +141,29 @@ namespace Gsemac.Net.WebBrowsers {
             return versionInfo.ProductName;
 
         }
-        private static BrowserId GetBrowserId(FileVersionInfo versionInfo) {
+        private static WebBrowserId GetBrowserId(FileVersionInfo versionInfo) {
 
             string productName = GetBrowserName(versionInfo);
 
             if (productName.Equals("firefox", StringComparison.OrdinalIgnoreCase))
-                return BrowserId.Firefox;
+                return WebBrowserId.Firefox;
 
             if (productName.Equals("google chrome", StringComparison.OrdinalIgnoreCase))
-                return BrowserId.Chrome;
+                return WebBrowserId.Chrome;
 
             if (productName.Equals("internet explorer", StringComparison.OrdinalIgnoreCase))
-                return BrowserId.InternetExplorer;
+                return WebBrowserId.InternetExplorer;
 
             if (productName.Equals("microsoft edge", StringComparison.OrdinalIgnoreCase))
-                return BrowserId.Edge;
+                return WebBrowserId.Edge;
 
             if (productName.EndsWith("opera", StringComparison.OrdinalIgnoreCase))
-                return BrowserId.Opera;
+                return WebBrowserId.Opera;
 
             if (productName.Equals("vivaldi", StringComparison.OrdinalIgnoreCase))
-                return BrowserId.Vivaldi;
+                return WebBrowserId.Vivaldi;
 
-            return BrowserId.Unknown;
+            return WebBrowserId.Unknown;
 
         }
         private static System.Version GetBrowserVersion(FileVersionInfo versionInfo) {
@@ -179,27 +179,27 @@ namespace Gsemac.Net.WebBrowsers {
                 PathUtilities.PathContainsSegment(browserExecutablePath, "Program Files");
 
         }
-        private static IBrowserProfilesReader GetBrowserProfilesReader(BrowserId webBrowserId) {
+        private static IWebBrowserProfilesReader GetBrowserProfilesReader(WebBrowserId webBrowserId) {
 
             switch (webBrowserId) {
 
-                case BrowserId.Chrome:
-                case BrowserId.Edge:
+                case WebBrowserId.Chrome:
+                case WebBrowserId.Edge:
                     return new ChromiumProfilesReader(GetUserDataDirectoryPath(webBrowserId));
 
-                case BrowserId.Firefox:
+                case WebBrowserId.Firefox:
                     return new FirefoxProfilesReader(GetUserDataDirectoryPath(webBrowserId));
 
                 default:
-                    return new NullBrowserProfileReader();
+                    return new NullProfileReader();
 
             }
 
         }
 
-        private static BrowserId GetDefaultBrowserIdFromUserChoiceKey() {
+        private static WebBrowserId GetDefaultBrowserIdFromUserChoiceKey() {
 
-            BrowserId id = BrowserId.Unknown;
+            WebBrowserId id = WebBrowserId.Unknown;
 
             using (RegistryKey userChoiceKey = Registry.CurrentUser.OpenSubKey(@"Software\Microsoft\Windows\Shell\Associations\UrlAssociations\http\UserChoice", writable: false)) {
 
@@ -212,31 +212,31 @@ namespace Gsemac.Net.WebBrowsers {
                         switch (progId) {
 
                             case "AppXq0fevzme2pys62n3e0fbqa7peapykr8v":
-                                id = BrowserId.Edge;
+                                id = WebBrowserId.Edge;
                                 break;
 
                             case "ChromeHTML":
-                                id = BrowserId.Chrome;
+                                id = WebBrowserId.Chrome;
                                 break;
 
                             case "FirefoxURL":
-                                id = BrowserId.Firefox;
+                                id = WebBrowserId.Firefox;
                                 break;
 
                             case "IE.HTTP":
-                                id = BrowserId.InternetExplorer;
+                                id = WebBrowserId.InternetExplorer;
                                 break;
 
                             case "OperaStable":
-                                id = BrowserId.Opera;
+                                id = WebBrowserId.Opera;
                                 break;
 
                             case "SafariHTML":
-                                id = BrowserId.Safari;
+                                id = WebBrowserId.Safari;
                                 break;
 
                             default:
-                                id = BrowserId.Unknown;
+                                id = WebBrowserId.Unknown;
                                 break;
 
                         }
@@ -250,7 +250,7 @@ namespace Gsemac.Net.WebBrowsers {
             return id;
 
         }
-        private static BrowserId GetDefaultBrowserIdFromClassesRootCommandKey() {
+        private static WebBrowserId GetDefaultBrowserIdFromClassesRootCommandKey() {
 
             string browserExecutablePath = string.Empty;
 
@@ -282,19 +282,19 @@ namespace Gsemac.Net.WebBrowsers {
             }
             else {
 
-                return BrowserId.Unknown;
+                return WebBrowserId.Unknown;
 
             }
 
         }
-        private static BrowserId GetDefaultWebBrowserId() {
+        private static WebBrowserId GetDefaultWebBrowserId() {
 
             // From Windows 8 forward, this seems to be the most reliable location for finding the default browser.
             // https://stackoverflow.com/a/17599201
 
-            BrowserId id = GetDefaultBrowserIdFromUserChoiceKey();
+            WebBrowserId id = GetDefaultBrowserIdFromUserChoiceKey();
 
-            if (id != BrowserId.Unknown)
+            if (id != WebBrowserId.Unknown)
                 return id;
 
             // For Windows 7 and previous, the UserChoice key may be empty.
@@ -302,12 +302,12 @@ namespace Gsemac.Net.WebBrowsers {
 
             id = GetDefaultBrowserIdFromClassesRootCommandKey();
 
-            if (id != BrowserId.Unknown)
+            if (id != WebBrowserId.Unknown)
                 return id;
 
             // Default to Internet Explorer if we can't find the default web browser.
 
-            return BrowserId.InternetExplorer;
+            return WebBrowserId.InternetExplorer;
 
         }
 

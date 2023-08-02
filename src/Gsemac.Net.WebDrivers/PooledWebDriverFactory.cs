@@ -78,7 +78,7 @@ namespace Gsemac.Net.WebDrivers {
             return CreateInternal(webBrowserInfo: options.WebBrowser);
 
         }
-        public IWebDriver Create(IBrowserInfo webBrowserInfo) {
+        public IWebDriver Create(IWebBrowserInfo webBrowserInfo) {
 
             return CreateInternal(webBrowserInfo);
 
@@ -198,10 +198,10 @@ namespace Gsemac.Net.WebDrivers {
         private class PoolItem {
 
             public int Id { get; set; }
-            public BrowserId WebBrowserId { get; set; }
+            public WebBrowserId WebBrowserId { get; set; }
             public IWebDriver WebDriver { get; set; }
 
-            public PoolItem(int id, BrowserId webBrowserId, IWebDriver webDriver) {
+            public PoolItem(int id, WebBrowserId webBrowserId, IWebDriver webDriver) {
 
                 this.Id = id;
                 this.WebBrowserId = webBrowserId;
@@ -236,7 +236,7 @@ namespace Gsemac.Net.WebDrivers {
 
         }
 
-        private IWebDriver CreateInternal(IBrowserInfo webBrowserInfo) {
+        private IWebDriver CreateInternal(IWebBrowserInfo webBrowserInfo) {
 
             // Attempt to take a web driver from the pool.
 
@@ -313,7 +313,7 @@ namespace Gsemac.Net.WebDrivers {
 
         }
 
-        private IWebDriver SpawnNewWebDriver(IBrowserInfo webBrowserInfo) {
+        private IWebDriver SpawnNewWebDriver(IWebBrowserInfo webBrowserInfo) {
 
             PoolItem webDriverItem = null;
 
@@ -326,7 +326,7 @@ namespace Gsemac.Net.WebDrivers {
 
                     IWebDriver webDriver = webBrowserInfo is null ? baseFactory.Create() : baseFactory.Create(webBrowserInfo);
 
-                    webDriverItem = new PoolItem(currentWebDriverId++, webBrowserInfo?.Id ?? BrowserId.Unknown, webDriver);
+                    webDriverItem = new PoolItem(currentWebDriverId++, webBrowserInfo?.Id ?? WebBrowserId.Unknown, webDriver);
 
                     spawnedDrivers.Add(webDriverItem);
 
@@ -342,7 +342,7 @@ namespace Gsemac.Net.WebDrivers {
             return webDriverItem?.WebDriver;
 
         }
-        private IWebDriver TakeWebDriverFromPool(IBrowserInfo webBrowserInfo) {
+        private IWebDriver TakeWebDriverFromPool(IWebBrowserInfo webBrowserInfo) {
 
             lock (poolLock) {
 
@@ -350,7 +350,7 @@ namespace Gsemac.Net.WebDrivers {
 
                     if (pool.Count() > 0) {
 
-                        PoolItem webDriverItem = pool.FirstOrDefault(item => (webBrowserInfo?.Id ?? BrowserId.Unknown) == item.WebBrowserId);
+                        PoolItem webDriverItem = pool.FirstOrDefault(item => (webBrowserInfo?.Id ?? WebBrowserId.Unknown) == item.WebBrowserId);
 
                         if (webDriverItem is object) {
 

@@ -10,7 +10,7 @@ using System.Linq;
 namespace Gsemac.Net.WebBrowsers {
 
     internal sealed class ChromiumAes256GcmCookieDecryptor :
-        IBrowserCookieDecryptor {
+        IWebBrowserCookieDecryptor {
 
         // Public members
 

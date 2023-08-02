@@ -7,7 +7,7 @@ using System.Security.Cryptography;
 namespace Gsemac.Net.WebBrowsers {
 
     internal sealed class ChromiumDpapiCookieDecryptor :
-        IBrowserCookieDecryptor {
+        IWebBrowserCookieDecryptor {
 
         // Public members
 

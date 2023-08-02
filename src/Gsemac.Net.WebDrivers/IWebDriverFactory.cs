@@ -12,7 +12,7 @@ namespace Gsemac.Net.WebDrivers {
         event DownloadFileProgressChangedEventHandler DownloadFileProgressChanged;
         event DownloadFileCompletedEventHandler DownloadFileCompleted;
 
-        IWebDriver Create(IBrowserInfo webBrowserInfo);
+        IWebDriver Create(IWebBrowserInfo webBrowserInfo);
 
     }
 

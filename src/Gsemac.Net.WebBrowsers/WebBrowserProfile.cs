@@ -3,8 +3,8 @@ using System.Net;
 
 namespace Gsemac.Net.WebBrowsers {
 
-    internal class BrowserProfile :
-        IBrowserProfile {
+    internal class WebBrowserProfile :
+        IWebBrowserProfile {
 
         // Public members
 
@@ -12,7 +12,7 @@ namespace Gsemac.Net.WebBrowsers {
         public bool IsDefault { get; set; }
         public string DirectoryPath { get; set; }
 
-        public BrowserProfile(IBrowserCookiesReader cookiesReader) {
+        public WebBrowserProfile(IWebBrowserCookiesReader cookiesReader) {
 
             if (cookiesReader is null)
                 throw new ArgumentNullException(nameof(cookiesReader));
@@ -29,7 +29,7 @@ namespace Gsemac.Net.WebBrowsers {
 
         // Private members
 
-        private readonly IBrowserCookiesReader cookiesReader;
+        private readonly IWebBrowserCookiesReader cookiesReader;
 
     }
 

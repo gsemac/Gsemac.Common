@@ -11,21 +11,21 @@ using System.Text;
 
 namespace Gsemac.Net.WebBrowsers {
 
-    public static class BrowserUtilities {
+    public static class WebBrowserUtilities {
 
         // Public members
 
-        public static WebHeaderCollection GetBrowserRequestHeaders(IBrowserInfo webBrowserInfo) {
+        public static WebHeaderCollection GetBrowserRequestHeaders(IWebBrowserInfo webBrowserInfo) {
 
             return GetBrowserRequestHeaders(webBrowserInfo, TimeSpan.FromSeconds(10));
 
         }
-        public static WebHeaderCollection GetBrowserRequestHeaders(IBrowserInfo webBrowserInfo, TimeSpan timeout) {
+        public static WebHeaderCollection GetBrowserRequestHeaders(IWebBrowserInfo webBrowserInfo, TimeSpan timeout) {
 
             return GetBrowserRequestHeaders(webBrowserInfo, timeout, null);
 
         }
-        public static WebHeaderCollection GetBrowserRequestHeaders(IBrowserInfo webBrowserInfo, TimeSpan timeout, string responseBody) {
+        public static WebHeaderCollection GetBrowserRequestHeaders(IWebBrowserInfo webBrowserInfo, TimeSpan timeout, string responseBody) {
 
             WebHeaderCollection requestHeaders = new WebHeaderCollection();
 

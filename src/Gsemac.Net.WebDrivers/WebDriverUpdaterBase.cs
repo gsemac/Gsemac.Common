@@ -20,7 +20,7 @@ namespace Gsemac.Net.WebDrivers {
 
         // Public members
 
-        public IWebDriverInfo Update(IBrowserInfo webBrowserInfo, CancellationToken cancellationToken) {
+        public IWebDriverInfo Update(IWebBrowserInfo webBrowserInfo, CancellationToken cancellationToken) {
 
             if (webBrowserInfo is null)
                 throw new ArgumentNullException(nameof(webBrowserInfo));
@@ -92,7 +92,7 @@ namespace Gsemac.Net.WebDrivers {
 
         }
 
-        protected abstract Uri GetWebDriverUri(IBrowserInfo webBrowserInfo);
+        protected abstract Uri GetWebDriverUri(IWebBrowserInfo webBrowserInfo);
         protected abstract string GetWebDriverExecutablePath();
 
         protected void OnDownloadFileProgressChanged(object sender, DownloadFileProgressChangedEventArgs e) {
@@ -150,15 +150,15 @@ namespace Gsemac.Net.WebDrivers {
 
         }
 
-        protected bool IsSupportedWebBrowser(IBrowserInfo webBrowserInfo) {
+        protected bool IsSupportedWebBrowser(IWebBrowserInfo webBrowserInfo) {
 
-            BrowserId webBrowserId = webDriverUpdaterOptions.WebBrowserId;
+            WebBrowserId webBrowserId = webDriverUpdaterOptions.WebBrowserId;
 
-            return webBrowserId == BrowserId.Unknown ||
+            return webBrowserId == WebBrowserId.Unknown ||
                 webBrowserId.Equals(webBrowserInfo.Id);
 
         }
-        private bool DownloadWebDriver(IBrowserInfo webBrowserInfo, CancellationToken cancellationToken) {
+        private bool DownloadWebDriver(IWebBrowserInfo webBrowserInfo, CancellationToken cancellationToken) {
 
             string webDriverExecutablePath = GetWebDriverExecutablePathInternal();
 

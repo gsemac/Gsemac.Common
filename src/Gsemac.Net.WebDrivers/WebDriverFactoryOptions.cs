@@ -10,11 +10,11 @@ namespace Gsemac.Net.WebDrivers {
 
         public bool AutoUpdateEnabled { get; set; } = true;
         public bool IgnoreUpdateErrors { get; set; } = true;
-        public BrowserId WebBrowserId {
+        public WebBrowserId WebBrowserId {
             get => webBrowserId;
             set => webBrowserId = value;
         }
-        public IBrowserInfo WebBrowser {
+        public IWebBrowserInfo WebBrowser {
             get => webBrowserInfo;
             set {
 
@@ -47,8 +47,8 @@ namespace Gsemac.Net.WebDrivers {
 
         // Private members
 
-        private BrowserId webBrowserId = BrowserId.Unknown;
-        private IBrowserInfo webBrowserInfo;
+        private WebBrowserId webBrowserId = WebBrowserId.Unknown;
+        private IWebBrowserInfo webBrowserInfo;
 
     }
 
