@@ -104,5 +104,14 @@ namespace Gsemac.Net.WebBrowsers.Properties {
                 return ResourceManager.GetString("UnableToFindLocalStateFile", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The web browser executable path was not found..
+        /// </summary>
+        internal static string WebBrowserExecutablePathNotFound {
+            get {
+                return ResourceManager.GetString("WebBrowserExecutablePathNotFound", resourceCulture);
+            }
+        }
     }
 }

@@ -113,17 +113,66 @@ namespace Gsemac.Net.WebBrowsers {
             if (uri is null)
                 throw new ArgumentNullException(nameof(uri));
 
-            return OpenUrl(uri.AbsoluteUri);
+            return OpenUrl(uri, OpenUrlOptions.Default);
+
+        }
+        public static bool OpenUrl(Uri uri, IOpenUrlOptions options) {
+
+            if (uri is null)
+                throw new ArgumentNullException(nameof(uri));
+
+            if (options is null)
+                throw new ArgumentNullException(nameof(options));
+
+            return OpenUrl(uri.AbsoluteUri, options);
 
         }
         public static bool OpenUrl(string url) {
 
-            // Based on the answer given here: https://stackoverflow.com/a/62678021/5383169 (EstevaoLuis)
+            if (url is null)
+                throw new ArgumentNullException(nameof(url));
+
+            return OpenUrl(url, OpenUrlOptions.Default);
+
+        }
+        public static bool OpenUrl(string url, IOpenUrlOptions options) {
+
+            if (url is null)
+                throw new ArgumentNullException(nameof(url));
+
+            if (options is null)
+                throw new ArgumentNullException(nameof(options));
 
             if (!PathUtilities.IsUrl(url))
                 throw new ArgumentException(ExceptionMessages.StringIsNotAValidUrl, nameof(url));
 
-            using (Process process = Process.Start("explorer.exe", $"\"{url}\""))
+            IWebBrowserInfo browserInfo = options.WebBrowser;
+            IWebBrowserProfile browserProfile = options.Profile;
+            string browserExecutablePath = browserInfo?.ExecutablePath ?? "explorer.exe";
+            string arguments = $"\"{url}\"";
+
+            if (browserInfo is object && browserProfile is object) {
+
+                switch (browserInfo.Id) {
+
+                    case WebBrowserId.Chrome:
+                    case WebBrowserId.Edge:
+
+                        arguments = $"\"{url}\" --profile-directory=\"{browserProfile.Identifier}\"";
+
+                        break;
+
+                    case WebBrowserId.Firefox:
+
+                        arguments = $"\"{url}\" -profile=\"{browserProfile.DirectoryPath}\"";
+
+                        break;
+
+                }
+
+            }
+
+            using (Process process = Process.Start(browserExecutablePath, arguments))
                 return process.Responding;
 
         }

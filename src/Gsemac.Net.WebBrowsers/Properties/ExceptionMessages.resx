@@ -132,4 +132,7 @@
   <data name="UnableToFindLocalStateFile" xml:space="preserve">
     <value>Unable to locate local state file in '{0}'.</value>
   </data>
+  <data name="WebBrowserExecutablePathNotFound" xml:space="preserve">
+    <value>The web browser executable path was not found.</value>
+  </data>
 </root>
