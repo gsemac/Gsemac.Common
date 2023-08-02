@@ -8,6 +8,7 @@ namespace Gsemac.Net.WebBrowsers {
 
         // Public members
 
+        public string Identifier { get; set; }
         public string Name { get; set; }
         public bool IsDefault { get; set; }
         public string DirectoryPath { get; set; }

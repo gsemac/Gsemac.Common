@@ -50,6 +50,7 @@ namespace Gsemac.Net.WebBrowsers {
                         string directoryPath = Path.Combine(userDataDirectoryPath, identifier);
 
                         profiles.Add(new WebBrowserProfile(new ChromiumCookiesReader()) {
+                            Identifier = identifier,
                             Name = name,
                             IsDefault = identifier.Equals(lastUsedProfileIdentifier) || profileTokens.Count() == 1,
                             DirectoryPath = directoryPath,

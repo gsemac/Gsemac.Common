@@ -56,6 +56,7 @@ namespace Gsemac.Net.WebBrowsers {
                         string directoryPath = section["Path"];
 
                         profiles.Add(new WebBrowserProfile(new FirefoxCookiesReader()) {
+                            Identifier = section.Name,
                             Name = name,
                             IsDefault = defaultProfileDirectoryPaths.Contains(directoryPath),
                             DirectoryPath = Path.Combine(userDataDirectoryPath, directoryPath),
