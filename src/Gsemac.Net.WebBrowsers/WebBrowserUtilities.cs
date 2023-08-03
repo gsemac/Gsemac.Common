@@ -172,8 +172,34 @@ namespace Gsemac.Net.WebBrowsers {
 
             }
 
-            using (Process process = Process.Start(browserExecutablePath, arguments))
-                return process.Responding;
+            using (Process process = new Process()) {
+
+                process.StartInfo = new ProcessStartInfo() {
+                    FileName = browserExecutablePath,
+                    Arguments = arguments,
+                };
+
+                bool processedStarted = process.Start();
+
+                try {
+
+                    // We can't rely on the return value of Start() alone, because it only returns true if we started a new process.
+                    // It's possible that we're opening a new tab in an existing process as well, so it's important to also check the Responding property. 
+
+                    return processedStarted ||
+                        process.Responding;
+
+                }
+                catch (InvalidOperationException) {
+
+                    // Accessing the Responding property will sometimes, nondeterministically, throw an exception (I'm not totally sure why).
+                    // When this happens, we'll just return false to indicate that an error has occurred.
+
+                    return false;
+
+                }
+
+            }
 
         }
 
