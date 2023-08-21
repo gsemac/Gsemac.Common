@@ -23,10 +23,10 @@ namespace Gsemac.Data.ValueConversion.Tests {
         [TestMethod]
         public void TestConvertFromNameNormalizesGraySpelling() {
 
-            Assert.AreEqual(Color.Gray, new StringToColorConverter().Convert("grey"));
+            Assert.AreEqual(Color.Gray, new StringToColorConverter().Convert("gray"));
             Assert.AreEqual(Color.Gray, new StringToColorConverter().Convert("grey"));
             Assert.AreEqual(Color.DarkGray, new StringToColorConverter().Convert("darkgray"));
-            Assert.AreEqual(Color.DarkGray, new StringToColorConverter().Convert("darkgray"));
+            Assert.AreEqual(Color.DarkGray, new StringToColorConverter().Convert("darkgrey"));
 
         }
         [TestMethod]
