@@ -12,8 +12,9 @@ namespace Gsemac.Core {
 
         public static IEnumerable<Process> GetProcessesByFileName(string fileName) {
 
-            // TODO: It might be better to check the path associated with the process and compare the file name instead of the process name.
-            // This approach tends to work in practice, but I don't know if the process name always matches the filename.
+            // A process' "ProcessName" property is simply the executable file name without the file extension.
+            // https://learn.microsoft.com/en-us/dotnet/api/system.diagnostics.process.processname?view=net-7.0
+            // "GetProcessesByName" can therefore be used with a file name reliably.
 
             if (string.IsNullOrWhiteSpace(fileName))
                 return Enumerable.Empty<Process>();
@@ -29,13 +30,53 @@ namespace Gsemac.Core {
         public static IEnumerable<Process> GetProcessesByFilePath(string filePath) {
 
             return GetProcessesByFileName(filePath)
-                .Where(process => ProcessHasFilePath(process, filePath));
+                .Where(process => ProcessHasMatchingFileName(process, filePath));
 
         }
 
         // Private members
 
-        private static bool ProcessHasFilePath(Process process, string filePath) {
+        private static bool TryGetProcessFilePath(Process process, out string filePath) {
+
+            filePath = null;
+
+            if (process is null)
+                throw new ArgumentNullException(nameof(process));
+
+            try {
+
+                // The "Filename" property will return a fully-qualified file name.
+                // Note that accessing the "MainModule" property can throw an exception under certain conditions.
+
+                string processFilePath = process.MainModule.FileName;
+
+                // The path is normalized to ease comparisons.
+
+                if (!string.IsNullOrWhiteSpace(processFilePath))
+                    processFilePath = NormalizeProcessFilePath(processFilePath);
+
+                filePath = processFilePath;
+
+                return true;
+
+            }
+            catch {
+
+                return false;
+
+            }
+
+        }
+        private static string NormalizeProcessFilePath(string processPath) {
+
+            if (string.IsNullOrWhiteSpace(processPath))
+                return processPath;
+
+            return Path.GetFullPath(processPath)
+                .Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar);
+
+        }
+        private static bool ProcessHasMatchingFileName(Process process, string filePath) {
 
             if (process is null)
                 throw new ArgumentNullException(nameof(process));
@@ -43,25 +84,10 @@ namespace Gsemac.Core {
             if (string.IsNullOrWhiteSpace(filePath))
                 return false;
 
-            string processPath = process.MainModule.FileName;
+            // Directory separators are normalized before doing the comparison.
 
-            if (string.IsNullOrWhiteSpace(processPath))
-                return false;
-
-            // Normalize the directory separators before doing the path comparison.
-
-            return NormalizeProcessPath(filePath)
-                .Equals(NormalizeProcessPath(processPath));
-
-
-        }
-        private static string NormalizeProcessPath(string processPath) {
-
-            if (string.IsNullOrWhiteSpace(processPath))
-                return processPath;
-
-            return Path.GetFullPath(processPath)
-                .Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar);
+            return TryGetProcessFilePath(process, out string processFilePath) &&
+                processFilePath.Equals(NormalizeProcessFilePath(filePath));
 
         }
 
