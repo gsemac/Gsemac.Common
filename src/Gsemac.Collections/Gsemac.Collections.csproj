@@ -25,7 +25,7 @@
 	</ItemGroup>
 
 	<PropertyGroup Condition="$(DefineConstants.Contains('NET40_OR_LESSER'))">
-		<DefineConstants>$(DefineConstants);POLYFILLS_AVAILABLE</DefineConstants>
+		<DefineConstants>$(DefineConstants);ENABLE_POLYFILLS</DefineConstants>
 	</PropertyGroup>
 
 	<ItemGroup>

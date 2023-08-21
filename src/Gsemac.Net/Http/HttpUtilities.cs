@@ -1,7 +1,6 @@
 ﻿using Gsemac.IO;
 using Gsemac.Net.Http.Lexers;
 using Gsemac.Net.Properties;
-using Gsemac.Polyfills.System.Net;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -9,6 +8,8 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
+
+using DecompressionMethodsEx = Gsemac.Polyfills.System.Net.DecompressionMethods;
 
 namespace Gsemac.Net.Http {
 

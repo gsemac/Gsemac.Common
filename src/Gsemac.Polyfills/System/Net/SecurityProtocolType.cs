@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Net;
 
 namespace Gsemac.Polyfills.System.Net {
 
@@ -7,9 +6,9 @@ namespace Gsemac.Polyfills.System.Net {
     // SystemDefault was added in .NET Framework 4.7.
     // Tls13 was added in .NET Framework 4.8.
 
-    /// <inheritdoc cref="SecurityProtocolType"/>
+    /// <inheritdoc cref="global::System.Net.SecurityProtocolType"/>
     [Flags]
-    public enum SecurityProtocolTypeEx {
+    public enum SecurityProtocolType {
         /// <summary>
         /// Allows the operating system to choose the best protocol to use, and to block protocols that are not secure. Unless your app has a specific reason not to, you should use this value.
         /// </summary>
@@ -17,11 +16,11 @@ namespace Gsemac.Polyfills.System.Net {
         /// <summary>
         /// Specifies the Secure Socket Layer (SSL) 3.0 security protocol. SSL 3.0 has been superseded by the Transport Layer Security (TLS) protocol and is provided for backward compatibility only.
         /// </summary>
-        Ssl3 = 48,
+        Ssl3 = global::System.Net.SecurityProtocolType.Ssl3,
         /// <summary>
         /// Specifies the Transport Layer Security (TLS) 1.0 security protocol. The TLS 1.0 protocol is defined in IETF RFC 2246.
         /// </summary>
-        Tls = 192,
+        Tls = global::System.Net.SecurityProtocolType.Tls,
         /// <summary>
         /// Specifies the Transport Layer Security (TLS) 1.1 security protocol. The TLS 1.1 protocol is defined in IETF RFC 4346. On Windows systems, this value is supported starting with Windows 7.
         /// </summary>

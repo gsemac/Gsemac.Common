@@ -1,10 +1,10 @@
-﻿#if NETFRAMEWORK || NETSTANDARD2_0_OR_LESSER || NETCOREAPP2_0_OR_LESSER
-
-using System;
+﻿using System;
 
 namespace Gsemac.Polyfills.System {
 
     public static class StringExtensions {
+
+        // Public members
 
         public static bool Contains(this string str, char value, StringComparison comparisonType) {
 
@@ -20,5 +20,3 @@ namespace Gsemac.Polyfills.System {
     }
 
 }
-
-#endif

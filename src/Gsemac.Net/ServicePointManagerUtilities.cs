@@ -1,8 +1,9 @@
-﻿using Gsemac.Polyfills.System.Net;
-using System;
+﻿using System;
 using System.Net;
 using System.Net.Security;
 using System.Security.Cryptography.X509Certificates;
+
+using SecurityProtocolTypeEx = Gsemac.Polyfills.System.Net.SecurityProtocolType;
 
 namespace Gsemac.Net {
 
@@ -10,9 +11,9 @@ namespace Gsemac.Net {
 
         // Public members
 
-        public const SecurityProtocolTypeEx Net40SecurityProtocols = SecurityProtocolTypeEx.Ssl3 | SecurityProtocolTypeEx.Tls;
-        public const SecurityProtocolTypeEx Net45SecurityProtocols = SecurityProtocolTypeEx.Tls11 | SecurityProtocolTypeEx.Tls12;
-        public const SecurityProtocolTypeEx Net48SecurityProtocols = SecurityProtocolTypeEx.Tls13;
+        public const SecurityProtocolType Net40SecurityProtocols = (SecurityProtocolType)(SecurityProtocolTypeEx.Ssl3 | SecurityProtocolTypeEx.Tls);
+        public const SecurityProtocolType Net45SecurityProtocols = (SecurityProtocolType)(SecurityProtocolTypeEx.Tls11 | SecurityProtocolTypeEx.Tls12);
+        public const SecurityProtocolType Net48SecurityProtocols = (SecurityProtocolType)SecurityProtocolTypeEx.Tls13;
 
         public static bool IsCertificateValidationEnabled() {
 
@@ -48,6 +49,7 @@ namespace Gsemac.Net {
                 ServicePointManager.SecurityProtocol &= ~securityProtocol;
 
         }
+
         public static bool TrySetSecurityProtocolEnabled(SecurityProtocolTypeEx securityProtocol, bool enabled = true) {
 
             return TrySetSecurityProtocolEnabled((SecurityProtocolType)securityProtocol, enabled);
@@ -72,6 +74,7 @@ namespace Gsemac.Net {
             }
 
         }
+
         public static bool IsSecurityProtocolEnabled(SecurityProtocolTypeEx securityProtocol) {
 
             return IsSecurityProtocolEnabled((SecurityProtocolType)securityProtocol);

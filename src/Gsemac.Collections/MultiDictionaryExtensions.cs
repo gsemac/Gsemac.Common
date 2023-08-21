@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
-#if POLYFILLS_AVAILABLE
+#if ENABLE_POLYFILLS
 using Gsemac.Polyfills.System.Collections.Generic;
 #endif
 
