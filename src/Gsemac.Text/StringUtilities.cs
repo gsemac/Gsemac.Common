@@ -531,6 +531,25 @@ namespace Gsemac.Text {
 
         }
 
+        public static string GetRandomString(int length) {
+
+            return GetRandomString("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789", length);
+
+        }
+        public static string GetRandomString(string alphabet, int length) {
+
+            // Solution adapted from https://stackoverflow.com/a/1344242/5383169 (dtb)
+
+            if (length < 0)
+                throw new ArgumentOutOfRangeException(ExceptionMessages.LengthMustBeGreaterThanOrEqualToZero);
+
+            if (string.IsNullOrEmpty(alphabet) || length == 0)
+                return string.Empty;
+
+            return new string(Enumerable.Repeat(alphabet, length).Select(s => s[random.Next(s.Length)]).ToArray());
+
+        }
+
         // Private members
 
         private class NonClosingStreamReader :
@@ -554,6 +573,8 @@ namespace Gsemac.Text {
             }
 
         }
+
+        private static readonly Random random = new Random();
 
         private static string UnescapeEscapeSequence(string input) {
 

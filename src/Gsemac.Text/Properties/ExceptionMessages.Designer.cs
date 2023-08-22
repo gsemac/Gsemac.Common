@@ -61,6 +61,15 @@ namespace Gsemac.Text.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Length must be equal to or greater than 0..
+        /// </summary>
+        internal static string LengthMustBeGreaterThanOrEqualToZero {
+            get {
+                return ResourceManager.GetString("LengthMustBeGreaterThanOrEqualToZero", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to String cannot be of zero length..
         /// </summary>
         internal static string StringCannotBeOfZeroLength {
