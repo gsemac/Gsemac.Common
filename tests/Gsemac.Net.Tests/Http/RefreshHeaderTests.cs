@@ -5,6 +5,8 @@ namespace Gsemac.Net.Http.Tests {
     [TestClass]
     public class RefreshHeaderTests {
 
+        // Parse
+
         [TestMethod]
         public void TestParseWithValidRefreshHeaderWithTimeout() {
 
@@ -38,6 +40,25 @@ namespace Gsemac.Net.Http.Tests {
             // Popular web browsers (e.g. Google Chrome) will ignore redirect headers with negative timeouts, so they should be considered invalid.
 
             Assert.IsFalse(RefreshHeader.TryParse("Refresh: -1", out _));
+
+        }
+
+        // ToString
+
+        [TestMethod]
+        public void TestToStringWithRefreshHeaderWithUrl() {
+
+            RefreshHeader header = RefreshHeader.Parse("refresh: 5; url=https://www.example.com/");
+
+            Assert.AreEqual("refresh: 5; url=https://www.example.com/", header.ToString(), ignoreCase: true);
+
+        }
+        [TestMethod]
+        public void TestToStringWithRefreshHeaderWithoutUrl() {
+
+            RefreshHeader header = RefreshHeader.Parse("refresh: 5;");
+
+            Assert.AreEqual("refresh: 5", header.ToString(), ignoreCase: true);
 
         }
 

@@ -1,5 +1,7 @@
 ﻿using Gsemac.Net.Properties;
 using System;
+using System.Globalization;
+using System.Text;
 using System.Text.RegularExpressions;
 
 namespace Gsemac.Net.Http {
@@ -12,7 +14,7 @@ namespace Gsemac.Net.Http {
         public string Name => RefreshHeaderName;
         public string Value => GetValue();
 
-        public TimeSpan Timeout { get; } = TimeSpan.FromSeconds(0);
+        public TimeSpan Timeout { get; } = TimeSpan.Zero;
         public string Url { get; }
 
         public RefreshHeader(string url, TimeSpan timeout) {
@@ -84,7 +86,14 @@ namespace Gsemac.Net.Http {
 
         private string GetValue() {
 
-            return $"{(int)Timeout.TotalSeconds}; url={Url}";
+            StringBuilder sb = new StringBuilder();
+
+            sb.Append(((int)Timeout.TotalSeconds).ToString(CultureInfo.InvariantCulture));
+
+            if (!string.IsNullOrWhiteSpace(Url))
+                sb.Append($"; url={Url}");
+
+            return sb.ToString();
 
         }
 
