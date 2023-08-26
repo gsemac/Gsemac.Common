@@ -174,61 +174,91 @@ namespace Gsemac.Text {
 
         }
 
-        public static IEnumerable<string> Split(string value, char separator, int count, StringSplitOptionsEx options = StringSplitOptionsEx.None) {
+        public static IEnumerable<string> Split(string value, char separator, int count) {
+
+            return Split(value, separator, count, StringSplitOptionsEx.Default);
+
+        }
+        public static IEnumerable<string> Split(string value, string[] separators, int count) {
+
+            return Split(value, separators, count, StringSplitOptionsEx.Default);
+
+        }
+        public static IEnumerable<string> Split(string value, char[] separators, int count) {
+
+            return Split(value, separators, count, StringSplitOptionsEx.Default);
+
+        }
+        public static IEnumerable<string> Split(string value, string[] separators) {
+
+            return Split(value, separators, StringSplitOptionsEx.Default);
+
+        }
+        public static IEnumerable<string> Split(string value, string separator, int count) {
+
+            return Split(value, separator, count, StringSplitOptionsEx.Default);
+
+        }
+        public static IEnumerable<string> Split(string value, char[] separators) {
+
+            return Split(value, separators, StringSplitOptionsEx.Default);
+
+        }
+        public static IEnumerable<string> Split(string value, char separator) {
+
+            return Split(value, separator, StringSplitOptionsEx.Default);
+
+        }
+        public static IEnumerable<string> Split(string value, string separator) {
+
+            return Split(value, separator, StringSplitOptionsEx.Default);
+
+        }
+        public static IEnumerable<string> Split(string value, char separator, int count, IStringSplitOptionsEx options) {
 
             return Split(value, new[] { separator }, count, options);
 
         }
-        public static IEnumerable<string> Split(string value, string[] separator, int count, StringSplitOptionsEx options = StringSplitOptionsEx.None) {
+        public static IEnumerable<string> Split(string value, string[] separators, int count, IStringSplitOptionsEx options) {
+
+            if (options is null)
+                throw new ArgumentNullException(nameof(options));
 
             if (string.IsNullOrEmpty(value))
                 yield break;
 
-            IEnumerable<string> items;
-
-            if (options <= StringSplitOptionsEx.TrimEntries) {
-
-                // No special options have been specified, so we can do a normal string split.
-
-                items = value.Split(separator, count, GetStringSplitOptions(options));
-
-            }
-            else {
-
-                items = SplitWithDelimiters(value, separator, count, options);
-
-            }
+            IEnumerable<string> items = SplitWithDelimiters(value, separators, count, options);
 
             foreach (string item in ApplyPostSplitOptions(items, options))
                 yield return item;
 
         }
-        public static IEnumerable<string> Split(string value, char[] separators, int count, StringSplitOptionsEx options = StringSplitOptionsEx.None) {
+        public static IEnumerable<string> Split(string value, char[] separators, int count, IStringSplitOptionsEx options) {
 
             return Split(value, separators?.Select(c => c.ToString()).ToArray(), count, options);
 
         }
-        public static IEnumerable<string> Split(string value, string[] separators, StringSplitOptionsEx options = StringSplitOptionsEx.None) {
+        public static IEnumerable<string> Split(string value, string[] separators, IStringSplitOptionsEx options) {
 
             return Split(value, separators, int.MaxValue, options);
 
         }
-        public static IEnumerable<string> Split(string value, string separator, int count, StringSplitOptionsEx options = StringSplitOptionsEx.None) {
+        public static IEnumerable<string> Split(string value, string separator, int count, IStringSplitOptionsEx options) {
 
             return Split(value, new[] { separator }, count, options);
 
         }
-        public static IEnumerable<string> Split(string value, char[] separators, StringSplitOptionsEx options = StringSplitOptionsEx.None) {
+        public static IEnumerable<string> Split(string value, char[] separators, IStringSplitOptionsEx options) {
 
             return Split(value, separators?.Select(c => c.ToString()).ToArray(), int.MaxValue, options);
 
         }
-        public static IEnumerable<string> Split(string value, char separator, StringSplitOptionsEx options = StringSplitOptionsEx.None) {
+        public static IEnumerable<string> Split(string value, char separator, IStringSplitOptionsEx options) {
 
             return Split(value, separator, int.MaxValue, options);
 
         }
-        public static IEnumerable<string> Split(string value, string separator, StringSplitOptionsEx options = StringSplitOptionsEx.None) {
+        public static IEnumerable<string> Split(string value, string separator, IStringSplitOptionsEx options) {
 
             return Split(value, separator, int.MaxValue, options);
 
@@ -697,17 +727,23 @@ namespace Gsemac.Text {
 
         }
 
-        private static System.StringSplitOptions GetStringSplitOptions(StringSplitOptionsEx options) {
+        private static StringSplitOptions GetStringSplitOptions(IStringSplitOptionsEx options) {
 
-            System.StringSplitOptions result = System.StringSplitOptions.None;
+            if (options is null)
+                throw new ArgumentNullException(nameof(options));
 
-            if (options.HasFlag(StringSplitOptionsEx.RemoveEmptyEntries))
-                result |= System.StringSplitOptions.RemoveEmptyEntries;
+            StringSplitOptions result = StringSplitOptions.None;
+
+            if (options.RemoveEmptyEntries)
+                result |= StringSplitOptions.RemoveEmptyEntries;
 
             return result;
 
         }
-        private static IEnumerable<string> ApplyPostSplitOptions(IEnumerable<string> items, StringSplitOptionsEx options) {
+        private static IEnumerable<string> ApplyPostSplitOptions(IEnumerable<string> items, IStringSplitOptionsEx options) {
+
+            if (options is null)
+                throw new ArgumentNullException(nameof(options));
 
             IEnumerator<string> enumerator = items.GetEnumerator();
             bool onFirstItem = true;
@@ -716,14 +752,14 @@ namespace Gsemac.Text {
 
                 string item = enumerator.Current;
 
-                if (options.HasFlag(StringSplitOptionsEx.TrimEntries) && !string.IsNullOrEmpty(item))
+                if (options.TrimEntries && !string.IsNullOrEmpty(item))
                     item = item.Trim();
 
-                bool hasNextItem = ((!onFirstItem && options.HasFlag(StringSplitOptionsEx.PrependDelimiter)) ||
-                    options.HasFlag(StringSplitOptionsEx.AppendDelimiter)) &&
+                bool hasNextItem = ((!onFirstItem && options.SplitBeforeDelimiter) ||
+                    options.SplitAfterDelimiter) &&
                     enumerator.MoveNext();
 
-                if (!options.HasFlag(StringSplitOptionsEx.RemoveEmptyEntries) || !string.IsNullOrEmpty(item)) {
+                if (!options.RemoveEmptyEntries || !string.IsNullOrEmpty(item)) {
 
                     if (hasNextItem) {
 
@@ -742,14 +778,17 @@ namespace Gsemac.Text {
             }
 
         }
-        private static IEnumerable<string> SplitWithDelimiters(string value, string[] separators, int count, StringSplitOptionsEx options) {
+        private static IEnumerable<string> SplitWithDelimiters(string value, string[] separators, int count, IStringSplitOptionsEx options) {
+
+            if (options is null)
+                throw new ArgumentNullException(nameof(options));
 
             int startIndex = 0;
             int itemCount = 0;
 
             for (int i = 0; i < value.Length && itemCount < count; ++i) {
 
-                if (options.HasFlag(StringSplitOptionsEx.RespectEnclosingPunctuation)) {
+                if (options.AllowEnclosedDelimiters) {
 
                     char currentChar = value[i];
 
@@ -777,7 +816,7 @@ namespace Gsemac.Text {
 
                     yield return value.Substring(startIndex, i - startIndex);
 
-                    if (options.HasFlag(StringSplitOptionsEx.PrependDelimiter) || options.HasFlag(StringSplitOptionsEx.AppendDelimiter))
+                    if (options.SplitBeforeDelimiter || options.SplitAfterDelimiter)
                         yield return value.Substring(i, endIndex - i + 1);
 
                     i = endIndex;

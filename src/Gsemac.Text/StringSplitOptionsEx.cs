@@ -1,16 +1,18 @@
-﻿using System;
+﻿namespace Gsemac.Text {
 
-namespace Gsemac.Text {
+    public sealed class StringSplitOptionsEx :
+        IStringSplitOptionsEx {
 
-    [Flags]
-    public enum StringSplitOptionsEx {
-        None = 0,
-        RemoveEmptyEntries = 1,
-        TrimEntries = 2,
-        AppendDelimiter = 4,
-        PrependDelimiter = 8,
-        RespectEnclosingPunctuation = 16,
-        Default = None,
+        // Public members
+
+        public bool AllowEnclosedDelimiters { get; set; } = false;
+        public bool RemoveEmptyEntries { get; set; } = false;
+        public bool SplitAfterDelimiter { get; set; } = false;
+        public bool SplitBeforeDelimiter { get; set; } = false;
+        public bool TrimEntries { get; set; } = false;
+
+        public static StringSplitOptionsEx Default => new StringSplitOptionsEx();
+
     }
 
 }

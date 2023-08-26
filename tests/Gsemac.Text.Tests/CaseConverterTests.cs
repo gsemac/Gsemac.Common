@@ -62,21 +62,21 @@ namespace Gsemac.Text.Tests {
         public void TestToSentenceCaseWithMultipleSentencesAndMultiSentenceOption() {
 
             Assert.AreEqual("Hello! Welcome to my test case.", CaseConverter.ToSentence("hello! welcome to my test case.",
-                SentenceCasingOptions.DetectMultipleSentences));
+                SentenceCaseOptions.DetectMultipleSentences));
 
         }
         [TestMethod]
         public void TestToSentenceCaseWithPunctuationWithoutFollowingWhitespace() {
 
             Assert.AreEqual("Hello! Please see the attatched archive.Zip.", CaseConverter.ToSentence("hello! please see the attatched archive.zip.",
-                SentenceCasingOptions.DetectMultipleSentences));
+                SentenceCaseOptions.DetectMultipleSentences));
 
         }
         [TestMethod]
         public void TestToSentenceCaseWithPunctuationWithoutFollowingWhitespaceWithRequireWhitespaceAfterPunctuationOption() {
 
             Assert.AreEqual("Hello! Please see the attatched archive.zip.", CaseConverter.ToSentence("hello! please see the attatched archive.zip.",
-                SentenceCasingOptions.DetectMultipleSentences | SentenceCasingOptions.RequireWhitespaceAfterPunctuation));
+                SentenceCaseOptions.DetectMultipleSentences | SentenceCaseOptions.RequireWhitespaceAfterPunctuation));
 
         }
 

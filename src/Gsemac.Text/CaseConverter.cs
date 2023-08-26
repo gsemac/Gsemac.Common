@@ -9,10 +9,10 @@ namespace Gsemac.Text {
 
         // Public members
 
-        public CaseConverter(StringCasing casing) :
+        public CaseConverter(StringCase casing) :
             this(casing, CasingOptions.Default) {
         }
-        public CaseConverter(StringCasing casing, CasingOptions options) {
+        public CaseConverter(StringCase casing, CasingOptions options) {
 
             this.casing = casing;
             this.options = options;
@@ -25,31 +25,31 @@ namespace Gsemac.Text {
 
         }
 
-        public static string ToCase(string input, StringCasing casing) {
+        public static string ToCase(string input, StringCase casing) {
 
             return ToCase(input, casing, CasingOptions.Default);
 
         }
-        public static string ToCase(string input, StringCasing casing, CasingOptions options) {
+        public static string ToCase(string input, StringCase casing, CasingOptions options) {
 
             if (string.IsNullOrEmpty(input))
                 return input;
 
             switch (casing) {
 
-                case StringCasing.Unchanged:
+                case StringCase.Unchanged:
                     return input;
 
-                case StringCasing.Lower:
+                case StringCase.Lower:
                     return input.ToLowerInvariant();
 
-                case StringCasing.Upper:
+                case StringCase.Upper:
                     return input.ToUpperInvariant();
 
-                case StringCasing.Proper:
+                case StringCase.Proper:
                     return ToProper(input, options);
 
-                case StringCasing.Sentence:
+                case StringCase.Sentence:
                     return ToSentence(input, options);
 
                 default:
@@ -99,20 +99,20 @@ namespace Gsemac.Text {
 
         public static string ToSentence(string input) {
 
-            return ToSentence(input, CasingOptions.Default, SentenceCasingOptions.Default);
+            return ToSentence(input, CasingOptions.Default, SentenceCaseOptions.Default);
 
         }
         public static string ToSentence(string input, CasingOptions options) {
 
-            return ToSentence(input, options, SentenceCasingOptions.Default);
+            return ToSentence(input, options, SentenceCaseOptions.Default);
 
         }
-        public static string ToSentence(string input, SentenceCasingOptions options) {
+        public static string ToSentence(string input, SentenceCaseOptions options) {
 
             return ToSentence(input, CasingOptions.Default, options);
 
         }
-        public static string ToSentence(string input, CasingOptions options, SentenceCasingOptions sentenceCasingOptions) {
+        public static string ToSentence(string input, CasingOptions options, SentenceCaseOptions sentenceCasingOptions) {
 
             if (string.IsNullOrEmpty(input))
                 return input;
@@ -122,11 +122,11 @@ namespace Gsemac.Text {
 
             string result = input;
 
-            if (sentenceCasingOptions.HasFlag(SentenceCasingOptions.DetectMultipleSentences)) {
+            if (sentenceCasingOptions.HasFlag(SentenceCaseOptions.DetectMultipleSentences)) {
 
                 // Detect multiple sentences in the same string, and convert them all to sentence case.
 
-                string pattern = sentenceCasingOptions.HasFlag(SentenceCasingOptions.RequireWhitespaceAfterPunctuation) ?
+                string pattern = sentenceCasingOptions.HasFlag(SentenceCaseOptions.RequireWhitespaceAfterPunctuation) ?
                     @"(?:^|[\.!?]\s)\s*(\w)" :
                     @"(?:^|[\.!?])\s*(\w)";
 
@@ -157,38 +157,38 @@ namespace Gsemac.Text {
 
         }
 
-        public static StringCasing DetectCase(string input) {
+        public static StringCase DetectCase(string input) {
 
             if (string.IsNullOrWhiteSpace(input))
-                return StringCasing.Unchanged;
+                return StringCase.Unchanged;
 
             if (input.Equals(input.ToUpperInvariant()))
-                return StringCasing.Upper;
+                return StringCase.Upper;
 
             if (input.Equals(input.ToLowerInvariant()))
-                return StringCasing.Lower;
+                return StringCase.Lower;
 
             char[] firstCharsOfEachWord = Regex.Matches(input, @"\s*\b(.).+?\b").Cast<Match>().Select(m => m.Groups[1].Value.First()).ToArray();
 
             // If the first letter of each word is uppercase, assume we have Proper Case.
 
             if (firstCharsOfEachWord.All(c => !char.IsLower(c)))
-                return StringCasing.Proper;
+                return StringCase.Proper;
 
             // If the first letter of the first word is uppercase, assume we have Sentence Case.
 
             if (firstCharsOfEachWord.Any() && !char.IsLower(firstCharsOfEachWord.First()))
-                return StringCasing.Sentence;
+                return StringCase.Sentence;
 
             // We could not detect the case.
 
-            return StringCasing.Unchanged;
+            return StringCase.Unchanged;
 
         }
 
         // Private members
 
-        private readonly StringCasing casing;
+        private readonly StringCase casing;
         private readonly CasingOptions options;
 
         private static string CapitalizeRomanNumerals(string input) {

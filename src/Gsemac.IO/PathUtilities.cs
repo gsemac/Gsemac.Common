@@ -79,8 +79,9 @@ namespace Gsemac.IO {
 
             // Return the remaining segments.
 
-            IEnumerable<string> remainingSegments = StringUtilities.Split(path, new[] { Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar }, Text.StringSplitOptionsEx.AppendDelimiter)
-                .Where(segment => !string.IsNullOrEmpty(segment));
+            IEnumerable<string> remainingSegments = StringUtilities.Split(path, new[] { Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar }, new StringSplitOptionsEx() {
+                SplitAfterDelimiter = true,
+            }).Where(segment => !string.IsNullOrEmpty(segment));
 
             foreach (string segment in remainingSegments)
                 yield return segment;

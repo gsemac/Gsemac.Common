@@ -4,12 +4,12 @@ namespace Gsemac.Text.Extensions {
 
     public static class StringExtensions {
 
-        public static string ToCase(this string input, StringCasing casing) {
+        public static string ToCase(this string input, StringCase casing) {
 
             return CaseConverter.ToCase(input, casing);
 
         }
-        public static string ToCase(this string input, StringCasing casing, CasingOptions options) {
+        public static string ToCase(this string input, StringCase casing, CasingOptions options) {
 
             return CaseConverter.ToCase(input, casing, options);
 

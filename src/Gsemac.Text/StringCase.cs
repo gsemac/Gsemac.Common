@@ -1,6 +1,6 @@
 ﻿namespace Gsemac.Text {
 
-    public enum StringCasing {
+    public enum StringCase {
         Unchanged = 0,
         Lower,
         Upper,
