@@ -10,9 +10,9 @@ namespace Gsemac.Text {
         // Public members
 
         public CaseConverter(StringCase casing) :
-            this(casing, CasingOptions.Default) {
+            this(casing, CaseConversionOptions.Default) {
         }
-        public CaseConverter(StringCase casing, CasingOptions options) {
+        public CaseConverter(StringCase casing, CaseConversionOptions options) {
 
             this.casing = casing;
             this.options = options;
@@ -27,10 +27,10 @@ namespace Gsemac.Text {
 
         public static string ToCase(string input, StringCase casing) {
 
-            return ToCase(input, casing, CasingOptions.Default);
+            return ToCase(input, casing, CaseConversionOptions.Default);
 
         }
-        public static string ToCase(string input, StringCase casing, CasingOptions options) {
+        public static string ToCase(string input, StringCase casing, CaseConversionOptions options) {
 
             if (string.IsNullOrEmpty(input))
                 return input;
@@ -70,10 +70,10 @@ namespace Gsemac.Text {
 
         public static string ToProper(string input) {
 
-            return ToProper(input, CasingOptions.Default);
+            return ToProper(input, CaseConversionOptions.Default);
 
         }
-        public static string ToProper(string input, CasingOptions options) {
+        public static string ToProper(string input, CaseConversionOptions options) {
 
             if (string.IsNullOrEmpty(input))
                 return input;
@@ -81,7 +81,7 @@ namespace Gsemac.Text {
             // TextInfo.ToTitleCase preserves sequences of all-caps, assuming that the sequence represents an acronym.
             // If we do not wish to preserve acronyms, we'll make the entire string lowercase first.
 
-            if (!options.HasFlag(CasingOptions.PreserveAcronyms))
+            if (!options.HasFlag(CaseConversionOptions.PreserveAcronyms))
                 input = input.ToLowerInvariant();
 
             string result = System.Threading.Thread.CurrentThread.CurrentCulture.TextInfo.ToTitleCase(input);
@@ -90,7 +90,7 @@ namespace Gsemac.Text {
 
             result = Regex.Replace(result, @"\b(['’])S\b", "$1s");
 
-            if (options.HasFlag(CasingOptions.CapitalizeRomanNumerals))
+            if (options.HasFlag(CaseConversionOptions.CapitalizeRomanNumerals))
                 result = CapitalizeRomanNumerals(result);
 
             return result;
@@ -99,25 +99,25 @@ namespace Gsemac.Text {
 
         public static string ToSentence(string input) {
 
-            return ToSentence(input, CasingOptions.Default, SentenceCaseOptions.Default);
+            return ToSentence(input, CaseConversionOptions.Default, SentenceCaseOptions.Default);
 
         }
-        public static string ToSentence(string input, CasingOptions options) {
+        public static string ToSentence(string input, CaseConversionOptions options) {
 
             return ToSentence(input, options, SentenceCaseOptions.Default);
 
         }
         public static string ToSentence(string input, SentenceCaseOptions options) {
 
-            return ToSentence(input, CasingOptions.Default, options);
+            return ToSentence(input, CaseConversionOptions.Default, options);
 
         }
-        public static string ToSentence(string input, CasingOptions options, SentenceCaseOptions sentenceCasingOptions) {
+        public static string ToSentence(string input, CaseConversionOptions options, SentenceCaseOptions sentenceCasingOptions) {
 
             if (string.IsNullOrEmpty(input))
                 return input;
 
-            if (!options.HasFlag(CasingOptions.PreserveAcronyms))
+            if (!options.HasFlag(CaseConversionOptions.PreserveAcronyms))
                 input = input.ToLowerInvariant();
 
             string result = input;
@@ -141,7 +141,7 @@ namespace Gsemac.Text {
 
             }
 
-            if (options.HasFlag(CasingOptions.CapitalizeRomanNumerals))
+            if (options.HasFlag(CaseConversionOptions.CapitalizeRomanNumerals))
                 result = CapitalizeRomanNumerals(result);
 
             return result;
@@ -189,7 +189,7 @@ namespace Gsemac.Text {
         // Private members
 
         private readonly StringCase casing;
-        private readonly CasingOptions options;
+        private readonly CaseConversionOptions options;
 
         private static string CapitalizeRomanNumerals(string input) {
 

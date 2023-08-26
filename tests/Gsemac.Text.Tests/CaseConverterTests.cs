@@ -22,19 +22,19 @@ namespace Gsemac.Text.Tests {
         [TestMethod]
         public void TestToProperCaseWithUpperCaseAndPreserveAcronymsOption() {
 
-            Assert.AreEqual("MY TITLE", CaseConverter.ToProper("MY TITLE", CasingOptions.PreserveAcronyms));
+            Assert.AreEqual("MY TITLE", CaseConverter.ToProper("MY TITLE", CaseConversionOptions.PreserveAcronyms));
 
         }
         [TestMethod]
         public void TestToProperCaseWithRomanNumerals() {
 
-            Assert.AreEqual("James III Of Scotland", CaseConverter.ToProper("james iii of scotland", CasingOptions.CapitalizeRomanNumerals));
+            Assert.AreEqual("James III Of Scotland", CaseConverter.ToProper("james iii of scotland", CaseConversionOptions.CapitalizeRomanNumerals));
 
         }
         [TestMethod]
         public void TestToProperCaseWithRomanNumeralsInsideOfWord() {
 
-            Assert.AreEqual("The Liver Is An Organ", CaseConverter.ToProper("the liver is an organ", CasingOptions.CapitalizeRomanNumerals));
+            Assert.AreEqual("The Liver Is An Organ", CaseConverter.ToProper("the liver is an organ", CaseConversionOptions.CapitalizeRomanNumerals));
 
         }
         [TestMethod]

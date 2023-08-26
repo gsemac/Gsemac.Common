@@ -9,7 +9,7 @@ namespace Gsemac.Text.Extensions {
             return CaseConverter.ToCase(input, casing);
 
         }
-        public static string ToCase(this string input, StringCase casing, CasingOptions options) {
+        public static string ToCase(this string input, StringCase casing, CaseConversionOptions options) {
 
             return CaseConverter.ToCase(input, casing, options);
 
@@ -19,7 +19,7 @@ namespace Gsemac.Text.Extensions {
             return CaseConverter.ToProper(input);
 
         }
-        public static string ToProper(this string input, CasingOptions options) {
+        public static string ToProper(this string input, CaseConversionOptions options) {
 
             return CaseConverter.ToProper(input, options);
 
@@ -29,7 +29,7 @@ namespace Gsemac.Text.Extensions {
             return CaseConverter.ToSentence(input);
 
         }
-        public static string ToSentence(this string input, CasingOptions options) {
+        public static string ToSentence(this string input, CaseConversionOptions options) {
 
             return CaseConverter.ToSentence(input, options);
 

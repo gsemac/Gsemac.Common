@@ -3,7 +3,7 @@
 namespace Gsemac.Text {
 
     [Flags]
-    public enum CasingOptions {
+    public enum CaseConversionOptions {
         None = 0,
         CapitalizeRomanNumerals = 1,
         PreserveAcronyms = 2,
