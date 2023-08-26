@@ -136,7 +136,7 @@ namespace Gsemac.IO.Extensions {
 
                 // Allow multi-character newlines to be escaped when the "BreakOnNewLine" option is enabled.
 
-                if (nextChar == '\\' && !insideEscapeSequence)
+                if (nextChar == options.EscapeCharacter && !insideEscapeSequence)
                     insideEscapeSequence = true;
                 else if (!(nextCharIsNewLine && ((char)reader.Peek()).IsNewLine() && options.BreakOnNewLine))
                     insideEscapeSequence = false;
@@ -248,7 +248,7 @@ namespace Gsemac.IO.Extensions {
 
                 // Allow multi-character newlines to be escaped when the "BreakOnNewLine" option is enabled.
 
-                if (nextChar == '\\' && !insideEscapeSequence)
+                if (nextChar == options.EscapeCharacter && !insideEscapeSequence)
                     insideEscapeSequence = true;
                 else if (!(nextCharIsNewLine && ((char)reader.Peek()).IsNewLine() && options.BreakOnNewLine))
                     insideEscapeSequence = false;

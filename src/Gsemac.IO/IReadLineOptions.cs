@@ -2,9 +2,11 @@
 
     public interface IReadLineOptions {
 
+        bool AllowEscapedDelimiters { get; }
         bool BreakOnNewLine { get; }
         bool ConsumeDelimiter { get; }
-        bool AllowEscapedDelimiters { get; }
+
+        char EscapeCharacter { get; }
 
     }
 

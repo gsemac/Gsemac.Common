@@ -5,9 +5,11 @@
 
         // Public members
 
+        public bool AllowEscapedDelimiters { get; set; } = false;
         public bool BreakOnNewLine { get; set; } = true;
         public bool ConsumeDelimiter { get; set; } = true;
-        public bool AllowEscapedDelimiters { get; set; } = false;
+
+        public char EscapeCharacter { get; set; } = '\\';
 
         public static ReadLineOptions Default => new ReadLineOptions();
 
