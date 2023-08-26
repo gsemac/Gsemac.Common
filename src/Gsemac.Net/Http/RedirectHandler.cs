@@ -1,11 +1,13 @@
 ﻿using Gsemac.Net.Extensions;
 using Gsemac.Net.Http.Extensions;
+using Gsemac.Net.Http.Headers;
 using System;
 using System.Linq;
 using System.Net;
 using System.Threading;
 
-namespace Gsemac.Net.Http {
+namespace Gsemac.Net.Http
+{
 
     // While redirections can be handled automatically be enabling "AllowAutoRedirect", the default implementation ignores the set-cookie header of intermediate responses.
     // This implementation preserves cookies set throughout the entire chain of requests.

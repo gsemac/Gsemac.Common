@@ -1,5 +1,6 @@
 ﻿using Gsemac.Collections.Extensions;
 using Gsemac.Net.Extensions;
+using Gsemac.Net.Http.Headers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,7 +9,8 @@ using System.Reflection;
 using System.Text;
 using System.Threading;
 
-namespace Gsemac.Net.Http {
+namespace Gsemac.Net.Http
+{
 
     // Despite the RFC stating that header ordering doesn't matter, some CDNs will block requests if the headers are not in a certain order (e.g. Cloudflare).
     // See https://sansec.io/research/http-header-order-is-important

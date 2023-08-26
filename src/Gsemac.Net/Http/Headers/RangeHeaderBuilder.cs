@@ -1,10 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
 using System.Text.RegularExpressions;
 
-namespace Gsemac.Net.Http {
+namespace Gsemac.Net.Http.Headers {
 
     public class RangeHeaderBuilder :
         IRangeHeaderBuilder {

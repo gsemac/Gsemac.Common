@@ -1,6 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace Gsemac.Net.Http.Tests {
+namespace Gsemac.Net.Http.Headers.Tests {
 
     [TestClass]
     public class RefreshHeaderValueTests {

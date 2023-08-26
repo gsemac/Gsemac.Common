@@ -1,6 +1,6 @@
-﻿using System;
+﻿using Gsemac.Net.Http.Headers;
+using System;
 using System.IO;
-using System.Net;
 using System.Text;
 
 namespace Gsemac.Net.Http {

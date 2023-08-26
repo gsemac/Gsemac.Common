@@ -1,11 +1,12 @@
-﻿using Gsemac.Net.Http;
+﻿using Gsemac.Net.Http.Headers;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
 using System.Net;
 
-namespace Gsemac.Net.Extensions {
+namespace Gsemac.Net.Extensions
+{
 
     public static class WebHeaderCollectionExtensions {
 

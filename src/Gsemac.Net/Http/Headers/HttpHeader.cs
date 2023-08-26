@@ -3,7 +3,7 @@ using System;
 using System.Net;
 using System.Text.RegularExpressions;
 
-namespace Gsemac.Net.Http {
+namespace Gsemac.Net.Http.Headers {
 
     public class HttpHeader :
         IHttpHeader {

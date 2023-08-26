@@ -1,4 +1,5 @@
-﻿using Gsemac.Net.Properties;
+﻿using Gsemac.Net.Http.Headers;
+using Gsemac.Net.Properties;
 using System;
 using System.Globalization;
 using System.IO;

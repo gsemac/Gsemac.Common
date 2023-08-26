@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Gsemac.Net.Http.Headers;
+using System;
 using System.Net;
 
 namespace Gsemac.Net.Http.Extensions {

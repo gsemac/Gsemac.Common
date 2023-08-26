@@ -1,11 +1,13 @@
-﻿using Gsemac.Net.Tests.Properties;
+﻿using Gsemac.Net.Http.Headers;
+using Gsemac.Net.Tests.Properties;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
-namespace Gsemac.Net.Http.Tests {
+namespace Gsemac.Net.Http.Tests
+{
 
     [TestClass]
     public class HttpRequestReaderTests {

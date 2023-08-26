@@ -1,11 +1,13 @@
 ﻿using Gsemac.IO;
+using Gsemac.Net.Http.Headers;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
 
-namespace Gsemac.Net.Http {
+namespace Gsemac.Net.Http
+{
 
     public abstract class HttpReaderBase :
         IHttpReader {

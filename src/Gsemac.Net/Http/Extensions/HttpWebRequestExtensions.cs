@@ -1,11 +1,13 @@
 ﻿using Gsemac.Net.Extensions;
+using Gsemac.Net.Http.Headers;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Net;
 using System.Text.RegularExpressions;
 
-namespace Gsemac.Net.Http.Extensions {
+namespace Gsemac.Net.Http.Extensions
+{
 
     public static class HttpWebRequestExtensions {
 

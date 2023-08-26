@@ -1,4 +1,4 @@
-﻿namespace Gsemac.Net.Http {
+﻿namespace Gsemac.Net.Http.Headers {
 
     public interface IRangeHeaderBuilder {
 

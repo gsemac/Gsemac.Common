@@ -1,11 +1,13 @@
 ﻿using Gsemac.Net.Extensions;
 using Gsemac.Net.Http;
+using Gsemac.Net.Http.Headers;
 using System;
 using System.IO;
 using System.Net;
 using System.Text.RegularExpressions;
 
-namespace Gsemac.Net.Curl {
+namespace Gsemac.Net.Curl
+{
 
     internal abstract class CurlHttpWebResponseBase :
         HttpWebResponseBase {

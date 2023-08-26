@@ -1,9 +1,11 @@
-﻿using Gsemac.Text;
+﻿using Gsemac.Net.Http.Headers;
+using Gsemac.Text;
 using System;
 using System.IO;
 using System.Text;
 
-namespace Gsemac.Net.Http {
+namespace Gsemac.Net.Http
+{
 
     public abstract class HttpWriterBase :
         IHttpWriter {

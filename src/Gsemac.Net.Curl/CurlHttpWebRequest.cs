@@ -2,6 +2,7 @@
 using Gsemac.IO.Extensions;
 using Gsemac.Net.Extensions;
 using Gsemac.Net.Http;
+using Gsemac.Net.Http.Headers;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -9,7 +10,8 @@ using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Gsemac.Net.Curl {
+namespace Gsemac.Net.Curl
+{
 
     public class CurlHttpWebRequest :
         HttpWebRequestBase {

@@ -1,6 +1,8 @@
 ﻿using System.IO;
+using Gsemac.Net.Http.Headers;
 
-namespace Gsemac.Net.Http {
+namespace Gsemac.Net.Http
+{
 
     public interface IHttpWriter {
 

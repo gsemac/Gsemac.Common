@@ -4,7 +4,7 @@ using System.Globalization;
 using System.Text;
 using System.Text.RegularExpressions;
 
-namespace Gsemac.Net.Http {
+namespace Gsemac.Net.Http.Headers {
 
     public sealed class RefreshHeaderValue {
 
@@ -65,7 +65,7 @@ namespace Gsemac.Net.Http {
 
             }
 
-            return !(result is null);
+            return result is object;
 
         }
 
