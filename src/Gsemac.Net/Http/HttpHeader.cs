@@ -8,6 +8,8 @@ namespace Gsemac.Net.Http {
     public class HttpHeader :
         IHttpHeader {
 
+        // Public members
+
         public string Name { get; }
         public string Value { get; }
 
@@ -32,11 +34,16 @@ namespace Gsemac.Net.Http {
 
         public static HttpHeader Parse(string httpHeader) {
 
-            if (TryParse(httpHeader, out HttpHeader result))
-                return result;
-            else
-                throw new ArgumentException(string.Format(ExceptionMessages.InvalidHttpHeaderWithString, httpHeader), nameof(httpHeader));
+            if (TryParse(httpHeader, out HttpHeader result)) {
 
+                return result;
+
+            }
+            else {
+
+                throw new FormatException(string.Format(ExceptionMessages.InvalidHttpHeaderWithString, httpHeader));
+
+            }
 
         }
         public static bool TryParse(string httpHeader, out HttpHeader result) {
@@ -57,7 +64,7 @@ namespace Gsemac.Net.Http {
 
             }
 
-            return result != null;
+            return result is object;
 
         }
 

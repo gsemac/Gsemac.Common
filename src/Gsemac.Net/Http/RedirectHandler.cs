@@ -119,7 +119,7 @@ namespace Gsemac.Net.Http {
                         }
 
                     }
-                    else if (HasRefreshHeader(response) && RefreshHeader.TryParse(response.Headers["refresh"], out RefreshHeader refreshHeader) && !string.IsNullOrWhiteSpace(refreshHeader.Url) && !refreshHeader.Url.Equals(request.RequestUri.AbsoluteUri)) {
+                    else if (HasRefreshHeader(response) && RefreshHeaderValue.TryParse(response.Headers["refresh"], out RefreshHeaderValue refreshHeaderValue) && !string.IsNullOrWhiteSpace(refreshHeaderValue.Url) && !refreshHeaderValue.Url.Equals(request.RequestUri.AbsoluteUri)) {
 
                         // The request had a refresh header.
 
@@ -128,7 +128,7 @@ namespace Gsemac.Net.Http {
 
                         try {
 
-                            request = CreateRequestFromRefreshHeader(originatingRequest, refreshHeader);
+                            request = CreateRequestFromRefreshHeader(originatingRequest, refreshHeaderValue);
 
                         }
                         finally {
@@ -167,18 +167,18 @@ namespace Gsemac.Net.Http {
 
         private readonly IHttpWebRequestFactory httpWebRequestFactory;
 
-        private IHttpWebRequest CreateRequestFromRefreshHeader(IHttpWebRequest originatingRequest, RefreshHeader refreshHeader) {
+        private IHttpWebRequest CreateRequestFromRefreshHeader(IHttpWebRequest originatingRequest, RefreshHeaderValue refreshHeaderValue) {
 
             if (originatingRequest is null)
                 throw new ArgumentNullException(nameof(originatingRequest));
 
-            if (refreshHeader is null)
-                throw new ArgumentNullException(nameof(refreshHeader));
+            if (refreshHeaderValue is null)
+                throw new ArgumentNullException(nameof(refreshHeaderValue));
 
             // Wait for the timeout period, preferring the request's timeout if it is shorter.
 
             TimeSpan timeout = new[] {
-                                refreshHeader.Timeout,
+                                refreshHeaderValue.Timeout,
                                 TimeSpan.FromMilliseconds(originatingRequest.Timeout),
                                 MaximumRefreshTimeout,
                             }.Min();
@@ -188,7 +188,7 @@ namespace Gsemac.Net.Http {
             // Initiate a new request to the new endpoint, preserving any cookies that have been set.
             // Unlike regular redirects, no referer is included, and the request is treated like an entirely new GET request. 
 
-            IHttpWebRequest request = httpWebRequestFactory.Create(Url.Combine(originatingRequest.RequestUri.AbsoluteUri, refreshHeader.Url));
+            IHttpWebRequest request = httpWebRequestFactory.Create(Url.Combine(originatingRequest.RequestUri.AbsoluteUri, refreshHeaderValue.Url));
 
             request.CookieContainer = originatingRequest.CookieContainer;
 
