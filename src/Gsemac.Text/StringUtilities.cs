@@ -388,12 +388,12 @@ namespace Gsemac.Text {
 
         }
 
-        public static string Unescape(string input, UnescapeOptions options = UnescapeOptions.Default) {
+        public static string Unescape(string value, UnescapeOptions options = UnescapeOptions.Default) {
 
-            if (string.IsNullOrEmpty(input))
-                return input;
+            if (string.IsNullOrEmpty(value))
+                return value;
 
-            string result = input;
+            string result = value;
 
             if (options.HasFlag(UnescapeOptions.RepairTextEncoding))
                 result = RepairTextEncoding(result);
@@ -426,9 +426,9 @@ namespace Gsemac.Text {
 
         }
 
-        public static bool IsNumeric(string input) {
+        public static bool IsNumeric(string value) {
 
-            if (string.IsNullOrWhiteSpace(input))
+            if (string.IsNullOrWhiteSpace(value))
                 return false;
 
             // The idea behind this method is that it should return true for any string a naive observer would consider to be a number.
@@ -436,49 +436,74 @@ namespace Gsemac.Text {
 
             // Allow a leading a sign for negative numbers, but not positive numbers.
 
-            if (input.TrimStart().StartsWith("+"))
+            if (value.TrimStart().StartsWith("+"))
                 return false;
 
-            return IsNumeric(input, NumberStyles.Integer | NumberStyles.AllowDecimalPoint);
+            return IsNumeric(value, NumberStyles.Integer | NumberStyles.AllowDecimalPoint);
 
         }
-        public static bool IsNumeric(string input, NumberStyles styles) {
+        public static bool IsNumeric(string value, NumberStyles styles) {
 
-            if (string.IsNullOrWhiteSpace(input))
+            if (string.IsNullOrWhiteSpace(value))
                 return false;
 
-            return double.TryParse(input, styles, CultureInfo.InvariantCulture, out _);
+            return double.TryParse(value, styles, CultureInfo.InvariantCulture, out _);
 
         }
-        public static string PadDigits(string num, int numberOfDigits) {
+        public static bool IsNewLine(string value) {
+
+            if (string.IsNullOrEmpty(value))
+                return false;
+
+            return value.Equals("\r") ||
+                value.Equals("\n") ||
+                value.Equals("\r\n");
+
+        }
+        public static bool CanBeEncodedAs(string value, Encoding encoding) {
+
+            if (encoding is null)
+                throw new ArgumentNullException(nameof(encoding));
+
+            if (string.IsNullOrEmpty(value))
+                return false;
+
+            byte[] encodedBytes = encoding.GetBytes(value);
+            string decodedString = encoding.GetString(encodedBytes);
+
+            return decodedString.Equals(value, StringComparison.InvariantCulture);
+
+        }
+
+        public static string PadDigits(string numericString, int numberOfDigits) {
 
             // Trim all existing leading zeros.
 
-            num = (num ?? "").TrimStart('0');
+            numericString = (numericString ?? "").TrimStart('0');
 
             // Make sure the string contains at least one (whole) digit.
 
-            if (num.Length <= 0 || num.StartsWith("."))
-                num = "0" + num;
+            if (numericString.Length <= 0 || numericString.StartsWith("."))
+                numericString = "0" + numericString;
 
             // Pad the string with zeros so that the leading digits have a length of /at least/ the desired number of digits.
             // If there are already more leading digits than desired, no padding is added.
 
-            int currentLeadingDigits = num.IndexOf(".");
+            int currentLeadingDigits = numericString.IndexOf(".");
 
             if (currentLeadingDigits < 0)
-                currentLeadingDigits = num.Length;
+                currentLeadingDigits = numericString.Length;
 
             int paddingLength = Math.Max(numberOfDigits - currentLeadingDigits, 0);
 
-            num = "".PadLeft(paddingLength, '0') + num;
+            numericString = "".PadLeft(paddingLength, '0') + numericString;
 
-            return num;
+            return numericString;
 
         }
-        public static string PadDigits(int num, int numberOfDigits) {
+        public static string PadDigits(int numericString, int numberOfDigits) {
 
-            return PadDigits(num.ToString(CultureInfo.InvariantCulture), numberOfDigits);
+            return PadDigits(numericString.ToString(CultureInfo.InvariantCulture), numberOfDigits);
 
         }
 
@@ -547,17 +572,6 @@ namespace Gsemac.Text {
         public static Stream StringToStream(string value, Encoding encoding) {
 
             return new MemoryStream(encoding.GetBytes(value));
-
-        }
-
-        public static bool IsNewLine(string value) {
-
-            if (string.IsNullOrEmpty(value))
-                return false;
-
-            return value.Equals("\r") ||
-                value.Equals("\n") ||
-                value.Equals("\r\n");
 
         }
 

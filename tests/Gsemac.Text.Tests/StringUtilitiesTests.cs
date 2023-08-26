@@ -638,6 +638,33 @@ namespace Gsemac.Text.Tests {
 
         }
 
+        // CanBeEncodedAs
+
+        [TestMethod]
+        public void TestCanBeEncodedAsWithAsciiStringAndAsciiEncoding() {
+
+            Assert.IsTrue(StringUtilities.CanBeEncodedAs("hello, world!", Encoding.ASCII));
+
+        }
+        [TestMethod]
+        public void TestCanBeEncodedAsWithAsciiStringAndUtf8Encoding() {
+
+            Assert.IsTrue(StringUtilities.CanBeEncodedAs("hello, world!", Encoding.UTF8));
+
+        }
+        [TestMethod]
+        public void TestCanBeEncodedAsWitUtf8StringAndAsciiEncoding() {
+
+            Assert.IsFalse(StringUtilities.CanBeEncodedAs("こんにちは世界！", Encoding.ASCII));
+
+        }
+        [TestMethod]
+        public void TestCanBeEncodedAsWitUtf8StringAndUtf8Encoding() {
+
+            Assert.IsTrue(StringUtilities.CanBeEncodedAs("こんにちは世界！", Encoding.UTF8));
+
+        }
+
         // PadDigits
 
         [TestMethod]
