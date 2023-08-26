@@ -106,6 +106,15 @@ namespace Gsemac.Net.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The string &apos;{0}&apos; is not a valid HTTP content-disposition header..
+        /// </summary>
+        internal static string InvalidHttpContentDispositionHeaderWithString {
+            get {
+                return ResourceManager.GetString("InvalidHttpContentDispositionHeaderWithString", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The given string is not a valid HTTP header..
         /// </summary>
         internal static string InvalidHttpHeader {

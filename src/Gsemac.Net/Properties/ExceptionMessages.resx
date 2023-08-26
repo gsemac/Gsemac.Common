@@ -132,6 +132,9 @@
   <data name="InvalidCookieDomainPattern" xml:space="preserve">
     <value>The given cookie domain pattern is invalid.</value>
   </data>
+  <data name="InvalidHttpContentDispositionHeaderWithString" xml:space="preserve">
+    <value>The string '{0}' is not a valid HTTP content-disposition header.</value>
+  </data>
   <data name="InvalidHttpHeader" xml:space="preserve">
     <value>The given string is not a valid HTTP header.</value>
   </data>
