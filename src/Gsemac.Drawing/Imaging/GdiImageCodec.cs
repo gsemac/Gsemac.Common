@@ -8,7 +8,7 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
-using static Gsemac.Win32.Native.Defines;
+using static Gsemac.Win32.Native.Constants;
 
 namespace Gsemac.Drawing.Imaging {
 

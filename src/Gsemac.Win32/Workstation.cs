@@ -14,7 +14,7 @@ namespace Gsemac.Win32 {
         }
         public static bool LogOff() {
 
-            return User32.ExitWindowsEx(Defines.EWX_LOGOFF, Defines.SHTDN_REASON_MAJOR_OTHER);
+            return User32.ExitWindowsEx(Constants.EWX_LOGOFF, Constants.SHTDN_REASON_MAJOR_OTHER);
 
         }
 
@@ -31,13 +31,13 @@ namespace Gsemac.Win32 {
         public static bool Shutdown() {
 
             return RequestShutdownPrivilege() &&
-                User32.ExitWindowsEx(Defines.EWX_SHUTDOWN, Defines.SHTDN_REASON_MAJOR_OTHER);
+                User32.ExitWindowsEx(Constants.EWX_SHUTDOWN, Constants.SHTDN_REASON_MAJOR_OTHER);
 
         }
         public static bool Shutdown(TimeSpan timeout) {
 
             return RequestShutdownPrivilege() &&
-                Advapi32.InitiateSystemShutdownEx(null, null, (uint)timeout.TotalSeconds, bForceAppsClosed: false, bRebootAfterShutdown: false, Defines.SHTDN_REASON_MAJOR_OTHER);
+                Advapi32.InitiateSystemShutdownEx(null, null, (uint)timeout.TotalSeconds, bForceAppsClosed: false, bRebootAfterShutdown: false, Constants.SHTDN_REASON_MAJOR_OTHER);
 
         }
 
@@ -47,7 +47,7 @@ namespace Gsemac.Win32 {
 
             IntPtr processHandle = Kernel32.GetCurrentProcess();
 
-            if (Advapi32.OpenProcessToken(processHandle, Defines.TOKEN_ADJUST_PRIVILEGES | Defines.TOKEN_QUERY, out IntPtr tokenHandle)) {
+            if (Advapi32.OpenProcessToken(processHandle, Constants.TOKEN_ADJUST_PRIVILEGES | Constants.TOKEN_QUERY, out IntPtr tokenHandle)) {
 
                 TOKEN_PRIVILEGES tokenPrivileges = new TOKEN_PRIVILEGES {
                     PrivilegeCount = 1,
@@ -57,12 +57,12 @@ namespace Gsemac.Win32 {
                                 HighPart = 0,
                                 LowPart = 0,
                             },
-                            Attributes = Defines.SE_PRIVILEGE_ENABLED,
+                            Attributes = Constants.SE_PRIVILEGE_ENABLED,
                         }
                     }
                 };
 
-                return Advapi32.LookupPrivilegeValue(null, Defines.SE_SHUTDOWN_NAME, ref tokenPrivileges.Privileges[0].Luid) &&
+                return Advapi32.LookupPrivilegeValue(null, Constants.SE_SHUTDOWN_NAME, ref tokenPrivileges.Privileges[0].Luid) &&
                     Advapi32.AdjustTokenPrivileges(tokenHandle, false, ref tokenPrivileges);
 
             }

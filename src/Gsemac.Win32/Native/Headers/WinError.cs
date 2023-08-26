@@ -1,6 +1,6 @@
 ﻿namespace Gsemac.Win32.Native {
 
-    public static partial class Defines {
+    public static partial class Constants {
 
         /// <summary>
         /// The disk is full.

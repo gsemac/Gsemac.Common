@@ -3,7 +3,7 @@ using System;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows.Forms;
-using static Gsemac.Win32.Native.Defines;
+using static Gsemac.Win32.Native.Constants;
 
 namespace Gsemac.Forms {
 

@@ -161,8 +161,8 @@ namespace Gsemac.Forms {
                 return 0;
 
             int scrollBarNum = scrollBar == ScrollBars.Horizontal ?
-                Defines.SB_HORZ :
-                Defines.SB_VERT;
+                Constants.SB_HORZ :
+                Constants.SB_VERT;
 
             return User32.GetScrollPos(control.Handle, scrollBarNum);
 
@@ -180,20 +180,20 @@ namespace Gsemac.Forms {
             if (scrollBar == ScrollBars.None)
                 return;
 
-            int scrollBarNum = Defines.SB_VERT;
-            int scrollBarDirection = Defines.WM_VSCROLL;
+            int scrollBarNum = Constants.SB_VERT;
+            int scrollBarDirection = Constants.WM_VSCROLL;
 
             if (scrollBar == ScrollBars.Both) {
 
                 // TODO: What direction should be set here?
 
-                scrollBarNum = Defines.SB_BOTH;
+                scrollBarNum = Constants.SB_BOTH;
 
             }
             else if (scrollBar == ScrollBars.Horizontal) {
 
-                scrollBarNum = Defines.SB_HORZ;
-                scrollBarDirection = Defines.WM_HSCROLL;
+                scrollBarNum = Constants.SB_HORZ;
+                scrollBarDirection = Constants.WM_HSCROLL;
 
             }
 

@@ -1,6 +1,6 @@
 ﻿namespace Gsemac.Win32.Native {
 
-    public static partial class Defines {
+    public static partial class Constants {
 
         /// <summary>
         /// Indicates that a Platform for Privacy Protection (P3P) header is to be associated with a cookie.

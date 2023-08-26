@@ -21,12 +21,12 @@ namespace Gsemac.Win32.Native {
     public struct TOKEN_PRIVILEGES {
 
         public int PrivilegeCount;
-        [MarshalAs(UnmanagedType.ByValArray, SizeConst = Defines.ANYSIZE_ARRAY)]
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = Constants.ANYSIZE_ARRAY)]
         public LUID_AND_ATTRIBUTES[] Privileges;
 
     }
 
-    public static partial class Defines {
+    public static partial class Constants {
 
         public const int FILE_ATTRIBUTE_ARCHIVE = 0x20;
         public const int FILE_ATTRIBUTE_COMPRESSED = 0x800;

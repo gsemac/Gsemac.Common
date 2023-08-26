@@ -20,7 +20,7 @@ namespace Gsemac.Win32.Native {
         public uint state;
     }
 
-    public static partial class Defines {
+    public static partial class Constants {
 
         public const int HDF_SORTUP = 0x0400;
         public const int HDF_SORTDOWN = 0x0200;

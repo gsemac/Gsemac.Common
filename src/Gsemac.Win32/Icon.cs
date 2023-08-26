@@ -1,7 +1,7 @@
 ﻿using Gsemac.Win32.Native;
 using System;
 using System.Runtime.InteropServices;
-using static Gsemac.Win32.Native.Defines;
+using static Gsemac.Win32.Native.Constants;
 
 #if NETFRAMEWORK
 using System.Drawing;
