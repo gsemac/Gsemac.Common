@@ -10,6 +10,12 @@ namespace Gsemac.Text.Lexers {
         public TokenTypeT Type { get; }
         public string Value { get; }
 
+        public override string ToString() {
+
+            return $"{Type}: {Value}";
+
+        }
+
         // Protected members
 
         protected LexerTokenBase(TokenTypeT type, string value) {

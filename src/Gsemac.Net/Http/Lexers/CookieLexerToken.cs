@@ -22,12 +22,6 @@ namespace Gsemac.Net.Http.Lexers {
             base(type, value) {
         }
 
-        public override string ToString() {
-
-            return $"{Type}: {Value}";
-
-        }
-
     }
 
 }

@@ -1,6 +1,7 @@
 ﻿using Gsemac.IO;
 using Gsemac.IO.Extensions;
 using Gsemac.Text.Lexers;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
@@ -8,7 +9,7 @@ using System.Linq;
 
 namespace Gsemac.Net.Http.Lexers {
 
-    internal class CookieLexer :
+    internal sealed class CookieLexer :
         LexerBase<CookieLexerToken> {
 
         // Public members
@@ -23,6 +24,9 @@ namespace Gsemac.Net.Http.Lexers {
         // Protected members
 
         protected override void ReadNext(Queue<CookieLexerToken> tokens) {
+
+            if (tokens is null)
+                throw new ArgumentNullException(nameof(tokens));
 
             // Designed based on the specification given here:
             // https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Set-Cookie
@@ -65,7 +69,7 @@ namespace Gsemac.Net.Http.Lexers {
                     if (ReadName(tokens, CookieLexerTokenType.AttributeName)) {
 
                         bool isExpiresAttribute = tokens.LastOrDefault()?.
-                            Value.Equals("expires", System.StringComparison.OrdinalIgnoreCase) ?? false;
+                            Value.Equals("expires", StringComparison.OrdinalIgnoreCase) ?? false;
 
                         if (ReadSeparator(tokens, AttributeValueSeparator, CookieLexerTokenType.AttributeValueSeparator))
                             ReadAttributeValue(tokens, isExpiresAttribute);
