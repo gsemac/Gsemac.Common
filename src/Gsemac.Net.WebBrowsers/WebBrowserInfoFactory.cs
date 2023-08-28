@@ -186,9 +186,10 @@ namespace Gsemac.Net.WebBrowsers {
 
             string productVersionStr = versionInfo.ProductVersion;
 
-            return string.IsNullOrWhiteSpace(productVersionStr) ?
-                new System.Version() :
-                new System.Version(productVersionStr);
+            if (!string.IsNullOrWhiteSpace(productVersionStr) && System.Version.TryParse(productVersionStr, out System.Version productVersion))
+                return productVersion;
+
+            return new System.Version();
 
         }
         private static bool Is64BitExecutable(string browserExecutablePath) {
