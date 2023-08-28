@@ -17,6 +17,7 @@
                 "upgrade-insecure-requests",
                 "user-agent",
                 "accept",
+                "referer",
                 "accept-encoding",
                 "accept-language",
             };
