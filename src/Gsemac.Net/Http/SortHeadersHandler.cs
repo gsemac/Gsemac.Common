@@ -1,5 +1,4 @@
-﻿using Gsemac.Collections.Extensions;
-using Gsemac.Net.Extensions;
+﻿using Gsemac.Net.Extensions;
 using Gsemac.Net.Http.Headers;
 using System;
 using System.Collections.Generic;
@@ -9,8 +8,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading;
 
-namespace Gsemac.Net.Http
-{
+namespace Gsemac.Net.Http {
 
     // Despite the RFC stating that header ordering doesn't matter, some CDNs will block requests if the headers are not in a certain order (e.g. Cloudflare).
     // See https://sansec.io/research/http-header-order-is-important
@@ -47,6 +45,9 @@ namespace Gsemac.Net.Http
 
             public ReorderedWebHeaderCollection(WebRequest webRequest) {
 
+                if (webRequest is null)
+                    throw new ArgumentNullException(nameof(webRequest));
+
                 // Store the web request so we can use its properties to generate headers even if they're changed after this object was instantiated.
 
                 this.webRequest = webRequest;
@@ -67,7 +68,9 @@ namespace Gsemac.Net.Http
 
                 StringBuilder sb = new StringBuilder();
 
-                foreach (IHttpHeader header in headers.OrderBy(h => GetHeaderOrder(h))) {
+                string userAgent = headers.Where(header => header.Name.Equals("user-agent")).FirstOrDefault()?.Value ?? string.Empty;
+
+                foreach (IHttpHeader header in headers.OrderBy(h => h, GetHeaderComparer(userAgent))) {
 
                     sb.Append(header.Name);
                     sb.Append(": ");
@@ -94,27 +97,41 @@ namespace Gsemac.Net.Http
                 if (webRequest is null)
                     throw new ArgumentNullException(nameof(webRequest));
 
-                if (!headers.Any(h => h.Name.Equals("Host", StringComparison.OrdinalIgnoreCase)))
-                    headers.Add(new HttpHeader("Host", Url.GetHostname(webRequest.RequestUri.AbsoluteUri)));
+                // Add the "Host" header.
 
-                if (webRequest.KeepAlive && !headers.Any(h => h.Name.Equals("Connection", StringComparison.OrdinalIgnoreCase)))
-                    headers.Add(new HttpHeader("Connection", "keep-alive"));
+                if (!headers.Any(header => header.Name.Equals("Host", StringComparison.OrdinalIgnoreCase)))
+                    headers.Add(new HttpHeader("Host", webRequest.RequestUri.Authority));
+
+                // Add the "Connection" header.
+
+                // We will replace the connection header if it already exists with a lowercase variant.
+                // While .NET likes to send the value in proper case ("Keep-Alive"), mainstream browsers (Chrome, Firefox) will use lowercase ("keep-alive").
+
+                IHttpHeader connectionHeader = headers.Where(header => header.Name.Equals("Connection", StringComparison.OrdinalIgnoreCase)).FirstOrDefault()
+                    ?? new HttpHeader("Connection", webRequest.KeepAlive ? "keep-alive" : "close");
+
+                headers.Remove(connectionHeader);
+
+                headers.Add(new HttpHeader("Connection", connectionHeader.Value.ToLowerInvariant()));
 
             }
-            private static int GetHeaderOrder(IHttpHeader header) {
+            private static IComparer<IHttpHeader> GetHeaderComparer(string userAgent) {
 
-                string[] headerOrder = new[] {
-                    "host",
-                    "connection",
-                    "accept",
-                    "user-agent",
-                };
+                // Different web browsers will send their headers in different orders.
 
-                int order = headerOrder.IndexOf(header.Name.ToLowerInvariant());
+                if (!string.IsNullOrWhiteSpace(userAgent)) {
 
-                return order < 0 ?
-                    headerOrder.Length :
-                    order;
+                    if (userAgent.Contains(" Chrome/"))
+                        return new ChromeHttpHeaderComparer();
+
+                    if (userAgent.Contains(" Firefox/"))
+                        return new FirefoxHttpHeaderComparer();
+
+                }
+
+                // Default to the Chrome header order when we can't determine the user agent.
+
+                return new ChromeHttpHeaderComparer();
 
             }
 
