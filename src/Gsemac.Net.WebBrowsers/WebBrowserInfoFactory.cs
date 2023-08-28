@@ -1,5 +1,6 @@
 ﻿using Gsemac.Core;
 using Gsemac.IO;
+using Gsemac.Net.WebBrowsers.Properties;
 using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
@@ -21,6 +22,9 @@ namespace Gsemac.Net.WebBrowsers {
 
             if (browserExecutablePath is null)
                 throw new ArgumentNullException(nameof(browserExecutablePath));
+
+            if (!File.Exists(browserExecutablePath))
+                throw new FileNotFoundException(ExceptionMessages.WebBrowserExecutablePathNotFound, browserExecutablePath);
 
             FileVersionInfo versionInfo = FileVersionInfo.GetVersionInfo(browserExecutablePath);
 
@@ -82,14 +86,14 @@ namespace Gsemac.Net.WebBrowsers {
 
             // A better way of detecting installed web browsers might be looking up their associated keys in the registry.
 
-            IEnumerable<string> driveDirectoryPaths = System.IO.DriveInfo.GetDrives().Select(info => info.RootDirectory.FullName);
+            IEnumerable<string> driveDirectoryPaths = DriveInfo.GetDrives().Select(info => info.RootDirectory.FullName);
 
             IEnumerable<string> programFilesDirectoryPaths = new string[]{
                 @"Program Files",
                 @"Program Files (x86)",
                 @"Windows\SystemApps", // Microsoft Edge
                 Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-            }.SelectMany(path => driveDirectoryPaths.Select(drivePath => System.IO.Path.Combine(drivePath, path)))
+            }.SelectMany(path => driveDirectoryPaths.Select(drivePath => Path.Combine(drivePath, path)))
             .Distinct();
 
             IEnumerable<string> webBrowserExecutablePaths = new string[]{
@@ -101,10 +105,10 @@ namespace Gsemac.Net.WebBrowsers {
                 @"Mozilla Firefox\firefox.exe",
                 @"Opera\launcher.exe",
                 @"Vivaldi\Application\vivaldi.exe",
-            }.SelectMany(path => programFilesDirectoryPaths.Select(programFilesDirectoryPath => System.IO.Path.Combine(programFilesDirectoryPath, path)))
+            }.SelectMany(path => programFilesDirectoryPaths.Select(programFilesDirectoryPath => Path.Combine(programFilesDirectoryPath, path)))
             .Distinct();
 
-            return webBrowserExecutablePaths.Where(path => System.IO.File.Exists(path));
+            return webBrowserExecutablePaths.Where(path => File.Exists(path));
 
         }
         private static IEnumerable<IWebBrowserInfo> GetGetInstalledBrowsersInternal() {
@@ -138,12 +142,21 @@ namespace Gsemac.Net.WebBrowsers {
         }
         private static string GetBrowserName(FileVersionInfo versionInfo) {
 
-            return versionInfo.ProductName;
+            if (versionInfo is null)
+                throw new ArgumentNullException(nameof(versionInfo));
+
+            return versionInfo.ProductName ?? string.Empty;
 
         }
         private static WebBrowserId GetBrowserId(FileVersionInfo versionInfo) {
 
+            if (versionInfo is null)
+                throw new ArgumentNullException(nameof(versionInfo));
+
             string productName = GetBrowserName(versionInfo);
+
+            if (string.IsNullOrWhiteSpace(productName))
+                return WebBrowserId.Unknown;
 
             if (productName.Equals("firefox", StringComparison.OrdinalIgnoreCase))
                 return WebBrowserId.Firefox;
@@ -168,7 +181,14 @@ namespace Gsemac.Net.WebBrowsers {
         }
         private static System.Version GetBrowserVersion(FileVersionInfo versionInfo) {
 
-            return new System.Version(versionInfo.ProductVersion);
+            if (versionInfo is null)
+                throw new ArgumentNullException(nameof(versionInfo));
+
+            string productVersionStr = versionInfo.ProductVersion;
+
+            return string.IsNullOrWhiteSpace(productVersionStr) ?
+                new System.Version() :
+                new System.Version(productVersionStr);
 
         }
         private static bool Is64BitExecutable(string browserExecutablePath) {
