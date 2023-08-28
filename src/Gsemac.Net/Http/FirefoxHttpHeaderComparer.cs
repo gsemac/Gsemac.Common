@@ -15,6 +15,7 @@
                 "accept",
                 "accept-language",
                 "accept-encoding",
+                "referer",
                 "connection",
                 "upgrade-insecure-requests",
             };
