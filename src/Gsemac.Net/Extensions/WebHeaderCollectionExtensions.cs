@@ -100,7 +100,7 @@ namespace Gsemac.Net.Extensions {
                 return true;
 
             }
-            catch (InvalidOperationException) {
+            catch (Exception) {
 
                 return false;
 
@@ -138,7 +138,7 @@ namespace Gsemac.Net.Extensions {
                 return true;
 
             }
-            catch (InvalidOperationException) {
+            catch (Exception) {
 
                 return false;
 
@@ -147,10 +147,22 @@ namespace Gsemac.Net.Extensions {
         }
         public static bool TrySet(this WebHeaderCollection headerCollection, IHttpHeader header) {
 
+            if (headerCollection is null)
+                throw new ArgumentNullException(nameof(headerCollection));
+
+            if (header is null)
+                throw new ArgumentNullException(nameof(header));
+
             return TrySet(headerCollection, header.Name, header.Value);
 
         }
         public static bool TrySet(this WebHeaderCollection headerCollection, IEnumerable<IHttpHeader> headers) {
+
+            if (headerCollection is null)
+                throw new ArgumentNullException(nameof(headerCollection));
+
+            if (headers is null)
+                throw new ArgumentNullException(nameof(headers));
 
             return !headers.All(header => headerCollection.TrySet(header));
 
