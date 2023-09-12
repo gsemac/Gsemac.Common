@@ -5,19 +5,20 @@ using System.Collections.Specialized;
 using System.Linq;
 using System.Net;
 
-namespace Gsemac.Net.Extensions
-{
+namespace Gsemac.Net.Extensions {
 
     public static class WebHeaderCollectionExtensions {
 
-        public static IEnumerable<IHttpHeader> GetHeaders(this WebHeaderCollection headerCollection) {
+        // Public members
+
+        public static IEnumerable<IHttpHeader> GetAll(this WebHeaderCollection headerCollection) {
 
             foreach (string key in headerCollection.AllKeys)
                 yield return new HttpHeader(key, headerCollection[key]);
 
         }
 
-        public static bool TryGetHeader(this WebHeaderCollection headerCollection, string headerName, out string value) {
+        public static bool TryGet(this WebHeaderCollection headerCollection, string headerName, out string value) {
 
             value = default;
 
@@ -44,7 +45,7 @@ namespace Gsemac.Net.Extensions
             }
 
         }
-        public static bool TryGetHeader(this WebHeaderCollection headerCollection, HttpRequestHeader requestHeader, out string value) {
+        public static bool TryGet(this WebHeaderCollection headerCollection, HttpRequestHeader requestHeader, out string value) {
 
             value = default;
 
@@ -65,7 +66,7 @@ namespace Gsemac.Net.Extensions
             }
 
         }
-        public static bool TryGetHeader(this WebHeaderCollection headerCollection, HttpResponseHeader responseHeader, out string value) {
+        public static bool TryGet(this WebHeaderCollection headerCollection, HttpResponseHeader responseHeader, out string value) {
 
             value = default;
 
@@ -87,7 +88,7 @@ namespace Gsemac.Net.Extensions
 
         }
 
-        public static bool TrySetHeader(this WebHeaderCollection headerCollection, string headerName, string value) {
+        public static bool TrySet(this WebHeaderCollection headerCollection, string headerName, string value) {
 
             if (headerCollection is null)
                 return false;
@@ -106,7 +107,7 @@ namespace Gsemac.Net.Extensions
             }
 
         }
-        public static bool TrySetHeader(this WebHeaderCollection headerCollection, HttpRequestHeader requestHeader, string value) {
+        public static bool TrySet(this WebHeaderCollection headerCollection, HttpRequestHeader requestHeader, string value) {
 
             if (headerCollection is null)
                 return false;
@@ -125,7 +126,7 @@ namespace Gsemac.Net.Extensions
             }
 
         }
-        public static bool TrySetHeader(this WebHeaderCollection headerCollection, HttpResponseHeader responseHeader, string value) {
+        public static bool TrySet(this WebHeaderCollection headerCollection, HttpResponseHeader responseHeader, string value) {
 
             if (headerCollection is null)
                 return false;
@@ -144,14 +145,14 @@ namespace Gsemac.Net.Extensions
             }
 
         }
-        public static bool TrySetHeader(this WebHeaderCollection headerCollection, IHttpHeader header) {
+        public static bool TrySet(this WebHeaderCollection headerCollection, IHttpHeader header) {
 
-            return TrySetHeader(headerCollection, header.Name, header.Value);
+            return TrySet(headerCollection, header.Name, header.Value);
 
         }
-        public static bool TrySetHeaders(this WebHeaderCollection headerCollection, IEnumerable<IHttpHeader> headers) {
+        public static bool TrySet(this WebHeaderCollection headerCollection, IEnumerable<IHttpHeader> headers) {
 
-            return !headers.All(header => headerCollection.TrySetHeader(header));
+            return !headers.All(header => headerCollection.TrySet(header));
 
         }
 
@@ -163,7 +164,7 @@ namespace Gsemac.Net.Extensions
             if (destination is null)
                 throw new ArgumentNullException(nameof(destination));
 
-            foreach (IHttpHeader header in source.GetHeaders())
+            foreach (IHttpHeader header in source.GetAll())
                 destination[header.Name] = header.Value;
 
         }

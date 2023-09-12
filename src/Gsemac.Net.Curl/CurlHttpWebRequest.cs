@@ -196,7 +196,7 @@ namespace Gsemac.Net.Curl
         }
         private void SetHeaders(CurlEasyHandle easyHandle, SList headersList) {
 
-            IEnumerable<IHttpHeader> headers = Headers.GetHeaders();
+            IEnumerable<IHttpHeader> headers = Headers.GetAll();
 
             foreach (IHttpHeader header in headers)
                 headersList.Append($"{header.Name}: {header.Value}");

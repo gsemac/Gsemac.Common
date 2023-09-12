@@ -210,7 +210,7 @@ namespace Gsemac.Net.Http.Extensions
         }
         public static IHttpWebRequest WithHeaders(this IHttpWebRequest httpWebRequest, WebHeaderCollection headers) {
 
-            foreach (IHttpHeader header in headers.GetHeaders())
+            foreach (IHttpHeader header in headers.GetAll())
                 httpWebRequest.SetHeader(header.Name, header.Value);
 
             return httpWebRequest;
@@ -218,7 +218,7 @@ namespace Gsemac.Net.Http.Extensions
         }
         public static HttpWebRequest WithHeaders(this HttpWebRequest httpWebRequest, WebHeaderCollection headers) {
 
-            foreach (IHttpHeader header in headers.GetHeaders())
+            foreach (IHttpHeader header in headers.GetAll())
                 httpWebRequest.SetHeader(header.Name, header.Value);
 
             return httpWebRequest;

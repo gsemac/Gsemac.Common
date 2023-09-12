@@ -56,7 +56,7 @@ namespace Gsemac.Net.Http
 
                     if (HasRedirectStatusCode(response)) {
 
-                        if (response.Headers.TryGetHeader(HttpResponseHeader.Location, out string locationValue) && !string.IsNullOrWhiteSpace(locationValue)) {
+                        if (response.Headers.TryGet(HttpResponseHeader.Location, out string locationValue) && !string.IsNullOrWhiteSpace(locationValue)) {
 
                             try {
 
@@ -207,7 +207,7 @@ namespace Gsemac.Net.Http
         private static bool HasRefreshHeader(IHttpWebResponse response) {
 
             return response is object &&
-                response.Headers.TryGetHeader("refresh", out string refreshHeaderValue) &&
+                response.Headers.TryGet("refresh", out string refreshHeaderValue) &&
                 !string.IsNullOrWhiteSpace(refreshHeaderValue);
 
         }

@@ -130,7 +130,7 @@ namespace Gsemac.Net.Http {
 
                     using (WebResponse webResponse = httpWebRequest.GetResponse()) {
 
-                        if (webResponse.Headers.TryGetHeader(HttpResponseHeader.ContentLength, out string contentLength) &&
+                        if (webResponse.Headers.TryGet(HttpResponseHeader.ContentLength, out string contentLength) &&
                             long.TryParse(contentLength, NumberStyles.Integer, CultureInfo.InvariantCulture, out long parsedContentLength)) {
 
                             fileSize = parsedContentLength;
@@ -281,7 +281,7 @@ namespace Gsemac.Net.Http {
 
                 using (WebResponse webResponse = httpWebRequest.GetResponse()) {
 
-                    if (webResponse.Headers.TryGetHeader(HttpResponseHeader.Date, out string date) && HttpUtilities.TryParseDate(date, out DateTimeOffset parsedDate))
+                    if (webResponse.Headers.TryGet(HttpResponseHeader.Date, out string date) && HttpUtilities.TryParseDate(date, out DateTimeOffset parsedDate))
                         return parsedDate;
 
                 }

@@ -60,7 +60,7 @@ namespace Gsemac.Net.Http {
 
             public override string ToString() {
 
-                IList<IHttpHeader> headers = new List<IHttpHeader>(this.GetHeaders());
+                IList<IHttpHeader> headers = new List<IHttpHeader>(this.GetAll());
 
                 // Add required headers that are normally added automatically (they won't be added by HttpWebRequest).
 

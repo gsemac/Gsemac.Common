@@ -153,7 +153,7 @@ namespace Gsemac.Net.Http {
 
         private string GetHeader(HttpRequestHeader header) {
 
-            if (Headers is object && Headers.TryGetHeader(header, out string value))
+            if (Headers is object && Headers.TryGet(header, out string value))
                 return value;
 
             return string.Empty;
@@ -167,7 +167,7 @@ namespace Gsemac.Net.Http {
             if (removeIfEmpty && string.IsNullOrEmpty(value))
                 Headers.Remove(header);
             else
-                Headers.TrySetHeader(header, value);
+                Headers.TrySet(header, value);
 
         }
 
