@@ -8,25 +8,26 @@ namespace Gsemac.Reflection.Plugins {
 
         // Public members
 
-        public bool IsSatisfied => typeRequirementSatisfied.Value;
-
         public RequiresTypesAttribute(params string[] requiredTypeNames) {
 
+            if (requiredTypeNames is null)
+                throw new ArgumentNullException(nameof(requiredTypeNames));
+
             this.requiredTypeNames = requiredTypeNames;
-            typeRequirementSatisfied = new Lazy<bool>(TestRequirementInternal);
+            result = new Lazy<bool>(TestRequirementInternal);
 
         }
 
         public override bool TestRequirement(IServiceProvider serviceProvider) {
 
-            return typeRequirementSatisfied.Value;
+            return result.Value;
 
         }
 
         // Private members
 
         private readonly string[] requiredTypeNames;
-        private readonly Lazy<bool> typeRequirementSatisfied;
+        private readonly Lazy<bool> result;
 
         private bool TestRequirementInternal() {
 
