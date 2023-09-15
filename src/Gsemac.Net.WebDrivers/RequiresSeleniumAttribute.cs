@@ -1,5 +1,4 @@
 ﻿using Gsemac.Reflection.Plugins;
-using System;
 
 namespace Gsemac.Net.WebDrivers {
 
@@ -8,11 +7,8 @@ namespace Gsemac.Net.WebDrivers {
 
         // Public members
 
-        public override bool TestRequirement(IServiceProvider serviceProvider) {
-
-            return new RequiresAssemblyOrTypesAttribute("WebDriver", "OpenQA.Selenium.IWebDriver")
-                .TestRequirement(serviceProvider);
-
+        public RequiresSeleniumAttribute() :
+            base(new RequiresAssemblyOrTypesAttribute("WebDriver", "OpenQA.Selenium.IWebDriver")) {
         }
 
     }
