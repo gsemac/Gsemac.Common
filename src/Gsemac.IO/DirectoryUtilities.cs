@@ -7,6 +7,8 @@ namespace Gsemac.IO {
 
     public static class DirectoryUtilities {
 
+        // Public members
+
         public static bool TryCreateDirectory(string directoryPath) {
 
             try {
@@ -32,12 +34,42 @@ namespace Gsemac.IO {
             return !Directory.EnumerateFileSystemEntries(directoryPath).Any();
 
         }
-        public static bool ContainsDirectories(string directoryPath) {
+        public static bool HasSubdirectories(string directoryPath) {
 
             if (string.IsNullOrWhiteSpace(directoryPath) || !Directory.Exists(directoryPath))
                 return false;
 
             return Directory.EnumerateDirectories(directoryPath).Any();
+
+        }
+
+        public static long GetSize(string directoryPath) {
+
+            if (!Directory.Exists(directoryPath))
+                return 0;
+
+            return new DirectoryInfo(directoryPath).EnumerateFiles("*", SearchOption.AllDirectories).Sum(fileInfo => fileInfo.Length);
+
+        }
+        public static bool TryGetSize(string directoryPath, out long directorySize) {
+
+            directorySize = default;
+
+            if (!Directory.Exists(directoryPath))
+                return false;
+
+            try {
+
+                directorySize = GetSize(directoryPath);
+
+                return true;
+
+            }
+            catch (Exception) {
+
+                return false;
+
+            }
 
         }
 
