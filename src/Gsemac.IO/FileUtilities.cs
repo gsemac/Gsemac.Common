@@ -23,7 +23,7 @@ namespace Gsemac.IO {
 
         }
 
-        public static long GetFileSize(string filePath) {
+        public static long GetSize(string filePath) {
 
             if (!File.Exists(filePath))
                 return 0;
@@ -31,7 +31,7 @@ namespace Gsemac.IO {
             return new FileInfo(filePath).Length;
 
         }
-        public static bool TryGetFileSize(string filePath, out long fileSize) {
+        public static bool TryGetSize(string filePath, out long fileSize) {
 
             fileSize = default;
 
@@ -40,12 +40,12 @@ namespace Gsemac.IO {
 
             try {
 
-                fileSize = GetFileSize(filePath);
+                fileSize = GetSize(filePath);
 
                 return true;
 
             }
-            catch (UnauthorizedAccessException) {
+            catch (Exception) {
 
                 return false;
 
@@ -134,12 +134,12 @@ namespace Gsemac.IO {
 
         }
 
-        public static Stream WaitForFile(string filePath, TimeSpan timeout) {
+        public static Stream Open(string filePath, TimeSpan timeout) {
 
-            return WaitForFile(filePath, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None, timeout);
+            return Open(filePath, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None, timeout);
 
         }
-        public static Stream WaitForFile(string filePath, FileMode fileMode, FileAccess fileAccess, FileShare fileShare, TimeSpan timeout) {
+        public static Stream Open(string filePath, FileMode fileMode, FileAccess fileAccess, FileShare fileShare, TimeSpan timeout) {
 
             DateTimeOffset startTime = DateTimeOffset.Now;
             Exception lastException;
@@ -185,8 +185,8 @@ namespace Gsemac.IO {
                 // Copying files using streams can be significantly slower than using File.Copy, but it ensures that the operation is synchronous.
                 // Another way to do this might be using File.Exists with WaitForFile to verify that the destination file is fully written and unlocked.
 
-                using (Stream sourceStream = WaitForFile(filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite, timeout))
-                using (Stream destinationStream = WaitForFile(newFilePath, overwrite ? FileMode.Create : FileMode.CreateNew, FileAccess.Write, FileShare.None, timeout))
+                using (Stream sourceStream = Open(filePath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite, timeout))
+                using (Stream destinationStream = Open(newFilePath, overwrite ? FileMode.Create : FileMode.CreateNew, FileAccess.Write, FileShare.None, timeout))
                     sourceStream.CopyTo(destinationStream);
 
             }
@@ -263,18 +263,18 @@ namespace Gsemac.IO {
             return success;
 
         }
-        public static bool Rename(string filePath, string newFilename, bool overwrite = false, TimeSpan timeout = default) {
+        public static bool Rename(string filePath, string newFileName, bool overwrite = false, TimeSpan timeout = default) {
 
             string directoryPath = Path.GetDirectoryName(Path.GetFullPath(filePath));
-            string newFilePath = Path.Combine(directoryPath, newFilename);
+            string newFilePath = Path.Combine(directoryPath, newFileName);
 
             return Move(filePath, newFilePath, overwrite, timeout);
 
         }
-        public static bool TryRename(string filePath, string newFilename, bool overwrite = false, TimeSpan timeout = default) {
+        public static bool TryRename(string filePath, string newFileName, bool overwrite = false, TimeSpan timeout = default) {
 
             string directoryPath = Path.GetDirectoryName(Path.GetFullPath(filePath));
-            string newFilePath = Path.Combine(directoryPath, newFilename);
+            string newFilePath = Path.Combine(directoryPath, newFileName);
 
             return TryMove(filePath, newFilePath, overwrite, timeout);
 
@@ -289,7 +289,7 @@ namespace Gsemac.IO {
                 // Wait until nothing is locking the file.
 
                 if (timeout > TimeSpan.Zero)
-                    using (var stream = WaitForFile(filePath, timeout))
+                    using (var stream = Open(filePath, timeout))
                         stream.Close();
 
                 DateTimeOffset startTime = DateTimeOffset.Now;

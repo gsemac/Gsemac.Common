@@ -127,7 +127,7 @@ namespace Gsemac.IO.Compression.SevenZip {
 
             List<IArchiveEntry> items = new List<IArchiveEntry>();
 
-            if (File.Exists(filePath) && FileUtilities.GetFileSize(filePath) > 0) {
+            if (File.Exists(filePath) && FileUtilities.GetSize(filePath) > 0) {
 
                 ProcessStartInfo processStartInfo = CreateProcessStartInfo();
 
@@ -186,7 +186,7 @@ namespace Gsemac.IO.Compression.SevenZip {
 
             ProcessStartInfo processStartInfo = CreateProcessStartInfo();
 
-            if (File.Exists(filePath) && FileUtilities.GetFileSize(filePath) <= 0)
+            if (File.Exists(filePath) && FileUtilities.GetSize(filePath) <= 0)
                 File.Delete(filePath);
 
             // Remove deleted entries from the archive.
