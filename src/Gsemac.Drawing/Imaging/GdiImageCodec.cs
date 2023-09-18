@@ -79,7 +79,7 @@ namespace Gsemac.Drawing.Imaging {
             // Note that despite the fact the ICO image format is supported, decoding may still fail if the icon is of the newer format added in Windows Vista (which contains an appended PNG).
             // https://social.msdn.microsoft.com/Forums/vstudio/en-US/a4125122-63de-439a-bc33-cee2c65ec0ae/imagefromstream-and-imagefromfile-and-different-icon-files?forum=winforms
 
-            using (Image originalImage = Image.FromStream(stream))
+            using (Image originalImage = DecodeImageFromStream(stream, options))
             using (Image nonDeferredImage = new Bitmap(originalImage))
                 return new GdiImage(originalImage, nonDeferredImage, this);
 
@@ -196,6 +196,22 @@ namespace Gsemac.Drawing.Imaging {
 
         }
 
+        private static Image DecodeImageFromStream(Stream stream, IImageDecoderOptions options) {
+
+            if (stream is null)
+                throw new ArgumentNullException(nameof(stream));
+
+            if (options is null)
+                options = ImageDecoderOptions.Default;
+
+            // If we just need the metadata, we can disable image data validation, which decreases the load time.
+            // https://stackoverflow.com/a/9687096/5383169
+
+            return options.Mode == ImageDecoderMode.Metadata ?
+                Image.FromStream(stream, useEmbeddedColorManagement: false, validateImageData: false) :
+                Image.FromStream(stream);
+
+        }
         private static IEnumerable<ICodecCapabilities> GetNativelySupportedImageFormats() {
 
             return new List<string>(new[]{

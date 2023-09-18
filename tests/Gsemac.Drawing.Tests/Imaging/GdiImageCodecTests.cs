@@ -100,6 +100,17 @@ namespace Gsemac.Drawing.Imaging.Tests {
 
         }
         [TestMethod]
+        public void TestIsAnimatedReturnsTrueWithAnimatedGifAndMetadataModeEnabled() {
+
+            IImageDecoderOptions options = new ImageDecoderOptions() {
+                Mode = ImageDecoderMode.Metadata,
+            };
+
+            using (IImage image = ImageFromFile("animated.gif", options))
+                Assert.IsTrue(image.IsAnimated());
+
+        }
+        [TestMethod]
         public void TestIsAnimatedReturnsFalseWithStaticGif() {
 
             using (IImage image = ImageFromFile("static.gif"))
@@ -146,10 +157,15 @@ namespace Gsemac.Drawing.Imaging.Tests {
         }
         private static IImage ImageFromFile(string fileName) {
 
+            return ImageFromFile(fileName, ImageDecoderOptions.Default);
+
+        }
+        private static IImage ImageFromFile(string fileName, IImageDecoderOptions options) {
+
             IImageCodec codec = new GdiImageCodec();
 
             using (Stream stream = File.OpenRead(Path.Combine(SamplePaths.ImagesSamplesDirectoryPath, fileName)))
-                return codec.Decode(stream);
+                return codec.Decode(stream, options);
 
         }
 
