@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Globalization;
 using System.IO;
 using System.Security.Cryptography;
 using System.Threading;
@@ -53,82 +52,54 @@ namespace Gsemac.IO {
 
         }
 
-        public static string FormatBytes(long totalBytes, int precision = 1, ByteFormat byteFormat = ByteFormat.Binary) {
+        public static string FormatBytes(long bytes) {
+
+            return FormatBytes(bytes, ByteFormattingOptions.Default);
+
+        }
+        public static string FormatBytes(long bytes, IByteFormattingOptions options) {
+
+            if (options is null)
+                throw new ArgumentNullException(nameof(options));
 
             // Based on the answer given here: https://stackoverflow.com/a/14488941 (JLRishe)
 
-            if (precision < 0)
-                throw new ArgumentOutOfRangeException(string.Format(Properties.ExceptionMessages.MustBeGreaterThanZero, nameof(precision)), nameof(precision));
+            string[] suffixes = GetSuffixesForBinaryPrefix(options.Prefix);
+            long power = GetPowerForBinaryPrefix(options.Prefix);
 
-            string[] suffixes;
-            long power;
+            // Convert to bits if we're using a bit-based units.
 
-            switch (byteFormat) {
+            if (bytes < 0) {
 
-                case ByteFormat.Binary:
-
-                    power = 1024;
-                    suffixes = new[] { "bytes", "KiB", "MiB", "GiB", "TiB", "PiB", "EiB", "ZiB", "YiB", };
-
-                    break;
-
-                case ByteFormat.Decimal:
-
-                    power = 1000;
-                    suffixes = new[] { "bytes", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB", };
-
-                    break;
-
-                case ByteFormat.BinaryBits:
-
-                    power = 1024;
-                    totalBytes *= 8; // Convert to bits
-                    suffixes = new[] { "bits", "Kib", "Mib", "Gib", "Tib", "Pib", "Eib", "Zib", "Yib", };
-
-                    break;
-
-                case ByteFormat.DecimalBits:
-
-                    power = 1000;
-                    totalBytes *= 8; // Convert to bits
-                    suffixes = new[] { "bits", "Kb", "Mb", "Gb", "Tb", "Pb", "Eb", "Zb", "Yb", };
-
-                    break;
-
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(byteFormat));
+                return $"-{FormatBytes(Math.Abs(bytes), options)}";
 
             }
+            else if (bytes == 0) {
 
-            string formatStr = "{0:n" + precision.ToString(CultureInfo.InvariantCulture) + "} {1}";
-
-            if (totalBytes < 0) {
-
-                return "-" + FormatBytes(Math.Abs(totalBytes), precision);
-
-            }
-            else if (totalBytes == 0) {
-
-                return string.Format(formatStr, totalBytes, suffixes[0]);
+                return $"{bytes} {suffixes[0]}";
 
             }
             else {
 
-                int order = Math.Min((int)Math.Log(totalBytes, power), suffixes.Length - 1); // 0 = bytes, 1 = KiB, 2 = MiB, ...
-                double adjustedQuantity = totalBytes / Math.Pow(power, order);
+                double bitMultiplier = options.Prefix == BinaryPrefix.BinaryBits || options.Prefix == BinaryPrefix.DecimalBits ? 8.0 : 1.0;
+                double adjustedBytes = bytes * bitMultiplier;
+
+                int order = Math.Min((int)Math.Log(adjustedBytes, power), suffixes.Length - 1); // 0 = bytes, 1 = KiB, 2 = MiB, ...
+
+                adjustedBytes /= Math.Pow(power, order);
 
                 // If rounding the value puts us over the threshold (it will be rounded by String.Format), move up to the next order.
 
-                double threshold = 0.97;
-
-                if (order < suffixes.Length - 1 && Math.Round(adjustedQuantity, precision) >= (power * threshold)) {
+                if (order < suffixes.Length - 1 && Math.Round(adjustedBytes, Math.Max(0, options.Precision)) >= (power * options.Threshold)) {
 
                     order += 1;
-                    adjustedQuantity /= power;
+                    adjustedBytes /= power;
 
                 }
 
-                return string.Format(formatStr, adjustedQuantity, suffixes[order]);
+                string fractionPartFormatting = new string('#', options.Precision);
+
+                return string.Format("{0:0." + fractionPartFormatting + "} {1}", adjustedBytes, suffixes[order]);
 
             }
 
@@ -410,6 +381,46 @@ namespace Gsemac.IO {
         private static bool PathsPointToSameFile(string filePath1, string filePath2) {
 
             return PathUtilities.AreEqual(Path.GetFullPath(filePath1), Path.GetFullPath(filePath2));
+
+        }
+        private static long GetPowerForBinaryPrefix(BinaryPrefix byteFormat) {
+
+            switch (byteFormat) {
+
+                case BinaryPrefix.Binary:
+                case BinaryPrefix.BinaryBits:
+                    return 1024;
+
+                case BinaryPrefix.Decimal:
+                case BinaryPrefix.DecimalBits:
+                    return 1000;
+
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(byteFormat));
+
+            }
+
+        }
+        private static string[] GetSuffixesForBinaryPrefix(BinaryPrefix byteFormat) {
+
+            switch (byteFormat) {
+
+                case BinaryPrefix.Binary:
+                    return new[] { "B", "KiB", "MiB", "GiB", "TiB", "PiB", "EiB", "ZiB", "YiB", };
+
+                case BinaryPrefix.BinaryBits:
+                    return new[] { "b", "Kib", "Mib", "Gib", "Tib", "Pib", "Eib", "Zib", "Yib", };
+
+                case BinaryPrefix.Decimal:
+                    return new[] { "B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB", };
+
+                case BinaryPrefix.DecimalBits:
+                    return new[] { "b", "Kb", "Mb", "Gb", "Tb", "Pb", "Eb", "Zb", "Yb", };
+
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(byteFormat));
+
+            }
 
         }
 

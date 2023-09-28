@@ -1,9 +1,9 @@
 ﻿namespace Gsemac.IO {
 
-    public enum ByteFormat {
+    public enum BinaryPrefix {
         Decimal,
-        Binary,
         DecimalBits,
+        Binary,
         BinaryBits,
     }
 
