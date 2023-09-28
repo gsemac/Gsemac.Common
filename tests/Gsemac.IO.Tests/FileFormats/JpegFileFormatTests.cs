@@ -1,8 +1,7 @@
-﻿using Gsemac.IO.FileFormats;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Linq;
 
-namespace Gsemac.IO.Tests {
+namespace Gsemac.IO.FileFormats.Tests {
 
     [TestClass]
     public class JpegFileFormatTests {
