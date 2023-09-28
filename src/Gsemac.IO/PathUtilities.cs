@@ -313,6 +313,31 @@ namespace Gsemac.IO {
 
         }
 
+        public static long GetSize(string path) {
+
+            if (TryGetSize(path, out long size))
+                return size;
+
+            return 0;
+
+        }
+        public static bool TryGetSize(string path, out long size) {
+
+            size = 0;
+
+            if (string.IsNullOrWhiteSpace(path))
+                return false;
+
+            if (File.Exists(path) && FileUtilities.TryGetSize(path, out size))
+                return true;
+
+            if (Directory.Exists(path) && DirectoryUtilities.TryGetSize(path, out size))
+                return true;
+
+            return false;
+
+        }
+
         public static string GetTemporaryDirectoryPath() {
 
             return GetTemporaryDirectoryPath(TemporaryPathOptions.Default);
