@@ -7,7 +7,7 @@
 
         protected override string[] GetHeaderOrdering() {
 
-            // The following ordering is taken from Firefox (116).
+            // The following ordering is taken from Firefox (118).
 
             return new[] {
                 "host",
@@ -16,8 +16,13 @@
                 "accept-language",
                 "accept-encoding",
                 "referer",
+                "origin",
+                "DNT",
                 "connection",
+                "cookie",
                 "upgrade-insecure-requests",
+                "pragma",
+                "cache-control",
             };
 
         }
