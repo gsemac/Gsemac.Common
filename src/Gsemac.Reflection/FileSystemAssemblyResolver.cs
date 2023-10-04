@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Gsemac.Reflection {
 
@@ -15,6 +16,9 @@ namespace Gsemac.Reflection {
             }) {
         }
         public FileSystemAssemblyResolver(IEnumerable<string> probingPaths) {
+
+            if (probingPaths is null)
+                throw new ArgumentNullException(nameof(probingPaths));
 
             foreach (string probingPath in probingPaths)
                 ProbingPaths.Add(probingPath);
