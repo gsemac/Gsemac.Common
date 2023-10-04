@@ -5,6 +5,8 @@ namespace Gsemac.Reflection.Extensions {
 
     public static class TypeExtensions {
 
+        // Public members
+
         public static bool IsDefaultConstructable(this Type type) {
 
             return TypeUtilities.IsDefaultConstructable(type);

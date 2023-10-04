@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 
 namespace Gsemac.Reflection {
 
@@ -14,25 +15,25 @@ namespace Gsemac.Reflection {
         public ICollection<string> ProbingPaths { get; } = new List<string>();
         public bool Unsafe { get; set; } = false;
 
-        public System.Reflection.Assembly ResolveAssembly(string assemblyName) {
+        public Assembly ResolveAssembly(string assemblyName) {
 
             string assemblyPath = GetAssemblyPath(assemblyName);
 
             if (!string.IsNullOrEmpty(assemblyPath)) {
 
                 if (Unsafe)
-                    return System.Reflection.Assembly.UnsafeLoadFrom(assemblyPath);
+                    return Assembly.UnsafeLoadFrom(assemblyPath);
                 else
-                    return System.Reflection.Assembly.LoadFrom(assemblyPath);
+                    return Assembly.LoadFrom(assemblyPath);
 
             }
 
             return null;
 
         }
-        public System.Reflection.Assembly ResolveAssembly(object sender, ResolveEventArgs e) {
+        public Assembly ResolveAssembly(object sender, ResolveEventArgs e) {
 
-            return ResolveAssembly(new System.Reflection.AssemblyName(e.Name).Name);
+            return ResolveAssembly(new AssemblyName(e.Name).Name);
 
         }
 
