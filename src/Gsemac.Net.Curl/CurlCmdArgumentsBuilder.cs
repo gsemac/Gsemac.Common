@@ -55,7 +55,7 @@ namespace Gsemac.Net.Curl {
             if (requestUri is null)
                 requestUri = uri;
 
-            if (!(cookieContainer is null)) {
+            if (cookieContainer is object) {
 
                 List<string> cookieStrings = new List<string>();
 

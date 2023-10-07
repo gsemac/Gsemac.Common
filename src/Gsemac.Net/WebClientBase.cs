@@ -17,6 +17,9 @@ namespace Gsemac.Net {
         }
         protected WebClientBase(IHttpWebRequestFactory webRequestFactory) {
 
+            if (webRequestFactory is null)
+                throw new ArgumentNullException(nameof(webRequestFactory));
+
             this.webRequestFactory = webRequestFactory;
 
             // Replace the default proxy with a placeholder, so we can detect if the user has changed the proxy property.
@@ -30,6 +33,9 @@ namespace Gsemac.Net {
         }
         protected WebClientBase(IHttpWebRequestFactory webRequestFactory, WebRequestHandler webRequestHandler) :
             this(webRequestFactory) {
+
+            if (webRequestHandler is null)
+                throw new ArgumentNullException(nameof(webRequestHandler));
 
             this.webRequestHandler = webRequestHandler;
 

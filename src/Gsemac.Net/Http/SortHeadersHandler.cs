@@ -139,6 +139,9 @@ namespace Gsemac.Net.Http {
 
         private void SetWebHeaderCollection(WebRequest webRequest) {
 
+            if (webRequest is null)
+                throw new ArgumentNullException(nameof(webRequest));
+
             webRequest = HttpWebRequestUtilities.GetInnermostWebRequest(webRequest);
 
             if (webRequest is HttpWebRequest httpWebRequest) {
