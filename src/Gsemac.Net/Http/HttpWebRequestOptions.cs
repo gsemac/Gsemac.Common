@@ -20,7 +20,7 @@ namespace Gsemac.Net.Http {
         }
         public bool? AllowAutoRedirect { get; set; } = true;
         public DecompressionMethods AutomaticDecompression { get; set; } = DecompressionMethods.Deflate | DecompressionMethods.GZip;
-        public CookieContainer Cookies { get; set; } = new CookieContainer();
+        public CookieContainer Cookies { get; set; }
         public ICredentials Credentials { get; set; }
         public WebHeaderCollection Headers {
             get => headers;

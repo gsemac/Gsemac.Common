@@ -77,8 +77,7 @@ namespace Gsemac.Net.Http.Resolvers {
 
             // We need to pass "t" as a form data field in order to access the file. 
 
-            string t = request.CookieContainer.GetCookies(request.Address)
-                .Cast<Cookie>()
+            string t = response.Cookies.Cast<Cookie>()
                 .FirstOrDefault(x => x.Name == "t")?.Value ?? string.Empty;
 
             // Build the POST request.

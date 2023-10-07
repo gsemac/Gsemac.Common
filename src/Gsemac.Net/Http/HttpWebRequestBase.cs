@@ -68,7 +68,7 @@ namespace Gsemac.Net.Http {
             get => Headers[HttpRequestHeader.Connection];
             set => SetOrRemoveHeader(HttpRequestHeader.Connection, value);
         }
-        public CookieContainer CookieContainer { get; set; } = new CookieContainer();
+        public CookieContainer CookieContainer { get; set; } // CookieContainer is null by default for HttpWebRequest (Note that the "cookie" header is only sent when this property is null)
         public DateTime Date {
             get => HttpUtilities.ParseDate(Headers[HttpRequestHeader.Date]).DateTime;
             set => SetOrRemoveHeader(HttpRequestHeader.Date, value);
