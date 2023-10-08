@@ -1,11 +1,14 @@
 ﻿using Gsemac.Net.Http.Extensions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using System.Net;
 
 namespace Gsemac.Net.Http.Tests {
 
     [TestClass]
     public class HttpWebRequestOptionsFactoryTests {
+
+        // Create
 
         [TestMethod]
         public void TestCreateWithoutAddingReturnsDefault() {
@@ -54,6 +57,27 @@ namespace Gsemac.Net.Http.Tests {
             });
 
             Assert.AreNotEqual("hello world", webRequestOptionsFactory.Create("https://stackoverflow.comm").UserAgent);
+
+        }
+
+        [TestMethod]
+        public void TestCreateAlwaysReturnsTheLatestDefaultProxy() {
+
+            // The default proxy (WebRequest.DefaultProxy) should not be cached, so we always have the most up-to-date value.
+            // HttpWebRequestOptions don't cache the proxy either, and always return the most up-to-date value.
+
+            HttpWebRequestOptionsFactory webRequestOptionsFactory = new HttpWebRequestOptionsFactory();
+
+            IHttpWebRequestOptions options1 = webRequestOptionsFactory.Create();
+
+            IWebProxy webProxy = new WebProxy("http://127.0.0.1", 8888);
+
+            WebRequest.DefaultWebProxy = webProxy;
+
+            IHttpWebRequestOptions options2 = webRequestOptionsFactory.Create();
+
+            Assert.IsTrue(ReferenceEquals(options1.Proxy, webProxy));
+            Assert.IsTrue(ReferenceEquals(options2.Proxy, webProxy));
 
         }
 

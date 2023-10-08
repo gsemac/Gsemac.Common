@@ -27,7 +27,10 @@ namespace Gsemac.Net.Http {
             set => headers = value.Clone();
         }
         public string Method { get; set; } = DefaultHttpHeaders.Method;
-        public IWebProxy Proxy { get; set; } = WebRequestUtilities.GetDefaultWebProxy();
+        public IWebProxy Proxy {
+            get => proxy ?? WebRequestUtilities.GetDefaultWebProxy(); // Always return the most current default proxy (in case the default proxy has changed)
+            set => proxy = value;
+        }
         public string UserAgent {
             get => GetHeader(HttpRequestHeader.UserAgent);
             set => SetHeader(HttpRequestHeader.UserAgent, value, removeIfEmpty: true);
@@ -108,6 +111,7 @@ namespace Gsemac.Net.Http {
         // Private members
 
         private WebHeaderCollection headers = new WebHeaderCollection();
+        private IWebProxy proxy;
 
         private void Combine(IHttpWebRequestOptions other, bool copyNullValues = true) {
 

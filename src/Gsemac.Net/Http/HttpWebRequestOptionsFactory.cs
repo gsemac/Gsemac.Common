@@ -9,9 +9,7 @@ namespace Gsemac.Net.Http {
 
         // Public members
 
-        public HttpWebRequestOptionsFactory() :
-            this(HttpWebRequestOptions.Default) {
-        }
+        public HttpWebRequestOptionsFactory() { }
         public HttpWebRequestOptionsFactory(IHttpWebRequestOptions webRequestOptions) {
 
             if (webRequestOptions is null)
@@ -23,7 +21,7 @@ namespace Gsemac.Net.Http {
 
         public IHttpWebRequestOptions Create() {
 
-            return defaultWebRequestOptions;
+            return GetDefaultOptions();
 
         }
         public IHttpWebRequestOptions Create(Uri requestUri) {
@@ -68,11 +66,19 @@ namespace Gsemac.Net.Http {
                     .FirstOrDefault();
 
                 if (optionsInfo is null)
-                    return defaultWebRequestOptions;
+                    return GetDefaultOptions();
 
-                return HttpWebRequestOptions.Combine(defaultWebRequestOptions, optionsInfo.WebRequestOptions, optionsInfo.CopyIfNull);
+                return HttpWebRequestOptions.Combine(GetDefaultOptions(), optionsInfo.WebRequestOptions, optionsInfo.CopyIfNull);
 
             }
+
+        }
+        private IHttpWebRequestOptions GetDefaultOptions() {
+
+            // Instead of caching HttpWebRequestOptions.Default, we reconstruct the options object every single time we need it.
+            // This ensures that the properties associated with it are always up-to-date (e.g. in case the default proxy has changed).
+
+            return defaultWebRequestOptions ?? HttpWebRequestOptions.Default;
 
         }
 
