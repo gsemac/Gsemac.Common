@@ -27,7 +27,7 @@ namespace Gsemac.Net.Http {
             set => headers = value.Clone();
         }
         public string Method { get; set; } = DefaultHttpHeaders.Method;
-        public IWebProxy Proxy { get; set; } = WebProxyUtilities.GetDefaultProxy();
+        public IWebProxy Proxy { get; set; } = WebRequestUtilities.GetDefaultWebProxy();
         public string UserAgent {
             get => GetHeader(HttpRequestHeader.UserAgent);
             set => SetHeader(HttpRequestHeader.UserAgent, value, removeIfEmpty: true);
