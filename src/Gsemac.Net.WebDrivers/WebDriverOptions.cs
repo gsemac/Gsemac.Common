@@ -8,7 +8,7 @@ namespace Gsemac.Net.WebDrivers {
         IWebDriverOptions {
 
         public Uri Uri { get; set; }
-        public IWebProxy Proxy { get; set; } = WebProxyUtilities.GetDefaultProxy();
+        public IWebProxy Proxy { get; set; } = WebRequestUtilities.GetDefaultWebProxy();
         public TimeSpan Timeout { get; set; } = TimeSpan.FromSeconds(30);
         public string UserAgent { get; set; }
         public string WebDriverExecutablePath { get; set; }

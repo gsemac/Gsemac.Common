@@ -15,7 +15,7 @@ namespace Gsemac.Net {
             get => dataUrl.MimeType.ToString();
         }
         public override WebHeaderCollection Headers { get; set; } = new WebHeaderCollection();
-        public override IWebProxy Proxy { get; set; } = WebProxyUtilities.GetDefaultProxy();
+        public override IWebProxy Proxy { get; set; } = WebRequestUtilities.GetDefaultWebProxy();
 
         public DataWebRequest(Uri uri) {
 
