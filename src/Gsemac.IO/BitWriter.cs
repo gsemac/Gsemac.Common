@@ -173,7 +173,19 @@ namespace Gsemac.IO {
 
         public void Write(byte value, int numberOfBits) {
 
-            WriteLowOrderBits(new byte[] { value }, numberOfBits);
+            if (numberOfBits < 0)
+                throw new ArgumentOutOfRangeException(nameof(numberOfBits));
+
+            if (numberOfBits <= 0)
+                return;
+
+            // Write the N low order bits.
+
+            for (int i = 0; i < numberOfBits; ++i) {
+
+                WriteBit((value & (1 << (numberOfBits - i - 1))) > 0);
+
+            }
 
         }
         public void Write(uint value, int numberOfBits) {
@@ -286,7 +298,7 @@ namespace Gsemac.IO {
                 // 00000011
 
                 int bitIndex = (BitsPerByte - numberOfBits % BitsPerByte) % BitsPerByte;
-                int byteIndex = Math.Min(numberOfBits / BitsPerByte, bytes.Length) - 1;
+                int byteIndex = Math.Max(Math.Min(numberOfBits / BitsPerByte, bytes.Length), 1) - 1;
 
                 for (int i = byteIndex; i >= 0; --i) {
 
