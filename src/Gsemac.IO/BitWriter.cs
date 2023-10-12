@@ -219,6 +219,9 @@ namespace Gsemac.IO {
             base.Close();
 
         }
+
+        // Protected members
+
         protected override void Dispose(bool disposing) {
 
             if (disposing) {
