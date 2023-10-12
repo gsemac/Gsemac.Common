@@ -249,6 +249,15 @@ namespace Gsemac.IO {
                 CommitByte();
 
         }
+        private void WriteBits(byte value, int startIndex, int count) {
+
+            for (int j = startIndex; j < Math.Min(startIndex + count, BitsPerByte); ++j) {
+
+                WriteBit((value & (0x80 >> j)) > 0);
+
+            }
+
+        }
         private void WriteLowOrderBits(byte[] bytes, int numberOfBits) {
 
             if (bytes is null)
@@ -260,20 +269,57 @@ namespace Gsemac.IO {
             if (numberOfBits <= 0)
                 return;
 
+            // If we're on a little endian system, we want to write the first N bytes.
+            // If we're on a big endian system, we want to write the last N bytes.
+
+            // For simplicity, we'll just normalize our byte array to little endian.
+
             bytes = ToLittleEndian(bytes);
 
-            int byteIndex = Math.Min(numberOfBits / 8, bytes.Length - 1);
-            int bitIndex = BitsPerByte - (numberOfBits % 8);
+            if (byteOrder == ByteOrder.BigEndian || (byteOrder == ByteOrder.Default && !BitConverter.IsLittleEndian)) {
 
-            for (int i = byteIndex; i >= 0; --i) {
+                // Write the bytes in big endian order.
 
-                for (int j = bitIndex; j < BitsPerByte; ++j) {
+                // If we're writing a partial byte, we want the cutoff in the last byte.
+                // Writing 3 with 9 bits would look like:
+                // .......0
+                // 00000011
 
-                    WriteBit((bytes[i] & (0x80 >> j)) > 0);
+                int bitIndex = (BitsPerByte - numberOfBits % BitsPerByte) % BitsPerByte;
+                int byteIndex = Math.Min(numberOfBits / BitsPerByte, bytes.Length) - 1;
+
+                for (int i = byteIndex; i >= 0; --i) {
+
+                    WriteBits(bytes[i], bitIndex, BitsPerByte - bitIndex);
+
+                    bitIndex = 0;
 
                 }
 
-                bitIndex = 0;
+            }
+            else {
+
+                // Write the bytes in little endian order.
+
+                // If we're writing a partial byte, we want the cutoff in the first byte.
+                // Writing 3 with 9 bits would look like:
+                // 00000011
+                // 0.......
+
+                int byteIndex = 0;
+                int totalBytes = (int)Math.Ceiling(numberOfBits / (double)BitsPerByte);
+
+                for (int i = byteIndex; i < totalBytes; ++i) {
+
+                    bool isLastIteration = i + 1 >= totalBytes;
+
+                    int bitIndex = isLastIteration ?
+                        (BitsPerByte - numberOfBits % BitsPerByte) % BitsPerByte :
+                        0;
+
+                    WriteBits(bytes[i], bitIndex, BitsPerByte - bitIndex);
+
+                }
 
             }
 
@@ -285,6 +331,9 @@ namespace Gsemac.IO {
 
         }
         private byte[] ToLittleEndian(byte[] bytes) {
+
+            if (bytes is null)
+                throw new ArgumentNullException(nameof(bytes));
 
             if (!BitConverter.IsLittleEndian)
                 return bytes.Reverse().ToArray();

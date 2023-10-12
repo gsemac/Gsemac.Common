@@ -220,7 +220,7 @@ namespace Gsemac.IO.Tests {
 
             using (MemoryStream stream = new MemoryStream()) {
 
-                using (BitWriter writer = new BitWriter(stream)) {
+                using (BitWriter writer = new BitWriter(stream, ByteOrder.LittleEndian)) {
 
                     writer.Write(true);
                     writer.Write((ushort)3, numberOfBits: 9);
@@ -229,8 +229,46 @@ namespace Gsemac.IO.Tests {
                 }
 
                 CollectionAssert.AreEqual(new byte[] {
-                    0b10000000,
-                    0b11100000,
+                    0b10000001,
+                    0b10100000,
+                }, stream.ToArray().Take(2).ToArray());
+
+            }
+
+        }
+        [TestMethod]
+        public void TestWritePartialUIntWithLittleEndianByteOrder() {
+
+            using (MemoryStream stream = new MemoryStream()) {
+
+                using (BitWriter writer = new BitWriter(stream, ByteOrder.LittleEndian)) {
+
+                    writer.Write((uint)3, numberOfBits: 16);
+
+                }
+
+                CollectionAssert.AreEqual(new byte[] {
+                    0b00000011,
+                    0b00000000,
+                }, stream.ToArray().Take(2).ToArray());
+
+            }
+
+        }
+        [TestMethod]
+        public void TestWritePartialUIntWithBigEndianByteOrder() {
+
+            using (MemoryStream stream = new MemoryStream()) {
+
+                using (BitWriter writer = new BitWriter(stream, ByteOrder.BigEndian)) {
+
+                    writer.Write((uint)3, numberOfBits: 16);
+
+                }
+
+                CollectionAssert.AreEqual(new byte[] {
+                    0b00000000,
+                    0b00000011,
                 }, stream.ToArray().Take(2).ToArray());
 
             }
