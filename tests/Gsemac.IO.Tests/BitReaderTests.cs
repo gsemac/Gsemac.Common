@@ -1,5 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.IO;
+using System.Text;
 
 namespace Gsemac.IO.Tests {
 
@@ -138,6 +139,74 @@ namespace Gsemac.IO.Tests {
                 Assert.AreEqual(2, buffer.Length);
                 Assert.AreEqual(0b01100000, buffer[0]);
                 Assert.AreEqual(0b01001110, buffer[1]);
+
+            }
+
+        }
+
+        // ReadDecimal
+
+        [TestMethod]
+        public void TestReadDecimal() {
+
+            decimal value = 4.78M;
+
+            using (MemoryStream stream = new MemoryStream()) {
+
+                using (BinaryWriter writer = new BinaryWriter(stream, Encoding.UTF8, leaveOpen: true))
+                    writer.Write(value);
+
+                stream.Seek(0, SeekOrigin.Begin);
+
+                using (BitReader reader = new BitReader(stream))
+                    Assert.AreEqual(value, reader.ReadDecimal());
+
+            }
+
+        }
+
+        // ReadUInt16
+
+        [TestMethod]
+        public void TestReadReadUInt16WithAlignedBytes() {
+
+            using (MemoryStream stream = new MemoryStream(new byte[] {
+                0b01100000,
+                0b01001110,
+            }))
+            using (BitReader reader = new BitReader(stream, ByteOrder.BigEndian)) {
+
+                Assert.AreEqual(24654, reader.ReadUInt16());
+
+            }
+
+        }
+        [TestMethod]
+        public void TestReadReadUInt16WithUnalignedBytes() {
+
+            using (MemoryStream stream = new MemoryStream(new byte[] {
+                0b11110000,
+                0b00100111,
+                0b00110011,
+            }))
+            using (BitReader reader = new BitReader(stream, ByteOrder.BigEndian)) {
+
+                Assert.IsTrue(reader.ReadBoolean());
+                Assert.AreEqual(57422, reader.ReadUInt16());
+
+            }
+
+        }
+        [TestMethod]
+        public void TestReadReadUInt16WithLittleEndianByteOrder() {
+
+            using (MemoryStream stream = new MemoryStream(new byte[] {
+                0b01100000,
+                0b01001110,
+            }))
+            using (BitReader reader = new BitReader(stream, ByteOrder.LittleEndian)) {
+
+                Assert.AreEqual(20064, reader.ReadUInt16());
 
             }
 

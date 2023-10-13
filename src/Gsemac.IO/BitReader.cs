@@ -159,53 +159,98 @@ namespace Gsemac.IO {
 
         public override decimal ReadDecimal() {
 
-            return base.ReadDecimal();
+            byte[] buffer = new byte[sizeof(decimal)];
+
+            if (Read(buffer, 0, buffer.Length) < buffer.Length)
+                throw new EndOfStreamException();
+
+            return BytesToDecimal(buffer);
 
         }
         public override double ReadDouble() {
 
-            return base.ReadDouble();
+            byte[] buffer = new byte[sizeof(double)];
+
+            if (Read(buffer, 0, buffer.Length) < buffer.Length)
+                throw new EndOfStreamException();
+
+            return BitConverter.ToDouble(buffer, 0);
 
         }
         public override float ReadSingle() {
 
-            return base.ReadSingle();
+            byte[] buffer = new byte[sizeof(float)];
+
+            if (Read(buffer, 0, buffer.Length) < buffer.Length)
+                throw new EndOfStreamException();
+
+            return BitConverter.ToSingle(buffer, 0);
 
         }
 
         public override short ReadInt16() {
 
-            return base.ReadInt16();
+            byte[] buffer = new byte[sizeof(short)];
+
+            if (ReadOrderedBytes(buffer, 0, buffer.Length) < buffer.Length)
+                throw new EndOfStreamException();
+
+            return BitConverter.ToInt16(buffer, 0);
 
         }
         public override int ReadInt32() {
 
-            return base.ReadInt32();
+            byte[] buffer = new byte[sizeof(int)];
+
+            if (ReadOrderedBytes(buffer, 0, buffer.Length) < buffer.Length)
+                throw new EndOfStreamException();
+
+            return BitConverter.ToInt32(buffer, 0);
 
         }
         public override long ReadInt64() {
 
-            return base.ReadInt64();
+            byte[] buffer = new byte[sizeof(long)];
+
+            if (ReadOrderedBytes(buffer, 0, buffer.Length) < buffer.Length)
+                throw new EndOfStreamException();
+
+            return BitConverter.ToInt64(buffer, 0);
 
         }
         public override sbyte ReadSByte() {
 
-            return base.ReadSByte();
+            return (sbyte)ReadByte();
 
         }
         public override ushort ReadUInt16() {
 
-            return base.ReadUInt16();
+            byte[] buffer = new byte[sizeof(ushort)];
+
+            if (ReadOrderedBytes(buffer, 0, buffer.Length) < buffer.Length)
+                throw new EndOfStreamException();
+
+            return BitConverter.ToUInt16(buffer, 0);
 
         }
         public override uint ReadUInt32() {
 
-            return base.ReadUInt32();
+            byte[] buffer = new byte[sizeof(uint)];
+
+            if (ReadOrderedBytes(buffer, 0, buffer.Length) < buffer.Length)
+                throw new EndOfStreamException();
+
+            return BitConverter.ToUInt32(buffer, 0);
 
         }
         public override ulong ReadUInt64() {
 
-            return base.ReadUInt64();
+            byte[] buffer = new byte[sizeof(ulong)];
+
+            if (ReadOrderedBytes(buffer, 0, buffer.Length) < buffer.Length)
+                throw new EndOfStreamException();
+
+            return BitConverter.ToUInt64(buffer, 0);
 
         }
 
@@ -239,6 +284,69 @@ namespace Gsemac.IO {
 
             return true;
 
+        }
+        private bool IsByteReorderingRequired() {
+
+            return BitConverter.IsLittleEndian && byteOrder == ByteOrder.BigEndian ||
+                !BitConverter.IsLittleEndian && byteOrder == ByteOrder.LittleEndian;
+
+        }
+        private int ReadOrderedBytes(byte[] buffer, int index, int count) {
+
+            if (buffer is null)
+                throw new ArgumentNullException(nameof(buffer));
+
+            if (index < 0)
+                throw new ArgumentOutOfRangeException(nameof(index));
+
+            if (count < 0)
+                throw new ArgumentOutOfRangeException(nameof(count));
+
+            if (buffer.Length - index < count)
+                throw new ArgumentException($"The buffer length minus {nameof(index)} is less than {nameof(count)}.");
+
+            if (count <= 0)
+                return 0;
+
+            int bytesRead = 0;
+
+            while (bytesRead < count) {
+
+                bytesRead += Read(buffer, index, count);
+
+                if (bytesRead <= 0)
+                    break;
+
+                index += bytesRead;
+
+            }
+
+            if (IsByteReorderingRequired())
+                Array.Reverse(buffer);
+
+            return bytesRead;
+
+        }
+
+        public static decimal BytesToDecimal(byte[] buffer) {
+
+            // The following implementation is based on decimal.ToDecimal:
+            // https://github.com/microsoft/referencesource/blob/master/mscorlib/system/decimal.cs#L594
+
+            if (buffer is null)
+                throw new ArgumentNullException(nameof(buffer));
+
+            int lo = buffer[0] | (buffer[1] << 8) | (buffer[2] << 16) | (buffer[3] << 24);
+            int mid = buffer[4] | (buffer[5] << 8) | (buffer[6] << 16) | (buffer[7] << 24);
+            int hi = buffer[8] | (buffer[9] << 8) | (buffer[10] << 16) | (buffer[11] << 24);
+            int flags = buffer[12] | (buffer[13] << 8) | (buffer[14] << 16) | (buffer[15] << 24);
+
+            return new decimal(new int[] {
+                lo,
+                mid,
+                hi,
+                flags,
+            });
         }
 
     }
