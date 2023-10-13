@@ -1,6 +1,7 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.IO;
 using System.Linq;
+using System.Text;
 
 namespace Gsemac.IO.Tests {
 
@@ -91,6 +92,24 @@ namespace Gsemac.IO.Tests {
                     0b10100000,
                     0b10000000
                 }, stream.ToArray().Take(2).ToArray());
+
+            }
+
+        }
+        [TestMethod]
+        public void TestWriteDecimal() {
+
+            decimal value = 4.78M;
+
+            using (MemoryStream stream = new MemoryStream()) {
+
+                using (BitWriter writer = new BitWriter(stream, Encoding.UTF8, leaveOpen: true))
+                    writer.Write(value);
+
+                stream.Seek(0, SeekOrigin.Begin);
+
+                using (BinaryReader reader = new BinaryReader(stream))
+                    Assert.AreEqual(value, reader.ReadDecimal());
 
             }
 
