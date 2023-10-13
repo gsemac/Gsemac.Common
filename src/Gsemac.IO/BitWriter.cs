@@ -21,15 +21,19 @@ namespace Gsemac.IO {
         }
         public BitWriter(Stream stream, Encoding encoding) :
             this(stream, encoding, ByteOrder.Default) {
-
-            this.encoding = encoding;
-
+        }
+        public BitWriter(Stream stream, Encoding encoding, bool leaveOpen) :
+           this(stream, encoding, ByteOrder.Default, leaveOpen) {
         }
         public BitWriter(Stream stream, Encoding encoding, ByteOrder byteOrder) :
+            this(stream, encoding, byteOrder, leaveOpen: false) {
+        }
+        public BitWriter(Stream stream, Encoding encoding, ByteOrder byteOrder, bool leaveOpen) :
             base(stream, encoding) {
 
             this.encoding = encoding;
             this.byteOrder = byteOrder;
+            this.leaveOpen = leaveOpen;
 
         }
 
@@ -120,8 +124,12 @@ namespace Gsemac.IO {
 
         public override void Write(decimal value) {
 
-            foreach (int part in decimal.GetBits(value))
-                Write(part);
+            // Note that the byte order for a decimal is the same regardless of endianess.
+            // https://github.com/microsoft/referencesource/blob/master/mscorlib/system/decimal.cs#L567
+
+            byte[] buffer = DecimalToBytes(value);
+
+            Write(buffer, 0, buffer.Length);
 
         }
         public override void Write(double value) {
@@ -226,13 +234,20 @@ namespace Gsemac.IO {
 
             if (disposing) {
 
-                // We only flush instead of closing-- The underlying BinaryWriter does not call Close() when disposing either.
+                // We only flush instead of closing.
+                // The underlying BinaryWriter does not call Close() when disposing.
 
                 Flush();
 
             }
 
-            base.Dispose(disposing);
+            // Calling Dispose on the base BinaryReader will also close the underlying stream.
+            // .NET 4.5 added a "leaveOpen" parameter to avoid this behavior, but this parameter isn't present in .NET 4.0.
+            // Since calling Dispose only closes the underlying stream, it's safe to skip it to avoid closing the stream.
+            // https://stackoverflow.com/a/1084828/5383169
+
+            if (!leaveOpen)
+                base.Dispose(disposing);
 
         }
 
@@ -242,6 +257,7 @@ namespace Gsemac.IO {
 
         private readonly Encoding encoding;
         private readonly ByteOrder byteOrder;
+        private readonly bool leaveOpen = false;
         private byte currentByte = 0;
         private byte bitIndex = 0;
 
@@ -387,6 +403,46 @@ namespace Gsemac.IO {
             currentByte = 0;
             bitIndex = 0;
 
+        }
+
+        public static byte[] DecimalToBytes(decimal value) {
+
+            // The following implementation is based on decimal.GetBytes:
+            // https://github.com/microsoft/referencesource/blob/master/mscorlib/system/decimal.cs#L571
+
+            byte[] buffer = new byte[16];
+
+            int[] bits = decimal.GetBits(value);
+
+            // lo
+
+            buffer[0] = (byte)bits[0];
+            buffer[1] = (byte)(bits[0] >> 8);
+            buffer[2] = (byte)(bits[0] >> 16);
+            buffer[3] = (byte)(bits[0] >> 24);
+
+            // mid
+
+            buffer[4] = (byte)bits[1];
+            buffer[5] = (byte)(bits[1] >> 8);
+            buffer[6] = (byte)(bits[1] >> 16);
+            buffer[7] = (byte)(bits[1] >> 24);
+
+            // hi
+
+            buffer[8] = (byte)bits[2];
+            buffer[9] = (byte)(bits[2] >> 8);
+            buffer[10] = (byte)(bits[2] >> 16);
+            buffer[11] = (byte)(bits[2] >> 24);
+
+            // flags
+
+            buffer[12] = (byte)bits[3];
+            buffer[13] = (byte)(bits[3] >> 8);
+            buffer[14] = (byte)(bits[3] >> 16);
+            buffer[15] = (byte)(bits[3] >> 24);
+
+            return buffer;
         }
 
     }
