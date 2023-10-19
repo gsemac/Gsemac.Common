@@ -104,6 +104,32 @@ namespace Gsemac.IO.Tests {
             }
 
         }
+        [TestMethod]
+        public void TestReadByteWithPartialByte() {
+
+            using (MemoryStream stream = new MemoryStream(new byte[] {
+                0b01100000,
+            }))
+            using (BitReader reader = new BitReader(stream)) {
+
+                Assert.AreEqual(3, reader.ReadByte(numberOfBits: 3));
+
+            }
+
+        }
+        [TestMethod]
+        public void TestReadByteWithZeroLengthByte() {
+
+            using (MemoryStream stream = new MemoryStream(new byte[] {
+                0b01100000,
+            }))
+            using (BitReader reader = new BitReader(stream)) {
+
+                Assert.AreEqual(0, reader.ReadByte(numberOfBits: 0));
+
+            }
+
+        }
 
         // ReadBytes
 
@@ -207,6 +233,88 @@ namespace Gsemac.IO.Tests {
             using (BitReader reader = new BitReader(stream, ByteOrder.LittleEndian)) {
 
                 Assert.AreEqual(20064, reader.ReadUInt16());
+
+            }
+
+        }
+        [TestMethod]
+        public void TestReadReadUInt16WithWithPartialByte() {
+
+            using (MemoryStream stream = new MemoryStream(new byte[] {
+                0b01100000,
+            }))
+            using (BitReader reader = new BitReader(stream)) {
+
+                Assert.AreEqual(3, reader.ReadUInt16(numberOfBits: 3));
+
+            }
+
+        }
+        [TestMethod]
+        public void TestReadReadUInt16WithPartialByteAndMultipleBytesAndLittleEndianByteOrder() {
+
+            using (MemoryStream stream = new MemoryStream(new byte[] {
+                0b00000011,
+                0b01000000,
+            }))
+            using (BitReader reader = new BitReader(stream, ByteOrder.LittleEndian)) {
+
+                Assert.AreEqual(3, reader.ReadUInt16(numberOfBits: 9));
+
+            }
+
+        }
+        [TestMethod]
+        public void TestReadReadUInt16WithPartialByteAndMultipleBytesAndBigEndianByteOrder() {
+
+            using (MemoryStream stream = new MemoryStream(new byte[] {
+                0b00000001,
+                0b11000000,
+            }))
+            using (BitReader reader = new BitReader(stream, ByteOrder.BigEndian)) {
+
+                Assert.AreEqual(3, reader.ReadUInt16(numberOfBits: 9));
+
+            }
+
+        }
+        [TestMethod]
+        public void TestReadReadUInt32WithAlignedBytes() {
+
+            using (MemoryStream stream = new MemoryStream()) {
+
+                using (BinaryWriter writer = new BinaryWriter(stream, Encoding.UTF8, leaveOpen: true))
+                    writer.Write(uint.MaxValue);
+
+                stream.Seek(0, SeekOrigin.Begin);
+
+                using (BitReader reader = new BitReader(stream, ByteOrder.LittleEndian))
+                    Assert.AreEqual(uint.MaxValue, reader.ReadUInt32());
+
+            }
+
+        }
+        [TestMethod]
+        public void TestReadReadUInt32WithUnalignedBytes() {
+
+            using (MemoryStream stream = new MemoryStream()) {
+
+                using (BitWriter writer = new BitWriter(stream, Encoding.UTF8, ByteOrder.LittleEndian, leaveOpen: true)) {
+
+                    writer.Write(true);
+                    writer.Write(uint.MaxValue);
+
+                }
+
+                stream.Seek(0, SeekOrigin.Begin);
+
+                using (BitReader reader = new BitReader(stream, ByteOrder.LittleEndian)) {
+
+                    reader.ReadBoolean();
+
+                    Assert.AreEqual(uint.MaxValue, reader.ReadUInt32());
+
+                }
 
             }
 

@@ -254,9 +254,54 @@ namespace Gsemac.IO {
 
         }
 
+        public byte ReadByte(int numberOfBits) {
+
+            if (numberOfBits < 0)
+                throw new ArgumentOutOfRangeException(nameof(numberOfBits));
+
+            byte result = 0;
+
+            for (int i = 0; i < numberOfBits; ++i) {
+
+                if (ReadBoolean())
+                    result |= (byte)(1 << numberOfBits - i - 1);
+
+            }
+
+            return result;
+
+        }
+        public ushort ReadUInt16(int numberOfBits) {
+
+            byte[] buffer = new byte[sizeof(ushort)];
+
+            ReadLowOrderBits(buffer, numberOfBits);
+
+            return BitConverter.ToUInt16(buffer, 0);
+
+        }
+        public uint ReadUInt32(int numberOfBits) {
+
+            byte[] buffer = new byte[sizeof(uint)];
+
+            ReadLowOrderBits(buffer, numberOfBits);
+
+            return BitConverter.ToUInt32(buffer, 0);
+
+        }
+        public ulong ReadUInt64(int numberOfBits) {
+
+            byte[] buffer = new byte[sizeof(ulong)];
+
+            ReadLowOrderBits(buffer, numberOfBits);
+
+            return BitConverter.ToUInt64(buffer, 0);
+
+        }
+
         // Private members
 
-        private const byte BitsPerByte = 8;
+        private const byte BitsPerByte = BitUtilities.BitsPerByte;
 
         private readonly Encoding encoding;
         private readonly ByteOrder byteOrder;
@@ -325,6 +370,76 @@ namespace Gsemac.IO {
                 Array.Reverse(buffer);
 
             return bytesRead;
+
+        }
+        private void ReadLowOrderBits(byte[] buffer, int numberOfBits) {
+
+            if (buffer is null)
+                throw new ArgumentNullException(nameof(buffer));
+
+            if (numberOfBits < 0)
+                throw new ArgumentOutOfRangeException(nameof(numberOfBits));
+
+            if (numberOfBits <= 0)
+                return;
+
+            int bytesNeeded = (int)Math.Ceiling(numberOfBits / (double)BitsPerByte) - 1;
+
+            int bitsNeeded = numberOfBits % BitsPerByte;
+
+            // Note that this method assumes that the buffer is already zeroed out.
+
+            if (byteOrder == ByteOrder.BigEndian || (byteOrder == ByteOrder.Default && !BitConverter.IsLittleEndian)) {
+
+                // Read the bytes in big endian order.
+
+                // Assume the cutoff occurred in the last partial byte.
+                // For example, the number 3 represented in 9 bits would look like:
+                // .......0
+                // 00000011
+
+                // Read extra bits into the end of the first partial byte.
+
+                int byteIndex = bytesNeeded - 1;
+
+                buffer[byteIndex] = ReadByte(bitsNeeded);
+
+                // Read the remaining bytes.
+
+                Read(buffer, byteIndex + 1, bytesNeeded);
+
+            }
+            else {
+
+                // Read the bytes in little endian order.
+
+                // Assume the cutoff occurred in the first partial byte.
+                // For example, the number 3 represented in 9 bits would look like:
+                // 00000011
+                // 0.......
+
+                // Read the initial bytes.
+
+                int byteIndex = 0;
+
+                if (bytesNeeded > 0)
+                    Read(buffer, byteIndex, bytesNeeded);
+
+                // Read extra bits into the beginning of the last partial byte.
+
+                byteIndex += bytesNeeded;
+
+                for (int i = 0; i < bitsNeeded; ++i) {
+
+                    if (ReadBoolean())
+                        buffer[byteIndex] |= (byte)(1 << numberOfBits - i - 1);
+
+                }
+
+            }
+
+            if (IsByteReorderingRequired())
+                Array.Reverse(buffer);
 
         }
 
