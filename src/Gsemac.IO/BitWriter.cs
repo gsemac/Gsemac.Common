@@ -52,7 +52,7 @@ namespace Gsemac.IO {
 
             CommitByte();
 
-            currentByte |= (byte)(value << (BitsPerByte - previousBitIndex));
+            currentByte |= (byte)(value << (BitUtilities.BitsPerByte - previousBitIndex));
 
             bitIndex = previousBitIndex;
 
@@ -253,7 +253,7 @@ namespace Gsemac.IO {
 
         // Private members
 
-        private const byte BitsPerByte = 8;
+        private const byte BitsPerByte = BitUtilities.BitsPerByte;
 
         private readonly Encoding encoding;
         private readonly ByteOrder byteOrder;
@@ -311,8 +311,8 @@ namespace Gsemac.IO {
 
                 // Write the bytes in big endian order.
 
-                // If we're writing a partial byte, we want the cutoff in the last byte.
-                // Writing 3 with 9 bits would look like:
+                // If we're writing a partial byte, we want the cutoff in the last partial byte.
+                // The number 3 represented in 9 bits would look like:
                 // .......0
                 // 00000011
 
@@ -332,8 +332,8 @@ namespace Gsemac.IO {
 
                 // Write the bytes in little endian order.
 
-                // If we're writing a partial byte, we want the cutoff in the first byte.
-                // Writing 3 with 9 bits would look like:
+                // If we're writing a partial byte, we want the cutoff in the first partial byte.
+                // The number 3 represented in 9 bits would look like:
                 // 00000011
                 // 0.......
 
