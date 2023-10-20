@@ -90,6 +90,11 @@ namespace Gsemac.Net.Dns {
                 for (int i = 0; i < questionCount; ++i)
                     message.Questions.Add(ReadQuestion(reader, labelAddressDict, ref byteOffset));
 
+                // Read the answers.
+
+                for (int i = 0; i < answerCount; ++i)
+                    message.Answers.Add(ReadAnswer(reader, labelAddressDict, ref byteOffset));
+
             }
 
             return message;
@@ -189,7 +194,8 @@ namespace Gsemac.Net.Dns {
             byteOffset += 4;
 
         }
-        private DnsQuestion ReadQuestion(BitReader reader, IDictionary<int, string> addressLabelDict, ref int byteOffset) {
+
+        private string ReadNameSection(BitReader reader, IDictionary<int, string> addressLabelDict, ref int byteOffset) {
 
             if (reader is null)
                 throw new ArgumentNullException(nameof(reader));
@@ -198,7 +204,6 @@ namespace Gsemac.Net.Dns {
                 throw new ArgumentNullException(nameof(addressLabelDict));
 
             List<Tuple<int, string>> labels = new List<Tuple<int, string>>();
-
             while (true) {
 
                 byte labelPointerFlag = reader.ReadByte(bits: 2);
@@ -211,7 +216,7 @@ namespace Gsemac.Net.Dns {
 
                     int labelAddress = reader.ReadUInt16(bits: 14);
 
-                    labels.Add(Tuple.Create(byteOffset, addressLabelDict[labelAddress]));
+                    labels.Add(Tuple.Create(-1, addressLabelDict[labelAddress])); // -1 indicates pointer, so we don't cache this name
 
                     byteOffset += 2;
 
@@ -250,6 +255,10 @@ namespace Gsemac.Net.Dns {
             for (int i = 0; i < labels.Count; ++i) {
 
                 int labelOffset = labels[i].Item1;
+
+                if (labelOffset < 0)
+                    continue;
+
                 string labelName = string.Join(".", labels.Select(t => t.Item2).Skip(i));
 
                 if (!addressLabelDict.ContainsKey(labelOffset))
@@ -257,15 +266,50 @@ namespace Gsemac.Net.Dns {
 
             }
 
+            return string.Join(".", labels.Select(t => t.Item2));
+
+        }
+        private DnsQuestion ReadQuestion(BitReader reader, IDictionary<int, string> addressLabelDict, ref int byteOffset) {
+
+            if (reader is null)
+                throw new ArgumentNullException(nameof(reader));
+
+            if (addressLabelDict is null)
+                throw new ArgumentNullException(nameof(addressLabelDict));
+
+            string name = ReadNameSection(reader, addressLabelDict, ref byteOffset);
+
             DnsRecordType dnsRecordType = (DnsRecordType)reader.ReadUInt16(bits: 16); // QTYPE
             DnsClass dnsClass = (DnsClass)reader.ReadUInt16(bits: 16); // QCLASS
 
             byteOffset += 4;
 
             return new DnsQuestion() {
-                Name = string.Join(".", labels.Select(t => t.Item2)),
+                Name = name,
                 RecordType = dnsRecordType,
                 Class = dnsClass,
+            };
+
+        }
+        private DnsAnswer ReadAnswer(BitReader reader, IDictionary<int, string> addressLabelDict, ref int byteOffset) {
+
+            if (reader is null)
+                throw new ArgumentNullException(nameof(reader));
+
+            if (addressLabelDict is null)
+                throw new ArgumentNullException(nameof(addressLabelDict));
+
+            string name = ReadNameSection(reader, addressLabelDict, ref byteOffset);
+            DnsRecordType dnsRecordType = (DnsRecordType)reader.ReadUInt16(bits: 16); //  TYPE
+            DnsClass dnsClass = (DnsClass)reader.ReadUInt16(bits: 16); // CLASS
+            uint ttlSeconds = reader.ReadUInt32(bits: 32); //  TTL
+            int rDataLength = reader.ReadUInt16(bits: 16); // RDLENGTH
+
+            return new DnsAnswer() {
+                Name = name,
+                RecordType = dnsRecordType,
+                Class = dnsClass,
+                TimeToLive = TimeSpan.FromSeconds(ttlSeconds),
             };
 
         }

@@ -9,7 +9,7 @@ namespace Gsemac.Net.Dns {
         public string Name { get; set; }
         public DnsRecordType RecordType { get; set; } = DnsRecordType.A;
         public DnsClass Class { get; set; } = DnsClass.Internet;
-        public TimeSpan Lifespan { get; set; } = TimeSpan.Zero;
+        public TimeSpan TimeToLive { get; set; } = TimeSpan.Zero;
 
     }
 
