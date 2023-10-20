@@ -76,6 +76,7 @@ namespace Gsemac.IO.Tests {
             }
 
         }
+
         [TestMethod]
         public void TestWriteWithChar() {
 
@@ -128,6 +129,7 @@ namespace Gsemac.IO.Tests {
             }
 
         }
+
         [TestMethod]
         public void TestWriteWithAsciiString() {
 
@@ -160,8 +162,9 @@ namespace Gsemac.IO.Tests {
             }
 
         }
+
         [TestMethod]
-        public void hTestWriteWitDecimal() {
+        public void TestWriteWitDecimal() {
 
             decimal value = 4.78M;
 
@@ -178,6 +181,7 @@ namespace Gsemac.IO.Tests {
             }
 
         }
+
         [TestMethod]
         public void TestWriteWithUIntWithLittleEndianByteOrder() {
 
@@ -221,6 +225,7 @@ namespace Gsemac.IO.Tests {
 
         }
         [TestMethod]
+
         public void TestWriteWithUShortWithLittleEndianByteOrder() {
 
             using (MemoryStream stream = new MemoryStream()) {
@@ -258,6 +263,7 @@ namespace Gsemac.IO.Tests {
             }
 
         }
+
         [TestMethod]
         public void TestWriteWithPartialByte() {
 
@@ -278,6 +284,7 @@ namespace Gsemac.IO.Tests {
             }
 
         }
+
         [TestMethod]
         public void TestWriteWithPartialUShortWithNumberOfBitsLessThanByte() {
 
@@ -319,6 +326,7 @@ namespace Gsemac.IO.Tests {
             }
 
         }
+
         [TestMethod]
         public void TestWriteWithPartialUIntWithLittleEndianByteOrder() {
 

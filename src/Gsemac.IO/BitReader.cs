@@ -469,9 +469,11 @@ namespace Gsemac.IO {
             if (numberOfBits <= 0)
                 return;
 
-            int bytesNeeded = (int)Math.Ceiling(numberOfBits / (double)BitsPerByte) - 1;
-
+            int bytesNeeded = (int)Math.Ceiling(numberOfBits / (double)BitsPerByte);
             int bitsNeeded = numberOfBits % BitsPerByte;
+
+            if (bitsNeeded > 0)
+                --bytesNeeded;
 
             // Note that this method assumes that the buffer is already zeroed out.
 
@@ -486,13 +488,19 @@ namespace Gsemac.IO {
 
                 // Read extra bits into the end of the first partial byte.
 
-                int byteIndex = bytesNeeded - 1;
+                int byteIndex = 0;
 
-                buffer[byteIndex] = ReadByte(bitsNeeded);
+                if (bitsNeeded > 0) {
+
+                    byteIndex = bytesNeeded - 1;
+
+                    buffer[byteIndex++] = ReadByte(bitsNeeded);
+
+                }
 
                 // Read the remaining bytes.
 
-                Read(buffer, byteIndex + 1, bytesNeeded);
+                Read(buffer, byteIndex, bytesNeeded);
 
             }
             else {

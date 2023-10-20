@@ -364,6 +364,54 @@ namespace Gsemac.IO.Tests {
             }
 
         }
+        [TestMethod]
+        public void TestReadReadUInt16WithWithEvenlyDivisibleNumberOfBits() {
+
+            using (MemoryStream stream = new MemoryStream()) {
+
+                using (BinaryWriter writer = new BinaryWriter(stream, Encoding.UTF8, leaveOpen: true))
+                    writer.Write(ushort.MaxValue);
+
+                stream.Position = 0;
+
+                using (BitReader reader = new BitReader(stream))
+                    Assert.AreEqual(ushort.MaxValue, reader.ReadUInt16(numberOfBits: 16));
+
+            }
+
+        }
+        [TestMethod]
+        public void TestReadReadUInt16WithWithEvenlyDivisibleNumberOfBitsAndLittleEndianByteOrder() {
+
+            using (MemoryStream stream = new MemoryStream()) {
+
+                using (BitWriter writer = new BitWriter(stream, Encoding.UTF8, ByteOrder.LittleEndian, leaveOpen: true))
+                    writer.Write(ushort.MaxValue);
+
+                stream.Position = 0;
+
+                using (BitReader reader = new BitReader(stream, ByteOrder.LittleEndian))
+                    Assert.AreEqual(ushort.MaxValue, reader.ReadUInt16(numberOfBits: 16));
+
+            }
+
+        }
+        [TestMethod]
+        public void TestReadReadUInt16WithWithEvenlyDivisibleNumberOfBitsAndBigEndianByteOrder() {
+
+            using (MemoryStream stream = new MemoryStream()) {
+
+                using (BitWriter writer = new BitWriter(stream, Encoding.UTF8, ByteOrder.BigEndian, leaveOpen: true))
+                    writer.Write(ushort.MaxValue);
+
+                stream.Position = 0;
+
+                using (BitReader reader = new BitReader(stream, ByteOrder.BigEndian))
+                    Assert.AreEqual(ushort.MaxValue, reader.ReadUInt16(numberOfBits: 16));
+
+            }
+
+        }
 
         // ReadUInt32
 
