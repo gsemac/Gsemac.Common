@@ -488,6 +488,38 @@ namespace Gsemac.IO.Tests {
             }
 
         }
+        [TestMethod]
+        public void TestReadReadUInt32WithEvenlyDivisibleNumberOfBitsAndLittleEndianByteOrder() {
+
+            using (MemoryStream stream = new MemoryStream()) {
+
+                using (BitWriter writer = new BitWriter(stream, Encoding.UTF8, ByteOrder.LittleEndian, leaveOpen: true))
+                    writer.Write(uint.MaxValue);
+
+                stream.Seek(0, SeekOrigin.Begin);
+
+                using (BitReader reader = new BitReader(stream, ByteOrder.LittleEndian))
+                    Assert.AreEqual(uint.MaxValue, reader.ReadUInt32(bits: 16));
+
+            }
+
+        }
+        [TestMethod]
+        public void TestReadReadUInt32WithEvenlyDivisibleNumberOfBitsAndBigEndianByteOrder() {
+
+            using (MemoryStream stream = new MemoryStream()) {
+
+                using (BitWriter writer = new BitWriter(stream, Encoding.UTF8, ByteOrder.BigEndian, leaveOpen: true))
+                    writer.Write(uint.MaxValue);
+
+                stream.Seek(0, SeekOrigin.Begin);
+
+                using (BitReader reader = new BitReader(stream, ByteOrder.BigEndian))
+                    Assert.AreEqual(uint.MaxValue, reader.ReadUInt32(bits: 16));
+
+            }
+
+        }
 
     }
 
