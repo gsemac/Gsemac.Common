@@ -112,7 +112,7 @@ namespace Gsemac.IO.Tests {
             }))
             using (BitReader reader = new BitReader(stream)) {
 
-                Assert.AreEqual(3, reader.ReadByte(numberOfBits: 3));
+                Assert.AreEqual(3, reader.ReadByte(bits: 3));
 
             }
 
@@ -125,7 +125,7 @@ namespace Gsemac.IO.Tests {
             }))
             using (BitReader reader = new BitReader(stream)) {
 
-                Assert.AreEqual(0, reader.ReadByte(numberOfBits: 0));
+                Assert.AreEqual(0, reader.ReadByte(bits: 0));
 
             }
 
@@ -331,7 +331,7 @@ namespace Gsemac.IO.Tests {
             }))
             using (BitReader reader = new BitReader(stream)) {
 
-                Assert.AreEqual(3, reader.ReadUInt16(numberOfBits: 3));
+                Assert.AreEqual(3, reader.ReadUInt16(bits: 3));
 
             }
 
@@ -345,7 +345,7 @@ namespace Gsemac.IO.Tests {
             }))
             using (BitReader reader = new BitReader(stream, ByteOrder.LittleEndian)) {
 
-                Assert.AreEqual(3, reader.ReadUInt16(numberOfBits: 9));
+                Assert.AreEqual(3, reader.ReadUInt16(bits: 9));
 
             }
 
@@ -359,7 +359,7 @@ namespace Gsemac.IO.Tests {
             }))
             using (BitReader reader = new BitReader(stream, ByteOrder.BigEndian)) {
 
-                Assert.AreEqual(3, reader.ReadUInt16(numberOfBits: 9));
+                Assert.AreEqual(3, reader.ReadUInt16(bits: 9));
 
             }
 
@@ -375,7 +375,7 @@ namespace Gsemac.IO.Tests {
                 stream.Position = 0;
 
                 using (BitReader reader = new BitReader(stream))
-                    Assert.AreEqual(ushort.MaxValue, reader.ReadUInt16(numberOfBits: 16));
+                    Assert.AreEqual(ushort.MaxValue, reader.ReadUInt16(bits: 16));
 
             }
 
@@ -391,7 +391,7 @@ namespace Gsemac.IO.Tests {
                 stream.Position = 0;
 
                 using (BitReader reader = new BitReader(stream, ByteOrder.LittleEndian))
-                    Assert.AreEqual(ushort.MaxValue, reader.ReadUInt16(numberOfBits: 16));
+                    Assert.AreEqual(ushort.MaxValue, reader.ReadUInt16(bits: 16));
 
             }
 
@@ -407,7 +407,7 @@ namespace Gsemac.IO.Tests {
                 stream.Position = 0;
 
                 using (BitReader reader = new BitReader(stream, ByteOrder.BigEndian))
-                    Assert.AreEqual(ushort.MaxValue, reader.ReadUInt16(numberOfBits: 16));
+                    Assert.AreEqual(ushort.MaxValue, reader.ReadUInt16(bits: 16));
 
             }
 

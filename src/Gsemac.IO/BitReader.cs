@@ -339,46 +339,46 @@ namespace Gsemac.IO {
 
         }
 
-        public byte ReadByte(int numberOfBits) {
+        public byte ReadByte(int bits) {
 
-            if (numberOfBits < 0)
-                throw new ArgumentOutOfRangeException(nameof(numberOfBits));
+            if (bits < 0)
+                throw new ArgumentOutOfRangeException(nameof(bits));
 
             byte result = 0;
 
-            for (int i = 0; i < numberOfBits; ++i) {
+            for (int i = 0; i < bits; ++i) {
 
                 if (ReadBoolean())
-                    result |= (byte)(1 << numberOfBits - i - 1);
+                    result |= (byte)(1 << bits - i - 1);
 
             }
 
             return result;
 
         }
-        public ushort ReadUInt16(int numberOfBits) {
+        public ushort ReadUInt16(int bits) {
 
             byte[] buffer = new byte[sizeof(ushort)];
 
-            ReadLowOrderBits(buffer, numberOfBits);
+            ReadLowOrderBits(buffer, bits);
 
             return BitConverter.ToUInt16(buffer, 0);
 
         }
-        public uint ReadUInt32(int numberOfBits) {
+        public uint ReadUInt32(int bits) {
 
             byte[] buffer = new byte[sizeof(uint)];
 
-            ReadLowOrderBits(buffer, numberOfBits);
+            ReadLowOrderBits(buffer, bits);
 
             return BitConverter.ToUInt32(buffer, 0);
 
         }
-        public ulong ReadUInt64(int numberOfBits) {
+        public ulong ReadUInt64(int bits) {
 
             byte[] buffer = new byte[sizeof(ulong)];
 
-            ReadLowOrderBits(buffer, numberOfBits);
+            ReadLowOrderBits(buffer, bits);
 
             return BitConverter.ToUInt64(buffer, 0);
 
