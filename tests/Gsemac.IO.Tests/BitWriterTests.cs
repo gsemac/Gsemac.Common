@@ -164,7 +164,7 @@ namespace Gsemac.IO.Tests {
         }
 
         [TestMethod]
-        public void TestWriteWitDecimal() {
+        public void TestWriteWithDecimal() {
 
             decimal value = 4.78M;
 
