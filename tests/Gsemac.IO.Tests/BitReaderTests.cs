@@ -112,7 +112,7 @@ namespace Gsemac.IO.Tests {
             }))
             using (BitReader reader = new BitReader(stream)) {
 
-                Assert.AreEqual(3, reader.ReadByte(numberOfBits: 3));
+                Assert.AreEqual(3, reader.ReadByte(bits: 3));
 
             }
 
@@ -125,7 +125,7 @@ namespace Gsemac.IO.Tests {
             }))
             using (BitReader reader = new BitReader(stream)) {
 
-                Assert.AreEqual(0, reader.ReadByte(numberOfBits: 0));
+                Assert.AreEqual(0, reader.ReadByte(bits: 0));
 
             }
 
@@ -331,7 +331,7 @@ namespace Gsemac.IO.Tests {
             }))
             using (BitReader reader = new BitReader(stream)) {
 
-                Assert.AreEqual(3, reader.ReadUInt16(numberOfBits: 3));
+                Assert.AreEqual(3, reader.ReadUInt16(bits: 3));
 
             }
 
@@ -345,7 +345,7 @@ namespace Gsemac.IO.Tests {
             }))
             using (BitReader reader = new BitReader(stream, ByteOrder.LittleEndian)) {
 
-                Assert.AreEqual(3, reader.ReadUInt16(numberOfBits: 9));
+                Assert.AreEqual(3, reader.ReadUInt16(bits: 9));
 
             }
 
@@ -359,7 +359,55 @@ namespace Gsemac.IO.Tests {
             }))
             using (BitReader reader = new BitReader(stream, ByteOrder.BigEndian)) {
 
-                Assert.AreEqual(3, reader.ReadUInt16(numberOfBits: 9));
+                Assert.AreEqual(3, reader.ReadUInt16(bits: 9));
+
+            }
+
+        }
+        [TestMethod]
+        public void TestReadReadUInt16WithWithEvenlyDivisibleNumberOfBits() {
+
+            using (MemoryStream stream = new MemoryStream()) {
+
+                using (BinaryWriter writer = new BinaryWriter(stream, Encoding.UTF8, leaveOpen: true))
+                    writer.Write(ushort.MaxValue);
+
+                stream.Position = 0;
+
+                using (BitReader reader = new BitReader(stream))
+                    Assert.AreEqual(ushort.MaxValue, reader.ReadUInt16(bits: 16));
+
+            }
+
+        }
+        [TestMethod]
+        public void TestReadReadUInt16WithWithEvenlyDivisibleNumberOfBitsAndLittleEndianByteOrder() {
+
+            using (MemoryStream stream = new MemoryStream()) {
+
+                using (BitWriter writer = new BitWriter(stream, Encoding.UTF8, ByteOrder.LittleEndian, leaveOpen: true))
+                    writer.Write(ushort.MaxValue);
+
+                stream.Position = 0;
+
+                using (BitReader reader = new BitReader(stream, ByteOrder.LittleEndian))
+                    Assert.AreEqual(ushort.MaxValue, reader.ReadUInt16(bits: 16));
+
+            }
+
+        }
+        [TestMethod]
+        public void TestReadReadUInt16WithWithEvenlyDivisibleNumberOfBitsAndBigEndianByteOrder() {
+
+            using (MemoryStream stream = new MemoryStream()) {
+
+                using (BitWriter writer = new BitWriter(stream, Encoding.UTF8, ByteOrder.BigEndian, leaveOpen: true))
+                    writer.Write(ushort.MaxValue);
+
+                stream.Position = 0;
+
+                using (BitReader reader = new BitReader(stream, ByteOrder.BigEndian))
+                    Assert.AreEqual(ushort.MaxValue, reader.ReadUInt16(bits: 16));
 
             }
 

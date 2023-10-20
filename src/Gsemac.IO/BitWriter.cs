@@ -179,36 +179,36 @@ namespace Gsemac.IO {
 
         }
 
-        public void Write(byte value, int numberOfBits) {
+        public void Write(byte value, int bits) {
 
-            if (numberOfBits < 0)
-                throw new ArgumentOutOfRangeException(nameof(numberOfBits));
+            if (bits < 0)
+                throw new ArgumentOutOfRangeException(nameof(bits));
 
-            if (numberOfBits <= 0)
+            if (bits <= 0)
                 return;
 
             // Write the N low order bits.
 
-            for (int i = 0; i < numberOfBits; ++i) {
+            for (int i = 0; i < bits; ++i) {
 
-                WriteBit((value & (1 << (numberOfBits - i - 1))) > 0);
+                WriteBit((value & (1 << (bits - i - 1))) > 0);
 
             }
 
         }
-        public void Write(uint value, int numberOfBits) {
+        public void Write(uint value, int bits) {
 
-            WriteLowOrderBits(BitConverter.GetBytes(value), numberOfBits);
-
-        }
-        public void Write(ulong value, int numberOfBits) {
-
-            WriteLowOrderBits(BitConverter.GetBytes(value), numberOfBits);
+            WriteLowOrderBits(BitConverter.GetBytes(value), bits);
 
         }
-        public void Write(ushort value, int numberOfBits) {
+        public void Write(ulong value, int bits) {
 
-            WriteLowOrderBits(BitConverter.GetBytes(value), numberOfBits);
+            WriteLowOrderBits(BitConverter.GetBytes(value), bits);
+
+        }
+        public void Write(ushort value, int bits) {
+
+            WriteLowOrderBits(BitConverter.GetBytes(value), bits);
 
         }
 

@@ -339,46 +339,46 @@ namespace Gsemac.IO {
 
         }
 
-        public byte ReadByte(int numberOfBits) {
+        public byte ReadByte(int bits) {
 
-            if (numberOfBits < 0)
-                throw new ArgumentOutOfRangeException(nameof(numberOfBits));
+            if (bits < 0)
+                throw new ArgumentOutOfRangeException(nameof(bits));
 
             byte result = 0;
 
-            for (int i = 0; i < numberOfBits; ++i) {
+            for (int i = 0; i < bits; ++i) {
 
                 if (ReadBoolean())
-                    result |= (byte)(1 << numberOfBits - i - 1);
+                    result |= (byte)(1 << bits - i - 1);
 
             }
 
             return result;
 
         }
-        public ushort ReadUInt16(int numberOfBits) {
+        public ushort ReadUInt16(int bits) {
 
             byte[] buffer = new byte[sizeof(ushort)];
 
-            ReadLowOrderBits(buffer, numberOfBits);
+            ReadLowOrderBits(buffer, bits);
 
             return BitConverter.ToUInt16(buffer, 0);
 
         }
-        public uint ReadUInt32(int numberOfBits) {
+        public uint ReadUInt32(int bits) {
 
             byte[] buffer = new byte[sizeof(uint)];
 
-            ReadLowOrderBits(buffer, numberOfBits);
+            ReadLowOrderBits(buffer, bits);
 
             return BitConverter.ToUInt32(buffer, 0);
 
         }
-        public ulong ReadUInt64(int numberOfBits) {
+        public ulong ReadUInt64(int bits) {
 
             byte[] buffer = new byte[sizeof(ulong)];
 
-            ReadLowOrderBits(buffer, numberOfBits);
+            ReadLowOrderBits(buffer, bits);
 
             return BitConverter.ToUInt64(buffer, 0);
 
@@ -469,9 +469,11 @@ namespace Gsemac.IO {
             if (numberOfBits <= 0)
                 return;
 
-            int bytesNeeded = (int)Math.Ceiling(numberOfBits / (double)BitsPerByte) - 1;
-
+            int bytesNeeded = (int)Math.Ceiling(numberOfBits / (double)BitsPerByte);
             int bitsNeeded = numberOfBits % BitsPerByte;
+
+            if (bitsNeeded > 0)
+                --bytesNeeded;
 
             // Note that this method assumes that the buffer is already zeroed out.
 
@@ -486,13 +488,19 @@ namespace Gsemac.IO {
 
                 // Read extra bits into the end of the first partial byte.
 
-                int byteIndex = bytesNeeded - 1;
+                int byteIndex = 0;
 
-                buffer[byteIndex] = ReadByte(bitsNeeded);
+                if (bitsNeeded > 0) {
+
+                    byteIndex = bytesNeeded - 1;
+
+                    buffer[byteIndex++] = ReadByte(bitsNeeded);
+
+                }
 
                 // Read the remaining bytes.
 
-                Read(buffer, byteIndex + 1, bytesNeeded);
+                Read(buffer, byteIndex, bytesNeeded);
 
             }
             else {

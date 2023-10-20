@@ -76,6 +76,7 @@ namespace Gsemac.IO.Tests {
             }
 
         }
+
         [TestMethod]
         public void TestWriteWithChar() {
 
@@ -128,6 +129,7 @@ namespace Gsemac.IO.Tests {
             }
 
         }
+
         [TestMethod]
         public void TestWriteWithAsciiString() {
 
@@ -160,8 +162,9 @@ namespace Gsemac.IO.Tests {
             }
 
         }
+
         [TestMethod]
-        public void hTestWriteWitDecimal() {
+        public void TestWriteWitDecimal() {
 
             decimal value = 4.78M;
 
@@ -178,6 +181,7 @@ namespace Gsemac.IO.Tests {
             }
 
         }
+
         [TestMethod]
         public void TestWriteWithUIntWithLittleEndianByteOrder() {
 
@@ -221,6 +225,7 @@ namespace Gsemac.IO.Tests {
 
         }
         [TestMethod]
+
         public void TestWriteWithUShortWithLittleEndianByteOrder() {
 
             using (MemoryStream stream = new MemoryStream()) {
@@ -258,6 +263,7 @@ namespace Gsemac.IO.Tests {
             }
 
         }
+
         [TestMethod]
         public void TestWriteWithPartialByte() {
 
@@ -266,7 +272,7 @@ namespace Gsemac.IO.Tests {
                 using (BitWriter writer = new BitWriter(stream)) {
 
                     writer.Write(true);
-                    writer.Write(3, numberOfBits: 4);
+                    writer.Write(3, bits: 4);
                     writer.Write(true);
 
                 }
@@ -278,6 +284,7 @@ namespace Gsemac.IO.Tests {
             }
 
         }
+
         [TestMethod]
         public void TestWriteWithPartialUShortWithNumberOfBitsLessThanByte() {
 
@@ -286,7 +293,7 @@ namespace Gsemac.IO.Tests {
                 using (BitWriter writer = new BitWriter(stream)) {
 
                     writer.Write(true);
-                    writer.Write((ushort)3, numberOfBits: 3);
+                    writer.Write((ushort)3, bits: 3);
                     writer.Write(true);
 
                 }
@@ -306,7 +313,7 @@ namespace Gsemac.IO.Tests {
                 using (BitWriter writer = new BitWriter(stream, ByteOrder.LittleEndian)) {
 
                     writer.Write(true);
-                    writer.Write((ushort)3, numberOfBits: 9);
+                    writer.Write((ushort)3, bits: 9);
                     writer.Write(true);
 
                 }
@@ -319,6 +326,7 @@ namespace Gsemac.IO.Tests {
             }
 
         }
+
         [TestMethod]
         public void TestWriteWithPartialUIntWithLittleEndianByteOrder() {
 
@@ -326,7 +334,7 @@ namespace Gsemac.IO.Tests {
 
                 using (BitWriter writer = new BitWriter(stream, ByteOrder.LittleEndian)) {
 
-                    writer.Write((uint)3, numberOfBits: 16);
+                    writer.Write((uint)3, bits: 16);
 
                 }
 
@@ -345,7 +353,7 @@ namespace Gsemac.IO.Tests {
 
                 using (BitWriter writer = new BitWriter(stream, ByteOrder.BigEndian)) {
 
-                    writer.Write((uint)3, numberOfBits: 16);
+                    writer.Write((uint)3, bits: 16);
 
                 }
 
