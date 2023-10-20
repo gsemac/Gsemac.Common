@@ -116,7 +116,7 @@ namespace Gsemac.IO {
 
             // BinaryWriter writes the string prefixed with a 7-bit encoded integer length.
 
-            Write7BitEncodedInt(value.Length);
+            Write7BitEncodedInt(encoding.GetByteCount(value));
 
             Write(encoding.GetBytes(value));
 

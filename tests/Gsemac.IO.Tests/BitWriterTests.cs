@@ -11,7 +11,7 @@ namespace Gsemac.IO.Tests {
         // Write
 
         [TestMethod]
-        public void TestWriteBool() {
+        public void TestWriteWithBool() {
 
             using (MemoryStream stream = new MemoryStream()) {
 
@@ -29,7 +29,7 @@ namespace Gsemac.IO.Tests {
 
         }
         [TestMethod]
-        public void TestWriteByte() {
+        public void TestWriteWithByte() {
 
             using (MemoryStream stream = new MemoryStream()) {
 
@@ -50,7 +50,7 @@ namespace Gsemac.IO.Tests {
 
         }
         [TestMethod]
-        public void TestWriteByteArray() {
+        public void TestWriteWithByteArray() {
 
             using (MemoryStream stream = new MemoryStream()) {
 
@@ -77,7 +77,7 @@ namespace Gsemac.IO.Tests {
 
         }
         [TestMethod]
-        public void TestWriteChar() {
+        public void TestWriteWithChar() {
 
             using (MemoryStream stream = new MemoryStream()) {
 
@@ -97,7 +97,71 @@ namespace Gsemac.IO.Tests {
 
         }
         [TestMethod]
-        public void TestWriteDecimal() {
+        public void TestWriteWithAsciiChar() {
+
+            using (MemoryStream stream = new MemoryStream()) {
+
+                using (BitWriter writer = new BitWriter(stream, Encoding.ASCII, leaveOpen: true))
+                    writer.Write('A');
+
+                stream.Position = 0;
+
+                using (BinaryReader reader = new BinaryReader(stream, Encoding.ASCII))
+                    Assert.AreEqual('A', reader.ReadChar());
+
+            }
+
+        }
+        [TestMethod]
+        public void TestWriteWithUtf8Char() {
+
+            using (MemoryStream stream = new MemoryStream()) {
+
+                using (BitWriter writer = new BitWriter(stream, Encoding.UTF8, leaveOpen: true))
+                    writer.Write('字');
+
+                stream.Position = 0;
+
+                using (BinaryReader reader = new BinaryReader(stream, Encoding.UTF8))
+                    Assert.AreEqual('字', reader.ReadChar());
+
+            }
+
+        }
+        [TestMethod]
+        public void TestWriteWithAsciiString() {
+
+            using (MemoryStream stream = new MemoryStream()) {
+
+                using (BitWriter writer = new BitWriter(stream, Encoding.ASCII, leaveOpen: true))
+                    writer.Write("Hello, world!");
+
+                stream.Position = 0;
+
+                using (BinaryReader reader = new BinaryReader(stream, Encoding.ASCII))
+                    Assert.AreEqual("Hello, world!", reader.ReadString());
+
+            }
+
+        }
+        [TestMethod]
+        public void TestWriteWithUtf8String() {
+
+            using (MemoryStream stream = new MemoryStream()) {
+
+                using (BitWriter writer = new BitWriter(stream, Encoding.UTF8, leaveOpen: true))
+                    writer.Write("こんにちは世界！");
+
+                stream.Position = 0;
+
+                using (BinaryReader reader = new BinaryReader(stream, Encoding.UTF8))
+                    Assert.AreEqual("こんにちは世界！", reader.ReadString());
+
+            }
+
+        }
+        [TestMethod]
+        public void hTestWriteWitDecimal() {
 
             decimal value = 4.78M;
 
@@ -115,7 +179,7 @@ namespace Gsemac.IO.Tests {
 
         }
         [TestMethod]
-        public void TestWriteUIntWithLittleEndianByteOrder() {
+        public void TestWriteWithUIntWithLittleEndianByteOrder() {
 
             using (MemoryStream stream = new MemoryStream()) {
 
@@ -136,7 +200,7 @@ namespace Gsemac.IO.Tests {
 
         }
         [TestMethod]
-        public void TestWriteUIntWithBigEndianByteOrder() {
+        public void TestWriteWithUIntWithBigEndianByteOrder() {
 
             using (MemoryStream stream = new MemoryStream()) {
 
@@ -157,7 +221,7 @@ namespace Gsemac.IO.Tests {
 
         }
         [TestMethod]
-        public void TestWriteUShortWithLittleEndianByteOrder() {
+        public void TestWriteWithUShortWithLittleEndianByteOrder() {
 
             using (MemoryStream stream = new MemoryStream()) {
 
@@ -176,7 +240,7 @@ namespace Gsemac.IO.Tests {
 
         }
         [TestMethod]
-        public void TestWriteUShortWithBigEndianByteOrder() {
+        public void TestWriteWithUShortWithBigEndianByteOrder() {
 
             using (MemoryStream stream = new MemoryStream()) {
 
@@ -195,7 +259,7 @@ namespace Gsemac.IO.Tests {
 
         }
         [TestMethod]
-        public void TestWritePartialByte() {
+        public void TestWriteWithPartialByte() {
 
             using (MemoryStream stream = new MemoryStream()) {
 
@@ -215,7 +279,7 @@ namespace Gsemac.IO.Tests {
 
         }
         [TestMethod]
-        public void TestWritePartialUShortWithNumberOfBitsLessThanByte() {
+        public void TestWriteWithPartialUShortWithNumberOfBitsLessThanByte() {
 
             using (MemoryStream stream = new MemoryStream()) {
 
@@ -235,7 +299,7 @@ namespace Gsemac.IO.Tests {
 
         }
         [TestMethod]
-        public void TestWritePartialUShortWithNumberOfBitsGreaterThanByte() {
+        public void TestWriteWithPartialUShortWithNumberOfBitsGreaterThanByte() {
 
             using (MemoryStream stream = new MemoryStream()) {
 
@@ -256,7 +320,7 @@ namespace Gsemac.IO.Tests {
 
         }
         [TestMethod]
-        public void TestWritePartialUIntWithLittleEndianByteOrder() {
+        public void TestWriteWithPartialUIntWithLittleEndianByteOrder() {
 
             using (MemoryStream stream = new MemoryStream()) {
 
@@ -275,7 +339,7 @@ namespace Gsemac.IO.Tests {
 
         }
         [TestMethod]
-        public void TestWritePartialUIntWithBigEndianByteOrder() {
+        public void TestWriteWithPartialUIntWithBigEndianByteOrder() {
 
             using (MemoryStream stream = new MemoryStream()) {
 
