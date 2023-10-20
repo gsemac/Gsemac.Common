@@ -61,6 +61,15 @@ namespace Gsemac.IO.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to `BitReader` encountered an invalid string length of {0} characters..
+        /// </summary>
+        internal static string BitReaderInvalidStringLength {
+            get {
+                return ResourceManager.GetString("BitReaderInvalidStringLength", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Cannot access a closed Stream..
         /// </summary>
         internal static string CannotAccessAClosedStream {

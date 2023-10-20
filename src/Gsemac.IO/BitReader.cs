@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Gsemac.IO.Properties;
+using System;
 using System.IO;
 using System.Text;
 
@@ -27,11 +28,18 @@ namespace Gsemac.IO {
             this.encoding = encoding;
             this.byteOrder = byteOrder;
 
+            bytesPerChar = encoding is UnicodeEncoding ? 2 : 1;
+
         }
 
         public override int Read() {
 
-            return base.Read();
+            char[] buffer = new char[1];
+
+            if (Read(buffer, 0, 1) <= 0)
+                return -1;
+
+            return buffer[0];
 
         }
         public override int Read(byte[] buffer, int index, int count) {
@@ -66,7 +74,39 @@ namespace Gsemac.IO {
         }
         public override int Read(char[] buffer, int index, int count) {
 
-            return base.Read(buffer, index, count);
+            if (buffer is null)
+                throw new ArgumentNullException(nameof(buffer));
+
+            if (index < 0)
+                throw new ArgumentOutOfRangeException(nameof(index));
+
+            if (count < 0)
+                throw new ArgumentOutOfRangeException(nameof(count));
+
+            if (buffer.Length - index < count)
+                throw new ArgumentException($"The buffer length minus {nameof(index)} is less than {nameof(count)}.");
+
+            // This method is not trivial to implement, and BinaryReader has a far more robust implementation.
+            // https://github.com/microsoft/referencesource/blob/master/mscorlib/system/io/binaryreader.cs#L300
+
+            Decoder decoder = encoding.GetDecoder();
+
+            byte[] byteBuffer = new byte[bytesPerChar];
+
+            int charsRead = 0;
+
+            while (charsRead <= 0) {
+
+                int bytesRead = Read(byteBuffer, 0, byteBuffer.Length);
+
+                if (bytesRead <= 0)
+                    return 0;
+
+                charsRead = decoder.GetChars(byteBuffer, 0, bytesRead, buffer, 0);
+
+            }
+
+            return charsRead;
 
         }
 
@@ -138,22 +178,67 @@ namespace Gsemac.IO {
 
         public override int PeekChar() {
 
-            return base.PeekChar();
+            // BinaryReader implements by reading a character and seeking back, but this could be done more efficiently and without seeking by using a buffer.
+
+            if (!BaseStream.CanSeek)
+                return -1;
+
+            long position = BaseStream.Position;
+
+            int result = Read();
+
+            BaseStream.Position = position;
+
+            return result;
 
         }
         public override char ReadChar() {
 
-            return base.ReadChar();
+            int result = Read();
+
+            if (result < 0)
+                throw new EndOfStreamException();
+
+            return (char)result;
 
         }
         public override char[] ReadChars(int count) {
 
-            return base.ReadChars(count);
+            if (count <= 0)
+                throw new ArgumentOutOfRangeException(nameof(count));
+
+            char[] buffer = new char[count];
+
+            int charsRead = Read(buffer, 0, count);
+
+            if (charsRead < count) {
+
+                char[] newBuffer = new char[charsRead];
+
+                Array.Copy(buffer, newBuffer, newBuffer.Length);
+
+                buffer = newBuffer;
+
+            }
+
+            return buffer;
 
         }
         public override string ReadString() {
 
-            return base.ReadString();
+            int stringLengthInBytes = Read7BitEncodedInt();
+
+            if (stringLengthInBytes < 0)
+                throw new IOException(string.Format(ExceptionMessages.BitReaderInvalidStringLength, stringLengthInBytes));
+
+            if (stringLengthInBytes == 0)
+                return string.Empty;
+
+            byte[] buffer = new byte[stringLengthInBytes];
+
+            int bytesRead = Read(buffer, 0, buffer.Length);
+
+            return encoding.GetString(buffer, 0, bytesRead);
 
         }
 
@@ -305,6 +390,7 @@ namespace Gsemac.IO {
 
         private readonly Encoding encoding;
         private readonly ByteOrder byteOrder;
+        private int bytesPerChar;
         private bool isBufferInitialized = false;
         private byte currentByte = 0;
         private byte bitIndex = 0;

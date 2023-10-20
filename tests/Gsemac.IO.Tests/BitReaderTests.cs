@@ -170,6 +170,92 @@ namespace Gsemac.IO.Tests {
 
         }
 
+        // ReadChar
+
+        [TestMethod]
+        public void TestReadCharWithAsciiChar() {
+
+            using (MemoryStream stream = new MemoryStream()) {
+
+                using (BinaryWriter writer = new BinaryWriter(stream, Encoding.ASCII, leaveOpen: true))
+                    writer.Write('A');
+
+                stream.Position = 0;
+
+                using (BitReader reader = new BitReader(stream, Encoding.ASCII))
+                    Assert.AreEqual('A', reader.ReadChar());
+
+            }
+
+        }
+        [TestMethod]
+        public void TestReadCharWithUtf8Char() {
+
+            using (MemoryStream stream = new MemoryStream()) {
+
+                using (BinaryWriter writer = new BinaryWriter(stream, Encoding.UTF8, leaveOpen: true))
+                    writer.Write('字');
+
+                stream.Position = 0;
+
+                using (BitReader reader = new BitReader(stream, Encoding.UTF8))
+                    Assert.AreEqual('字', reader.ReadChar());
+
+            }
+
+        }
+        [TestMethod]
+        public void TestReadCharWithUnicodeChar() {
+
+            using (MemoryStream stream = new MemoryStream()) {
+
+                using (BinaryWriter writer = new BinaryWriter(stream, Encoding.Unicode, leaveOpen: true))
+                    writer.Write('字');
+
+                stream.Position = 0;
+
+                using (BitReader reader = new BitReader(stream, Encoding.Unicode))
+                    Assert.AreEqual('字', reader.ReadChar());
+
+            }
+
+        }
+
+        // ReadString
+
+        [TestMethod]
+        public void TestReadStringWithAsciiString() {
+
+            using (MemoryStream stream = new MemoryStream()) {
+
+                using (BinaryWriter writer = new BinaryWriter(stream, Encoding.ASCII, leaveOpen: true))
+                    writer.Write("Hello, world!");
+
+                stream.Position = 0;
+
+                using (BitReader reader = new BitReader(stream, Encoding.ASCII))
+                    Assert.AreEqual("Hello, world!", reader.ReadString());
+
+            }
+
+        }
+        [TestMethod]
+        public void TestReadStringWithUtf8String() {
+
+            using (MemoryStream stream = new MemoryStream()) {
+
+                using (BinaryWriter writer = new BinaryWriter(stream, Encoding.UTF8, leaveOpen: true))
+                    writer.Write("こんにちは世界！");
+
+                stream.Position = 0;
+
+                using (BitReader reader = new BitReader(stream, Encoding.UTF8))
+                    Assert.AreEqual("こんにちは世界！", reader.ReadString());
+
+            }
+
+        }
+
         // ReadDecimal
 
         [TestMethod]
@@ -278,6 +364,9 @@ namespace Gsemac.IO.Tests {
             }
 
         }
+
+        // ReadUInt32
+
         [TestMethod]
         public void TestReadReadUInt32WithAlignedBytes() {
 
