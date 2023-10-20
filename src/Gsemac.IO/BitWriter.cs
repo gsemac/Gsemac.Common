@@ -52,7 +52,7 @@ namespace Gsemac.IO {
 
             CommitByte();
 
-            currentByte |= (byte)(value << (BitUtilities.BitsPerByte - previousBitIndex));
+            currentByte |= (byte)(value << (BitsPerByte - previousBitIndex));
 
             bitIndex = previousBitIndex;
 
