@@ -3,7 +3,7 @@
 	<PropertyGroup>
 		<TargetFramework>net6.0</TargetFramework>
 		<IsPackable>false</IsPackable>
-		<NoWarn>IDE0063</NoWarn>
+		<NoWarn>IDE0063,IDE0090</NoWarn>
 	</PropertyGroup>
 
 	<ItemGroup>
