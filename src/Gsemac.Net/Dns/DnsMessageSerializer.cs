@@ -41,9 +41,9 @@ namespace Gsemac.Net.Dns {
 
                 int byteOffset = 12;
 
-                // Write the questions
-
                 Dictionary<string, int> compressionDict = new Dictionary<string, int>();
+
+                // Write the questions
 
                 foreach (DnsQuestion question in message.Questions) {
 
@@ -96,6 +96,7 @@ namespace Gsemac.Net.Dns {
                 }
 
                 // TODO: Write the answers
+                // Answers should use the same compression dictionary as the questions.
 
             }
 
@@ -105,7 +106,30 @@ namespace Gsemac.Net.Dns {
             if (stream is null)
                 throw new ArgumentNullException(nameof(stream));
 
-            throw new NotImplementedException();
+            DnsMessage message = new DnsMessage();
+
+            using (BitReader reader = new BitReader(stream, ByteOrder.BigEndian)) {
+
+                // Read the message header
+
+                message.Id = reader.ReadUInt16(numberOfBits: 16); // ID
+                message.Type = reader.ReadBoolean() ? DnsMessageType.Response : DnsMessageType.Query; // QR
+                message.OpCode = (DnsOpCode)reader.ReadByte(numberOfBits: 4); // OPCODE
+                message.IsAuthoritativeAnswer = reader.ReadBoolean(); // AA
+                message.IsTruncated = reader.ReadBoolean(); // TC
+                message.RecursionDesired = reader.ReadBoolean(); // RD
+                message.RecursionAvailable = reader.ReadBoolean(); // RA
+                reader.ReadByte(numberOfBits: 3); // Z
+                message.ResponseCode = (DnsResponseCode)reader.ReadByte(numberOfBits: 4); // RCODE
+
+                int questionCount = reader.ReadUInt16(numberOfBits: 16); // QDCOUNT
+                int answerCount = reader.ReadUInt16(numberOfBits: 16); // ANCOUNT
+                int serviceRecordCount = reader.ReadUInt16(numberOfBits: 16); // NSCOUNT
+                int additionalRecordCount = reader.ReadUInt16(numberOfBits: 16); // ARCOUNT
+
+            }
+
+            return message;
 
         }
 
