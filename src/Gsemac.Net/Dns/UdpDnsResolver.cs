@@ -49,8 +49,8 @@ namespace Gsemac.Net.Dns {
 
                 byte[] responseBytes = udp.Receive(ref endpoint);
 
-                using (MemoryStream stream = new MemoryStream(responseBytes))
-                    return serializer.Deserialize(stream);
+                using (MemoryStream responseStream = new MemoryStream(responseBytes))
+                    return serializer.Deserialize(responseStream);
 
             }
 
