@@ -1,6 +1,7 @@
 ﻿namespace Gsemac.Net.Dns {
 
-    public sealed class DnsQuestion {
+    public sealed class DnsQuestion :
+        IDnsQuestion {
 
         // Public members
 

@@ -106,6 +106,15 @@ namespace Gsemac.Net.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The host address is invalid..
+        /// </summary>
+        internal static string InvalidDnsHostAddress {
+            get {
+                return ResourceManager.GetString("InvalidDnsHostAddress", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The string &apos;{0}&apos; is not a valid HTTP content-disposition header..
         /// </summary>
         internal static string InvalidHttpContentDispositionHeaderWithString {

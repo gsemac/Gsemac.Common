@@ -1,8 +1,10 @@
 ﻿using Gsemac.IO;
+using Gsemac.Net.Properties;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Text;
 
 namespace Gsemac.Net.Dns {
@@ -11,7 +13,7 @@ namespace Gsemac.Net.Dns {
 
         // Public members
 
-        public void Serialize(DnsMessage message, Stream stream) {
+        public void Serialize(IDnsMessage message, Stream stream) {
 
             if (message is null)
                 throw new ArgumentNullException(nameof(message));
@@ -55,7 +57,7 @@ namespace Gsemac.Net.Dns {
             }
 
         }
-        public DnsMessage Deserialize(Stream stream) {
+        public IDnsMessage Deserialize(Stream stream) {
 
             if (stream is null)
                 throw new ArgumentNullException(nameof(stream));
@@ -78,8 +80,11 @@ namespace Gsemac.Net.Dns {
 
                 int questionCount = reader.ReadUInt16(bits: 16); // QDCOUNT
                 int answerCount = reader.ReadUInt16(bits: 16); // ANCOUNT
-                int serviceRecordCount = reader.ReadUInt16(bits: 16); // NSCOUNT
-                int additionalRecordCount = reader.ReadUInt16(bits: 16); // ARCOUNT
+
+                // TODO: Handle service records and additional records.
+
+                _ = reader.ReadUInt16(bits: 16); // NSCOUNT
+                _ = reader.ReadUInt16(bits: 16); // ARCOUNT
 
                 int byteOffset = 12;
 
@@ -303,14 +308,51 @@ namespace Gsemac.Net.Dns {
             DnsRecordType dnsRecordType = (DnsRecordType)reader.ReadUInt16(bits: 16); //  TYPE
             DnsClass dnsClass = (DnsClass)reader.ReadUInt16(bits: 16); // CLASS
             uint ttlSeconds = reader.ReadUInt32(bits: 32); //  TTL
-            int rDataLength = reader.ReadUInt16(bits: 16); // RDLENGTH
+            _ = reader.ReadUInt16(bits: 16); // RDLENGTH
 
-            return new DnsAnswer() {
+            byteOffset += 10; // RDLENGTH not included
+
+            DnsAnswer answer = new DnsAnswer() {
                 Name = name,
                 RecordType = dnsRecordType,
                 Class = dnsClass,
                 TimeToLive = TimeSpan.FromSeconds(ttlSeconds),
             };
+
+            // The format of the following RDATA segment depends on the record type.
+
+            switch (dnsRecordType) {
+
+                case DnsRecordType.A:
+
+                    // We have 4 octets representing the IPv4 address.
+
+                    answer.HostAddress = ReadARecord(reader, ref byteOffset);
+
+                    break;
+
+                    // TODO: Handle other cases.
+
+            }
+
+            return answer;
+
+        }
+        private IPAddress ReadARecord(BitReader reader, ref int byteOffset) {
+
+            if (reader is null)
+                throw new ArgumentNullException(nameof(reader));
+
+            byte[] buffer = reader.ReadBytes(4);
+
+            byteOffset += buffer.Length;
+
+            if (buffer.Length != 4)
+                throw new Exception(ExceptionMessages.InvalidDnsHostAddress);
+
+            IPAddress address = new IPAddress(buffer);
+
+            return address;
 
         }
 
