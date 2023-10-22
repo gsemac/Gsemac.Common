@@ -4,7 +4,7 @@
 
         string Name { get; }
         DnsRecordType RecordType { get; }
-        DnsClass Class { get; }
+        DnsRecordClass Class { get; }
 
     }
 

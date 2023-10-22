@@ -7,7 +7,7 @@
 
         public string Name { get; set; }
         public DnsRecordType RecordType { get; set; } = DnsRecordType.A;
-        public DnsClass Class { get; set; } = DnsClass.Internet;
+        public DnsRecordClass Class { get; set; } = DnsRecordClass.Internet;
 
     }
 

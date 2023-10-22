@@ -9,7 +9,8 @@ using System.Text;
 
 namespace Gsemac.Net.Dns {
 
-    public sealed class DnsMessageSerializer {
+    public sealed class DnsMessageSerializer :
+        IDnsMessageSerializer {
 
         // Public members
 
@@ -285,7 +286,7 @@ namespace Gsemac.Net.Dns {
             string name = ReadNameSection(reader, addressLabelDict, ref byteOffset);
 
             DnsRecordType dnsRecordType = (DnsRecordType)reader.ReadUInt16(bits: 16); // QTYPE
-            DnsClass dnsClass = (DnsClass)reader.ReadUInt16(bits: 16); // QCLASS
+            DnsRecordClass dnsClass = (DnsRecordClass)reader.ReadUInt16(bits: 16); // QCLASS
 
             byteOffset += 4;
 
@@ -306,7 +307,7 @@ namespace Gsemac.Net.Dns {
 
             string name = ReadNameSection(reader, addressLabelDict, ref byteOffset);
             DnsRecordType dnsRecordType = (DnsRecordType)reader.ReadUInt16(bits: 16); //  TYPE
-            DnsClass dnsClass = (DnsClass)reader.ReadUInt16(bits: 16); // CLASS
+            DnsRecordClass dnsClass = (DnsRecordClass)reader.ReadUInt16(bits: 16); // CLASS
             uint ttlSeconds = reader.ReadUInt32(bits: 32); //  TTL
             _ = reader.ReadUInt16(bits: 16); // RDLENGTH
 
