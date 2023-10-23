@@ -30,12 +30,12 @@ namespace Gsemac.Net.Dns {
             if (message is null)
                 throw new ArgumentNullException(nameof(message));
 
-            using (UdpClient udp = new UdpClient(endpoint.AddressFamily)) {
+            using (UdpClient client = new UdpClient(endpoint.AddressFamily)) {
 
-                udp.Client.SendTimeout = (int)timeout.TotalMilliseconds;
-                udp.Client.ReceiveTimeout = (int)timeout.TotalMilliseconds;
+                client.Client.SendTimeout = (int)timeout.TotalMilliseconds;
+                client.Client.ReceiveTimeout = (int)timeout.TotalMilliseconds;
 
-                udp.Connect(endpoint);
+                client.Connect(endpoint);
 
                 using (MemoryStream requestStream = new MemoryStream()) {
 
@@ -43,11 +43,11 @@ namespace Gsemac.Net.Dns {
 
                     byte[] requestBytes = requestStream.ToArray();
 
-                    udp.Send(requestBytes, requestBytes.Length);
+                    client.Send(requestBytes, requestBytes.Length);
 
                 }
 
-                byte[] responseBytes = udp.Receive(ref endpoint);
+                byte[] responseBytes = client.Receive(ref endpoint);
 
                 using (MemoryStream responseStream = new MemoryStream(responseBytes))
                     return serializer.Deserialize(responseStream);
