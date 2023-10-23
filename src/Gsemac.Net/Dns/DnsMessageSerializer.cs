@@ -49,7 +49,7 @@ namespace Gsemac.Net.Dns {
 
                 // Write the questions.
 
-                foreach (DnsQuestion question in message.Questions)
+                foreach (IDnsQuestion question in message.Questions)
                     WriteQuestion(writer, question, labelAddressDict, ref byteOffset);
 
                 // TODO: Write the answers.
@@ -109,7 +109,7 @@ namespace Gsemac.Net.Dns {
 
         // Private members
 
-        private void WriteQuestion(BitWriter writer, DnsQuestion question, IDictionary<string, int> labelAddressDict, ref int byteOffset) {
+        private void WriteQuestion(BitWriter writer, IDnsQuestion question, IDictionary<string, int> labelAddressDict, ref int byteOffset) {
 
             if (writer is null)
                 throw new ArgumentNullException(nameof(writer));
@@ -275,7 +275,7 @@ namespace Gsemac.Net.Dns {
             return string.Join(".", labels.Select(t => t.Item2));
 
         }
-        private DnsQuestion ReadQuestion(BitReader reader, IDictionary<int, string> addressLabelDict, ref int byteOffset) {
+        private IDnsQuestion ReadQuestion(BitReader reader, IDictionary<int, string> addressLabelDict, ref int byteOffset) {
 
             if (reader is null)
                 throw new ArgumentNullException(nameof(reader));
@@ -297,7 +297,7 @@ namespace Gsemac.Net.Dns {
             };
 
         }
-        private DnsAnswer ReadAnswer(BitReader reader, IDictionary<int, string> addressLabelDict, ref int byteOffset) {
+        private IDnsAnswer ReadAnswer(BitReader reader, IDictionary<int, string> addressLabelDict, ref int byteOffset) {
 
             if (reader is null)
                 throw new ArgumentNullException(nameof(reader));
