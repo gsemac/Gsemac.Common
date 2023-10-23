@@ -499,7 +499,7 @@ namespace Gsemac.IO.Tests {
                 stream.Seek(0, SeekOrigin.Begin);
 
                 using (BitReader reader = new BitReader(stream, ByteOrder.LittleEndian))
-                    Assert.AreEqual(uint.MaxValue, reader.ReadUInt32(bits: 16));
+                    Assert.AreEqual(uint.MaxValue, reader.ReadUInt32(bits: sizeof(uint) * 8));
 
             }
 
@@ -515,7 +515,7 @@ namespace Gsemac.IO.Tests {
                 stream.Seek(0, SeekOrigin.Begin);
 
                 using (BitReader reader = new BitReader(stream, ByteOrder.BigEndian))
-                    Assert.AreEqual(uint.MaxValue, reader.ReadUInt32(bits: 16));
+                    Assert.AreEqual(uint.MaxValue, reader.ReadUInt32(bits: sizeof(uint) * 8));
 
             }
 
