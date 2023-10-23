@@ -10,6 +10,12 @@ namespace Gsemac.Net.Dns {
 
         // Public members
 
+        public UdpDnsResolver(IPAddress endpoint) :
+            this(endpoint, DefaultTimeout) {
+        }
+        public UdpDnsResolver(IPAddress endpoint, TimeSpan timeout) :
+            this(new IPEndPoint(endpoint, DefaultPort), timeout) {
+        }
         public UdpDnsResolver(IPEndPoint endpoint) :
             this(endpoint, DefaultTimeout) {
         }
@@ -58,6 +64,7 @@ namespace Gsemac.Net.Dns {
 
         // Private members
 
+        private const int DefaultPort = 53;
         private static readonly TimeSpan DefaultTimeout = TimeSpan.FromSeconds(1);
 
         private readonly TimeSpan timeout;

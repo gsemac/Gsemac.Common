@@ -13,6 +13,18 @@ namespace Gsemac.Net.Dns {
 
         // Public members
 
+        public TcpDnsResolver(IPAddress endpoint) :
+            this(endpoint, DefaultTimeout) {
+        }
+        public TcpDnsResolver(IPAddress endpoint, SslProtocols sslProtocols) :
+            this(endpoint, sslProtocols, DefaultTimeout) {
+        }
+        public TcpDnsResolver(IPAddress endpoint, TimeSpan timeout) :
+            this(endpoint, DefaultSslProtocols, timeout) {
+        }
+        public TcpDnsResolver(IPAddress endpoint, SslProtocols sslProtocols, TimeSpan timeout) :
+            this(new IPEndPoint(endpoint, GetDefaultPort(sslProtocols)), sslProtocols, timeout) {
+        }
         public TcpDnsResolver(IPEndPoint endpoint) :
             this(endpoint, DefaultTimeout) {
         }
@@ -139,6 +151,14 @@ namespace Gsemac.Net.Dns {
 
         }
 
+        private static int GetDefaultPort(SslProtocols sslProtocols) {
+
+            if (sslProtocols == SslProtocols.None)
+                return 53;
+
+            return 853;
+
+        }
         public static bool ValidateServerCertificate(object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors) {
 
             if (sslPolicyErrors == SslPolicyErrors.None)
