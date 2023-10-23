@@ -79,6 +79,15 @@ namespace Gsemac.Net.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to DNS-over-HTTP must use GET or POST..
+        /// </summary>
+        internal static string DnsOverHttpMustUseGetOrPost {
+            get {
+                return ResourceManager.GetString("DnsOverHttpMustUseGetOrPost", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to HTTP listener timed out while waiting for a request..
         /// </summary>
         internal static string HttpListenerTimedOut {
