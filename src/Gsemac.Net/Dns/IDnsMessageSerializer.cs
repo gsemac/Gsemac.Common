@@ -4,7 +4,7 @@ namespace Gsemac.Net.Dns {
 
     internal interface IDnsMessageSerializer {
 
-        void Serialize(IDnsMessage message, Stream stream);
+        void Serialize(Stream stream, IDnsMessage message);
         IDnsMessage Deserialize(Stream stream);
 
     }

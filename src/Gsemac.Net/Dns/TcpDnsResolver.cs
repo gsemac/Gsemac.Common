@@ -56,7 +56,7 @@ namespace Gsemac.Net.Dns {
 
                 using (MemoryStream requestStream = new MemoryStream()) {
 
-                    serializer.Serialize(message, requestStream);
+                    serializer.Serialize(requestStream, message);
 
                     byte[] requestBytes = requestStream.ToArray();
 

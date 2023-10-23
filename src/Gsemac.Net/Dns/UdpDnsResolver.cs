@@ -11,7 +11,7 @@ namespace Gsemac.Net.Dns {
         // Public members
 
         public UdpDnsResolver(IPEndPoint endpoint) :
-            this(endpoint, TimeSpan.FromSeconds(1)) {
+            this(endpoint, DefaultTimeout) {
         }
         public UdpDnsResolver(IPEndPoint endpoint, TimeSpan timeout) {
 
@@ -39,7 +39,7 @@ namespace Gsemac.Net.Dns {
 
                 using (MemoryStream requestStream = new MemoryStream()) {
 
-                    serializer.Serialize(message, requestStream);
+                    serializer.Serialize(requestStream, message);
 
                     byte[] requestBytes = requestStream.ToArray();
 
@@ -57,6 +57,8 @@ namespace Gsemac.Net.Dns {
         }
 
         // Private members
+
+        private static readonly TimeSpan DefaultTimeout = TimeSpan.FromSeconds(1);
 
         private readonly TimeSpan timeout;
         private readonly IDnsMessageSerializer serializer;

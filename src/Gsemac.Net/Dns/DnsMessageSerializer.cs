@@ -14,13 +14,13 @@ namespace Gsemac.Net.Dns {
 
         // Public members
 
-        public void Serialize(IDnsMessage message, Stream stream) {
-
-            if (message is null)
-                throw new ArgumentNullException(nameof(message));
+        public void Serialize(Stream stream, IDnsMessage message) {
 
             if (stream is null)
                 throw new ArgumentNullException(nameof(stream));
+
+            if (message is null)
+                throw new ArgumentNullException(nameof(message));
 
             // See the following assignment for a good description of the anatomy of a DNS packet:
             // https://mislove.org/teaching/cs4700/spring11/handouts/project1-primer.pdf
