@@ -10,6 +10,7 @@ namespace Gsemac.Net.Dns {
         DnsRecordClass Class { get; }
         TimeSpan TimeToLive { get; }
 
+        string DomainName { get; }
         IPAddress HostAddress { get; }
 
     }

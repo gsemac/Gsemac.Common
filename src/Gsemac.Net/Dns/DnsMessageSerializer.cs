@@ -331,6 +331,15 @@ namespace Gsemac.Net.Dns {
 
                     break;
 
+                case DnsRecordType.PTR:
+
+                    // We have a domain name (from a reverse lookup).
+                    // This will be a series of labels.
+
+                    answer.DomainName = ReadNameSection(reader, addressLabelDict, ref byteOffset);
+
+                    break;
+
                     // TODO: Handle other cases.
 
             }

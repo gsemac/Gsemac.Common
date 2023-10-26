@@ -13,6 +13,7 @@ namespace Gsemac.Net.Dns {
         public DnsRecordClass Class { get; set; } = DnsRecordClass.Internet;
         public TimeSpan TimeToLive { get; set; } = TimeSpan.Zero;
 
+        public string DomainName { get; set; }
         public IPAddress HostAddress { get; set; }
 
     }

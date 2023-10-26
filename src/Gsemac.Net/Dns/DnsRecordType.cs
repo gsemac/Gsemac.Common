@@ -24,6 +24,16 @@
         /// The canonical name for an alias.
         /// </summary>
         CNAME = 5,
+        SOA = 6,
+        MB = 7,
+        MG = 8,
+        MR = 9,
+        NULL = 10,
+        WKS = 11,
+        /// <summary>
+        /// A domain name pointer.
+        /// </summary>
+        PTR = 12,
     }
 
 }
