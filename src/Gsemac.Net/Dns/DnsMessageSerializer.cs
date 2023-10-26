@@ -195,7 +195,7 @@ namespace Gsemac.Net.Dns {
             }
 
             writer.Write((ushort)question.RecordType, bits: 16); // QTYPE
-            writer.Write((ushort)question.Class, bits: 16); // QCLASS
+            writer.Write((ushort)question.RecordClass, bits: 16); // QCLASS
 
             byteOffset += 4;
 
@@ -290,10 +290,9 @@ namespace Gsemac.Net.Dns {
 
             byteOffset += 4;
 
-            return new DnsQuestion() {
-                Name = name,
+            return new DnsQuestion(name) {
                 RecordType = dnsRecordType,
-                Class = dnsClass,
+                RecordClass = dnsClass,
             };
 
         }

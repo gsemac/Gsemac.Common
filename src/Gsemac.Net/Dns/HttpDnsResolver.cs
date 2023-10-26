@@ -12,25 +12,29 @@ namespace Gsemac.Net.Dns {
 
         // Public members
 
+        public string Method {
+            get => method;
+            set {
+
+                if (!value.Equals("GET", StringComparison.OrdinalIgnoreCase) && !value.Equals("POST", StringComparison.OrdinalIgnoreCase))
+                    throw new ArgumentException(ExceptionMessages.DnsOverHttpMustUseGetOrPost, nameof(value));
+
+                method = value;
+
+            }
+        }
+        public TimeSpan Timeout { get; set; } = DefaultTimeout;
+
         public HttpDnsResolver(Uri endpoint) :
             this(endpoint, DefaultTimeout) {
         }
         public HttpDnsResolver(Uri endpoint, TimeSpan timeout) :
             this(endpoint, HttpWebRequestFactory.Default, timeout) {
         }
-        public HttpDnsResolver(Uri endpoint, string method) :
-            this(endpoint, method, DefaultTimeout) {
-        }
-        public HttpDnsResolver(Uri endpoint, string method, TimeSpan timeout) :
-            this(endpoint, HttpWebRequestFactory.Default, method, timeout) {
-        }
         public HttpDnsResolver(Uri endpoint, IHttpWebRequestFactory httpWebRequestFactory) :
             this(endpoint, httpWebRequestFactory, DefaultTimeout) {
         }
-        public HttpDnsResolver(Uri endpoint, IHttpWebRequestFactory httpWebRequestFactory, TimeSpan timeout) :
-            this(endpoint, httpWebRequestFactory, DefaultMethod, timeout) {
-        }
-        public HttpDnsResolver(Uri endpoint, IHttpWebRequestFactory httpWebRequestFactory, string method, TimeSpan timeout) {
+        public HttpDnsResolver(Uri endpoint, IHttpWebRequestFactory httpWebRequestFactory, TimeSpan timeout) {
 
             if (endpoint is null)
                 throw new ArgumentNullException(nameof(endpoint));
@@ -38,13 +42,9 @@ namespace Gsemac.Net.Dns {
             if (httpWebRequestFactory is null)
                 throw new ArgumentNullException(nameof(httpWebRequestFactory));
 
-            if (!method.Equals("GET", StringComparison.OrdinalIgnoreCase) && !method.Equals("POST", StringComparison.OrdinalIgnoreCase))
-                throw new ArgumentException(ExceptionMessages.DnsOverHttpMustUseGetOrPost, nameof(method));
-
             this.endpoint = endpoint;
-            this.timeout = timeout;
+            Timeout = timeout;
             this.httpWebRequestFactory = httpWebRequestFactory;
-            this.method = method;
 
             serializer = new DnsMessageSerializer();
 
@@ -105,13 +105,12 @@ namespace Gsemac.Net.Dns {
         // Private members
 
         private static readonly string DefaultMethod = "POST";
-        private static readonly TimeSpan DefaultTimeout = TimeSpan.FromSeconds(30);
+        private static readonly TimeSpan DefaultTimeout = TimeSpan.FromSeconds(5);
 
-        private readonly TimeSpan timeout;
         private readonly IDnsMessageSerializer serializer;
         private readonly Uri endpoint;
         private readonly IHttpWebRequestFactory httpWebRequestFactory;
-        private readonly string method;
+        private string method = DefaultMethod;
 
         private IHttpWebRequest CreateRequest(IDnsMessage message) {
 
@@ -141,7 +140,7 @@ namespace Gsemac.Net.Dns {
             request.Accept = "application/dns-message";
             request.ContentType = "application/dns-message";
             request.Method = method;
-            request.Timeout = (int)timeout.TotalMilliseconds;
+            request.Timeout = (int)Timeout.TotalMilliseconds;
 
             return request;
 

@@ -13,6 +13,9 @@ namespace Gsemac.Net.Dns {
 
         // Public members
 
+        public SslProtocols SslProtocols { get; set; } = SslProtocols.None;
+        public TimeSpan Timeout { get; set; } = DefaultTimeout;
+
         public TcpDnsResolver(IPAddress endpoint) :
             this(endpoint, DefaultTimeout) {
         }
@@ -40,9 +43,8 @@ namespace Gsemac.Net.Dns {
                 throw new ArgumentNullException(nameof(endpoint));
 
             this.endpoint = endpoint;
-            this.timeout = timeout;
-            this.sslProtocols = sslProtocols;
-
+            Timeout = timeout;
+            SslProtocols = sslProtocols;
             serializer = new DnsMessageSerializer();
 
         }
@@ -57,8 +59,8 @@ namespace Gsemac.Net.Dns {
 
             using (TcpClient client = new TcpClient(endpoint.AddressFamily)) {
 
-                client.Client.SendTimeout = (int)timeout.TotalMilliseconds;
-                client.Client.ReceiveTimeout = (int)timeout.TotalMilliseconds;
+                client.Client.SendTimeout = (int)Timeout.TotalMilliseconds;
+                client.Client.ReceiveTimeout = (int)Timeout.TotalMilliseconds;
 
                 client.Connect(endpoint);
 
@@ -110,12 +112,10 @@ namespace Gsemac.Net.Dns {
 
         // Private members
 
-        private readonly TimeSpan timeout;
         private readonly IDnsMessageSerializer serializer;
         private readonly IPEndPoint endpoint;
-        private readonly SslProtocols sslProtocols;
 
-        private static readonly TimeSpan DefaultTimeout = TimeSpan.FromSeconds(5);
+        private static readonly TimeSpan DefaultTimeout = TimeSpan.FromSeconds(2);
         private static readonly SslProtocols DefaultSslProtocols = SslProtocols.None;
 
         private Stream GetTcpStream(TcpClient client) {
@@ -123,13 +123,13 @@ namespace Gsemac.Net.Dns {
             if (client is null)
                 throw new ArgumentNullException(nameof(client));
 
-            if (sslProtocols != SslProtocols.None) {
+            if (SslProtocols != SslProtocols.None) {
 
                 SslStream stream = new SslStream(client.GetStream(), leaveInnerStreamOpen: false, new RemoteCertificateValidationCallback(ValidateServerCertificate), null);
 
                 try {
 
-                    stream.AuthenticateAsClient(endpoint.Address.ToString(), null, sslProtocols, checkCertificateRevocation: true);
+                    stream.AuthenticateAsClient(endpoint.Address.ToString(), null, SslProtocols, checkCertificateRevocation: true);
 
                 }
                 catch (Exception) {

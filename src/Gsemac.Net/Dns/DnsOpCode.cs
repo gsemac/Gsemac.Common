@@ -2,7 +2,7 @@
 
     // DNS OpCodes
     // https://www.iana.org/assignments/dns-parameters/dns-parameters.xhtml#dns-parameters-5
-
+    
     public enum DnsOpCode {
         Query = 0,
         IQuery = 1,

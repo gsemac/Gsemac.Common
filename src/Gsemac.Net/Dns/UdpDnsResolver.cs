@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Gsemac.Net.Properties;
+using System;
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
@@ -9,6 +10,9 @@ namespace Gsemac.Net.Dns {
         IDnsResolver {
 
         // Public members
+
+        public bool TcpFallbackEnabled { get; set; } = true;
+        public TimeSpan Timeout { get; set; } = DefaultTimeout;
 
         public UdpDnsResolver(IPAddress endpoint) :
             this(endpoint, DefaultTimeout) {
@@ -25,8 +29,7 @@ namespace Gsemac.Net.Dns {
                 throw new ArgumentNullException(nameof(endpoint));
 
             this.endpoint = endpoint;
-            this.timeout = timeout;
-
+            Timeout = timeout;
             serializer = new DnsMessageSerializer();
 
         }
@@ -38,8 +41,8 @@ namespace Gsemac.Net.Dns {
 
             using (UdpClient client = new UdpClient(endpoint.AddressFamily)) {
 
-                client.Client.SendTimeout = (int)timeout.TotalMilliseconds;
-                client.Client.ReceiveTimeout = (int)timeout.TotalMilliseconds;
+                client.Client.SendTimeout = (int)Timeout.TotalMilliseconds;
+                client.Client.ReceiveTimeout = (int)Timeout.TotalMilliseconds;
 
                 client.Connect(endpoint);
 
@@ -53,10 +56,37 @@ namespace Gsemac.Net.Dns {
 
                 }
 
-                byte[] responseBytes = client.Receive(ref endpoint);
+                byte[] responseBytes;
 
-                using (MemoryStream responseStream = new MemoryStream(responseBytes))
-                    return serializer.Deserialize(responseStream);
+                try {
+
+                    responseBytes = client.Receive(ref endpoint);
+
+                }
+                catch (SocketException ex) {
+
+                    // Timeouts are wrapped to make them easier to catch downstream.
+
+                    if (ex.SocketErrorCode == SocketError.TimedOut)
+                        throw new TimeoutException(ExceptionMessages.DnsRequestTimedOut, ex);
+
+                    throw;
+
+                }
+
+                using (MemoryStream responseStream = new MemoryStream(responseBytes)) {
+
+                    IDnsMessage responseMessage = serializer.Deserialize(responseStream);
+
+                    // If the response is truncated, it was too large to transmit in a single UDP packet.
+                    // Fall back to TCP to read the entire response message.
+
+                    if (responseMessage is object && responseMessage.IsTruncated && TcpFallbackEnabled)
+                        responseMessage = new TcpDnsResolver(endpoint, Timeout).Resolve(message);
+
+                    return responseMessage;
+
+                }
 
             }
 
@@ -65,9 +95,8 @@ namespace Gsemac.Net.Dns {
         // Private members
 
         private const int DefaultPort = 53;
-        private static readonly TimeSpan DefaultTimeout = TimeSpan.FromSeconds(1);
+        private static readonly TimeSpan DefaultTimeout = TimeSpan.FromSeconds(2);
 
-        private readonly TimeSpan timeout;
         private readonly IDnsMessageSerializer serializer;
         private IPEndPoint endpoint;
 
