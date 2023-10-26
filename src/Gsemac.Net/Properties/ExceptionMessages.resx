@@ -123,8 +123,17 @@
   <data name="ContentLengthMustBeGreaterThanOrEqualToZero" xml:space="preserve">
     <value>The Content-Length value must be greater than or equal to zero.</value>
   </data>
+  <data name="DnsMessageIdMismatch" xml:space="preserve">
+    <value>The DNS response ID did not match the request.</value>
+  </data>
   <data name="DnsOverHttpMustUseGetOrPost" xml:space="preserve">
     <value>DNS-over-HTTP must use GET or POST.</value>
+  </data>
+  <data name="DnsRequestDidNotReceiveResponse" xml:space="preserve">
+    <value>The DNS request did not receive a response.</value>
+  </data>
+  <data name="DnsRequestTimedOut" xml:space="preserve">
+    <value>The DNS request timed out.</value>
   </data>
   <data name="HttpListenerTimedOut" xml:space="preserve">
     <value>HTTP listener timed out while waiting for a request.</value>
@@ -134,6 +143,9 @@
   </data>
   <data name="InvalidCookieDomainPattern" xml:space="preserve">
     <value>The given cookie domain pattern is invalid.</value>
+  </data>
+  <data name="InvalidDnsEndpointWithString" xml:space="preserve">
+    <value>The string '{0}' is not a valid DNS endpoint.</value>
   </data>
   <data name="InvalidDnsHostAddress" xml:space="preserve">
     <value>The host address is invalid.</value>

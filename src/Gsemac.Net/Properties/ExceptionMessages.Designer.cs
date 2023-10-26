@@ -79,11 +79,38 @@ namespace Gsemac.Net.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The DNS response ID did not match the request..
+        /// </summary>
+        internal static string DnsMessageIdMismatch {
+            get {
+                return ResourceManager.GetString("DnsMessageIdMismatch", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to DNS-over-HTTP must use GET or POST..
         /// </summary>
         internal static string DnsOverHttpMustUseGetOrPost {
             get {
                 return ResourceManager.GetString("DnsOverHttpMustUseGetOrPost", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The DNS request did not receive a response..
+        /// </summary>
+        internal static string DnsRequestDidNotReceiveResponse {
+            get {
+                return ResourceManager.GetString("DnsRequestDidNotReceiveResponse", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The DNS request timed out..
+        /// </summary>
+        internal static string DnsRequestTimedOut {
+            get {
+                return ResourceManager.GetString("DnsRequestTimedOut", resourceCulture);
             }
         }
         
@@ -111,6 +138,15 @@ namespace Gsemac.Net.Properties {
         internal static string InvalidCookieDomainPattern {
             get {
                 return ResourceManager.GetString("InvalidCookieDomainPattern", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The string &apos;{0}&apos; is not a valid DNS endpoint..
+        /// </summary>
+        internal static string InvalidDnsEndpointWithString {
+            get {
+                return ResourceManager.GetString("InvalidDnsEndpointWithString", resourceCulture);
             }
         }
         
