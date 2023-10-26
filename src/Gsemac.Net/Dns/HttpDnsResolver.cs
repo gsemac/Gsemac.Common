@@ -66,37 +66,49 @@ namespace Gsemac.Net.Dns {
 
             IHttpWebRequest request = CreateRequest(message);
 
-            if (method.Equals("POST", StringComparison.OrdinalIgnoreCase)) {
+            try {
 
-                using (MemoryStream requestStream = new MemoryStream()) {
+                if (method.Equals("POST", StringComparison.OrdinalIgnoreCase)) {
 
-                    serializer.Serialize(requestStream, message);
+                    using (MemoryStream requestStream = new MemoryStream()) {
 
-                    byte[] requestBytes = requestStream.ToArray();
+                        serializer.Serialize(requestStream, message);
 
-                    request.ContentLength = requestBytes.Length;
+                        byte[] requestBytes = requestStream.ToArray();
 
-                    using (Stream stream = request.GetRequestStream())
-                        stream.Write(requestBytes, 0, requestBytes.Length);
+                        request.ContentLength = requestBytes.Length;
+
+                        using (Stream stream = request.GetRequestStream())
+                            stream.Write(requestBytes, 0, requestBytes.Length);
+
+                    }
+
+                }
+
+                using (WebResponse response = request.GetResponse()) {
+
+                    int responseLength = (int)response.ContentLength;
+
+                    byte[] responseBytes = new byte[responseLength];
+
+                    using (Stream stream = response.GetResponseStream()) {
+
+                        stream.Read(responseBytes, 0, responseBytes.Length);
+
+                        using (MemoryStream responseStream = new MemoryStream(responseBytes))
+                            return serializer.Deserialize(responseStream);
+
+                    }
 
                 }
 
             }
+            catch (WebException ex) {
 
-            using (WebResponse response = request.GetResponse()) {
+                if (ex.Status == WebExceptionStatus.Timeout)
+                    throw new TimeoutException(ExceptionMessages.DnsRequestTimedOut, ex);
 
-                int responseLength = (int)response.ContentLength;
-
-                byte[] responseBytes = new byte[responseLength];
-
-                using (Stream stream = response.GetResponseStream()) {
-
-                    stream.Read(responseBytes, 0, responseBytes.Length);
-
-                    using (MemoryStream responseStream = new MemoryStream(responseBytes))
-                        return serializer.Deserialize(responseStream);
-
-                }
+                throw;
 
             }
 
