@@ -315,7 +315,7 @@ namespace Gsemac.Net.Dns {
             DnsAnswer answer = new DnsAnswer() {
                 Name = name,
                 RecordType = dnsRecordType,
-                Class = dnsClass,
+                RecordClass = dnsClass,
                 TimeToLive = TimeSpan.FromSeconds(ttlSeconds),
             };
 

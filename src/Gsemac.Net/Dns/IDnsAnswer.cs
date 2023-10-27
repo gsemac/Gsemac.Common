@@ -7,7 +7,7 @@ namespace Gsemac.Net.Dns {
 
         string Name { get; }
         DnsRecordType RecordType { get; }
-        DnsRecordClass Class { get; }
+        DnsRecordClass RecordClass { get; }
         TimeSpan TimeToLive { get; }
 
         string DomainName { get; }
