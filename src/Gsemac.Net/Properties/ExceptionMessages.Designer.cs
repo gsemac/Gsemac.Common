@@ -61,6 +61,15 @@ namespace Gsemac.Net.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Cannot copy an HTTP request object with a content length greater than 0. The stream returned by `GetRequestStream` is not seekable..
+        /// </summary>
+        internal static string CannotCopyHttpWebRequestWithRequestStream {
+            get {
+                return ResourceManager.GetString("CannotCopyHttpWebRequestWithRequestStream", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Cannot handle redirect from HTTP/HTTPS protocols to other dissimilar ones..
         /// </summary>
         internal static string CannotRedirectToDissimilarProtocols {

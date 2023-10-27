@@ -1,13 +1,15 @@
-﻿using Gsemac.Net.Extensions;
+﻿using Gsemac.IO.Extensions;
+using Gsemac.Net.Extensions;
 using Gsemac.Net.Http.Headers;
+using Gsemac.Net.Properties;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 using System.Net;
 using System.Text.RegularExpressions;
 
-namespace Gsemac.Net.Http.Extensions
-{
+namespace Gsemac.Net.Http.Extensions {
 
     public static class HttpWebRequestExtensions {
 
@@ -222,6 +224,67 @@ namespace Gsemac.Net.Http.Extensions
                 httpWebRequest.SetHeader(header.Name, header.Value);
 
             return httpWebRequest;
+
+        }
+
+        public static void CopyTo(this IHttpWebRequest httpWebRequest, IHttpWebRequest other) {
+
+            if (httpWebRequest is null)
+                throw new ArgumentNullException(nameof(httpWebRequest));
+
+            if (other is null)
+                throw new ArgumentNullException(nameof(other));
+
+            other.WithOptions(HttpWebRequestOptions.FromHttpWebRequest(httpWebRequest));
+
+            if (httpWebRequest.ContentLength > 0) {
+
+                // We can't normally read the request stream in order retry a POST request.
+                // However, we can access it if the request is decorated with LazyUploadHttpWebRequestDecorator.
+
+                if (httpWebRequest is LazyUploadHttpWebRequestDecorator lazyHttpWebRequest && other is LazyUploadHttpWebRequestDecorator lazyOther) {
+
+                    Stream httpWebRequestRequestStream = lazyHttpWebRequest.GetRequestStream();
+                    Stream otherRequestStream = lazyOther.GetRequestStream();
+
+                    byte[] requestData = httpWebRequestRequestStream.ToArray();
+
+                    otherRequestStream.Seek(0, SeekOrigin.Begin);
+
+                    otherRequestStream.Write(requestData, 0, requestData.Length);
+
+                    otherRequestStream.SetLength(requestData.Length);
+
+                    lazyOther.ContentLength = requestData.Length;
+
+                }
+                else {
+
+                    throw new Exception(ExceptionMessages.CannotCopyHttpWebRequestWithRequestStream);
+
+                }
+
+            }
+
+        }
+        public static void CopyTo(this HttpWebRequest httpWebRequest, HttpWebRequest other) {
+
+            if (httpWebRequest is null)
+                throw new ArgumentNullException(nameof(httpWebRequest));
+
+            if (other is null)
+                throw new ArgumentNullException(nameof(other));
+
+            if (httpWebRequest.ContentLength > 0) {
+
+                // We can't read the request stream on an HttpWebRequest instance.
+                // These requests cannot be fully copied.
+
+                throw new Exception(ExceptionMessages.CannotCopyHttpWebRequestWithRequestStream);
+
+            }
+
+            other.WithOptions(HttpWebRequestOptions.FromHttpWebRequest(httpWebRequest));
 
         }
 

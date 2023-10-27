@@ -14,6 +14,11 @@ namespace Gsemac.Net.Http {
 
         // Public members
 
+        public override long ContentLength {
+            get => GetContentLength();
+            set => SetContentLength(value);
+        }
+
         public LazyUploadHttpWebRequestDecorator(IHttpWebRequest innerHttpWebRequest) :
             this(innerHttpWebRequest, () => new MemoryStream()) {
         }
@@ -52,6 +57,32 @@ namespace Gsemac.Net.Http {
         // Private members
 
         private readonly Lazy<Stream> requestStream;
+        private bool isContentLengthManuallySet = false;
+
+        private long GetContentLength() {
+
+            if (isContentLengthManuallySet)
+                return base.ContentLength;
+
+            if (!requestStream.IsValueCreated)
+                return -1;
+
+            if (requestStream.Value.CanSeek)
+                return requestStream.Value.Length;
+
+            // Reading the entire stream into an array just to get the length is very inefficient.
+            // However, it seems to be the only way we can access the length of a disposed MemoryStream instance.
+
+            return requestStream.Value.ToArray().Length;
+
+        }
+        private void SetContentLength(long value) {
+
+            base.ContentLength = value;
+
+            isContentLengthManuallySet = true;
+
+        }
 
     }
 
