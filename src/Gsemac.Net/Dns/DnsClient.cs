@@ -153,7 +153,7 @@ namespace Gsemac.Net.Dns {
         private const int MaxHostNameLength = 255;
 
         private readonly RandomNumberGenerator random = RandomNumberGenerator.Create();
-        private static readonly IDnsCache cache = new DnsCache(); // Cache shared by all clients
+        private readonly IDnsCache cache = new DnsCache();
 
         private IDnsMessage GetDnsResponse(IDnsMessage dnsQuery) {
 
