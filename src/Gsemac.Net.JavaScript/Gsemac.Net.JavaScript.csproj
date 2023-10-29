@@ -27,7 +27,7 @@
 	<Choose>
 		<When Condition="$(DefineConstants.Contains('NET45_OR_GREATER')) Or $(DefineConstants.Contains('NETCOREAPP')) Or $(DefineConstants.Contains('NETSTANDARD'))">
 			<ItemGroup>
-				<PackageReference Include="JavaScriptEngineSwitcher.Jint" Version="3.23.1" />
+				<PackageReference Include="JavaScriptEngineSwitcher.Jint" Version="3.23.2" />
 			</ItemGroup>
 		</When>
 		<Otherwise>
