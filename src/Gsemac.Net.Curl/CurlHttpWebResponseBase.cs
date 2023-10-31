@@ -6,8 +6,7 @@ using System.IO;
 using System.Net;
 using System.Text.RegularExpressions;
 
-namespace Gsemac.Net.Curl
-{
+namespace Gsemac.Net.Curl {
 
     internal abstract class CurlHttpWebResponseBase :
         HttpWebResponseBase {
@@ -22,26 +21,33 @@ namespace Gsemac.Net.Curl
 
         // Protected members
 
-        protected CurlHttpWebResponseBase(IHttpWebRequest parentRequest, Stream responseStream) :
-            this(parentRequest, responseStream, () => null) {
+        protected CurlHttpWebResponseBase(IHttpWebRequest originatingRequest, Stream responseStream) :
+            this(originatingRequest, responseStream, () => null) {
         }
-        protected CurlHttpWebResponseBase(IHttpWebRequest parentRequest, Stream responseStream, Func<Exception> exceptionFactory) :
-            base(parentRequest.RequestUri, responseStream) {
+        protected CurlHttpWebResponseBase(IHttpWebRequest originatingRequest, Stream responseStream, Func<Exception> exceptionFactory) :
+            base(originatingRequest.RequestUri, responseStream) {
 
-            this.responseUri = parentRequest.RequestUri;
+            if (originatingRequest is null)
+                throw new ArgumentNullException(nameof(originatingRequest));
+
+            if (responseStream is null)
+                throw new ArgumentNullException(nameof(responseStream));
+
+            responseUri = originatingRequest.RequestUri;
+
             this.responseStream = responseStream;
             this.exceptionFactory = exceptionFactory;
 
-            Method = parentRequest.Method;
-            ProtocolVersion = parentRequest.ProtocolVersion;
+            Method = originatingRequest.Method;
+            ProtocolVersion = originatingRequest.ProtocolVersion;
 
         }
 
-        protected internal void ReadHeadersFromResponseStream() {
+        protected internal void ReadHttpHeadersFromStream() {
 
             // Read headers from the stream before returning to the caller so our property values are valid.
 
-            ReadHttpHeaders(responseStream);
+            ReadHttpHeadersFromStreamInternal(responseStream);
 
             // Check status code for success.
 
@@ -82,7 +88,10 @@ namespace Gsemac.Net.Curl
         private readonly CookieContainer cookies = new CookieContainer();
         private readonly Func<Exception> exceptionFactory;
 
-        private void ReadHttpHeaders(Stream responseStream) {
+        private void ReadHttpHeadersFromStreamInternal(Stream responseStream) {
+
+            if (responseStream is null)
+                throw new ArgumentNullException(nameof(responseStream));
 
             using (IHttpResponseReader reader = new HttpResponseReader(responseStream)) {
 
@@ -112,7 +121,9 @@ namespace Gsemac.Net.Curl
                     bool wasRedirected = Headers.TryGet(HttpResponseHeader.Location, out string locationHeader);
                     Uri locationUri = null;
 
-                    readHeaders = wasRedirected || StatusCode == HttpStatusCode.Continue;
+                    readHeaders = wasRedirected ||
+                        StatusCode == HttpStatusCode.Continue ||
+                        IsConnectionEstablishedStatus(statusLine);
 
                     if (wasRedirected) {
 
@@ -150,6 +161,19 @@ namespace Gsemac.Net.Curl
                 }
 
             }
+
+        }
+        private bool IsConnectionEstablishedStatus(IHttpStatusLine statusLine) {
+
+            if (statusLine is null)
+                throw new ArgumentNullException(nameof(statusLine));
+
+            // This status line can be added by proxies (e.g. Fiddler).
+            // We should skip it and continue on to the next status line when it is encountered.
+            // https://stackoverflow.com/q/16965530/5383169
+
+            return statusLine.StatusCode == HttpStatusCode.OK &&
+                statusLine.StatusDescription.Equals("Connection Established", StringComparison.OrdinalIgnoreCase);
 
         }
 

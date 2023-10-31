@@ -32,7 +32,7 @@ namespace Gsemac.Net.Curl {
 
         public override WebResponse GetResponse() {
 
-            Stream responseStream = new ProducerConsumerStream(8192) {
+            Stream responseStream = new ProducerConsumerStream(ResponseStreamBufferSize) {
                 Blocking = true,
                 ReadTimeout = Timeout,
                 WriteTimeout = Timeout,
@@ -110,6 +110,8 @@ namespace Gsemac.Net.Curl {
 
         // Private members
 
+        private const int ResponseStreamBufferSize = 8192;
+
         private readonly ICurlWebRequestOptions options;
         private readonly object globalInitLock = new object();
 
@@ -170,8 +172,12 @@ namespace Gsemac.Net.Curl {
 
         private void SetCertificateValidationEnabled(CurlEasyHandle easyHandle) {
 
-            if (!ServicePointManagerUtilities.IsCertificateValidationEnabled())
+            if (!ServicePointManagerUtilities.IsCertificateValidationEnabled()) {
+
                 LibCurl.EasySetOpt(easyHandle, CurlOption.SslVerifyHost, 0);
+                LibCurl.EasySetOpt(easyHandle, CurlOption.SslVerifyPeer, 0);
+
+            }
 
         }
         private void SetCookies(CurlEasyHandle easyHandle) {
@@ -184,7 +190,7 @@ namespace Gsemac.Net.Curl {
         }
         private void SetCredentials(CurlEasyHandle easyHandle) {
 
-            if (!(Credentials is null)) {
+            if (Credentials is object) {
 
                 string credentialString = Credentials.ToCredentialsString(RequestUri);
 
@@ -244,7 +250,7 @@ namespace Gsemac.Net.Curl {
         }
         private void SetProxy(CurlEasyHandle easyHandle) {
 
-            if (!(Proxy is null) && !Proxy.IsBypassed(RequestUri))
+            if (Proxy is object && !Proxy.IsBypassed(RequestUri))
                 LibCurl.EasySetOpt(easyHandle, CurlOption.Proxy, Proxy.ToProxyString(RequestUri));
 
         }

@@ -1,4 +1,5 @@
 ﻿using Gsemac.Net.Http;
+using System;
 
 namespace Gsemac.Net.Curl {
 
@@ -7,13 +8,16 @@ namespace Gsemac.Net.Curl {
 
         // Public members
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="CurlExeHttpWebResponse"/> class.
-        /// </summary>
-        internal CurlExeHttpWebResponse(IHttpWebRequest parentRequest, CurlExeProcessStream responseStream) :
-            base(parentRequest, responseStream) {
+        internal CurlExeHttpWebResponse(IHttpWebRequest originatingRequest, CurlExeProcessStream responseStream) :
+            base(originatingRequest, responseStream) {
 
-            ReadHeadersFromResponseStream();
+            if (originatingRequest is null)
+                throw new ArgumentNullException(nameof(originatingRequest));
+
+            if (responseStream is null)
+                throw new ArgumentNullException(nameof(responseStream));
+
+            ReadHttpHeadersFromStream();
 
         }
 

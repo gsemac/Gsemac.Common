@@ -1,4 +1,5 @@
 ﻿using Gsemac.Net.Http;
+using System;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -11,12 +12,21 @@ namespace Gsemac.Net.Curl {
 
         // Public members
 
-        internal CurlHttpWebResponse(IHttpWebRequest parentRequest, Stream responseStream, Task task, CancellationTokenSource taskCancellationTokenSource) :
-            base(parentRequest, responseStream, () => task.Exception?.InnerExceptions.First()) {
+        internal CurlHttpWebResponse(IHttpWebRequest originatingRequest, Stream responseStream, Task curlTask, CancellationTokenSource cancellationTokenSource) :
+            base(originatingRequest, responseStream, () => curlTask.Exception?.InnerExceptions.First()) {
 
-            this.taskCancellationTokenSource = taskCancellationTokenSource;
+            if (originatingRequest is null)
+                throw new ArgumentNullException(nameof(originatingRequest));
 
-            ReadHeadersFromResponseStream();
+            if (responseStream is null)
+                throw new ArgumentNullException(nameof(responseStream));
+
+            if (cancellationTokenSource is null)
+                throw new ArgumentNullException(nameof(cancellationTokenSource));
+
+            this.cancellationTokenSource = cancellationTokenSource;
+
+            ReadHttpHeadersFromStream();
 
         }
 
@@ -24,10 +34,10 @@ namespace Gsemac.Net.Curl {
 
             if (!isClosed) {
 
-                // Cancel the thread reading data from curl.
+                // Cancel the cURL reading thread.
 
-                taskCancellationTokenSource.Cancel();
-                taskCancellationTokenSource.Dispose();
+                cancellationTokenSource.Cancel();
+                cancellationTokenSource.Dispose();
 
                 isClosed = true;
 
@@ -40,7 +50,7 @@ namespace Gsemac.Net.Curl {
         // Private members
 
         private bool isClosed;
-        private readonly CancellationTokenSource taskCancellationTokenSource;
+        private readonly CancellationTokenSource cancellationTokenSource;
 
     }
 
