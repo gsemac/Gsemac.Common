@@ -34,7 +34,7 @@ namespace Gsemac.IO {
         public override int WriteTimeout { get; set; } = Timeout.Infinite;
 
         /// <summary>
-        /// If set to true, reads will block until data is available.
+        /// If <see langword="true" />, reads will block until data is available.
         /// </summary>
         public bool Blocking {
             get => isBlocking;
