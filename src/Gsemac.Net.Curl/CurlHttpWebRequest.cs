@@ -6,12 +6,12 @@ using Gsemac.Net.Http.Headers;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Gsemac.Net.Curl
-{
+namespace Gsemac.Net.Curl {
 
     public class CurlHttpWebRequest :
         HttpWebRequestBase {
@@ -208,6 +208,11 @@ namespace Gsemac.Net.Curl
 
             if (!string.IsNullOrWhiteSpace(acceptEncoding))
                 headersList.Append($"Accept-Encoding: {acceptEncoding}");
+
+            // Remove default headers unless they were added manually by the user.
+
+            if (!Headers.TryGet(HttpRequestHeader.ContentType, out _))
+                headersList.Append($"Content-Type:");
 
             LibCurl.EasySetOpt(easyHandle, CurlOption.HttpHeader, headersList.Handle);
 
