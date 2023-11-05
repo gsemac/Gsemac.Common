@@ -35,7 +35,7 @@ namespace Gsemac.Net.Http {
 
             // If redirects are not to be handled, simply pass down the request.
 
-            if (!request.AllowAutoRedirect)
+            if (!request.AllowAutoRedirect || request.MaximumAutomaticRedirections <= 0)
                 return base.Send(request, cancellationToken);
 
             int maximumRedirections = request.MaximumAutomaticRedirections;
