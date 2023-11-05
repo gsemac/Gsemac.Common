@@ -1,13 +1,11 @@
 ﻿using Gsemac.Net.Extensions;
-using Gsemac.Net.Http.Extensions;
 using Gsemac.Net.Http.Headers;
 using System;
 using System.Linq;
 using System.Net;
 using System.Threading;
 
-namespace Gsemac.Net.Http
-{
+namespace Gsemac.Net.Http {
 
     // While redirections can be handled automatically be enabling "AllowAutoRedirect", the default implementation ignores the set-cookie header of intermediate responses.
     // This implementation preserves cookies set throughout the entire chain of requests.
@@ -54,69 +52,56 @@ namespace Gsemac.Net.Http
 
                     IHttpWebRequest originatingRequest = request;
 
-                    if (HasRedirectStatusCode(response)) {
+                    if (HasRedirectStatusCode(response) && response.Headers.TryGet(HttpResponseHeader.Location, out string locationValue) && !string.IsNullOrWhiteSpace(locationValue)) {
 
-                        if (response.Headers.TryGet(HttpResponseHeader.Location, out string locationValue) && !string.IsNullOrWhiteSpace(locationValue)) {
+                        try {
 
-                            try {
+                            // Follow the redirect to the new location.
 
-                                // Follow the redirect to the new location.
+                            if (Uri.TryCreate(request.RequestUri, locationValue, out Uri locationUri) && (locationUri.Scheme == Uri.UriSchemeHttp || locationUri.Scheme == Uri.UriSchemeHttps)) {
 
-                                if (Uri.TryCreate(request.RequestUri, locationValue, out Uri locationUri) && (locationUri.Scheme == Uri.UriSchemeHttp || locationUri.Scheme == Uri.UriSchemeHttps)) {
+                                // Create a new web request.
 
-                                    // Create a new web request.
+                                // No properties are kept from the original request (including headers) except for the cookies, allowing us to acquire new cookies throughout the redirection.
+                                // Note that if we did copy the headers, we'd also be copying the "Host" header, because it gets set when GetResponse is called in the original request.
+                                // The previous Host value might not be valid for the new endpoint we're redirecting to, which can cause a 404 error.
 
-                                    // No properties are kept from the original request (including headers) except for the cookies, allowing us to acquire new cookies throughout the redirection.
-                                    // Note that if we did copy the headers, we'd also be copying the "Host" header, because it gets set when GetResponse is called in the original request.
-                                    // The previous Host value might not be valid for the new endpoint we're redirecting to, which can cause a 404 error.
+                                request = httpWebRequestFactory.Create(locationUri);
 
-                                    request = httpWebRequestFactory.Create(locationUri);
+                                request.AllowAutoRedirect = false;
+                                request.CookieContainer = originatingRequest.CookieContainer;
 
-                                    request.AllowAutoRedirect = false;
-                                    request.CookieContainer = originatingRequest.CookieContainer;
+                                // Do not forward the referer when redirecting to less-secure destinations (HTTPS → HTTP).
+                                // https://smerity.com/articles/2013/where_did_all_the_http_referrers_go.html
+                                // https://serverfault.com/q/883750
 
-                                    // Do not forward the referer when redirecting to less-secure destinations (HTTPS → HTTP).
-                                    // https://smerity.com/articles/2013/where_did_all_the_http_referrers_go.html
-                                    // https://serverfault.com/q/883750
+                                if (ShouldForwardRefererHeader(originatingRequest.RequestUri, locationUri))
+                                    request.Referer = originatingRequest.Referer;
 
-                                    if (ShouldForwardRefererHeader(originatingRequest.RequestUri, locationUri))
-                                        request.Referer = originatingRequest.Referer;
+                                // Set the verb for the new request.
 
-                                    // Set the verb for the new request.
+                                // While the standard specifies that the verb is maintained for 302 redirects, browsers have made it a de facto standard that a GET request is used.
+                                // The 307 and 308 status codes were introduced to explicitly instruct the client to use the same verb as the original request.
+                                // https://stackoverflow.com/a/2068504/5383169 (Christopher Orr)
 
-                                    // While the standard specifies that the verb is maintained for 302 redirects, browsers have made it a de facto standard that a GET request is used.
-                                    // The 307 and 308 status codes were introduced to explicitly instruct the client to use the same verb as the original request.
-                                    // https://stackoverflow.com/a/2068504/5383169 (Christopher Orr)
-
-                                    if (response.StatusCode == HttpStatusCode.RedirectKeepVerb || response.StatusCode == (HttpStatusCode)308)
-                                        request.Method = originatingRequest.Method;
-                                    else
-                                        request.Method = "GET";
-
-                                }
-                                else {
-
-                                    // The location URI was malformed.
-
-                                    throw new WebException(Properties.ExceptionMessages.CannotRedirectToDissimilarProtocols, null, WebExceptionStatus.ProtocolError, response as WebResponse);
-
-                                }
+                                if (response.StatusCode == HttpStatusCode.RedirectKeepVerb || response.StatusCode == (HttpStatusCode)308)
+                                    request.Method = originatingRequest.Method;
+                                else
+                                    request.Method = "GET";
 
                             }
-                            finally {
+                            else {
 
-                                response.Close();
+                                // The location URI was malformed.
+
+                                throw new WebException(Properties.ExceptionMessages.CannotRedirectToDissimilarProtocols, null, WebExceptionStatus.ProtocolError, response as WebResponse);
 
                             }
 
                         }
-                        else {
-
-                            // We did not receive a location header even though we were supposed to.
+                        finally {
 
                             response.Close();
-
-                            throw new WebException(string.Format(Properties.ExceptionMessages.TheRemoteServerReturnedAnErrorWithStatusCode, response.StatusCode), null, WebExceptionStatus.ProtocolError, response as WebResponse);
 
                         }
 
@@ -142,7 +127,10 @@ namespace Gsemac.Net.Http
                     }
                     else {
 
-                        // We did not receive an HTTP redirection by the location header.
+                        // We either didn't receive a redirection, or we didn't get enough information to perform the redirect.
+                        // Note that it is not an error to receive a 3xx status code without a "Location" header-- It's up to the client to decide how to handle that.
+                        // An empty "Location" header can be interpreted as a refresh of the current page, but we won't handle that scenario.
+                        // https://stackoverflow.com/a/21321976/5383169
 
                         return response;
 
