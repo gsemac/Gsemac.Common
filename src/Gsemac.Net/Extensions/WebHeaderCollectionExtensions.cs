@@ -32,7 +32,7 @@ namespace Gsemac.Net.Extensions {
                 return !string.IsNullOrWhiteSpace(value);
 
             }
-            catch (InvalidOperationException) {
+            catch (Exception) {
 
                 // The WebHeaderCollection will throw an InvalidOperationException if the header type (HttpRequestHeader or HttpResponseHeader) does not match what type the collection allows instances of.
                 // What type of header the WebHeaderCollection allows can only be inferred from context and cannot be determined for an arbitrary WebHeaderCollection.
@@ -59,7 +59,7 @@ namespace Gsemac.Net.Extensions {
                 return !string.IsNullOrWhiteSpace(value);
 
             }
-            catch (InvalidOperationException) {
+            catch (Exception) {
 
                 return false;
 
@@ -80,7 +80,7 @@ namespace Gsemac.Net.Extensions {
                 return !string.IsNullOrWhiteSpace(value);
 
             }
-            catch (InvalidOperationException) {
+            catch (Exception) {
 
                 return false;
 
@@ -119,7 +119,7 @@ namespace Gsemac.Net.Extensions {
                 return true;
 
             }
-            catch (InvalidOperationException) {
+            catch (Exception) {
 
                 return false;
 
@@ -165,6 +165,64 @@ namespace Gsemac.Net.Extensions {
                 throw new ArgumentNullException(nameof(headers));
 
             return !headers.All(header => headerCollection.TrySet(header));
+
+        }
+
+        public static bool TryRemove(this WebHeaderCollection headerCollection, string headerName) {
+
+            if (headerCollection is null)
+                return false;
+
+            try {
+
+                headerCollection.Remove(headerName);
+
+                return true;
+
+            }
+            catch (Exception) {
+
+                return false;
+
+            }
+
+        }
+        public static bool TryRemove(this WebHeaderCollection headerCollection, HttpRequestHeader requestHeader) {
+
+            if (headerCollection is null)
+                return false;
+
+            try {
+
+                headerCollection.Remove(requestHeader);
+
+                return true;
+
+            }
+            catch (Exception) {
+
+                return false;
+
+            }
+
+        }
+        public static bool TryRemove(this WebHeaderCollection headerCollection, HttpResponseHeader responseHeader) {
+
+            if (headerCollection is null)
+                return false;
+
+            try {
+
+                headerCollection.Remove(responseHeader);
+
+                return true;
+
+            }
+            catch (Exception) {
+
+                return false;
+
+            }
 
         }
 
