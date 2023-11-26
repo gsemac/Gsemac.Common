@@ -105,37 +105,49 @@ namespace Gsemac.IO {
 
         }
 
-        public static Stream Open(string filePath, TimeSpan timeout) {
+        public static FileStream Open(string filePath, FileMode fileMode, TimeSpan timeout) {
 
-            return Open(filePath, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None, timeout);
+            return InternalOpen(() => File.Open(filePath, fileMode), timeout);
 
         }
-        public static Stream Open(string filePath, FileMode fileMode, FileAccess fileAccess, FileShare fileShare, TimeSpan timeout) {
+        public static FileStream Open(string filePath, FileMode fileMode, FileAccess fileAccess, TimeSpan timeout) {
 
-            DateTimeOffset startTime = DateTimeOffset.Now;
-            Exception lastException;
+            return InternalOpen(() => File.Open(filePath, fileMode, fileAccess), timeout);
 
-            do {
+        }
+        public static FileStream Open(string filePath, FileMode fileMode, FileAccess fileAccess, FileShare fileShare, TimeSpan timeout) {
 
-                try {
+            return InternalOpen(() => File.Open(filePath, fileMode, fileAccess, fileShare), timeout);
 
-                    // Attempt to open the file path with exclusive access.
+        }
+        public static bool TryOpen(string filePath, FileMode fileMode, out FileStream stream) {
 
-                    return File.Open(filePath, fileMode, fileAccess, fileShare);
+            stream = null;
 
-                }
-                catch (Exception ex) {
+            if (!File.Exists(filePath))
+                return false;
 
-                    lastException = ex;
+            return InternalTryOpen(() => File.Open(filePath, fileMode), out stream);
 
-                    if ((DateTimeOffset.Now - startTime) < timeout)
-                        Thread.Sleep(DefaultSleep);
+        }
+        public static bool TryOpen(string filePath, FileMode fileMode, FileAccess fileAccess, out FileStream stream) {
 
-                }
+            stream = null;
 
-            } while ((DateTimeOffset.Now - startTime) < timeout);
+            if (!File.Exists(filePath))
+                return false;
 
-            throw new TimeoutException(Properties.ExceptionMessages.OperationTimedOut, lastException);
+            return InternalTryOpen(() => File.Open(filePath, fileMode, fileAccess), out stream);
+
+        }
+        public static bool TryOpen(string filePath, FileMode fileMode, FileAccess fileAccess, FileShare fileShare, out FileStream stream) {
+
+            stream = null;
+
+            if (!File.Exists(filePath))
+                return false;
+
+            return InternalTryOpen(() => File.Open(filePath, fileMode, fileAccess, fileShare), out stream);
 
         }
 
@@ -176,6 +188,7 @@ namespace Gsemac.IO {
             return TryWithTimeout(() => Copy(filePath, newFilePath, overwrite, timeout), timeout);
 
         }
+
         public static bool Move(string filePath, string newFilePath, bool overwrite = false, TimeSpan timeout = default) {
 
             // Be careful that we don't delete the original file if the two paths point to the same file.
@@ -234,6 +247,7 @@ namespace Gsemac.IO {
             return success;
 
         }
+
         public static bool Rename(string filePath, string newFileName, bool overwrite = false, TimeSpan timeout = default) {
 
             string directoryPath = Path.GetDirectoryName(Path.GetFullPath(filePath));
@@ -250,6 +264,7 @@ namespace Gsemac.IO {
             return TryMove(filePath, newFilePath, overwrite, timeout);
 
         }
+
         public static bool Delete(string filePath, TimeSpan timeout = default) {
 
             // File.Delete doesn't wait for the operation to finish before returning, so this is a workaround.
@@ -260,7 +275,7 @@ namespace Gsemac.IO {
                 // Wait until nothing is locking the file.
 
                 if (timeout > TimeSpan.Zero)
-                    using (var stream = Open(filePath, timeout))
+                    using (var stream = Open(filePath, FileMode.Open, timeout))
                         stream.Close();
 
                 DateTimeOffset startTime = DateTimeOffset.Now;
@@ -419,6 +434,58 @@ namespace Gsemac.IO {
 
                 default:
                     throw new ArgumentOutOfRangeException(nameof(byteFormat));
+
+            }
+
+        }
+        private static FileStream InternalOpen(Func<FileStream> fileStreamFactory, TimeSpan timeout) {
+
+            if (fileStreamFactory is null)
+                throw new ArgumentNullException(nameof(fileStreamFactory));
+
+            DateTimeOffset startTime = DateTimeOffset.Now;
+            Exception lastException;
+
+            do {
+
+                try {
+
+                    // Attempt to open the file path with exclusive access.
+
+                    return fileStreamFactory();
+
+                }
+                catch (Exception ex) {
+
+                    lastException = ex;
+
+                    if ((DateTimeOffset.Now - startTime) < timeout)
+                        Thread.Sleep(DefaultSleep);
+
+                }
+
+            } while ((DateTimeOffset.Now - startTime) < timeout);
+
+            throw new TimeoutException(Properties.ExceptionMessages.OperationTimedOut, lastException);
+
+        }
+        private static bool InternalTryOpen(Func<FileStream> fileStreamFactory, out FileStream stream) {
+
+            if (fileStreamFactory is null)
+                throw new ArgumentNullException(nameof(fileStreamFactory));
+
+            stream = null;
+
+            try {
+
+                stream = fileStreamFactory();
+
+                return true;
+
+            }
+            catch (Exception) {
+
+                return false;
 
             }
 
