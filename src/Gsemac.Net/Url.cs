@@ -494,13 +494,10 @@ namespace Gsemac.Net {
             // To determine the suffix, we use the Public Suffix List:
             // https://publicsuffix.org/list/public_suffix_list.dat
 
-            IEnumerable<string> suffixes = Encoding.UTF8.GetString(Properties.Resources.public_suffix_list)
-                   .Split(new string[] { Environment.NewLine }, System.StringSplitOptions.None)
-                   .Where(x => !string.IsNullOrWhiteSpace(x) && !x.StartsWith("//"))
-                   .Select(x => '.' + x.TrimStart('*', '!', '.'))
-                   .OrderByDescending(x => x.Length);
+            IPublicSuffixListProvider provider = PublicSuffixListProvider.Default ??
+                        new ResourcePublicSuffixListProvider();
 
-            return suffixes;
+            return provider.GetList();
 
         }
         private static string UriToString(Uri uri) {
