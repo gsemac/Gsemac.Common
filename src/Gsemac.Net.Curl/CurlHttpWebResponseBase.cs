@@ -41,6 +41,13 @@ namespace Gsemac.Net.Curl {
             Method = originatingRequest.Method;
             ProtocolVersion = originatingRequest.ProtocolVersion;
 
+            // Use the CookieContainer from the originating request if one was set so that response cookies can be added to the container.
+
+            // While we make cookies accessible either way through the Cookies property, note the default HttpWebRequest implementation disables cookies if CookieContainer is null.
+            // https://learn.microsoft.com/en-us/dotnet/api/system.net.httpwebrequest.cookiecontainer
+
+            cookies = originatingRequest.CookieContainer ?? new CookieContainer();
+
         }
 
         protected internal void ReadHttpHeadersFromStream() {
@@ -85,7 +92,7 @@ namespace Gsemac.Net.Curl {
 
         private Uri responseUri;
         private readonly Stream responseStream;
-        private readonly CookieContainer cookies = new CookieContainer();
+        private readonly CookieContainer cookies;
         private readonly Func<Exception> exceptionFactory;
 
         private void ReadHttpHeadersFromStreamInternal(Stream responseStream) {
