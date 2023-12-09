@@ -425,10 +425,13 @@ namespace Gsemac.Net.Http {
 
         public static DateTimeOffset ParseDate(string dateHeader) {
 
+            if (dateHeader is null)
+                throw new ArgumentNullException(nameof(dateHeader));
+
             if (TryParseDate(dateHeader, out DateTimeOffset result))
                 return result;
 
-            throw new FormatException(ExceptionMessages.MalformedDateHeader);
+            throw new FormatException(string.Format(ExceptionMessages.MalformedDateHeader, dateHeader));
 
         }
         public static bool TryParseDate(string dateHeader, out DateTimeOffset result) {

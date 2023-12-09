@@ -232,7 +232,7 @@ namespace Gsemac.Net.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The date header &apos;{0}&apos; was malformed..
+        ///   Looks up a localized string similar to The string &apos;{0}&apos; is not a valid HTTP date header..
         /// </summary>
         internal static string MalformedDateHeader {
             get {

@@ -1,4 +1,5 @@
-﻿using Gsemac.Net.Http.Headers;
+﻿using Gsemac.Net.Extensions;
+using Gsemac.Net.Http.Headers;
 using Gsemac.Net.Properties;
 using System;
 using System.Globalization;
@@ -70,7 +71,17 @@ namespace Gsemac.Net.Http {
         }
         public CookieContainer CookieContainer { get; set; } // CookieContainer is null by default for HttpWebRequest (Note that the "cookie" header is only sent when this property is null)
         public DateTime Date {
-            get => HttpUtilities.ParseDate(Headers[HttpRequestHeader.Date]).DateTime;
+            get {
+
+                // If no date is specified in the header collection, we should return DateTime.MinValue or default.
+                // https://learn.microsoft.com/en-us/dotnet/api/system.net.httpwebrequest.date
+
+                if (Headers.TryGet(HttpRequestHeader.Date, out string headerValue) && HttpUtilities.TryParseDate(headerValue, out DateTimeOffset result))
+                    return result.DateTime;
+
+                return default;
+
+            }
             set => SetOrRemoveHeader(HttpRequestHeader.Date, value);
         }
         public string Expect {
@@ -83,14 +94,21 @@ namespace Gsemac.Net.Http {
             set => SetOrRemoveHeader(HttpRequestHeader.Host, value);
         }
         public DateTime IfModifiedSince {
-            get => HttpUtilities.ParseDate(Headers[HttpRequestHeader.IfModifiedSince]).DateTime;
+            get {
+
+                if (Headers.TryGet(HttpRequestHeader.IfModifiedSince, out string headerValue) && HttpUtilities.TryParseDate(headerValue, out DateTimeOffset result))
+                    return result.DateTime;
+
+                return default;
+
+            }
             set => SetOrRemoveHeader(HttpRequestHeader.IfModifiedSince, value);
         }
         public bool KeepAlive { get; set; } = true;
         public int MaximumAutomaticRedirections { get; set; } = 50;
         public int MaximumResponseHeadersLength { get; set; } = HttpWebRequest.DefaultMaximumResponseHeadersLength;
         public bool Pipelined { get; set; } = true;
-        public System.Version ProtocolVersion { get; set; } = new System.Version(1, 1);
+        public Version ProtocolVersion { get; set; } = new Version(1, 1);
         public int ReadWriteTimeout { get; set; } = 300000;
         public string Referer {
             get => Headers[HttpRequestHeader.Referer];
@@ -138,6 +156,9 @@ namespace Gsemac.Net.Http {
         private delegate WebResponse GetResponseDelegate();
 
         protected HttpWebRequestBase(Uri requestUri) {
+
+            if (requestUri is null)
+                throw new ArgumentNullException(nameof(requestUri));
 
             RequestUri = requestUri;
 
@@ -206,6 +227,9 @@ namespace Gsemac.Net.Http {
         private void SetOrRemoveHeader(HttpRequestHeader header, DateTime date) {
 
             if (date == default) {
+
+                // The date header is removed if it's assigned Date.MinValue (which is the same as default).
+                // https://learn.microsoft.com/en-us/dotnet/api/system.net.httpwebrequest.date
 
                 Headers.Remove(header);
 
