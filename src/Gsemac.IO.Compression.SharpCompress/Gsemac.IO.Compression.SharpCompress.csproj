@@ -29,7 +29,7 @@
 	<Choose>
 		<When Condition="$(DefineConstants.Contains('NET461_OR_GREATER')) Or $(DefineConstants.Contains('NETSTANDARD')) Or $(DefineConstants.Contains('NETCOREAPP'))">
 			<ItemGroup>
-				<PackageReference Include="SharpCompress" Version="0.34.1" />
+				<PackageReference Include="SharpCompress" Version="0.34.2" />
 			</ItemGroup>
 		</When>
 		<Otherwise>

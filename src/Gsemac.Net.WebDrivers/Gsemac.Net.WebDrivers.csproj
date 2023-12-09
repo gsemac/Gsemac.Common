@@ -36,7 +36,7 @@
 	<Choose>
 		<When Condition="$(DefineConstants.Contains('NET45_OR_GREATER')) Or $(DefineConstants.Contains('NETCOREAPP')) Or $(DefineConstants.Contains('NETSTANDARD'))">
 			<ItemGroup>
-				<PackageReference Include="Selenium.WebDriver" Version="4.15.0" />
+				<PackageReference Include="Selenium.WebDriver" Version="4.16.2" />
 			</ItemGroup>
 			<PropertyGroup>
 				<DefineConstants>$(DefineConstants);EXECUTE_CDP_COMMAND_AVAILABLE</DefineConstants>

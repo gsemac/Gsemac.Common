@@ -55,7 +55,7 @@
 			<ItemGroup>
 				<!-- On versions after .NET Framework, we need this package for CP437, which is used by ZipStorer as specified in the ZIP spec. -->
 				<PackageReference Include="System.Text.Encoding.CodePages">
-					<Version>7.0.0</Version>
+					<Version>8.0.0</Version>
 				</PackageReference>
 			</ItemGroup>
 		</Otherwise>
