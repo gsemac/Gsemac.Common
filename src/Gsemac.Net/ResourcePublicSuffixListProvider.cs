@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Text;
 
 namespace Gsemac.Net {
@@ -12,6 +13,18 @@ namespace Gsemac.Net {
         // Public members
 
         public override IEnumerable<string> GetList() {
+
+            return cache.Value;
+
+        }
+
+        // Private members
+
+        // The same cache will be used for instances because it never changes.
+
+        private static readonly Lazy<IEnumerable<string>> cache = new Lazy<IEnumerable<string>>(GetListInternal);
+
+        private static IEnumerable<string> GetListInternal() {
 
             return ParseList(Encoding.UTF8.GetString(Properties.Resources.public_suffix_list));
 

@@ -9,6 +9,9 @@ namespace Gsemac.Net {
 
         // Public members
 
+        public TimeSpan TimeToLive { get; set; } = default;
+        public bool FallbackEnabled { get; set; } = true;
+
         public virtual IEnumerable<string> GetList() {
 
             return new ResourcePublicSuffixListProvider().GetList();

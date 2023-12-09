@@ -1,4 +1,5 @@
 ﻿using Gsemac.IO;
+using Gsemac.IO.Logging;
 using Gsemac.Reflection;
 using System;
 using System.Collections.Generic;
@@ -13,20 +14,60 @@ namespace Gsemac.Net {
 
         // Public members
 
-        public FileSystemPublicSuffixListProvider() { }
-        public FileSystemPublicSuffixListProvider(IFileSystemAssemblyResolver resolver) {
+        public FileSystemPublicSuffixListProvider() :
+            this(Logger.Null) {
+        }
+        public FileSystemPublicSuffixListProvider(ILogger logger) :
+            this(GetDefaultResolver(), logger) {
+        }
+        public FileSystemPublicSuffixListProvider(IFileSystemAssemblyResolver resolver) :
+            this(resolver, Logger.Null) {
+        }
+        public FileSystemPublicSuffixListProvider(IFileSystemAssemblyResolver resolver, ILogger logger) {
 
             if (resolver is null)
                 throw new ArgumentNullException(nameof(resolver));
 
+            if (logger is null)
+                throw new ArgumentNullException(nameof(logger));
+
             this.resolver = resolver;
+            this.logger = new NamedLogger(logger, nameof(FileSystemPublicSuffixListProvider));
 
         }
 
         public override IEnumerable<string> GetList() {
 
+            lock (mutex) {
+
+                bool isCacheInvalid = cache is null ||
+                    (TimeToLive != default && (cacheLastUpdated == default || DateTimeOffset.Now > cacheLastUpdated + TimeToLive));
+
+                if (isCacheInvalid) {
+
+                    cache = GetListInternal();
+                    cacheLastUpdated = DateTimeOffset.Now;
+
+                }
+
+                return cache;
+
+            }
+
+        }
+
+        // Private members
+
+        private readonly IFileSystemAssemblyResolver resolver;
+        private readonly ILogger logger;
+        private readonly object mutex = new object();
+        private IEnumerable<string> cache;
+        private DateTimeOffset cacheLastUpdated;
+
+        private IEnumerable<string> GetListInternal() {
+
             IFileSystemAssemblyResolver resolver = this.resolver ??
-                FileSystemAssemblyResolver.Default;
+                GetDefaultResolver();
 
             if (resolver is null)
                 return Enumerable.Empty<string>();
@@ -38,7 +79,8 @@ namespace Gsemac.Net {
                 AddExtension = false,
             };
 
-            string filePath = resolver.GetAssemblyPath("public_suffix_list.dat");
+            string fileName = "public_suffix_list.dat";
+            string filePath = resolver.GetAssemblyPath(fileName);
 
             if (File.Exists(filePath) && FileUtilities.TryOpen(filePath, FileMode.Open, FileAccess.Read, FileShare.Read, out FileStream fileStream)) {
 
@@ -51,15 +93,22 @@ namespace Gsemac.Net {
 
             }
 
+            if (!FallbackEnabled)
+                throw new FileNotFoundException($"Could not find {fileName}.", fileName);
+
+            logger.Warning($"Could not find {fileName}, using internal list");
+
             // Return the default list if we weren't able to open a file.
 
             return base.GetList();
 
         }
 
-        // Private members
+        private static IFileSystemAssemblyResolver GetDefaultResolver() {
 
-        private readonly IFileSystemAssemblyResolver resolver;
+            return FileSystemAssemblyResolver.Default;
+
+        }
 
     }
 

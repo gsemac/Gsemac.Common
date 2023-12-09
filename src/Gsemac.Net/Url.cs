@@ -159,7 +159,7 @@ namespace Gsemac.Net {
             }
             else if (parts.Length > 2) {
 
-                string suffix = publicSuffixList.Value.Where(x => hostname.EndsWith(x)).FirstOrDefault();
+                string suffix = GetPublicSuffixList().Where(x => hostname.EndsWith(x)).FirstOrDefault();
 
                 if (string.IsNullOrEmpty(suffix)) {
 
@@ -331,8 +331,6 @@ namespace Gsemac.Net {
 
         private string scheme;
 
-        private static readonly Lazy<IEnumerable<string>> publicSuffixList = new Lazy<IEnumerable<string>>(BuildPublicSuffixList);
-
         private string GetHost() {
 
             StringBuilder sb = new StringBuilder();
@@ -489,7 +487,7 @@ namespace Gsemac.Net {
 
         }
 
-        private static IEnumerable<string> BuildPublicSuffixList() {
+        private static IEnumerable<string> GetPublicSuffixList() {
 
             // To determine the suffix, we use the Public Suffix List:
             // https://publicsuffix.org/list/public_suffix_list.dat
