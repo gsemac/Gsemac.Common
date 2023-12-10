@@ -48,12 +48,17 @@ namespace Gsemac.Net.Http.Headers {
         }
         public static bool TryParse(string httpHeader, out HttpHeader result) {
 
-            Match httpHeaderMatch = Regex.Match(httpHeader, @"^(.+?):\s(.+?)$");
+            // Http headers are of the form "name: value".
+
+            // Whitespace surrounding the field name is never trimmed, but whitspace surrounding the field value is always trimmed: https://stackoverflow.com/a/61632443/5383169
+            // Headers can also have empty field values: https://stackoverflow.com/a/12131993/5383169
+
+            Match httpHeaderMatch = Regex.Match(httpHeader, @"^(?<name>.+?):\s*(?<value>\S*?)\s*$");
 
             if (httpHeaderMatch.Success) {
 
-                string name = httpHeaderMatch.Groups[1].Value;
-                string value = httpHeaderMatch.Groups[2].Value;
+                string name = httpHeaderMatch.Groups["name"].Value;
+                string value = httpHeaderMatch.Groups["value"].Value;
 
                 result = new HttpHeader(name, value);
 
