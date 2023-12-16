@@ -30,6 +30,8 @@ The following style guide is mostly to help keep myself consistent.
 
 ### Classes
 
+* Properties should be associated with states, and methods should be associated with actions. For example, `OptionEnabled` should be a property, but `EnableOption` should be a method.
+
 #### Options Classes
 
 * If the class provides required configuration details, use the `Configuration` suffix.
