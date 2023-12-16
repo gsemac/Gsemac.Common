@@ -8,10 +8,10 @@ The following style guide is mostly to help keep myself consistent.
 
 ### Classes
 
-#### Configuration Classes
+#### Options Classes
 
 * Options classes should have a static `Default` property that returns an instance configured with default options.
-* Options classes should always appear last in the parameter list.
+* Options classes should always appear last in the parameter list, unless an `ILogger` parameter is also present.
 * Prefer options classes over enums.
 
 #### Factory Classes
@@ -20,7 +20,7 @@ The following style guide is mostly to help keep myself consistent.
 
 ### Exceptions
 
-* Treat `null` strings the same as empty strings where possible rather than throwing an exception.
+* Treat `null` strings the same as `String.Empty` where possible rather than throwing an exception.
 
 ### Extension Methods
 
@@ -30,10 +30,11 @@ The following style guide is mostly to help keep myself consistent.
 
 ### Classes
 
-#### Configuration Classes
+#### Options Classes
 
 * If the class provides required configuration details, use the `Configuration` suffix.
 * If the class provides optional configuration details, use the `Options` suffix.
+* Boolean options should use the `Enabled` suffix (e.g. `OptionEnabled`).
 
 #### Factory Classes
 
