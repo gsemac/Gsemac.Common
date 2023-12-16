@@ -28,7 +28,7 @@ namespace Gsemac.Data.ValueConversion.Tests {
         public void TestTransitiveConversionWithTransitiveLookupDisabled() {
 
             TestValueConverterFactory factory = new TestValueConverterFactory(new ValueConverterFactoryOptions() {
-                EnableTransitiveLookup = false,
+                TransitiveLookupEnabled = false,
             });
 
             factory.AddValueConverter(ValueConverter.Create<int, string>(arg => arg.ToString(CultureInfo.InvariantCulture)));
@@ -41,7 +41,7 @@ namespace Gsemac.Data.ValueConversion.Tests {
         public void TestTransitiveConversionWithTransitiveLookupEnabled() {
 
             TestValueConverterFactory factory = new TestValueConverterFactory(new ValueConverterFactoryOptions() {
-                EnableTransitiveLookup = true,
+                TransitiveLookupEnabled = true,
             });
 
             factory.AddValueConverter(ValueConverter.Create<int, string>(arg => arg.ToString(CultureInfo.InvariantCulture)));
@@ -58,7 +58,7 @@ namespace Gsemac.Data.ValueConversion.Tests {
             // In other words, failing to find a transitive conversion path should not throw an exception.
 
             ValueConverterFactory factory = new TestValueConverterFactory(new ValueConverterFactoryOptions() {
-                EnableTransitiveLookup = true,
+                TransitiveLookupEnabled = true,
             });
 
             Assert.IsFalse(factory.Create<string, ValueConverterFactoryTests>().TryConvert("abc", out object _));
@@ -70,8 +70,8 @@ namespace Gsemac.Data.ValueConversion.Tests {
             // When both transitive and derived class lookup are enabled, we should be able to find a transitive path to the derived class type.
 
             TestValueConverterFactory factory = new TestValueConverterFactory(new ValueConverterFactoryOptions() {
-                EnableTransitiveLookup = true,
-                EnableDerivedClassLookup = true,
+                TransitiveLookupEnabled = true,
+                DerivedClassLookupEnabled = true,
             });
 
             factory.AddValueConverter(ValueConverter.Create<int, string>(arg => arg.ToString(CultureInfo.InvariantCulture)));
@@ -86,8 +86,8 @@ namespace Gsemac.Data.ValueConversion.Tests {
         public void TestTransitiveConversionToInterfaceWitWithTransitiveLookupEnabledAndDerivedClassLookupEnabledAndMultipleCandidatesUsesLastCandidate() {
 
             TestValueConverterFactory factory = new TestValueConverterFactory(new ValueConverterFactoryOptions() {
-                EnableTransitiveLookup = true,
-                EnableDerivedClassLookup = true,
+                TransitiveLookupEnabled = true,
+                DerivedClassLookupEnabled = true,
             });
 
             factory.AddValueConverter(ValueConverter.Create<int, string>(arg => arg.ToString(CultureInfo.InvariantCulture)));
@@ -104,7 +104,7 @@ namespace Gsemac.Data.ValueConversion.Tests {
         public void TestConversionToInterfaceWithDerivedClassLookupDisabled() {
 
             TestValueConverterFactory factory = new TestValueConverterFactory(new ValueConverterFactoryOptions() {
-                EnableDerivedClassLookup = false,
+                DerivedClassLookupEnabled = false,
             });
 
             factory.AddValueConverter(ValueConverter.Create<string, TestClassImplementingInterface>(str => new TestClassImplementingInterface()));
@@ -116,7 +116,7 @@ namespace Gsemac.Data.ValueConversion.Tests {
         public void TestConversionToInterfaceWithDerivedClassLookupEnabled() {
 
             TestValueConverterFactory factory = new TestValueConverterFactory(new ValueConverterFactoryOptions() {
-                EnableDerivedClassLookup = true,
+                DerivedClassLookupEnabled = true,
             });
 
             factory.AddValueConverter(ValueConverter.Create<string, TestClassImplementingInterface>(str => new TestClassImplementingInterface()));
@@ -128,7 +128,7 @@ namespace Gsemac.Data.ValueConversion.Tests {
         public void TestConversionToInterfaceWithDerivedClassLookupEnabledAndMultipleCandidatesIgnoresFailedConversions() {
 
             TestValueConverterFactory factory = new TestValueConverterFactory(new ValueConverterFactoryOptions() {
-                EnableDerivedClassLookup = true,
+                DerivedClassLookupEnabled = true,
             });
 
             factory.AddValueConverter(ValueConverter.Create<string, TestClassImplementingInterface>(str => throw new Exception()));
@@ -141,7 +141,7 @@ namespace Gsemac.Data.ValueConversion.Tests {
         public void TestConversionToInterfaceWithDerivedClassLookupEnabledAndMultipleCandidatesUsesLastCandidate() {
 
             TestValueConverterFactory factory = new TestValueConverterFactory(new ValueConverterFactoryOptions() {
-                EnableDerivedClassLookup = true,
+                DerivedClassLookupEnabled = true,
             });
 
             factory.AddValueConverter(ValueConverter.Create<string, TestClassWithConstructor>(str => new TestClassWithConstructor("bad")));
@@ -157,7 +157,7 @@ namespace Gsemac.Data.ValueConversion.Tests {
         public void TestConversionWithValueConverterAttribute() {
 
             TestValueConverterFactory factory = new TestValueConverterFactory(new ValueConverterFactoryOptions() {
-                EnableAttributeLookup = true,
+                AttributeLookupEnabled = true,
             });
 
             Assert.IsTrue(factory.Create<string, TestClassWithAttribute>().TryConvert("good", out TestClassWithAttribute result));

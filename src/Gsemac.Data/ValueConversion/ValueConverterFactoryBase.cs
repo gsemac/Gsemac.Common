@@ -14,10 +14,10 @@ namespace Gsemac.Data.ValueConversion {
 
             var key = CreateKey(sourceType, destinationType);
 
-            if (!options.EnableLookupCache || !TryGetValueConverterFromCache(sourceType, destinationType, out IValueConverter valueConverter))
+            if (!options.LookupCacheEnabled || !TryGetValueConverterFromCache(sourceType, destinationType, out IValueConverter valueConverter))
                 valueConverter = CreateInternal(sourceType, destinationType);
 
-            if (options.EnableLookupCache)
+            if (options.LookupCacheEnabled)
                 AddValueToCache(sourceType, destinationType, valueConverter);
 
             return valueConverter;
@@ -34,7 +34,7 @@ namespace Gsemac.Data.ValueConversion {
             if (options is null)
                 throw new ArgumentNullException(nameof(options));
 
-            if (options.EnableDefaultConversions)
+            if (options.DefaultConversionsEnabled)
                 AddDefaultValueConverters();
 
             this.options = options;
@@ -127,7 +127,7 @@ namespace Gsemac.Data.ValueConversion {
 
             }
 
-            if (options.EnableDefaultConversions && IsTriviallyCastableType(sourceType) && IsTriviallyCastableType(destinationType)) {
+            if (options.DefaultConversionsEnabled && IsTriviallyCastableType(sourceType) && IsTriviallyCastableType(destinationType)) {
 
                 // Avoid costly transitive conversions along the path number -> string -> number if both types are numeric types that can easily be casted.
                 // Also, don't be strict about the input type for numeric conversions, because the conversion can then fail when passing incompatible literals.
@@ -145,7 +145,7 @@ namespace Gsemac.Data.ValueConversion {
 
             }
 
-            if (options.EnableDerivedClassLookup) {
+            if (options.DerivedClassLookupEnabled) {
 
                 // If we have a converter that converts to a class derived from the class we're converting to, we can use that instead.
                 // This is useful if we're attempting to convert an object to an interface, and we have a converter that returns an object implementing that interface.
@@ -160,7 +160,7 @@ namespace Gsemac.Data.ValueConversion {
 
             }
 
-            if (options.EnableTransitiveLookup) {
+            if (options.TransitiveLookupEnabled) {
 
                 // We didn't find any converters matching our source/destination types.
                 // However, maybe we can find a transitive path from one to the other.
@@ -204,7 +204,7 @@ namespace Gsemac.Data.ValueConversion {
 
         private IDictionary<Tuple<Type, Type>, List<IValueConverter>> GetAttributeConverters(Type sourceType, Type destinationType) {
 
-            if (!options.EnableAttributeLookup)
+            if (!options.AttributeLookupEnabled)
                 return new Dictionary<Tuple<Type, Type>, List<IValueConverter>>();
 
             return sourceType.GetCustomAttributes(inherit: false)
@@ -251,7 +251,7 @@ namespace Gsemac.Data.ValueConversion {
         private bool ConverterHasMatchingDestinationType(IValueConverter valueConverter, Type destinationType) {
 
             return valueConverter.DestinationType.Equals(destinationType) ||
-                (options.EnableDerivedClassLookup && destinationType.IsAssignableFrom(valueConverter.DestinationType));
+                (options.DerivedClassLookupEnabled && destinationType.IsAssignableFrom(valueConverter.DestinationType));
 
         }
 
