@@ -1,4 +1,5 @@
-﻿using System.Text.RegularExpressions;
+﻿using System;
+using System.Text.RegularExpressions;
 
 namespace Gsemac.Text.PatternMatching {
 
@@ -14,6 +15,9 @@ namespace Gsemac.Text.PatternMatching {
         }
         public RegexPattern(Regex regex) {
 
+            if (regex is null)
+                throw new ArgumentNullException(nameof(regex));
+
             this.regex = regex;
 
         }
@@ -21,6 +25,12 @@ namespace Gsemac.Text.PatternMatching {
         public override IPatternMatch Match(string input) {
 
             return new RegexPatternMatchAdapter(regex.Match(input));
+
+        }
+
+        public override string ToString() {
+
+            return regex.ToString();
 
         }
 

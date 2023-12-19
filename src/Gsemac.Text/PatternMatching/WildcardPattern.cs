@@ -28,7 +28,14 @@ namespace Gsemac.Text.PatternMatching {
 
         public override IPatternMatch Match(string input) {
 
+            input = input ?? string.Empty;
+
             if (patternContainsWildcardChar) {
+
+                // If the pattern is just the wildcard character, we match any string.
+
+                if (input.Length == 1)
+                    return new PatternMatch(0, input);
 
                 // Convert the wildcard pattern to a regular expression.
 
