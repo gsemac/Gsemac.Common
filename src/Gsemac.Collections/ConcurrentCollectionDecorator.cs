@@ -29,12 +29,19 @@ namespace Gsemac.Collections {
 
         }
 
-        public ConcurrentCollectionDecorator(ICollection<T> underlyingCollection) {
+        public ConcurrentCollectionDecorator(ICollection<T> underlyingCollection) :
+            this(underlyingCollection, mutex: new object()) {
+        }
+        public ConcurrentCollectionDecorator(ICollection<T> underlyingCollection, object mutex) {
 
             if (underlyingCollection is null)
                 throw new ArgumentNullException(nameof(underlyingCollection));
 
+            if (mutex is null)
+                throw new ArgumentNullException(nameof(mutex));
+
             this.underlyingCollection = underlyingCollection;
+            this.mutex = mutex;
 
         }
 
@@ -87,7 +94,7 @@ namespace Gsemac.Collections {
         // Private members
 
         private readonly ICollection<T> underlyingCollection;
-        private readonly object mutex = new object();
+        private readonly object mutex;
 
     }
 
