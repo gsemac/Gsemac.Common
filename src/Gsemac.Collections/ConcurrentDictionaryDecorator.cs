@@ -11,7 +11,7 @@ namespace Gsemac.Collections {
     // However, it should be noted that not all IDictionary implementations feature threadsafe reads (although the default Dictionary class does).
     // The relevant constructor parameter can be used to enable/disable concurrent reads.
 
-    public class ConcurrentDictionaryDecorator<TKey, TValue> :
+    public sealed class ConcurrentDictionaryDecorator<TKey, TValue> :
         IConcurrentDictionary<TKey, TValue> {
 
         // Public members
