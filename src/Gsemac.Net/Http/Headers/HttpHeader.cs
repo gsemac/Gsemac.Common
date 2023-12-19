@@ -53,7 +53,7 @@ namespace Gsemac.Net.Http.Headers {
             // Whitespace surrounding the field name is never trimmed, but whitspace surrounding the field value is always trimmed: https://stackoverflow.com/a/61632443/5383169
             // Headers can also have empty field values: https://stackoverflow.com/a/12131993/5383169
 
-            Match httpHeaderMatch = Regex.Match(httpHeader, @"^(?<name>.+?):\s*(?<value>\S*?)\s*$");
+            Match httpHeaderMatch = Regex.Match(httpHeader, @"^(?<name>.+?):\s*(?<value>.*?)\s*$");
 
             if (httpHeaderMatch.Success) {
 

@@ -1,10 +1,5 @@
 ﻿using Gsemac.Net.Http.Headers;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Gsemac.Net.Tests.Http {
 
@@ -23,7 +18,7 @@ namespace Gsemac.Net.Tests.Http {
 
         }
         [TestMethod]
-        public void TestParseHttpHeaderWithWhitespaceSurroundingFieldName() {
+        public void TestParseHttpHeaderWithWhiteSpaceSurroundingFieldName() {
 
             // Whitespace should not be trimmed from the field name (ideally, it should not be present at all).
             // https://stackoverflow.com/a/61632443/5383169
@@ -35,7 +30,7 @@ namespace Gsemac.Net.Tests.Http {
 
         }
         [TestMethod]
-        public void TestParseHttpHeaderWithWhitespaceSurroundingFieldValue() {
+        public void TestParseHttpHeaderWithWhiteSpaceSurroundingFieldValue() {
 
             // Whitespace should be trimmed around field values.
             // https://stackoverflow.com/a/61632443/5383169
@@ -56,6 +51,15 @@ namespace Gsemac.Net.Tests.Http {
 
         }
         [TestMethod]
+        public void TestParseHttpHeaderWithFieldValueContainingWhiteSpace() {
+
+            IHttpHeader header = HttpHeader.Parse("Date: Tue, 19 Dec 2023 00:55:08 GMT   ");
+
+            Assert.AreEqual("Date", header.Name);
+            Assert.AreEqual("Tue, 19 Dec 2023 00:55:08 GMT", header.Value);
+
+        }
+        [TestMethod]
         public void TestParseHttpHeaderWithEmptyFieldValue() {
 
             // Empty field values should be permitted.
@@ -68,7 +72,7 @@ namespace Gsemac.Net.Tests.Http {
 
         }
         [TestMethod]
-        public void TestParseHttpHeaderWithNoWhitespace() {
+        public void TestParseHttpHeaderWithNoWhiteSpace() {
 
             IHttpHeader header = HttpHeader.Parse("Name:Value");
 
