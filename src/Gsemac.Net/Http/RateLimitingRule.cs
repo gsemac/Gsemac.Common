@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Gsemac.Text.PatternMatching;
+using System;
 
 namespace Gsemac.Net.Http {
 
@@ -7,17 +8,29 @@ namespace Gsemac.Net.Http {
 
         // Public members
 
-        public string Endpoint { get; }
+        public IPatternMatcher Pattern { get; }
         public int RequestsPerTimePeriod { get; }
         public TimeSpan TimePeriod { get; }
 
-        public RateLimitingRule(int requestsPerTimePeriod, TimeSpan timePeriod) :
-            this("*", requestsPerTimePeriod, timePeriod) {
+        public RateLimitingRule(TimeSpan delayBetweenRequests) :
+            this(requestsPerTimePeriod: 1, delayBetweenRequests) {
         }
-        public RateLimitingRule(string endpoint, int requestsPerTimePeriod, TimeSpan timePeriod) {
+        public RateLimitingRule(IPatternMatcher pattern, TimeSpan delayBetweenRequests) :
+           this(pattern, requestsPerTimePeriod: 1, delayBetweenRequests) {
+        }
+        public RateLimitingRule(string pattern, TimeSpan delayBetweenRequests) :
+         this(pattern, requestsPerTimePeriod: 1, delayBetweenRequests) {
+        }
+        public RateLimitingRule(int requestsPerTimePeriod, TimeSpan timePeriod) :
+            this(PatternMatcher.Any, requestsPerTimePeriod, timePeriod) {
+        }
+        public RateLimitingRule(string pattern, int requestsPerTimePeriod, TimeSpan timePeriod) :
+            this(new WildcardPattern(pattern), requestsPerTimePeriod, timePeriod) {
+        }
+        public RateLimitingRule(IPatternMatcher pattern, int requestsPerTimePeriod, TimeSpan timePeriod) {
 
-            if (endpoint is null)
-                throw new ArgumentNullException(nameof(endpoint));
+            if (pattern is null)
+                throw new ArgumentNullException(nameof(pattern));
 
             if (requestsPerTimePeriod <= 0)
                 throw new ArgumentOutOfRangeException(nameof(requestsPerTimePeriod));
@@ -25,7 +38,7 @@ namespace Gsemac.Net.Http {
             if (timePeriod <= TimeSpan.Zero)
                 throw new ArgumentOutOfRangeException(nameof(timePeriod));
 
-            Endpoint = endpoint;
+            Pattern = pattern;
             RequestsPerTimePeriod = requestsPerTimePeriod;
             TimePeriod = timePeriod;
 

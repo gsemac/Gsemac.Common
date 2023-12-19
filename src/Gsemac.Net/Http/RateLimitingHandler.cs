@@ -1,9 +1,12 @@
-﻿using Gsemac.Collections.Extensions;
+﻿using Gsemac.Collections;
+using Gsemac.Collections.Extensions;
+using Gsemac.IO.Logging;
 using Gsemac.Polyfills.System.Threading.Tasks;
-using Gsemac.Text.Extensions;
+using Gsemac.Text.PatternMatching;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading;
 
 namespace Gsemac.Net.Http {
@@ -13,16 +16,30 @@ namespace Gsemac.Net.Http {
 
         // Public members
 
+        public bool AllowAutoRateLimit { get; set; } = true;
         public TimeSpan MaximumDelayBetweenRequests { get; set; } = TimeSpan.MaxValue;
-        public ICollection<IRateLimitingRule> Rules => rules;
+        public ICollection<IRateLimitingRule> Rules => GetWrappedRules();
 
-        public RateLimitingHandler() { }
-        public RateLimitingHandler(IEnumerable<IRateLimitingRule> rateLimitingRules) {
+        public RateLimitingHandler() :
+            this(Enumerable.Empty<IRateLimitingRule>()) {
+        }
+        public RateLimitingHandler(ILogger logger) :
+           this(Enumerable.Empty<IRateLimitingRule>(), logger) {
+        }
+        public RateLimitingHandler(IEnumerable<IRateLimitingRule> rules) :
+            this(rules, Logger.Null) {
+        }
+        public RateLimitingHandler(IEnumerable<IRateLimitingRule> rules, ILogger logger) {
 
-            if (rateLimitingRules is null)
-                throw new ArgumentNullException(nameof(rateLimitingRules));
+            if (rules is null)
+                throw new ArgumentNullException(nameof(rules));
 
-            Rules.AddRange(rateLimitingRules);
+            if (logger is null)
+                throw new ArgumentNullException(nameof(logger));
+
+            this.logger = new NamedLogger(logger, nameof(RateLimitingHandler));
+
+            this.rules.AddRange(rules.Select(rule => new RateLimitingRuleInfo(rule)));
 
         }
 
@@ -36,29 +53,30 @@ namespace Gsemac.Net.Http {
             // Check if we have any rules applying to this request.
             // It's possible for multiple rules to apply to the same request, and we'll take the most restrictive.
 
-            IEnumerable<IRateLimitingRule> rateLimitingRules = rules.Where(rule => IsRuleMatch(request, rule));
+            IEnumerable<RateLimitingRuleInfo> matchingRules = GetMatchingRules(request.RequestUri);
 
             bool rateLimitingRequired = false;
             TimeSpan delay = TimeSpan.Zero;
+            TimeSpan requestTimeout = TimeSpan.FromMilliseconds(request.Timeout);
 
-            if (rateLimitingRules.Any()) {
+            if (matchingRules.Any()) {
 
                 // We may need to rate limit this request.
 
                 DateTimeOffset currentTime = DateTimeOffset.Now;
 
-                delay = GetDelay(request, rateLimitingRules);
+                delay = GetMaximumDelay(matchingRules, requestTimeout);
 
-                lock (globalRequestMutex) {
+                lock (requestMutex) {
 
-                    DateTimeOffset lastRequestTime = GetLastRequestTime(rateLimitingRules);
+                    DateTimeOffset lastRequestTime = GetMaximumLastRequestTime(matchingRules);
 
                     if ((currentTime - lastRequestTime) < delay) {
 
                         // Update the request time to the time this request will end up being sent.
 
-                        foreach (IRateLimitingRule rule in rateLimitingRules)
-                            lastRequestTimes[rule.Endpoint] = currentTime + delay;
+                        foreach (RateLimitingRuleInfo info in matchingRules)
+                            info.LastRequestTime = currentTime + delay;
 
                         rateLimitingRequired = true;
 
@@ -67,8 +85,8 @@ namespace Gsemac.Net.Http {
 
                         // We can make the request immediately and don't need to wait.
 
-                        foreach (IRateLimitingRule rule in rateLimitingRules)
-                            lastRequestTimes[rule.Endpoint] = currentTime;
+                        foreach (RateLimitingRuleInfo info in matchingRules)
+                            info.LastRequestTime = currentTime;
 
                     }
 
@@ -84,95 +102,163 @@ namespace Gsemac.Net.Http {
 
             }
 
-            return base.Send(request, cancellationToken);
+            try {
+
+                return base.Send(request, cancellationToken);
+
+            }
+            catch (WebException ex) {
+
+                if (AllowAutoRateLimit && ex.Response is object && new HttpWebResponseAdapter(ex.Response).StatusCode == (HttpStatusCode)429) {
+
+                    logger.Info($"Received 429 status (Too Many Requests): {request.RequestUri}");
+
+                    // The server responded with "429 Too Many Requests".
+
+                    // We can apply throttling automatically to increase the time between requests.
+
+                    bool isAutoRuleAlreadyDefined = matchingRules.Where(info => !info.IsUserDefined).Any();
+
+                    lock (rulesMutex) {
+
+                        matchingRules = GetMatchingRules(request.RequestUri).Where(info => !info.IsUserDefined);
+
+                        // Only update rules if another request didn't beat us to it.
+                        // If there wasn't a rule defined before we entered the block, but now there is, it's already been initialized by another requset.
+
+                        bool autoRuleInitializedByDifferentRequest = !isAutoRuleAlreadyDefined && matchingRules.Any();
+
+                        if (!autoRuleInitializedByDifferentRequest) {
+
+                            if (!matchingRules.Any()) {
+
+                                // If there is no existing automatic rule for this endpoint, create one.
+                                // Automatic throttling will apply to all paths on the host.
+
+                                string throttledEndpoint = request.RequestUri.GetLeftPart(UriPartial.Authority).TrimEnd('/') + "/";
+
+                                IPatternMatcher newRulePattern = new WildcardPattern(throttledEndpoint + "*");
+                                IRateLimitingRule newRule = new RateLimitingRule(newRulePattern, InitialAutomaticDelay);
+
+                                logger.Info($"Throttling requests to {newRule.Pattern} ({newRule.TimePeriod.TotalMilliseconds:#.#}ms)");
+
+                                rules.Add(new RateLimitingRuleInfo(newRule) {
+                                    IsUserDefined = false,
+                                });
+
+                            }
+                            else {
+
+                                // If there are already automatic rules for this endpoint, increase the time between requests.
+
+                                foreach (RateLimitingRuleInfo autoRuleInfo in matchingRules) {
+
+                                    TimeSpan newDelay = ClampDelay(TimeSpan.FromMilliseconds(autoRuleInfo.Rule.TimePeriod.TotalMilliseconds * AutomaticDelayMultiplier), requestTimeout);
+
+                                    logger.Info($"Throttling requests to {autoRuleInfo.Rule.Pattern} ({newDelay.TotalMilliseconds:#.#}ms)");
+
+                                    autoRuleInfo.Rule = new RateLimitingRule(autoRuleInfo.Rule.Pattern, newDelay);
+
+                                }
+
+                            }
+
+                        }
+
+                    }
+
+                }
+
+                // We will allow the exception to propagate without retrying the request.
+                // It's up to the client to retry the request with the new rate limit (e.g. with Retry.
+
+                throw;
+
+            }
 
         }
 
         // Private members
 
-        private readonly ICollection<IRateLimitingRule> rules = new List<IRateLimitingRule>();
-        private readonly IDictionary<string, DateTimeOffset> lastRequestTimes = new Dictionary<string, DateTimeOffset>();
-        private readonly object globalRequestMutex = new object();
+        private sealed class RateLimitingRuleInfo {
+
+            // Public members
+
+            public IRateLimitingRule Rule { get; set; }
+            public DateTimeOffset LastRequestTime { get; set; } = DateTimeOffset.MinValue;
+            public bool IsUserDefined { get; set; } = true;
+
+            public RateLimitingRuleInfo(IRateLimitingRule rule) {
+
+                if (rule is null)
+                    throw new ArgumentNullException(nameof(rule));
+
+                Rule = rule;
+
+            }
+
+        }
+
+        private const double AutomaticDelayMultiplier = 1.5;
+        private static readonly TimeSpan InitialAutomaticDelay = TimeSpan.FromMilliseconds(500);
+
+        private readonly object rulesMutex = new object();
+        private readonly object requestMutex = new object();
+        private readonly ICollection<RateLimitingRuleInfo> rules = new List<RateLimitingRuleInfo>();
+        private readonly ILogger logger;
         private static readonly Random randomSource = new Random();
 
-        private TimeSpan GetDelay(IHttpWebRequest request, IEnumerable<IRateLimitingRule> rateLimitingRules) {
+        private ICollection<IRateLimitingRule> GetWrappedRules() {
 
-            if (request is null)
-                throw new ArgumentNullException(nameof(request));
+            return new ConcurrentCollectionDecorator<IRateLimitingRule>(
+                new MappedCollectionDecorator<RateLimitingRuleInfo, IRateLimitingRule>(rules,
+                i => i.Rule,
+                i => new RateLimitingRuleInfo(i)), rulesMutex);
 
-            if (rateLimitingRules is null)
-                throw new ArgumentNullException(nameof(rateLimitingRules));
+        }
 
-            TimeSpan ruleDelay = rateLimitingRules
-                .Select(rule => TimeSpan.FromMilliseconds(Math.Ceiling(rule.TimePeriod.TotalMilliseconds / rule.RequestsPerTimePeriod)))
-                .Max();
+        private IEnumerable<RateLimitingRuleInfo> GetMatchingRules(Uri requestUri) {
+
+            if (requestUri is null)
+                throw new ArgumentNullException(nameof(requestUri));
+
+            lock (rulesMutex) {
+
+                return rules.Where(info => info.Rule.Pattern?.IsMatch(requestUri.AbsoluteUri) ?? false)
+                     .ToArray();
+
+            }
+
+        }
+        private TimeSpan ClampDelay(TimeSpan delay, TimeSpan maximumTimeout) {
 
             return new[] {
-                ruleDelay,
+                delay,
                 MaximumDelayBetweenRequests,
-                TimeSpan.FromMilliseconds(request.Timeout)
+                maximumTimeout
             }.Min();
 
         }
-        private DateTimeOffset GetLastRequestTime(IEnumerable<IRateLimitingRule> rateLimitingRules) {
+        private TimeSpan GetMaximumDelay(IEnumerable<RateLimitingRuleInfo> matchingRules, TimeSpan maximumTimeout) {
 
-            if (rateLimitingRules is null)
-                throw new ArgumentNullException(nameof(rateLimitingRules));
+            if (matchingRules is null)
+                throw new ArgumentNullException(nameof(matchingRules));
 
-            DateTimeOffset lastRequestTime = DateTimeOffset.MinValue;
+            TimeSpan maxDelay = matchingRules
+                .Select(info => info.Rule)
+                .Select(rule => TimeSpan.FromMilliseconds(Math.Ceiling(rule.TimePeriod.TotalMilliseconds / rule.RequestsPerTimePeriod)))
+                .Max();
 
-            foreach (IRateLimitingRule rule in rateLimitingRules) {
-
-                if (lastRequestTimes.TryGetValue(rule.Endpoint, out DateTimeOffset ruleLastRequestTime) && ruleLastRequestTime > lastRequestTime)
-                    lastRequestTime = ruleLastRequestTime;
-
-            }
-
-            return lastRequestTime;
+            return ClampDelay(maxDelay, maximumTimeout);
 
         }
+        private DateTimeOffset GetMaximumLastRequestTime(IEnumerable<RateLimitingRuleInfo> matchingRules) {
 
-        private static bool IsRuleMatch(IHttpWebRequest request, IRateLimitingRule rateLimitingRule) {
+            if (matchingRules is null)
+                throw new ArgumentNullException(nameof(matchingRules));
 
-            if (request is null)
-                throw new ArgumentNullException(nameof(request));
-
-            if (rateLimitingRule is null)
-                throw new ArgumentNullException(nameof(rateLimitingRule));
-
-            // We will match all paths at the depth of the given endpoint and below.
-            // The scheme is ignored unless the endpoint pattern includes a scheme.
-
-            // "//example.com/" should match requests to "https://example.com/some/path"
-            // "example.com/" should match requests to "https://example.com/some/path"
-            // "example.com" should match requests to "https://example.com/some/path"
-            // "https://example.com/" should ONLY match "https://example.com/some/path" but not "http://example.com/some/path"
-
-            if (string.IsNullOrWhiteSpace(rateLimitingRule.Endpoint) || string.IsNullOrWhiteSpace(request.RequestUri.AbsoluteUri))
-                return false;
-
-            string endpointPattern = rateLimitingRule.Endpoint.Trim().TrimEnd('/');
-            string requestUri = request.RequestUri.AbsoluteUri.Trim().TrimEnd('/');
-
-            // Strip the scheme from the request URI as dictated by the endpoint pattern.
-
-            if (endpointPattern.StartsWith("//")) {
-
-                // Make it so both strings begin with "//".
-
-                requestUri = requestUri.After(":");
-
-            }
-            else if (!endpointPattern.Contains("://")) {
-
-                // If the pattern does not specify a scheme, we'll strip the scheme from the URI.
-
-                requestUri = requestUri.After("://");
-
-            }
-
-            return requestUri.Equals(endpointPattern, StringComparison.OrdinalIgnoreCase) ||
-                requestUri.StartsWith(endpointPattern + "/");
+            return matchingRules.Select(info => info.LastRequestTime)
+                .Max();
 
         }
 
