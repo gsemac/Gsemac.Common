@@ -16,7 +16,7 @@ namespace Gsemac.Net.Http {
 
         // Public members
 
-        public bool AllowAutoRateLimit { get; set; } = true;
+        public bool AllowAutoRateLimit { get; set; } = false;
         public TimeSpan MaximumDelayBetweenRequests { get; set; } = TimeSpan.MaxValue;
         public ICollection<IRateLimitingRule> Rules => GetWrappedRules();
 
