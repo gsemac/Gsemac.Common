@@ -111,8 +111,6 @@ namespace Gsemac.Net.Http {
 
                 if (AllowAutoRateLimit && ex.Response is object && new HttpWebResponseAdapter(ex.Response).StatusCode == (HttpStatusCode)429) {
 
-                    logger.Info($"Received 429 status (Too Many Requests): {request.RequestUri}");
-
                     // The server responded with "429 Too Many Requests".
 
                     // We can apply throttling automatically to increase the time between requests.
@@ -140,7 +138,7 @@ namespace Gsemac.Net.Http {
                                 IPatternMatcher newRulePattern = new WildcardPattern(throttledEndpoint + "*");
                                 IRateLimitingRule newRule = new RateLimitingRule(newRulePattern, InitialAutomaticDelay);
 
-                                logger.Info($"Throttling requests to {newRule.Pattern} ({newRule.TimePeriod.TotalMilliseconds:#.#}ms)");
+                                logger.Info($"Got status code 429, throttling ({newRule.TimePeriod.TotalMilliseconds:#.#}ms): {newRule.Pattern}");
 
                                 rules.Add(new RateLimitingRuleInfo(newRule) {
                                     IsUserDefined = false,
@@ -155,7 +153,7 @@ namespace Gsemac.Net.Http {
 
                                     TimeSpan newDelay = ClampDelay(TimeSpan.FromMilliseconds(autoRuleInfo.Rule.TimePeriod.TotalMilliseconds * AutomaticDelayMultiplier), requestTimeout);
 
-                                    logger.Info($"Throttling requests to {autoRuleInfo.Rule.Pattern} ({newDelay.TotalMilliseconds:#.#}ms)");
+                                    logger.Info($"Got status code 429, throttling ({newDelay.TotalMilliseconds:#.#}ms): {autoRuleInfo.Rule.Pattern}");
 
                                     autoRuleInfo.Rule = new RateLimitingRule(autoRuleInfo.Rule.Pattern, newDelay);
 
