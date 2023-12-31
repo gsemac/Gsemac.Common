@@ -27,7 +27,7 @@ namespace Gsemac.Net.Extensions.Tests {
 
             IWebProxy proxy = new WebProxy("socks5://127.0.0.1");
 
-            Assert.AreEqual("socks5://127.0.0.1:1080", proxy.ToProxyString());
+            Assert.AreEqual("socks5://127.0.0.1", proxy.ToProxyString());
 
         }
         [TestMethod]

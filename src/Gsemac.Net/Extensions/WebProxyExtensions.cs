@@ -26,6 +26,15 @@ namespace Gsemac.Net.Extensions {
 
         }
 
+        public static Uri GetProxy(this IWebProxy proxy) {
+
+            if (proxy is null)
+                throw new ArgumentNullException(nameof(proxy));
+
+            return proxy.GetProxy(PlaceholderUri);
+
+        }
+
         public static string ToProxyString(this IWebProxy proxy) {
 
             return proxy.ToProxyString(PlaceholderUri);
@@ -51,15 +60,13 @@ namespace Gsemac.Net.Extensions {
 
             sb.Append(proxyUri.GetLeftPart(UriPartial.Scheme));
 
-            if (!(credentials is null)) {
-
-                sb.Append(credentials.ToCredentialsString());
-                sb.Append("@");
-
-            }
+            if (credentials is object)
+                sb.Append($"{credentials.ToCredentialsString()}@");
 
             sb.Append(proxyUri.Host);
-            sb.Append(string.Format(":{0}", proxyUri.Port < 0 ? 1080 : proxyUri.Port));
+
+            if (proxyUri.Port > 0)
+                sb.Append($":{proxyUri.Port}");
 
             return sb.ToString();
 
