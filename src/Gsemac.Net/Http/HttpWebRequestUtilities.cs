@@ -1,5 +1,8 @@
 ﻿using Gsemac.Net.Extensions;
+using Gsemac.Net.Http.Extensions;
+using Gsemac.Net.Properties;
 using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Net;
 
@@ -76,6 +79,7 @@ namespace Gsemac.Net.Http {
             return GetStatusCode(new Uri(uri));
 
         }
+
         public static bool TryGetStatusCode(IHttpWebRequest httpWebRequest, out HttpStatusCode statusCode) {
 
             try {
@@ -184,6 +188,7 @@ namespace Gsemac.Net.Http {
             return GetRemoteFileSize(new Uri(uri));
 
         }
+
         public static bool TryGetRemoteFileSize(IHttpWebRequest httpWebRequest, out long fileSize) {
 
             try {
@@ -217,6 +222,7 @@ namespace Gsemac.Net.Http {
             return TryGetRemoteFileSize(new Uri(uri), out fileSize);
 
         }
+
         public static bool RemoteFileExists(IHttpWebRequest httpWebRequest) {
 
             // Rather than catching all exceptions, I check for certain conditions that indicate with certainty that the remote file does not exist.
@@ -311,6 +317,7 @@ namespace Gsemac.Net.Http {
             return GetRemoteDateTime(new Uri(uri));
 
         }
+
         public static bool TryGetRemoteDateTime(IHttpWebRequest httpWebRequest, out DateTimeOffset date) {
 
             try {
@@ -342,6 +349,51 @@ namespace Gsemac.Net.Http {
         public static bool TryGetRemoteDateTime(string uri, out DateTimeOffset date) {
 
             return TryGetRemoteDateTime(new Uri(uri), out date);
+
+        }
+
+        public static IPAddress GetExternalIPAddress() {
+
+            return GetExternalIPAddress(HttpWebRequestFactory.Default);
+
+        }
+        public static IPAddress GetExternalIPAddress(IHttpWebRequestFactory httpWebRequestFactory) {
+
+            if (httpWebRequestFactory is null)
+                throw new ArgumentNullException(nameof(httpWebRequestFactory));
+
+            List<Exception> exceptions = new List<Exception>();
+
+            foreach (string serviceUrl in new[] {
+                "https://ipv4.icanhazip.com",
+                "https://api.ipify.org",
+                "https://ipinfo.io/ip",
+                "https://checkip.amazonaws.com",
+                "https://wtfismyip.com/text",
+                "http://icanhazip.com"
+            }) {
+
+                try {
+
+                    using (IWebClient client = httpWebRequestFactory.ToWebClientFactory().Create()) {
+
+                        string ipAddressStr = client.DownloadString(serviceUrl);
+
+                        if (IPAddress.TryParse(ipAddressStr, out IPAddress ipAddress))
+                            return ipAddress;
+
+                    }
+
+                }
+                catch (Exception ex) {
+
+                    exceptions.Add(ex);
+
+                }
+
+            }
+
+            throw new AggregateException(ExceptionMessages.FailedToRetrieveExternalIPAddress, exceptions);
 
         }
 

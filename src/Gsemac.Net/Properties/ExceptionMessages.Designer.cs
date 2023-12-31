@@ -124,6 +124,15 @@ namespace Gsemac.Net.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Failed to retrieve external IP address: All services returned an error..
+        /// </summary>
+        internal static string FailedToRetrieveExternalIPAddress {
+            get {
+                return ResourceManager.GetString("FailedToRetrieveExternalIPAddress", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to HTTP listener timed out while waiting for a request..
         /// </summary>
         internal static string HttpListenerTimedOut {
