@@ -135,4 +135,7 @@ curl failed to verify the legitimacy of the server and therefore could not estab
   <data name="SendFailRewind" xml:space="preserve">
     <value>When doing a send operation curl had to rewind the data to retransmit, but the rewinding operation failed.</value>
   </data>
+  <data name="SslConnectError" xml:space="preserve">
+    <value>A problem occurred somewhere in the SSL/TLS handshake.</value>
+  </data>
 </root>

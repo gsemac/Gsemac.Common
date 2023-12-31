@@ -107,5 +107,14 @@ namespace Gsemac.Net.Curl.Properties {
                 return ResourceManager.GetString("SendFailRewind", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to A problem occurred somewhere in the SSL/TLS handshake..
+        /// </summary>
+        internal static string SslConnectError {
+            get {
+                return ResourceManager.GetString("SslConnectError", resourceCulture);
+            }
+        }
     }
 }

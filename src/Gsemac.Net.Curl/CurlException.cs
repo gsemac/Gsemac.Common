@@ -81,6 +81,10 @@ namespace Gsemac.Net.Curl {
                         sb.Append(CurlCodeDescriptions.CouldntConnect);
                         break;
 
+                    case CurlCode.SslConnectError:
+                        sb.Append(CurlCodeDescriptions.SslConnectError);
+                        break;
+
                     case CurlCode.PeerFailedVerification:
                         sb.Append(CurlCodeDescriptions.PeerFailedVerification);
                         break;
