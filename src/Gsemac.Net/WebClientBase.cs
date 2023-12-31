@@ -46,7 +46,21 @@ namespace Gsemac.Net {
             // The only way to get the method is to call base.GetWebRequest() and copy its properties.
             // Note that calling this method also clears most headers from the WebClient.
 
+            IWebProxy proxy = null;
+
+            if (!IsProxySupported(address)) {
+
+                proxy = Proxy;
+                Proxy = null;
+
+            }
+
             WebRequest baseWebRequest = base.GetWebRequest(address);
+
+            // Restore the proxy we removed temporarily. 
+
+            if (proxy is object)
+                Proxy = proxy;
 
             if (baseWebRequest is HttpWebRequest baseHttpWebRequest) {
 
@@ -59,6 +73,11 @@ namespace Gsemac.Net {
 
                 if (!(baseHttpWebRequest.Proxy is PlaceholderWebProxy))
                     httpWebRequest.Proxy = baseHttpWebRequest.Proxy;
+
+                // If we temporarily removed the proxy, we need to apply it to the request.
+
+                if (proxy is object)
+                    httpWebRequest.Proxy = proxy;
 
                 httpWebRequest.WithHeaders(baseHttpWebRequest.Headers);
 
@@ -136,6 +155,34 @@ namespace Gsemac.Net {
         private readonly IHttpWebRequestFactory webRequestFactory;
         private readonly WebRequestHandler webRequestHandler = new WebRequestHandler();
         private bool isDisposed = false;
+
+        private bool IsProxySupported(Uri address) {
+
+            if (address is null)
+                throw new ArgumentNullException(nameof(address));
+
+            if (Proxy is null)
+                return true;
+
+#if NETFRAMEWORK
+
+            // .NET Framework only supports HTTP/HTTPS proxies (SOCKS proxy support was added in .NET 6).
+            // "GetWebRequest" will throw if we attempt to create a web request with an unsupported proxy.
+
+            string proxyScheme = Proxy.GetProxy(address).Scheme;
+
+            bool isSupportedScheme = proxyScheme.Equals("http", StringComparison.OrdinalIgnoreCase) ||
+                proxyScheme.Equals("https", StringComparison.OrdinalIgnoreCase);
+
+            return isSupportedScheme;
+
+#else
+
+           return true;
+
+#endif
+
+        }
 
     }
 
