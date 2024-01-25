@@ -130,6 +130,12 @@ namespace Gsemac.Forms {
         }
         public static ScrollBars GetVisibleScrollBars(Control control) {
 
+            if (control is ListBox listBox)
+                return GetVisibleScrollBars(listBox);
+
+            if (control is TextBox textBox)
+                return GetVisibleScrollBars(textBox);
+
             ScrollBars scrollBars = ScrollBars.None;
 
             Size size = control.GetPreferredSize(Size.Empty);
