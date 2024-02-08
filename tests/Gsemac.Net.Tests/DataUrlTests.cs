@@ -1,5 +1,6 @@
 ﻿using Gsemac.Text;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
 using System.IO;
 
 namespace Gsemac.Net.Tests {
@@ -111,6 +112,17 @@ namespace Gsemac.Net.Tests {
             Assert.IsFalse(dataUrl.IsBase64Encoded);
             Assert.AreEqual(string.Empty, StringUtilities.StreamToString(dataStream));
             Assert.AreEqual("text/plain;charset=US-ASCII", dataUrl.MimeType.ToString());
+
+        }
+
+        // ToString
+
+        [TestMethod]
+        public void TestToStringWithEmptyData() {
+
+            DataUrl dataUrl = new("text/plain", Array.Empty<byte>());
+
+            Assert.AreEqual("data:text/plain,", dataUrl.ToString());
 
         }
 

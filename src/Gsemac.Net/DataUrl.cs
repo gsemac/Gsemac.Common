@@ -17,6 +17,9 @@ namespace Gsemac.Net {
         public bool IsBase64Encoded { get; } = false;
         public int DataLength => data.Length;
 
+        public DataUrl(string mimeType, byte[] data) :
+            this(new MimeType(mimeType), data) {
+        }
         public DataUrl(IMimeType mimeType, byte[] data) :
             this(mimeType, data, false) {
         }

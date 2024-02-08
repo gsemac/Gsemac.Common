@@ -1,7 +1,7 @@
 ﻿using Gsemac.Net.Http.Headers;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
-namespace Gsemac.Net.Tests.Http {
+namespace Gsemac.Net.Http.Tests {
 
     [TestClass]
     public class HttpHeaderTests {
