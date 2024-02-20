@@ -24,15 +24,9 @@ namespace Gsemac.Net.Http {
 
         }
 
-        protected abstract string[] GetHeaderOrdering();
+        protected virtual int GetHeaderIndex(IHttpHeader header) {
 
-        // Private members
-
-        private readonly Lazy<string[]> headerOrdering;
-
-        private int GetHeaderIndex(IHttpHeader header) {
-
-            int defaultIndex = headerOrdering.Value.Length;
+            int defaultIndex = headerOrdering.Value?.Length ?? 0;
 
             if (header is null)
                 return defaultIndex;
@@ -45,6 +39,11 @@ namespace Gsemac.Net.Http {
             return headerIndex;
 
         }
+        protected abstract string[] GetHeaderOrdering();
+
+        // Private members
+
+        private readonly Lazy<string[]> headerOrdering;
 
     }
 

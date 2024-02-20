@@ -121,8 +121,10 @@ namespace Gsemac.Net.Http {
 
                 if (!string.IsNullOrWhiteSpace(userAgent)) {
 
+                    // Note that this will also match other Chromium-based browsers (e.g. Edge).
+
                     if (userAgent.Contains(" Chrome/"))
-                        return new ChromeHttpHeaderComparer();
+                        return new ChromiumHttpHeaderComparer();
 
                     if (userAgent.Contains(" Firefox/"))
                         return new FirefoxHttpHeaderComparer();
@@ -131,7 +133,7 @@ namespace Gsemac.Net.Http {
 
                 // Default to the Chrome header order when we can't determine the user agent.
 
-                return new ChromeHttpHeaderComparer();
+                return new ChromiumHttpHeaderComparer();
 
             }
 
