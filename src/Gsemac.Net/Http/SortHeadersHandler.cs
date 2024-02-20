@@ -68,7 +68,7 @@ namespace Gsemac.Net.Http {
 
                 StringBuilder sb = new StringBuilder();
 
-                string userAgent = headers.Where(header => header.Name.Equals("user-agent")).FirstOrDefault()?.Value ?? string.Empty;
+                string userAgent = headers.Where(header => header.Name.Equals("user-agent", StringComparison.OrdinalIgnoreCase)).FirstOrDefault()?.Value ?? string.Empty;
 
                 foreach (IHttpHeader header in headers.OrderBy(h => h, GetHeaderComparer(userAgent))) {
 
