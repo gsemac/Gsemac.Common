@@ -22,55 +22,93 @@ namespace Gsemac.Net.Http.Extensions {
             switch (headerName.ToLowerInvariant()) {
 
                 case "accept":
+
                     httpWebRequest.Accept = value;
+
+                    break;
+
+                case "accept-encoding":
+
+                    // This header is not restricted, but setting it won't automatically update the "AutomaticDecompression" property.
+
+                    AcceptEncodingHeaderValue acceptEncoding = AcceptEncodingHeaderValue.Parse(value);
+
+                    httpWebRequest.AutomaticDecompression = acceptEncoding.EncodingMethods;
+
+                    httpWebRequest.Headers[HttpRequestHeader.AcceptEncoding] = acceptEncoding.ToString();
+
                     break;
 
                 case "connection":
+
                     SetConnectionHeader(httpWebRequest, value);
+
                     break;
 
                 case "content-length":
+
                     httpWebRequest.ContentLength = long.Parse(value, NumberStyles.Integer, CultureInfo.InvariantCulture);
+
                     break;
 
                 case "content-type":
+
                     httpWebRequest.ContentType = value;
+
                     break;
 
                 case "date":
+
                     httpWebRequest.Date = HttpUtilities.ParseDate(value).DateTime;
+
                     break;
 
                 case "expect":
+
                     httpWebRequest.Expect = value;
+
                     break;
 
                 case "host":
+
                     httpWebRequest.Host = value;
+
                     break;
 
                 case "if-modified-since":
+
                     httpWebRequest.IfModifiedSince = HttpUtilities.ParseDate(value).DateTime;
+
                     break;
 
                 case "range":
+
                     SetRangeHeader(httpWebRequest, value);
+
                     break;
 
                 case "referer":
+
                     httpWebRequest.Referer = value;
+
                     break;
 
                 case "transfer-encoding":
+
                     httpWebRequest.TransferEncoding = value;
+
                     break;
 
                 case "user-agent":
+
                     httpWebRequest.UserAgent = value;
+
                     break;
 
                 default:
+
                     httpWebRequest.Headers.Set(headerName, value);
+
                     break;
 
             }

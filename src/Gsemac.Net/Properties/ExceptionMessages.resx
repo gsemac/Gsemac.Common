@@ -156,6 +156,9 @@
   <data name="InvalidDnsHostAddress" xml:space="preserve">
     <value>The host address is invalid.</value>
   </data>
+  <data name="InvalidHttpAcceptEncodingHeaderWithString" xml:space="preserve">
+    <value>The string '{0}' is not a valid HTTP accept-encoding header.</value>
+  </data>
   <data name="InvalidHttpContentDispositionHeaderWithString" xml:space="preserve">
     <value>The string '{0}' is not a valid HTTP content-disposition header.</value>
   </data>

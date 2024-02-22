@@ -35,9 +35,8 @@ namespace Gsemac.Net.Http.Headers {
 
             if (TryParse(value, out RefreshHeaderValue result))
                 return result;
-            else
-                throw new FormatException(string.Format(ExceptionMessages.InvalidHttpRefreshHeaderWithString, value));
 
+            throw new FormatException(string.Format(ExceptionMessages.InvalidHttpRefreshHeaderWithString, value));
 
         }
         public static bool TryParse(string value, out RefreshHeaderValue result) {
