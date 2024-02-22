@@ -13,27 +13,7 @@ namespace Gsemac.Net.Http {
         WebRequest,
         IHttpWebRequest {
 
-        // Internal members
-
-        internal WebRequest InnerWebRequest => (WebRequest)innerHttpWebRequest;
-
-        // Protected members
-
-        protected HttpWebRequestDecoratorBase(IHttpWebRequest innerHttpWebRequest) {
-
-            if (innerHttpWebRequest is null)
-                throw new ArgumentNullException(nameof(innerHttpWebRequest));
-
-            this.innerHttpWebRequest = innerHttpWebRequest;
-
-        }
-        protected HttpWebRequestDecoratorBase(SerializationInfo serializationInfo, StreamingContext streamingContext) :
-            base(serializationInfo, streamingContext) {
-        }
-
-        // Private members
-
-        private readonly IHttpWebRequest innerHttpWebRequest;
+        // Public members
 
         // Inherited from WebRequest
 
@@ -210,6 +190,28 @@ namespace Gsemac.Net.Http {
         public virtual void AddRange(string rangeSpecifier, int range) => innerHttpWebRequest.AddRange(rangeSpecifier, range);
         public virtual void AddRange(string rangeSpecifier, long range) => innerHttpWebRequest.AddRange(rangeSpecifier, range);
         public virtual void AddRange(string rangeSpecifier, int from, int to) => innerHttpWebRequest.AddRange(rangeSpecifier, from, to);
+
+        // Internal members
+
+        internal WebRequest InnerWebRequest => (WebRequest)innerHttpWebRequest;
+
+        // Protected members
+
+        protected HttpWebRequestDecoratorBase(IHttpWebRequest innerHttpWebRequest) {
+
+            if (innerHttpWebRequest is null)
+                throw new ArgumentNullException(nameof(innerHttpWebRequest));
+
+            this.innerHttpWebRequest = innerHttpWebRequest;
+
+        }
+        protected HttpWebRequestDecoratorBase(SerializationInfo serializationInfo, StreamingContext streamingContext) :
+            base(serializationInfo, streamingContext) {
+        }
+
+        // Private members
+
+        private readonly IHttpWebRequest innerHttpWebRequest;
 
     }
 

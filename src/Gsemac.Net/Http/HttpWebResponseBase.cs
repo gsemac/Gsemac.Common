@@ -42,7 +42,7 @@ namespace Gsemac.Net.Http {
             set => cookies.Add(value);
         }
         public string ContentEncoding {
-            get => Headers[HttpResponseHeader.ContentEncoding] ?? "";
+            get => Headers[HttpResponseHeader.ContentEncoding] ?? string.Empty;
             set => Headers[HttpResponseHeader.ContentEncoding] = value;
         }
         public Version ProtocolVersion { get; protected set; }
@@ -52,11 +52,11 @@ namespace Gsemac.Net.Http {
         }
         public string Method { get; protected set; }
         public string Server {
-            get => Headers[HttpResponseHeader.Server] ?? "";
+            get => Headers[HttpResponseHeader.Server] ?? string.Empty;
             set => Headers[HttpResponseHeader.Server] = value;
         }
         public HttpStatusCode StatusCode { get; protected set; } = 0;
-        public string StatusDescription { get; protected set; } = "";
+        public string StatusDescription { get; protected set; } = string.Empty;
 
         public override Stream GetResponseStream() {
 
