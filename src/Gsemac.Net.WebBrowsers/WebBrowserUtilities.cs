@@ -4,10 +4,13 @@ using Gsemac.Net.Http.Extensions;
 using Gsemac.Net.Sockets;
 using Gsemac.Net.WebBrowsers.Properties;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace Gsemac.Net.WebBrowsers {
 
@@ -108,6 +111,54 @@ namespace Gsemac.Net.WebBrowsers {
 
         }
 
+        public static string EscapeUriString(string stringToEscape) {
+
+            return EscapeUriString(stringToEscape, WebBrowserId.Chrome);
+
+        }
+        public static string EscapeUriString(string stringToEscape, WebBrowserId webBrowserId) {
+
+            if (string.IsNullOrEmpty(stringToEscape))
+                return stringToEscape;
+
+            // Web browsers escape URLs differently compared to Uri.EscapeUriString.
+            // Certain reserved characters are never escaped, while others are escaped only contextually.
+            // Each browser has its own specific behavior.
+
+            // Non-ASCII characters are always escaped.
+
+            char[] globallyRestrictedChars = new[] { ' ', '<', '>', '"' };
+            char[] pathRestrictedChars = null;
+            char[] queryRestrictedChars = new[] { '\'' };
+
+            if (webBrowserId != WebBrowserId.Firefox) {
+
+                // The following applies to all Chromium-based browsers.
+
+                pathRestrictedChars = new[] { '|' };
+
+            }
+
+            stringToEscape = PercentEncodeChars(stringToEscape, globallyRestrictedChars, encodeNonAsciiChars: true);
+
+            stringToEscape = Regex.Replace(stringToEscape, @"^(?<scheme>[^:]+:\/\/)(?<authority>[^\/#]+)(?<path>\/[^#?]*)?(?<query>\?[^#]*)?(?<fragment>#.+)?$", m => {
+
+                StringBuilder resultBuilder = new StringBuilder();
+
+                resultBuilder.Append(m.Groups["scheme"].Value);
+                resultBuilder.Append(m.Groups["authority"].Value);
+                resultBuilder.Append(PercentEncodeChars(m.Groups["path"].Value, pathRestrictedChars, false));
+                resultBuilder.Append(PercentEncodeChars(m.Groups["query"].Value, queryRestrictedChars, false));
+                resultBuilder.Append(m.Groups["fragment"].Value);
+
+                return resultBuilder.ToString();
+
+            });
+
+            return stringToEscape;
+
+        }
+
         public static bool OpenUrl(Uri uri) {
 
             if (uri is null)
@@ -200,6 +251,33 @@ namespace Gsemac.Net.WebBrowsers {
                 }
 
             }
+
+        }
+
+        // Private members
+
+        private static string PercentEncodeChars(string stringToEscape, char[] chars, bool encodeNonAsciiChars) {
+
+            if (string.IsNullOrEmpty(stringToEscape))
+                return stringToEscape;
+
+            List<string> charPatterns = new List<string>(2);
+
+            if (chars is object)
+                charPatterns.Add($"[{string.Join(string.Empty, chars.Select(c => Regex.Escape(c.ToString())))}]");
+
+            if (encodeNonAsciiChars)
+                charPatterns.Add(@"[^\x00-\x7F]");
+
+            string pattern = string.Join("|", charPatterns);
+
+            return Regex.Replace(stringToEscape, pattern, m => {
+
+                byte[] bytes = Encoding.UTF8.GetBytes(m.Value);
+
+                return string.Join(string.Empty, bytes.Select(b => $"%{b:X2}"));
+
+            });
 
         }
 
