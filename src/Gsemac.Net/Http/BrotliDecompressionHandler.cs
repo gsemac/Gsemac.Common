@@ -58,8 +58,8 @@ namespace Gsemac.Net.Http {
             if (response is null)
                 throw new ArgumentNullException(nameof(response));
 
-            return (AcceptEncodingHeaderValue.TryParse(response.ContentEncoding, out AcceptEncodingHeaderValue result) &&
-                    result.EncodingMethods.HasFlag((DecompressionMethods)Polyfills.System.Net.DecompressionMethods.Brotli));
+            return AcceptEncodingHeaderValue.TryParse(response.ContentEncoding, out AcceptEncodingHeaderValue result) &&
+                result.DecompressionMethods.HasFlag((DecompressionMethods)Polyfills.System.Net.DecompressionMethods.Brotli);
 
         }
 

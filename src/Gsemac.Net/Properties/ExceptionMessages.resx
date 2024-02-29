@@ -147,6 +147,9 @@
   <data name="InnerHandlerHasNotBeenSet" xml:space="preserve">
     <value>The inner handler has not been set.</value>
   </data>
+  <data name="InvalidContentEncodingWithString" xml:space="preserve">
+    <value>The string '{0}' is not a valid content encoding.</value>
+  </data>
   <data name="InvalidCookieDomainPattern" xml:space="preserve">
     <value>The given cookie domain pattern is invalid.</value>
   </data>

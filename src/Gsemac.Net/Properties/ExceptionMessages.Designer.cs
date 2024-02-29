@@ -151,6 +151,15 @@ namespace Gsemac.Net.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The string &apos;{0}&apos; is not a valid content encoding..
+        /// </summary>
+        internal static string InvalidContentEncodingWithString {
+            get {
+                return ResourceManager.GetString("InvalidContentEncodingWithString", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The given cookie domain pattern is invalid..
         /// </summary>
         internal static string InvalidCookieDomainPattern {

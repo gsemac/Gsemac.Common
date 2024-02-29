@@ -10,18 +10,20 @@ namespace Gsemac.Net.Http.Headers {
 
         // Public members
 
-        public DecompressionMethods EncodingMethods { get; set; } = DecompressionMethods.None;
+        public ICollection<ContentEncoding> ContentEncodings { get; } = new List<ContentEncoding>();
+        public DecompressionMethods DecompressionMethods => GetDecompressionMethods();
 
         public AcceptEncodingHeaderValue(DecompressionMethods decompressionMethods) {
 
-            EncodingMethods = decompressionMethods;
+            foreach (string encodingName in GetEncodingNames(decompressionMethods))
+                ContentEncodings.Add(new ContentEncoding(encodingName));
 
         }
         public AcceptEncodingHeaderValue(string value) {
 
-            AcceptEncodingHeaderValue header = Parse(value);
+            AcceptEncodingHeaderValue parsedValue = Parse(value);
 
-            EncodingMethods = header.EncodingMethods;
+            ContentEncodings = parsedValue.ContentEncodings;
 
         }
 
@@ -35,47 +37,20 @@ namespace Gsemac.Net.Http.Headers {
         }
         public static bool TryParse(string value, out AcceptEncodingHeaderValue result) {
 
-            result = null;
-
-            DecompressionMethods methods = DecompressionMethods.None;
+            result = new AcceptEncodingHeaderValue();
 
             if (!string.IsNullOrWhiteSpace(value)) {
 
-                foreach (string encodingName in value.Split(',').Select(v => v.Trim().ToLowerInvariant()).Where(v => !string.IsNullOrWhiteSpace(v))) {
+                foreach (string encodingStr in value.Split(',').Where(v => !string.IsNullOrWhiteSpace(v))) {
 
-                    switch (encodingName) {
+                    if (!ContentEncoding.TryParse(encodingStr, out ContentEncoding parsedContentEncoding))
+                        return false;
 
-                        case "gzip":
-
-                            methods |= DecompressionMethods.GZip;
-
-                            break;
-
-                        case "deflate":
-
-                            methods |= DecompressionMethods.Deflate;
-
-                            break;
-
-                        case "br":
-
-                            methods |= (DecompressionMethods)Polyfills.System.Net.DecompressionMethods.Brotli;
-
-                            break;
-
-                        default:
-
-                            // Invalid encoding encountered.
-
-                            return false;
-
-                    }
+                    result.ContentEncodings.Add(parsedContentEncoding);
 
                 }
 
             }
-
-            result = new AcceptEncodingHeaderValue(methods);
 
             return true;
 
@@ -83,18 +58,42 @@ namespace Gsemac.Net.Http.Headers {
 
         public override string ToString() {
 
-            List<string> methods = new List<string>();
+            return string.Join(", ", ContentEncodings.OrderBy(e => e, new ContentEncodingComparer()));
 
-            if (EncodingMethods.HasFlag(DecompressionMethods.GZip))
-                methods.Add("gzip");
+        }
 
-            if (EncodingMethods.HasFlag(DecompressionMethods.Deflate))
-                methods.Add("deflate");
+        // Private members
 
-            if (EncodingMethods.HasFlag((DecompressionMethods)Polyfills.System.Net.DecompressionMethods.Brotli))
-                methods.Add("br");
+        private AcceptEncodingHeaderValue() { }
 
-            return string.Join(", ", methods);
+        private DecompressionMethods GetDecompressionMethods() {
+
+            DecompressionMethods result = DecompressionMethods.None;
+
+            foreach (ContentEncoding contentEncoding in ContentEncodings)
+                result |= contentEncoding.DecompressionMethod;
+
+            return result;
+
+        }
+
+        private static IEnumerable<string> GetEncodingNames(DecompressionMethods decompressionMethods) {
+
+            List<string> encodingNames = new List<string>();
+
+            if (decompressionMethods.HasFlag(DecompressionMethods.GZip))
+                encodingNames.Add("gzip");
+
+            if (decompressionMethods.HasFlag(DecompressionMethods.Deflate))
+                encodingNames.Add("deflate");
+
+            if (decompressionMethods.HasFlag((DecompressionMethods)Polyfills.System.Net.DecompressionMethods.Brotli))
+                encodingNames.Add("br");
+
+            if (decompressionMethods.HasFlag((DecompressionMethods)Polyfills.System.Net.DecompressionMethods.All))
+                encodingNames.Add("*");
+
+            return encodingNames;
 
         }
 

@@ -33,7 +33,7 @@ namespace Gsemac.Net.Http.Extensions {
 
                     AcceptEncodingHeaderValue acceptEncoding = AcceptEncodingHeaderValue.Parse(value);
 
-                    httpWebRequest.AutomaticDecompression = acceptEncoding.EncodingMethods;
+                    httpWebRequest.AutomaticDecompression = acceptEncoding.DecompressionMethods;
 
                     httpWebRequest.Headers[HttpRequestHeader.AcceptEncoding] = acceptEncoding.ToString();
 
