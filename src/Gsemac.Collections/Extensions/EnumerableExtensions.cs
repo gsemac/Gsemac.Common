@@ -66,6 +66,27 @@ namespace Gsemac.Collections.Extensions {
             return -1;
 
         }
+        public static int IndexOf(this IEnumerable<string> source, string value, StringComparison comparisonType) {
+
+            if (source is null)
+                throw new ArgumentNullException(nameof(source));
+
+            int index = 0;
+
+            foreach (string element in source) {
+
+                if (element.Equals(value, comparisonType))
+                    return index;
+
+                ++index;
+
+            }
+
+            // If we reach this point, the desired value was not found.
+
+            return -1;
+
+        }
 
         public static IEnumerable<T> DistinctBy<T, TKey>(this IEnumerable<T> source, Func<T, TKey> selector) {
 
