@@ -8,7 +8,7 @@ namespace Gsemac.Collections.Extensions {
 
         // Public members
 
-        public static IEnumerable<T> TakeLast<T>(this IEnumerable<T> source, int length) {
+        public static IEnumerable<TSource> TakeLast<TSource>(this IEnumerable<TSource> source, int length) {
 
             if (source is null)
                 throw new ArgumentNullException(nameof(source));
@@ -16,7 +16,7 @@ namespace Gsemac.Collections.Extensions {
             return source.Skip(Math.Max(0, source.Count() - length));
 
         }
-        public static IEnumerable<T> PadLeft<T>(this IEnumerable<T> source, int length) {
+        public static IEnumerable<TSource> PadLeft<TSource>(this IEnumerable<TSource> source, int length) {
 
             if (source is null)
                 throw new ArgumentNullException(nameof(source));
@@ -26,18 +26,18 @@ namespace Gsemac.Collections.Extensions {
             for (int i = 0; i < diff; ++i)
                 yield return default;
 
-            foreach (T value in source)
+            foreach (TSource value in source)
                 yield return value;
 
         }
-        public static IEnumerable<T> PadRight<T>(this IEnumerable<T> source, int length) {
+        public static IEnumerable<TSource> PadRight<TSource>(this IEnumerable<TSource> source, int length) {
 
             if (source is null)
                 throw new ArgumentNullException(nameof(source));
 
             int diff = length - source.Count();
 
-            foreach (T value in source)
+            foreach (TSource value in source)
                 yield return value;
 
             for (int i = 0; i < diff; ++i)
@@ -45,14 +45,14 @@ namespace Gsemac.Collections.Extensions {
 
         }
 
-        public static int IndexOf<T>(this IEnumerable<T> source, T value) {
+        public static int IndexOf<TSource>(this IEnumerable<TSource> source, TSource value) {
 
             if (source is null)
                 throw new ArgumentNullException(nameof(source));
 
             int index = 0;
 
-            foreach (T element in source) {
+            foreach (TSource element in source) {
 
                 if (element.Equals(value))
                     return index;
@@ -88,7 +88,7 @@ namespace Gsemac.Collections.Extensions {
 
         }
 
-        public static IEnumerable<T> DistinctBy<T, TKey>(this IEnumerable<T> source, Func<T, TKey> selector) {
+        public static IEnumerable<TSource> DistinctBy<TSource, TKey>(this IEnumerable<TSource> source, Func<TSource, TKey> selector) {
 
             if (source is null)
                 throw new ArgumentNullException(nameof(source));
@@ -99,7 +99,7 @@ namespace Gsemac.Collections.Extensions {
             return source.GroupBy(selector).Select(item => item.First());
 
         }
-        public static IEnumerable<T> DistinctBy<T, TKey>(this IEnumerable<T> source, Func<T, TKey> selector, IEqualityComparer<TKey> comparer) {
+        public static IEnumerable<TSource> DistinctBy<TSource, TKey>(this IEnumerable<TSource> source, Func<TSource, TKey> selector, IEqualityComparer<TKey> comparer) {
 
             if (source is null)
                 throw new ArgumentNullException(nameof(source));
@@ -114,7 +114,7 @@ namespace Gsemac.Collections.Extensions {
 
         }
 
-        public static IEnumerable<T> Shuffle<T>(this IEnumerable<T> source) {
+        public static IEnumerable<TSource> Shuffle<TSource>(this IEnumerable<TSource> source) {
 
             if (source is null)
                 throw new ArgumentNullException(nameof(source));
@@ -122,7 +122,7 @@ namespace Gsemac.Collections.Extensions {
             return source.OrderBy((item) => random.Next());
 
         }
-        public static T Random<T>(this IEnumerable<T> source) {
+        public static TSource Random<TSource>(this IEnumerable<TSource> source) {
 
             if (source is null)
                 throw new ArgumentNullException(nameof(source));
@@ -130,7 +130,7 @@ namespace Gsemac.Collections.Extensions {
             return source.Shuffle().First();
 
         }
-        public static T RandomOrDefault<T>(this IEnumerable<T> source) {
+        public static TSource RandomOrDefault<TSource>(this IEnumerable<TSource> source) {
 
             if (source is null)
                 throw new ArgumentNullException(nameof(source));
@@ -139,15 +139,15 @@ namespace Gsemac.Collections.Extensions {
 
         }
 
-        public static bool IsSorted<T>(this IEnumerable<T> source) {
+        public static bool IsSorted<TSource>(this IEnumerable<TSource> source) {
 
             if (source is null)
                 throw new ArgumentNullException(nameof(source));
 
-            return IsSorted(source, Comparer<T>.Default);
+            return IsSorted(source, Comparer<TSource>.Default);
 
         }
-        public static bool IsSorted<T>(this IEnumerable<T> source, IComparer<T> comparer) {
+        public static bool IsSorted<TSource>(this IEnumerable<TSource> source, IComparer<TSource> comparer) {
 
             if (source is null)
                 throw new ArgumentNullException(nameof(source));
@@ -157,6 +157,83 @@ namespace Gsemac.Collections.Extensions {
 
             return source.Zip(source.Skip(1), (curr, next) => comparer.Compare(curr, next) <= 0)
                 .All(isSorted => isSorted);
+
+        }
+
+        public static TSource MinOrDefault<TSource>(this IEnumerable<TSource> source) {
+
+            if (source is null)
+                throw new ArgumentNullException(nameof(source));
+
+            return source.DefaultIfEmpty().Min();
+
+        }
+        public static TSource MinOrDefault<TSource>(this IEnumerable<TSource> source, TSource defaultValue) {
+
+            if (source is null)
+                throw new ArgumentNullException(nameof(source));
+
+            return source.DefaultIfEmpty(defaultValue).Min();
+
+        }
+        public static TResult MinOrDefault<TSource, TResult>(this IEnumerable<TSource> source, Func<TSource, TResult> selector) {
+
+            if (source is null)
+                throw new ArgumentNullException(nameof(source));
+
+            if (selector is null)
+                throw new ArgumentNullException(nameof(selector));
+
+            return source.DefaultIfEmpty().Min(selector);
+
+        }
+        public static TResult MinOrDefault<TSource, TResult>(this IEnumerable<TSource> source, Func<TSource, TResult> selector, TResult defaultValue) {
+
+            if (source is null)
+                throw new ArgumentNullException(nameof(source));
+
+            if (selector is null)
+                throw new ArgumentNullException(nameof(selector));
+
+            return source.Select(selector).MinOrDefault(defaultValue);
+
+        }
+        public static TSource MaxOrDefault<TSource>(this IEnumerable<TSource> source) {
+
+            if (source is null)
+                throw new ArgumentNullException(nameof(source));
+
+            return source.DefaultIfEmpty().Max();
+
+        }
+        public static TSource MaxOrDefault<TSource>(this IEnumerable<TSource> source, TSource defaultValue) {
+
+            if (source is null)
+                throw new ArgumentNullException(nameof(source));
+
+            return source.DefaultIfEmpty(defaultValue).Max();
+
+        }
+        public static TResult MaxOrDefault<TSource, TResult>(this IEnumerable<TSource> source, Func<TSource, TResult> selector) {
+
+            if (source is null)
+                throw new ArgumentNullException(nameof(source));
+
+            if (selector is null)
+                throw new ArgumentNullException(nameof(selector));
+
+            return source.DefaultIfEmpty().Max(selector);
+
+        }
+        public static TResult MaxOrDefault<TSource, TResult>(this IEnumerable<TSource> source, Func<TSource, TResult> selector, TResult defaultValue) {
+
+            if (source is null)
+                throw new ArgumentNullException(nameof(source));
+
+            if (selector is null)
+                throw new ArgumentNullException(nameof(selector));
+
+            return source.Select(selector).MaxOrDefault(defaultValue);
 
         }
 
