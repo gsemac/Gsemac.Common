@@ -64,9 +64,7 @@ namespace Gsemac.Collections {
 
         private bool IsCharNumeric(char input) {
 
-            // Numeric sequences include all leading hyphens, which are ignored when comparing the numbers.
-
-            return input == '-' || char.IsDigit(input);
+            return char.IsDigit(input);
 
         }
         private bool IsCharDelimiter(char input) {
@@ -79,16 +77,39 @@ namespace Gsemac.Collections {
         }
         private bool ConsumeNumericSequence(string input, ref int startIndex, ref int endIndex) {
 
-            while (endIndex < input.Length && IsCharNumeric(input[endIndex]))
+            // Numeric sequences include all leading hyphens, which are ignored when comparing the numbers.
+            // Do not include trailing hyphens in the sequence.
+
+            bool consumedNonHyphenChar = false;
+
+            while (endIndex < input.Length) {
+
+                char nextChar = input[endIndex];
+
+                if (!IsCharNumeric(nextChar) && (nextChar != '-' || consumedNonHyphenChar))
+                    break;
+
+                consumedNonHyphenChar = nextChar != '-';
+
                 ++endIndex;
+
+            }
 
             return startIndex != endIndex;
 
         }
-        private bool ConsumeAlphabeticSequence(string input, ref int startIndex, ref int endIndex) {
+        private bool ConsumeNonNumericSequence(string input, ref int startIndex, ref int endIndex) {
 
-            while (endIndex < input.Length && !IsCharDelimiter(input[endIndex]) && !IsCharNumeric(input[endIndex]))
+            while (endIndex < input.Length) {
+
+                char nextChar = input[endIndex];
+
+                if (IsCharDelimiter(nextChar) || IsCharNumeric(nextChar) || nextChar == '-')
+                    break;
+
                 ++endIndex;
+
+            }
 
             return startIndex != endIndex;
 
@@ -99,11 +120,11 @@ namespace Gsemac.Collections {
             int startIndex = 0;
             int endIndex = 0;
 
-            if (!(input is null)) {
+            if (!string.IsNullOrEmpty(input)) {
 
                 while (startIndex < input.Length) {
 
-                    if (ConsumeNumericSequence(input, ref startIndex, ref endIndex) || ConsumeAlphabeticSequence(input, ref startIndex, ref endIndex)) {
+                    if (ConsumeNumericSequence(input, ref startIndex, ref endIndex) || ConsumeNonNumericSequence(input, ref startIndex, ref endIndex)) {
 
                         yield return input.Substring(startIndex, endIndex - startIndex);
 

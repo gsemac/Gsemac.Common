@@ -1,8 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
 using System.Globalization;
 using System.Linq;
-using System.Text;
 
 namespace Gsemac.Collections.Tests {
 
@@ -116,6 +114,28 @@ namespace Gsemac.Collections.Tests {
                 "My File (10).txt",
                 "My File (200).txt",
                 "My File (3000).txt",
+            }, sortedItems);
+
+        }
+        [TestMethod]
+        public void TestSortWithNumericSequencesWithTrailingHyphens() {
+
+            string[] items = new[] {
+                "16-",
+                "10-",
+                "11-",
+                "8-",
+                "1-",
+            };
+
+            string[] sortedItems = items.OrderBy(item => item, new NaturalSortComparer(CultureInfo.InvariantCulture)).ToArray();
+
+            CollectionAssert.AreEqual(new[] {
+                "1-",
+                "8-",
+                "10-",
+                "11-",
+                "16-",
             }, sortedItems);
 
         }
