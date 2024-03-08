@@ -21,13 +21,13 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="JavaScriptEngineSwitcher.Core" Version="3.24.0" />
+		<PackageReference Include="JavaScriptEngineSwitcher.Core" Version="3.24.1" />
 	</ItemGroup>
 
 	<Choose>
 		<When Condition="$(DefineConstants.Contains('NET45_OR_GREATER')) Or $(DefineConstants.Contains('NETCOREAPP')) Or $(DefineConstants.Contains('NETSTANDARD'))">
 			<ItemGroup>
-				<PackageReference Include="JavaScriptEngineSwitcher.Jint" Version="3.23.9" />
+				<PackageReference Include="JavaScriptEngineSwitcher.Jint" Version="3.24.1" />
 			</ItemGroup>
 		</When>
 		<Otherwise>
