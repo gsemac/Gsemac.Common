@@ -11,6 +11,7 @@ namespace Gsemac.Net.Http {
         // Public members
 
         public bool MaintainUserAgentPerHost { get; set; } = true;
+        public bool ReplaceExistingUserAgent { get; set; } = false;
 
         public RandomUserAgentHandler(IEnumerable<string> userAgents) :
             base() {
@@ -27,10 +28,14 @@ namespace Gsemac.Net.Http {
             if (request is null)
                 throw new ArgumentNullException(nameof(request));
 
-            string userAgent = GetUserAgentForHost(request.RequestUri);
+            if (string.IsNullOrWhiteSpace(request.UserAgent) || ReplaceExistingUserAgent) {
 
-            if (!string.IsNullOrWhiteSpace(userAgent))
-                request.UserAgent = userAgent;
+                string userAgent = GetUserAgentForHost(request.RequestUri);
+
+                if (!string.IsNullOrWhiteSpace(userAgent))
+                    request.UserAgent = userAgent;
+
+            }
 
             return base.Send(request, cancellationToken);
 
