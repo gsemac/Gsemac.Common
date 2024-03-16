@@ -57,6 +57,11 @@ namespace Gsemac.Win32.Native {
             return SendMessageNative(hWnd, wMsg, wParam, ref lParam);
 
         }
+        public static bool SetProcessDPIAware() {
+
+            return SetProcessDPIAwareNative();
+
+        }
         public static int SetScrollPos(IntPtr hWnd, int nBar, int nPos, bool bRedraw) {
 
             return SetScrollPosNative(hWnd, nBar, nPos, bRedraw);
@@ -93,6 +98,8 @@ namespace Gsemac.Win32.Native {
         private static extern IntPtr ReleaseDCNative(IntPtr hwnd, IntPtr hdc);
         [DllImport("user32", EntryPoint = "SendMessage", SetLastError = true)]
         private static extern IntPtr SendMessageNative(IntPtr hWnd, int wMsg, IntPtr wParam, IntPtr lParam);
+        [DllImport("user32", EntryPoint = "SetProcessDPIAware", SetLastError = true)]
+        private static extern bool SetProcessDPIAwareNative();
         [DllImport("user32", EntryPoint = "SendMessage", SetLastError = true)]
         private static extern IntPtr SendMessageNative(IntPtr hWnd, int wMsg, IntPtr wParam, ref HDItemA lParam);
         [DllImport("user32", EntryPoint = "SetScrollPos", SetLastError = true)]
