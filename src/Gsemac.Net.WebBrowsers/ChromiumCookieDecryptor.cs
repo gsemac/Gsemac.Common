@@ -19,6 +19,11 @@ namespace Gsemac.Net.WebBrowsers {
 
         public byte[] DecryptCookie(byte[] encryptedBytes) {
 
+            // It's okay if we have a zero-length byte array, which will be the case for cookies with empty values.
+
+            if (encryptedBytes.Length <= 0)
+                return new byte[0];
+
             if (TryDecryptCookie(encryptedBytes, out byte[] decryptedBytes))
                 return decryptedBytes;
 
