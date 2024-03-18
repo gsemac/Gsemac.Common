@@ -45,6 +45,7 @@
 		<ProjectReference Include="..\Gsemac.IO\Gsemac.IO.csproj" />
 		<ProjectReference Include="..\Gsemac.Net\Gsemac.Net.csproj" />
 		<ProjectReference Include="..\Gsemac.Text.Ini\Gsemac.Text.Ini.csproj" />
+		<ProjectReference Include="..\Gsemac.Win32\Gsemac.Win32.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>

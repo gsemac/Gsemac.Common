@@ -1,5 +1,6 @@
 ﻿using Gsemac.Core;
 using Gsemac.IO;
+using Gsemac.Win32.Native;
 using System;
 using System.Data;
 using System.Data.SQLite;
@@ -27,6 +28,8 @@ namespace Gsemac.Net.WebBrowsers {
             if (File.Exists(cookiesPath)) {
 
                 // Chrome stores its cookies in an SQLite database.
+
+                UnlockCookiesDatabase(cookiesPath);
 
                 IWebBrowserCookieDecryptor cookieDecryptor = new ChromiumCookieDecryptor(PathUtilities.GetParentPath(profile.DirectoryPath));
 
@@ -121,6 +124,86 @@ namespace Gsemac.Net.WebBrowsers {
                 return DateTime.MaxValue;
 
             return DateUtilities.FromUnixTimeSeconds(timestampSeconds).DateTime;
+
+        }
+
+        private static bool UnlockCookiesDatabase(string databaseFilePath) {
+
+            // Since Chrome 114, the cookies database is locked while the browser is open.
+            // https://stackoverflow.com/a/76442546
+
+            // We can kill the process locking the database without killing the browser process.
+            // The browser will automatically restart the process, so this is transparent to the user.
+            // This solution was adapted from the one here: https://github.com/bashonly/yt-dlp-ChromeCookieUnlock/blob/61fd994425e33b9286f8190171922e059181732e/yt_dlp_plugins/postprocessor/chrome_cookie_unlock.py
+
+            // Note that RestartManager API is only available in Windows Vista and later.
+
+            if (string.IsNullOrWhiteSpace(databaseFilePath) || !File.Exists(databaseFilePath))
+                return false;
+
+            // If the RestartManager API is not available, we'll assume the database is already unlocked.
+            // This would only be applicable to Windows XP and earlier, on which newer versions of Chrome aren't supported anyway.
+
+            if (Environment.OSVersion.Version.Major < 6)
+                return true;
+
+            uint sessionFlags = 0;
+            StringBuilder sessionKey = new StringBuilder(256);
+
+            string[] fileNames = new[] {
+                 databaseFilePath
+            };
+
+            if (Rstrtmgr.RmStartSession(out uint sessionHandle, sessionFlags, sessionKey) != Constants.ERROR_SUCCESS)
+                return false;
+
+            try {
+
+                uint rebootReasons = 0;
+                RM_PROCESS_INFO[] affectedApps = new RM_PROCESS_INFO[1];
+                uint procInfo = (uint)affectedApps.Length;
+
+                if (Rstrtmgr.RmRegisterResources(sessionHandle, 1, fileNames, 0, null, 0, null) != Constants.ERROR_SUCCESS)
+                    return false;
+
+                // Get all processes locking the database file.
+
+                int getListResult = Rstrtmgr.RmGetList(sessionHandle, out uint procInfoNeeded, ref procInfo, affectedApps, ref rebootReasons);
+
+                // The process info array wasn't large enough to store the process information.
+
+                if (getListResult == Constants.ERROR_MORE_DATA) {
+
+                    affectedApps = new RM_PROCESS_INFO[procInfoNeeded];
+                    procInfo = (uint)affectedApps.Length;
+
+                    getListResult = Rstrtmgr.RmGetList(sessionHandle, out procInfoNeeded, ref procInfo, affectedApps, ref rebootReasons);
+
+                }
+
+                if (getListResult != Constants.ERROR_SUCCESS)
+                    return false;
+
+                // If there were no processes locking the database, there's nothing we need to do.
+
+                if (procInfoNeeded <= 0)
+                    return true;
+
+                // Terminate the processes locking the database file.
+
+                if (Rstrtmgr.RmShutdown(sessionHandle, Constants.RmForceShutdown, null) != Constants.ERROR_SUCCESS)
+                    return false;
+
+                // The database file was successfully unlocked.
+
+                return true;
+
+            }
+            finally {
+
+                Rstrtmgr.RmEndSession(sessionHandle);
+
+            }
 
         }
 
