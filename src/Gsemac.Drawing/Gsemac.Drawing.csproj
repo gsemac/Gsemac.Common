@@ -40,7 +40,7 @@
 					For other targets, GDI-related classes are provided by System.Drawing.Common.
 					Note that the facilities provided are still only supported on Windows.
 				-->
-				<PackageReference Include="System.Drawing.Common" Version="8.0.2" />
+				<PackageReference Include="System.Drawing.Common" Version="8.0.3" />
 			</ItemGroup>
 		</Otherwise>
 	</Choose>
