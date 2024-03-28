@@ -3,6 +3,7 @@ using Gsemac.Net.Extensions;
 using Gsemac.Net.Http.Extensions;
 using Gsemac.Net.Sockets;
 using Gsemac.Net.WebBrowsers.Properties;
+using Gsemac.Text;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -41,7 +42,6 @@ namespace Gsemac.Net.WebBrowsers {
             // Start an HTTP server on a random port.
 
             Uri requestUri = new Uri($"http://localhost:{SocketUtilities.GetAvailablePort()}/");
-            bool listenForRequests = true;
 
             using (HttpListener listener = new HttpListener()) {
 
@@ -55,51 +55,54 @@ namespace Gsemac.Net.WebBrowsers {
 
                 // Wait for an incoming request.
 
-                while (listenForRequests) {
+                HttpListenerContext context = listener.GetContext(timeout);
 
-                    listenForRequests = false;
+                if (context is object) {
 
-                    HttpListenerContext context = listener.GetContext(timeout);
+                    HttpListenerRequest request = context.Request;
 
-                    if (!(context is null)) {
+                    if (request.HttpMethod.Equals("get", StringComparison.OrdinalIgnoreCase)) {
 
-                        HttpListenerRequest request = context.Request;
+                        // The web browser requested our webpage, so copy the request headers.
 
-                        if (request.HttpMethod.Equals("get", StringComparison.OrdinalIgnoreCase)) {
+                        context.Request.Headers.CopyTo(requestHeaders);
 
-                            // The web browser requested our webpage, so copy the request headers.
+                        // Respond to the request.
 
-                            context.Request.Headers.CopyTo(requestHeaders);
-
-                            // Respond to the request.
-
-                            HttpListenerResponse response = context.Response;
+                        using (HttpListenerResponse response = context.Response) {
 
                             StringBuilder responseBuilder = new StringBuilder();
 
                             responseBuilder.AppendLine("<!DOCTYPE html>");
                             responseBuilder.Append("<html>");
                             responseBuilder.Append("<body>");
-                            responseBuilder.Append("<script>fetch(\"" + requestUri.AbsoluteUri + "\", {method: \"POST\"});</script>");
-                            responseBuilder.Append(responseBody ?? "This window may now be closed.");
+                            responseBuilder.Append(responseBody ?? "This page may now be closed.");
                             responseBuilder.Append("</body>");
                             responseBuilder.Append("</html>");
 
-                            using (MemoryStream ms = new MemoryStream(Encoding.UTF8.GetBytes(responseBuilder.ToString())))
-                                ms.CopyTo(response.OutputStream);
+                            byte[] responseBytes = Encoding.UTF8.GetBytes(responseBuilder.ToString());
+
+                            // We need to be careful with how we handle our resources to ensure that HttpListener finishes responding before stopping.
+                            // While calling "Close()" on the output stream may look redundant, it seems to help.
+                            //m https://stackoverflow.com/a/72939272/5383169
+
+                            response.ContentLength64 = responseBytes.Length;
+                            response.KeepAlive = true;
+
+                            using (MemoryStream contentStream = new MemoryStream(responseBytes))
+                            using (Stream outputStream = response.OutputStream) {
+
+                                contentStream.CopyTo(response.OutputStream);
+
+                                outputStream.Close();
+
+                            }
 
                             response.Close();
 
-                            // Wait for the web browser to POST back let us know it got our response.
-
-                            listenForRequests = true;
-
                         }
-                        else {
 
-                            // The web browser has POSTed back to let us know it got our response.
-
-                        }
+                        listener.Stop();
 
                     }
 
@@ -199,23 +202,54 @@ namespace Gsemac.Net.WebBrowsers {
 
             IWebBrowserInfo browserInfo = options.WebBrowser;
             IWebBrowserProfile browserProfile = options.Profile;
-            string browserExecutablePath = browserInfo?.ExecutablePath ?? "explorer.exe";
-            string arguments = $"\"{url}\"";
 
-            if (browserInfo is object && browserProfile is object) {
+            if (browserInfo is null && options.WebBrowserId != WebBrowserId.Unknown)
+                browserInfo = WebBrowserInfoFactory.Default.GetWebBrowserInfo(options.WebBrowserId);
+
+            string browserExecutablePath = browserInfo?.ExecutablePath ?? "explorer.exe";
+
+            List<string> arguments = new List<string> {
+                $"\"{url}\""
+            };
+
+            if (browserInfo is object) {
 
                 switch (browserInfo.Id) {
 
                     case WebBrowserId.Chrome:
                     case WebBrowserId.Edge:
 
-                        arguments = $"\"{url}\" --profile-directory=\"{browserProfile.Identifier}\"";
+                        if (!string.IsNullOrWhiteSpace(options.UserDataDirectoryPath))
+                            arguments.Add($"--user-data-dir=\"{options.UserDataDirectoryPath}\"");
+
+                        if (browserProfile is object)
+                            arguments.Add($"--profile-directory=\"{browserProfile.Identifier}\"");
 
                         break;
 
                     case WebBrowserId.Firefox:
 
-                        arguments = $"\"{url}\" -profile=\"{browserProfile.DirectoryPath}\"";
+                        if (browserProfile is object) {
+
+                            arguments.Add($"-profile \"{browserProfile.DirectoryPath}\"");
+
+                        }
+                        else if (!string.IsNullOrWhiteSpace(options.UserDataDirectoryPath)) {
+
+                            // Firefox takes a profile path directly instead of a user data path (i.e. "Profiles" path).
+                            // If the given directory doesn't have any profile information, we'll generate it.
+
+                            FirefoxUtilities.CreateFirefoxUserDataDirectory(options.UserDataDirectoryPath);
+
+                            IWebBrowserProfilesReader profilesReader = new FirefoxProfilesReader(options.UserDataDirectoryPath);
+
+                            IWebBrowserProfile profile = profilesReader.GetDefaultProfile() ??
+                                profilesReader.GetProfiles().FirstOrDefault();
+
+                            if (profile is object)
+                                arguments.Add($"-profile \"{profile.DirectoryPath}\"");
+
+                        }
 
                         break;
 
@@ -227,7 +261,7 @@ namespace Gsemac.Net.WebBrowsers {
 
                 process.StartInfo = new ProcessStartInfo() {
                     FileName = browserExecutablePath,
-                    Arguments = arguments,
+                    Arguments = string.Join(" ", arguments),
                 };
 
                 bool processedStarted = process.Start();
