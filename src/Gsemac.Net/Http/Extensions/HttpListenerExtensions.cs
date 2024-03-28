@@ -1,9 +1,7 @@
 ﻿using Gsemac.Net.Properties;
-using Gsemac.Polyfills.System.Threading.Tasks;
 using System;
 using System.Net;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace Gsemac.Net.Http.Extensions {
 
@@ -22,44 +20,51 @@ namespace Gsemac.Net.Http.Extensions {
                 throw new ArgumentNullException(nameof(httpListener));
 
             HttpListenerContext context = null;
-            bool operationTimedOut = false;
 
-            IAsyncResult asyncResult = httpListener.BeginGetContext(result => {
+            using (ManualResetEvent resetEvent = new ManualResetEvent(false)) {
 
-                // A request has been received, so retrieve the context.
+                IAsyncResult asyncResult = httpListener.BeginGetContext(result => {
 
-                if (result is object)
-                    context = httpListener.EndGetContext(result);
+                    // A request has been received, so retrieve the context.
 
-            }, null);
+                    if (result is object)
+                        context = httpListener.EndGetContext(result);
 
-            Task[] tasks = new[] {
-                TaskEx.Run(() => operationTimedOut =! asyncResult.AsyncWaitHandle.WaitOne(timeout), cancellationToken),
-                TaskEx.Delay(timeout, cancellationToken),
-            };
+                    resetEvent.Set();
 
-            try {
+                }, null);
 
-                if (Task.WaitAny(tasks, cancellationToken) != 0 || operationTimedOut)
-                    throw new TimeoutException(ExceptionMessages.HttpListenerTimedOut);
+                // You'd think we'd be able to use the WaitHandle on the AsyncResult instead, but we can't.
+                // https://stackoverflow.com/a/4099757/5383169
+                // We have to create a new wait handle manually.
 
-            }
-            catch (Exception) {
+                int operationResult = WaitHandle.WaitAny(new[] {
+                    resetEvent,
+                    cancellationToken.WaitHandle,
+                }, timeout);
 
-                // Cancel any pending requests by stopping and restarting the listener.
+                bool operationTimedOut = operationResult == WaitHandle.WaitTimeout;
+                bool operationCancelled = operationResult != 0;
 
-                if (httpListener.IsListening) {
+                if (operationTimedOut || operationCancelled) {
 
-                    httpListener.Stop();
-                    httpListener.Start();
+                    // Cancel any pending requests by stopping and restarting the listener.
+
+                    if (httpListener.IsListening) {
+
+                        httpListener.Stop();
+                        httpListener.Start();
+
+                    }
+
+                    if (operationTimedOut)
+                        throw new TimeoutException(ExceptionMessages.HttpListenerTimedOut);
 
                 }
 
-                throw;
+                return context;
 
             }
-
-            return context;
 
         }
 
