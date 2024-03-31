@@ -9,9 +9,9 @@ namespace Gsemac.Data.ValueConversion {
 
         public static ValueConverterFactoryOptions Default => new ValueConverterFactoryOptions();
 
-        public ICastOptions CastOptions {
+        public IConvertOptions ConvertOptions {
             get => castOptions;
-            set => castOptions = value ?? Reflection.CastOptions.Default;
+            set => castOptions = value ?? Reflection.ConvertOptions.Default;
         }
 
         public bool AttributeLookupEnabled { get; set; } = true;
@@ -23,7 +23,7 @@ namespace Gsemac.Data.ValueConversion {
 
         // Private members
 
-        private ICastOptions castOptions = Reflection.CastOptions.Default;
+        private IConvertOptions castOptions = Reflection.ConvertOptions.Default;
 
     }
 

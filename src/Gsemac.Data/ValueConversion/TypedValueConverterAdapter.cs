@@ -22,7 +22,7 @@ namespace Gsemac.Data.ValueConversion {
             result = default;
 
             return valueConverter.TryConvert(value, out object objectResult) &&
-                TypeUtilities.TryCast(objectResult, out result);
+                TypeUtilities.TryConvert(objectResult, out result);
 
         }
 

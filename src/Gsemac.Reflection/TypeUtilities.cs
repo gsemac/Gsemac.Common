@@ -140,22 +140,22 @@ namespace Gsemac.Reflection {
 
         }
 
-        public static T Cast<T>(object obj) {
+        public static T Convert<T>(object obj) {
 
-            return (T)Cast(obj, typeof(T), CastOptions.Default);
-
-        }
-        public static T Cast<T>(object obj, ICastOptions options) {
-
-            return (T)Cast(obj, typeof(T), options);
+            return (T)Convert(obj, typeof(T), ConvertOptions.Default);
 
         }
-        public static object Cast(object obj, Type type) {
+        public static T Convert<T>(object obj, IConvertOptions options) {
 
-            return Cast(obj, type, CastOptions.Default);
+            return (T)Convert(obj, typeof(T), options);
 
         }
-        public static object Cast(object obj, Type type, ICastOptions options) {
+        public static object Convert(object obj, Type type) {
+
+            return Convert(obj, type, ConvertOptions.Default);
+
+        }
+        public static object Convert(object obj, Type type, IConvertOptions options) {
 
             if (type is null)
                 throw new ArgumentNullException(nameof(type));
@@ -163,24 +163,24 @@ namespace Gsemac.Reflection {
             if (options is null)
                 throw new ArgumentNullException(nameof(options));
 
-            if (!TryCast(obj, type, options, out object result))
+            if (!TryConvert(obj, type, options, out object result))
                 throw new InvalidCastException(string.Format(ExceptionMessages.CannotCastObjectToType, obj?.GetType().ToString() ?? "null", type));
 
             return result;
 
         }
 
-        public static bool TryCast<T>(object obj, out T result) {
+        public static bool TryConvert<T>(object obj, out T result) {
 
-            return TryCast(obj, CastOptions.Default, out result);
+            return TryConvert(obj, ConvertOptions.Default, out result);
 
         }
-        public static bool TryCast<T>(object obj, ICastOptions options, out T result) {
+        public static bool TryConvert<T>(object obj, IConvertOptions options, out T result) {
 
             if (options is null)
                 throw new ArgumentNullException(nameof(options));
 
-            if (TryCast(obj, typeof(T), options, out object resultObject)) {
+            if (TryConvert(obj, typeof(T), options, out object resultObject)) {
 
                 result = (T)resultObject;
 
@@ -193,12 +193,12 @@ namespace Gsemac.Reflection {
             return false;
 
         }
-        public static bool TryCast(object obj, Type type, out object result) {
+        public static bool TryConvert(object obj, Type type, out object result) {
 
-            return TryCast(obj, type, CastOptions.Default, out result);
+            return TryConvert(obj, type, ConvertOptions.Default, out result);
 
         }
-        public static bool TryCast(object obj, Type type, ICastOptions options, out object result) {
+        public static bool TryConvert(object obj, Type type, IConvertOptions options, out object result) {
 
             if (type is null)
                 throw new ArgumentNullException(nameof(type));
@@ -247,7 +247,7 @@ namespace Gsemac.Reflection {
 
                         try {
 
-                            result = Convert.ChangeType(obj, newType, CultureInfo.InvariantCulture);
+                            result = System.Convert.ChangeType(obj, newType, CultureInfo.InvariantCulture);
 
                         }
                         catch (Exception) {
@@ -262,7 +262,7 @@ namespace Gsemac.Reflection {
                                 result = obj.ToString();
 
                             }
-                            else if (options.EnableConstructorInitialization) {
+                            else if (options.UseConstructor) {
 
                                 // Attempt to create an instance of the object using constructor initialization.
 

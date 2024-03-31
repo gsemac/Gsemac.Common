@@ -4,9 +4,9 @@ namespace Gsemac.Data.ValueConversion {
 
     public interface IValueConverterFactoryOptions {
 
-        ICastOptions CastOptions { get; }
+        IConvertOptions ConvertOptions { get; }
 
-        bool AttributeLookupEnabled { get; } 
+        bool AttributeLookupEnabled { get; }
         bool DerivedClassLookupEnabled { get; }
         bool TransitiveLookupEnabled { get; }
 

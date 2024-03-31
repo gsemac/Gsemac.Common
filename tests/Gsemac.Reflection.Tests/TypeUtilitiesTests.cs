@@ -13,42 +13,42 @@ namespace Gsemac.Reflection.Tests {
         [TestMethod]
         public void TestTryCastWithValidCast() {
 
-            Assert.IsTrue(TypeUtilities.TryCast("35", out int result));
+            Assert.IsTrue(TypeUtilities.TryConvert("35", out int result));
             Assert.AreEqual(35, result);
 
         }
         [TestMethod]
         public void TestTryCastWithInvalidCast() {
 
-            Assert.IsFalse(TypeUtilities.TryCast("abc", out int _));
+            Assert.IsFalse(TypeUtilities.TryConvert("abc", out int _));
 
         }
 
         [TestMethod]
         public void TestTryCastStringToEnumWithValidName() {
 
-            Assert.IsTrue(TypeUtilities.TryCast("Item3", out TestEnum enumValue));
+            Assert.IsTrue(TypeUtilities.TryConvert("Item3", out TestEnum enumValue));
             Assert.AreEqual(TestEnum.Item3, enumValue);
 
         }
         [TestMethod]
         public void TestTryCastStringToEnumWithValidCaseInsensitiveName() {
 
-            Assert.IsTrue(TypeUtilities.TryCast("item3", out TestEnum enumValue));
+            Assert.IsTrue(TypeUtilities.TryConvert("item3", out TestEnum enumValue));
             Assert.AreEqual(TestEnum.Item3, enumValue);
 
         }
         [TestMethod]
         public void TestTryCastStringToEnumWithValidIntegralString() {
 
-            Assert.IsTrue(TypeUtilities.TryCast("2", out TestEnum enumValue));
+            Assert.IsTrue(TypeUtilities.TryConvert("2", out TestEnum enumValue));
             Assert.AreEqual(TestEnum.Item3, enumValue);
 
         }
         [TestMethod]
         public void TestTryCastIntToEnumWithValidValue() {
 
-            Assert.IsTrue(TypeUtilities.TryCast(2, out TestEnum enumValue));
+            Assert.IsTrue(TypeUtilities.TryConvert(2, out TestEnum enumValue));
             Assert.AreEqual(TestEnum.Item3, enumValue);
 
         }
@@ -56,20 +56,20 @@ namespace Gsemac.Reflection.Tests {
         [TestMethod]
         public void TestTryCastToNullableTypeWithNullValue() {
 
-            Assert.IsTrue(TypeUtilities.TryCast(null, out int? result));
+            Assert.IsTrue(TypeUtilities.TryConvert(null, out int? result));
             Assert.IsFalse(result.HasValue);
 
         }
         [TestMethod]
         public void TestTryCastToNullableTypeWithInvalidValue() {
 
-            Assert.IsFalse(TypeUtilities.TryCast("abc", out int? _));
+            Assert.IsFalse(TypeUtilities.TryConvert("abc", out int? _));
 
         }
         [TestMethod]
         public void TestTryCastToNullableTypeWithValidValue() {
 
-            Assert.IsTrue(TypeUtilities.TryCast("35", out int? result));
+            Assert.IsTrue(TypeUtilities.TryConvert("35", out int? result));
             Assert.AreEqual(35, result.Value);
 
         }
@@ -77,20 +77,20 @@ namespace Gsemac.Reflection.Tests {
         [TestMethod]
         public void TestTryCastToNullableEnumTypeWithNullValue() {
 
-            Assert.IsTrue(TypeUtilities.TryCast(null, out TestEnum? result));
+            Assert.IsTrue(TypeUtilities.TryConvert(null, out TestEnum? result));
             Assert.IsFalse(result.HasValue);
 
         }
         [TestMethod]
         public void TestTryCastToNullableEnumTypeWithInvalidValue() {
 
-            Assert.IsFalse(TypeUtilities.TryCast("abc", out TestEnum? _));
+            Assert.IsFalse(TypeUtilities.TryConvert("abc", out TestEnum? _));
 
         }
         [TestMethod]
         public void TestTryCastToNullableEnumTypeWithValidValue() {
 
-            Assert.IsTrue(TypeUtilities.TryCast("0", out TestEnum? result));
+            Assert.IsTrue(TypeUtilities.TryConvert("0", out TestEnum? result));
             Assert.AreEqual(TestEnum.Item1, result.Value);
 
         }
@@ -98,16 +98,16 @@ namespace Gsemac.Reflection.Tests {
         [TestMethod]
         public void TestTryCastWithEnableConstructorAndDefaultConstructor() {
 
-            Assert.IsFalse(TypeUtilities.TryCast("hello world", new CastOptions() {
-                EnableConstructorInitialization = true,
+            Assert.IsFalse(TypeUtilities.TryConvert("hello world", new ConvertOptions() {
+                UseConstructor = true,
             }, out TestClassWithDefaultConstructor _));
 
         }
         [TestMethod]
         public void TestTryCastWithEnableConstructorAndMatchingConstructor() {
 
-            Assert.IsTrue(TypeUtilities.TryCast("hello world", new CastOptions() {
-                EnableConstructorInitialization = true,
+            Assert.IsTrue(TypeUtilities.TryConvert("hello world", new ConvertOptions() {
+                UseConstructor = true,
             }, out TestClassWithStringConstructor result));
 
             Assert.AreEqual("hello world", result.Text);
@@ -116,8 +116,8 @@ namespace Gsemac.Reflection.Tests {
         [TestMethod]
         public void TestTryCastWithEnableConstructorAndThrowingConstructor() {
 
-            Assert.IsFalse(TypeUtilities.TryCast("hello world", new CastOptions() {
-                EnableConstructorInitialization = true,
+            Assert.IsFalse(TypeUtilities.TryConvert("hello world", new ConvertOptions() {
+                UseConstructor = true,
             }, out TestClassWithThrowingConstructor _));
 
         }
@@ -127,7 +127,7 @@ namespace Gsemac.Reflection.Tests {
 
             object obj = new TestClassImplementingInterface();
 
-            Assert.IsTrue(TypeUtilities.TryCast(obj, out ITestInterface result));
+            Assert.IsTrue(TypeUtilities.TryConvert(obj, out ITestInterface result));
             Assert.IsTrue(ReferenceEquals(obj, result));
 
         }
@@ -136,7 +136,7 @@ namespace Gsemac.Reflection.Tests {
 
             object obj = new TestClassWithDefaultConstructor();
 
-            Assert.IsTrue(TypeUtilities.TryCast(obj, out TestClassWithDefaultConstructor result));
+            Assert.IsTrue(TypeUtilities.TryConvert(obj, out TestClassWithDefaultConstructor result));
             Assert.IsTrue(ReferenceEquals(obj, result));
 
         }
@@ -145,7 +145,7 @@ namespace Gsemac.Reflection.Tests {
 
             object obj = new TestClassWithDefaultConstructor();
 
-            Assert.IsTrue(TypeUtilities.TryCast(obj, out string result));
+            Assert.IsTrue(TypeUtilities.TryConvert(obj, out string result));
             Assert.AreEqual(obj.ToString(), result);
 
         }

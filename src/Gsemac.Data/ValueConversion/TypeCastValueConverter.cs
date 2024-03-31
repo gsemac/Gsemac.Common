@@ -8,7 +8,7 @@ namespace Gsemac.Data.ValueConversion {
 
         // Public members
 
-        public TypeCastValueConverter(Type sourceType, Type destinationType, ICastOptions options, bool enforceSourceType) :
+        public TypeCastValueConverter(Type sourceType, Type destinationType, IConvertOptions options, bool enforceSourceType) :
             base(sourceType, destinationType) {
 
             if (options is null)
@@ -28,7 +28,7 @@ namespace Gsemac.Data.ValueConversion {
             if (enforceSourceType && value is object && !value.GetType().Equals(SourceType))
                 return false;
 
-            return TypeUtilities.TryCast(value, DestinationType, out result);
+            return TypeUtilities.TryConvert(value, DestinationType, out result);
 
         }
 
@@ -45,7 +45,7 @@ namespace Gsemac.Data.ValueConversion {
 
         public override bool TryConvert(object value, out TDestination result) {
 
-            return TypeUtilities.TryCast(value, out result);
+            return TypeUtilities.TryConvert(value, out result);
 
         }
 
@@ -63,7 +63,7 @@ namespace Gsemac.Data.ValueConversion {
             if (value is object && !value.GetType().Equals(SourceType))
                 return false;
 
-            return TypeUtilities.TryCast(value, out result);
+            return TypeUtilities.TryConvert(value, out result);
 
         }
 
