@@ -1,4 +1,5 @@
 ﻿using Gsemac.Reflection.Extensions;
+using Gsemac.Reflection.Properties;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -136,6 +137,36 @@ namespace Gsemac.Reflection {
                     return false;
 
             }
+
+        }
+
+        public static T Cast<T>(object obj) {
+
+            return (T)Cast(obj, typeof(T), CastOptions.Default);
+
+        }
+        public static T Cast<T>(object obj, ICastOptions options) {
+
+            return (T)Cast(obj, typeof(T), options);
+
+        }
+        public static object Cast(object obj, Type type) {
+
+            return Cast(obj, type, CastOptions.Default);
+
+        }
+        public static object Cast(object obj, Type type, ICastOptions options) {
+
+            if (type is null)
+                throw new ArgumentNullException(nameof(type));
+
+            if (options is null)
+                throw new ArgumentNullException(nameof(options));
+
+            if (!TryCast(obj, type, options, out object result))
+                throw new InvalidCastException(string.Format(ExceptionMessages.CannotCastObjectToType, obj?.GetType().ToString() ?? "null", type));
+
+            return result;
 
         }
 

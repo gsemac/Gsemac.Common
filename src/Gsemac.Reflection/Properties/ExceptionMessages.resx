@@ -117,6 +117,9 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="CannotCastObjectToType" xml:space="preserve">
+    <value>Cannot cast object of type '{0}' to type '{1}'.</value>
+  </data>
   <data name="NoSuitableInterfaceImplementationCouldBeDeterminedWithInterfaceName" xml:space="preserve">
     <value>No suitable '{0}' implementation could be found.</value>
   </data>
