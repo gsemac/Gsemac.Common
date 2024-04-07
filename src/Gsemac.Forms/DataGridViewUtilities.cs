@@ -152,17 +152,17 @@ namespace Gsemac.Forms {
 
                 if (sender is DataGridView dataGridView && Cursor.Current == Cursors.SizeWE) {
 
-                    DataGridView.HitTestInfo ht = dataGridView.HitTest(e.X, e.Y);
+                    DataGridView.HitTestInfo hitInfo = dataGridView.HitTest(e.X, e.Y);
 
-                    columnResized = ht.ColumnIndex;
+                    columnResized = hitInfo.ColumnIndex;
 
                     // If within 8 pixels of the left-side column, assume that it is the left-side column that is being resized.
 
-                    if (e.X < dataGridView.GetCellDisplayRectangle(columnResized, 0, false).Left + 8) {
+                    if (e.X < hitInfo.ColumnX + 8) {
 
-                        ht = dataGridView.HitTest(e.X - 8, e.Y);
+                        hitInfo = dataGridView.HitTest(e.X - 8, e.Y);
 
-                        columnResized = ht.ColumnIndex;
+                        columnResized = hitInfo.ColumnIndex;
 
                     }
 
