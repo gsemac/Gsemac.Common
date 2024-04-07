@@ -2,7 +2,7 @@
 
 namespace Gsemac.Win32.Native {
 
-    public static class Shlwapi {
+    public static class ShlwApi {
 
         // Public members
 

@@ -3,7 +3,7 @@ using System.Runtime.InteropServices;
 
 namespace Gsemac.Win32.Native {
 
-    public static class Advapi32 {
+    public static class AdvApi32 {
 
         // Public members
 

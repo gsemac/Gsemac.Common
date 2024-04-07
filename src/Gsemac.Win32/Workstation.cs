@@ -37,7 +37,7 @@ namespace Gsemac.Win32 {
         public static bool Shutdown(TimeSpan timeout) {
 
             return RequestShutdownPrivilege() &&
-                Advapi32.InitiateSystemShutdownEx(null, null, (uint)timeout.TotalSeconds, bForceAppsClosed: false, bRebootAfterShutdown: false, Constants.SHTDN_REASON_MAJOR_OTHER);
+                AdvApi32.InitiateSystemShutdownEx(null, null, (uint)timeout.TotalSeconds, bForceAppsClosed: false, bRebootAfterShutdown: false, Constants.SHTDN_REASON_MAJOR_OTHER);
 
         }
 
@@ -47,7 +47,7 @@ namespace Gsemac.Win32 {
 
             IntPtr processHandle = Kernel32.GetCurrentProcess();
 
-            if (Advapi32.OpenProcessToken(processHandle, Constants.TOKEN_ADJUST_PRIVILEGES | Constants.TOKEN_QUERY, out IntPtr tokenHandle)) {
+            if (AdvApi32.OpenProcessToken(processHandle, Constants.TOKEN_ADJUST_PRIVILEGES | Constants.TOKEN_QUERY, out IntPtr tokenHandle)) {
 
                 TOKEN_PRIVILEGES tokenPrivileges = new TOKEN_PRIVILEGES {
                     PrivilegeCount = 1,
@@ -62,8 +62,8 @@ namespace Gsemac.Win32 {
                     }
                 };
 
-                return Advapi32.LookupPrivilegeValue(null, Constants.SE_SHUTDOWN_NAME, ref tokenPrivileges.Privileges[0].Luid) &&
-                    Advapi32.AdjustTokenPrivileges(tokenHandle, false, ref tokenPrivileges);
+                return AdvApi32.LookupPrivilegeValue(null, Constants.SE_SHUTDOWN_NAME, ref tokenPrivileges.Privileges[0].Luid) &&
+                    AdvApi32.AdjustTokenPrivileges(tokenHandle, false, ref tokenPrivileges);
 
             }
 

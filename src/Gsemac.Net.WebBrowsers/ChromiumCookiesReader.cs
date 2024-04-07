@@ -154,7 +154,7 @@ namespace Gsemac.Net.WebBrowsers {
                  databaseFilePath
             };
 
-            if (Rstrtmgr.RmStartSession(out uint sessionHandle, sessionFlags, sessionKey) != Constants.ERROR_SUCCESS)
+            if (RstrtMgr.RmStartSession(out uint sessionHandle, sessionFlags, sessionKey) != Constants.ERROR_SUCCESS)
                 return false;
 
             try {
@@ -163,12 +163,12 @@ namespace Gsemac.Net.WebBrowsers {
                 RM_PROCESS_INFO[] affectedApps = new RM_PROCESS_INFO[1];
                 uint procInfo = (uint)affectedApps.Length;
 
-                if (Rstrtmgr.RmRegisterResources(sessionHandle, 1, fileNames, 0, null, 0, null) != Constants.ERROR_SUCCESS)
+                if (RstrtMgr.RmRegisterResources(sessionHandle, 1, fileNames, 0, null, 0, null) != Constants.ERROR_SUCCESS)
                     return false;
 
                 // Get all processes locking the database file.
 
-                int getListResult = Rstrtmgr.RmGetList(sessionHandle, out uint procInfoNeeded, ref procInfo, affectedApps, out rebootReasons);
+                int getListResult = RstrtMgr.RmGetList(sessionHandle, out uint procInfoNeeded, ref procInfo, affectedApps, out rebootReasons);
 
                 // The process info array wasn't large enough to store the process information.
 
@@ -177,7 +177,7 @@ namespace Gsemac.Net.WebBrowsers {
                     affectedApps = new RM_PROCESS_INFO[procInfoNeeded];
                     procInfo = (uint)affectedApps.Length;
 
-                    getListResult = Rstrtmgr.RmGetList(sessionHandle, out procInfoNeeded, ref procInfo, affectedApps, out rebootReasons);
+                    getListResult = RstrtMgr.RmGetList(sessionHandle, out procInfoNeeded, ref procInfo, affectedApps, out rebootReasons);
 
                 }
 
@@ -191,7 +191,7 @@ namespace Gsemac.Net.WebBrowsers {
 
                 // Terminate the processes locking the database file.
 
-                if (Rstrtmgr.RmShutdown(sessionHandle, RM_SHUTDOWN_TYPE.RmForceShutdown, null) != Constants.ERROR_SUCCESS)
+                if (RstrtMgr.RmShutdown(sessionHandle, RM_SHUTDOWN_TYPE.RmForceShutdown, null) != Constants.ERROR_SUCCESS)
                     return false;
 
                 // The database file was successfully unlocked.
@@ -201,7 +201,7 @@ namespace Gsemac.Net.WebBrowsers {
             }
             finally {
 
-                Rstrtmgr.RmEndSession(sessionHandle);
+                RstrtMgr.RmEndSession(sessionHandle);
 
             }
 

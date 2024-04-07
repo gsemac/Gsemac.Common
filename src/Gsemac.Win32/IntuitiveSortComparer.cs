@@ -6,7 +6,7 @@ using System.IO;
 namespace Gsemac.Win32 {
 
     /// <summary>
-    /// Sorts strings (i.e. filenames) according to the "Intuitive or Numerical" sorting method used by Windows Explorer using <see cref="Shlwapi.StrCmpLogicalW"/>.
+    /// Sorts strings (i.e. file names) according to the "Intuitive or Numerical" sorting method used by Windows Explorer using <see cref="ShlwApi.StrCmpLogicalW"/>.
     /// </summary>
     public class IntuitiveSortComparer :
         IComparer,
@@ -18,7 +18,7 @@ namespace Gsemac.Win32 {
             x = x ?? "";
             y = y ?? "";
 
-            return Shlwapi.StrCmpLogicalW(x, y);
+            return ShlwApi.StrCmpLogicalW(x, y);
 
         }
         public int Compare(FileInfo x, FileInfo y) {
