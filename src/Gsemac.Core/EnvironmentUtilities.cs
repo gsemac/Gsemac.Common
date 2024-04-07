@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Win32;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -7,6 +8,8 @@ using System.Linq;
 namespace Gsemac.Core {
 
     public static class EnvironmentUtilities {
+
+        // Public members
 
         public static void AddEnvironmentPath(string path) {
 
@@ -74,6 +77,34 @@ namespace Gsemac.Core {
             }
 
             return new PlatformInfo(PlatformId.Unknown);
+
+        }
+
+        public static bool IsUsingDarkMode() {
+
+            return IsUsingDarkMode(systemWide: false);
+
+        }
+        public static bool IsUsingDarkMode(bool systemWide) {
+
+            try {
+
+                // The value of the registry key is 1 if we're using light mode; otherwise, we're using dark mode.
+                // https://stackoverflow.com/a/72172845/5383169
+
+                int lightThemeValue = (int)Registry.GetValue(@"HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\CurrentVersion\Themes\Personalize", systemWide ? "SystemUsesLightTheme" : "AppsUseLightTheme", -1);
+
+                if (lightThemeValue == -1 || lightThemeValue == 1)
+                    return false;
+
+                return true;
+
+            }
+            catch {
+
+                return false;
+
+            }
 
         }
 

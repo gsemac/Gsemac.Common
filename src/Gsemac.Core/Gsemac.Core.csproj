@@ -29,7 +29,17 @@
 	<PropertyGroup Condition="$(DefineConstants.Contains('NET45_OR_GREATER')) Or $(DefineConstants.Contains('NETCOREAPP')) Or $(DefineConstants.Contains('NETSTANDARD'))">
 		<DefineConstants>$(DefineConstants);ASYNC_AVAILABLE</DefineConstants>
 	</PropertyGroup>
-	
+
+	<Choose>
+		<When Condition="$(DefineConstants.Contains('NETFRAMEWORK'))">
+		</When>
+		<Otherwise>
+			<ItemGroup>
+				<PackageReference Include="Microsoft.Win32.Registry" Version="5.0.0" />
+			</ItemGroup>
+		</Otherwise>
+	</Choose>
+
 	<ItemGroup>
 		<AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
 			<_Parameter1>Gsemac.IO</_Parameter1>
