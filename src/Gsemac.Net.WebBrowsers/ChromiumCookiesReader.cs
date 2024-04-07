@@ -159,7 +159,7 @@ namespace Gsemac.Net.WebBrowsers {
 
             try {
 
-                uint rebootReasons = 0;
+                RM_REBOOT_REASON rebootReasons = RM_REBOOT_REASON.RmRebootReasonNone;
                 RM_PROCESS_INFO[] affectedApps = new RM_PROCESS_INFO[1];
                 uint procInfo = (uint)affectedApps.Length;
 
@@ -168,7 +168,7 @@ namespace Gsemac.Net.WebBrowsers {
 
                 // Get all processes locking the database file.
 
-                int getListResult = Rstrtmgr.RmGetList(sessionHandle, out uint procInfoNeeded, ref procInfo, affectedApps, ref rebootReasons);
+                int getListResult = Rstrtmgr.RmGetList(sessionHandle, out uint procInfoNeeded, ref procInfo, affectedApps, out rebootReasons);
 
                 // The process info array wasn't large enough to store the process information.
 
@@ -177,7 +177,7 @@ namespace Gsemac.Net.WebBrowsers {
                     affectedApps = new RM_PROCESS_INFO[procInfoNeeded];
                     procInfo = (uint)affectedApps.Length;
 
-                    getListResult = Rstrtmgr.RmGetList(sessionHandle, out procInfoNeeded, ref procInfo, affectedApps, ref rebootReasons);
+                    getListResult = Rstrtmgr.RmGetList(sessionHandle, out procInfoNeeded, ref procInfo, affectedApps, out rebootReasons);
 
                 }
 
@@ -191,7 +191,7 @@ namespace Gsemac.Net.WebBrowsers {
 
                 // Terminate the processes locking the database file.
 
-                if (Rstrtmgr.RmShutdown(sessionHandle, Constants.RmForceShutdown, null) != Constants.ERROR_SUCCESS)
+                if (Rstrtmgr.RmShutdown(sessionHandle, RM_SHUTDOWN_TYPE.RmForceShutdown, null) != Constants.ERROR_SUCCESS)
                     return false;
 
                 // The database file was successfully unlocked.

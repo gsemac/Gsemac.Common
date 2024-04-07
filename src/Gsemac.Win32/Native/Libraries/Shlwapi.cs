@@ -14,7 +14,7 @@ namespace Gsemac.Win32.Native {
 
         // Private members
 
-        [DllImport("shlwapi.dll", EntryPoint = "StrCmpLogicalW", CharSet = CharSet.Unicode)]
+        [DllImport("shlwapi", EntryPoint = "StrCmpLogicalW", CharSet = CharSet.Unicode)]
         public static extern int StrCmpLogicalWNative(string psz1, string psz2);
 
     }
