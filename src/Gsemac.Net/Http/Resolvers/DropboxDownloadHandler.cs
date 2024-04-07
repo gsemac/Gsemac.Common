@@ -84,11 +84,11 @@ namespace Gsemac.Net.Http.Resolvers {
 
             IHttpWebRequest postRequest = httpWebRequestFactory.Create(fetchUserContentLinkUri);
 
-            byte[] postData = new UrlEncodedFormDataBuilder(Encoding.UTF8)
-                .WithField("is_xhr", "true")
-                .WithField("t", t)
-                .WithField("url", request.Address.AbsoluteUri)
-                .Build();
+            byte[] postData = new UrlEncodedFormData() {
+                { "is_xhr", "true" },
+                { "t", t },
+                { "url", request.Address.AbsoluteUri },
+            }.ToBytes();
 
             postRequest.Accept = "*/*";
             postRequest.ContentLength = postData.Length;

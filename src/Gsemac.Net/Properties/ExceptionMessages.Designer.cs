@@ -322,6 +322,15 @@ namespace Gsemac.Net.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The key cannot be empty..
+        /// </summary>
+        internal static string UrlEncodedFormDataKeyCannotBeEmpty {
+            get {
+                return ResourceManager.GetString("UrlEncodedFormDataKeyCannotBeEmpty", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to `WebResponse` is not an instance of `HttpWebResponse`..
         /// </summary>
         internal static string WebResponseWasNotAnInstanceOfHttpWebResponse {

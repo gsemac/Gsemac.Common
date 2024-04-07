@@ -1,5 +1,4 @@
-﻿using Gsemac.Net.Http.Extensions;
-using Gsemac.Polyfills.System;
+﻿using Gsemac.Polyfills.System;
 using Gsemac.Text;
 using System;
 using System.Collections.Generic;
@@ -67,14 +66,15 @@ namespace Gsemac.Net.Http.Resolvers {
             string fileId = GetFileIdFromUrl(requestUrl);
             string resourceKey = Url.GetQueryParameter(requestUrl, "resourcekey");
 
-            UrlEncodedFormDataBuilder queryStringBuilder = new UrlEncodedFormDataBuilder()
-                .WithField("id", fileId);
+            IUrlEncodedFormData queryStringBuilder = new UrlEncodedFormData() {
+                { "id", fileId },
+            };
 
             if (!string.IsNullOrWhiteSpace(resourceKey))
-                queryStringBuilder.WithField("resourcekey", resourceKey);
+                queryStringBuilder.Add("resourcekey", resourceKey);
 
             if (!string.IsNullOrWhiteSpace(confirmationCode))
-                queryStringBuilder.WithField("confirm", confirmationCode);
+                queryStringBuilder.Add("confirm", confirmationCode);
 
             string downloadUrl = $"{requestUri.GetLeftPart(UriPartial.Authority)}/uc?export=download&{queryStringBuilder}";
 
