@@ -7,16 +7,16 @@ namespace Gsemac.Win32.Native {
 
         // Public members
 
-        public static void DwmSetWindowAttribute(IntPtr hwnd, DWMWINDOWATTRIBUTE attribute, ref int pvAttribute, uint cbAttribute) {
+        public static void DwmSetWindowAttribute(IntPtr hWnd, DWMWINDOWATTRIBUTE attribute, ref int pvAttribute, uint cbAttribute) {
 
-            DwmSetWindowAttributeNative(hwnd, attribute, ref pvAttribute, cbAttribute);
+            DwmSetWindowAttributeNative(hWnd, attribute, ref pvAttribute, cbAttribute);
 
         }
 
         // Private members
 
         [DllImport("dwmapi", EntryPoint = "DwmSetWindowAttribute", CharSet = CharSet.Unicode, PreserveSig = false)]
-        private static extern void DwmSetWindowAttributeNative(IntPtr hwnd, DWMWINDOWATTRIBUTE attribute, ref int pvAttribute, uint cbAttribute);
+        private static extern void DwmSetWindowAttributeNative(IntPtr hWnd, DWMWINDOWATTRIBUTE attribute, ref int pvAttribute, uint cbAttribute);
 
     }
 

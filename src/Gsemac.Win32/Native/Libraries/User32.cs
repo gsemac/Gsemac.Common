@@ -7,9 +7,9 @@ namespace Gsemac.Win32.Native {
 
         // Public members
 
-        public static IntPtr GetDC(IntPtr hwnd) {
+        public static IntPtr GetDC(IntPtr hWnd) {
 
-            return GetDCNative(hwnd);
+            return GetDCNative(hWnd);
 
         }
         public static bool DestroyIcon(IntPtr hIcon) {
@@ -42,9 +42,9 @@ namespace Gsemac.Win32.Native {
             return ReleaseCaptureNative();
 
         }
-        public static IntPtr ReleaseDC(IntPtr hwnd, IntPtr hdc) {
+        public static IntPtr ReleaseDC(IntPtr hWnd, IntPtr hdc) {
 
-            return ReleaseDCNative(hwnd, hdc);
+            return ReleaseDCNative(hWnd, hdc);
 
         }
         public static IntPtr SendMessage(IntPtr hWnd, int wMsg, IntPtr wParam, IntPtr lParam) {
@@ -55,6 +55,11 @@ namespace Gsemac.Win32.Native {
         public static IntPtr SendMessage(IntPtr hWnd, int wMsg, IntPtr wParam, ref HDItemA lParam) {
 
             return SendMessageNative(hWnd, wMsg, wParam, ref lParam);
+
+        }
+        public static bool SetForegroundWindow(IntPtr hWnd) {
+
+            return SetForegroundWindowNative(hWnd);
 
         }
         public static bool SetProcessDPIAware() {
@@ -81,7 +86,7 @@ namespace Gsemac.Win32.Native {
         // Private members
 
         [DllImport("user32", EntryPoint = "GetDC")]
-        private static extern IntPtr GetDCNative(IntPtr hwnd);
+        private static extern IntPtr GetDCNative(IntPtr hWnd);
         [DllImport("user32", EntryPoint = "DestroyIcon", SetLastError = true)]
         private static extern bool DestroyIconNative(IntPtr hIcon);
         [DllImport("user32", EntryPoint = "ExitWindowsEx", SetLastError = true)]
@@ -95,9 +100,11 @@ namespace Gsemac.Win32.Native {
         [DllImport("user32", EntryPoint = "ReleaseCapture")]
         public static extern bool ReleaseCaptureNative();
         [DllImport("user32", EntryPoint = "ReleaseDC")]
-        private static extern IntPtr ReleaseDCNative(IntPtr hwnd, IntPtr hdc);
+        private static extern IntPtr ReleaseDCNative(IntPtr hWnd, IntPtr hdc);
         [DllImport("user32", EntryPoint = "SendMessage", SetLastError = true)]
         private static extern IntPtr SendMessageNative(IntPtr hWnd, int wMsg, IntPtr wParam, IntPtr lParam);
+        [DllImport("user32", EntryPoint = "SetForegroundWindow", SetLastError = true)]
+        private static extern bool SetForegroundWindowNative(IntPtr hWnd);
         [DllImport("user32", EntryPoint = "SetProcessDPIAware", SetLastError = true)]
         private static extern bool SetProcessDPIAwareNative();
         [DllImport("user32", EntryPoint = "SendMessage", SetLastError = true)]
