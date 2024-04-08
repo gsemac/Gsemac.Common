@@ -33,20 +33,20 @@ namespace Gsemac.IO.Logging {
         // Protected members
 
         public LogFileNameFormatterBase() { }
-        public LogFileNameFormatterBase(string name) {
+        public LogFileNameFormatterBase(string fileName) {
 
-            if (name is null)
-                throw new ArgumentNullException(nameof(name));
+            if (fileName is null)
+                throw new ArgumentNullException(nameof(fileName));
 
-            if (string.IsNullOrWhiteSpace(name))
-                throw new ArgumentException(nameof(name));
+            if (string.IsNullOrWhiteSpace(fileName))
+                throw new ArgumentException(nameof(fileName));
 
-            Name = name;
+            Name = fileName;
 
-            string ext = PathUtilities.GetFileExtension(name);
+            string fileExtension = PathUtilities.GetFileExtension(fileName);
 
-            if (!string.IsNullOrWhiteSpace(ext))
-                FileExtension = ext;
+            if (!string.IsNullOrWhiteSpace(fileExtension))
+                FileExtension = fileExtension;
 
         }
 

@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 
 namespace Gsemac.IO.Logging {
 
@@ -10,11 +11,6 @@ namespace Gsemac.IO.Logging {
         public FileLogger() :
             this(LoggerOptions.Default) {
         }
-        public FileLogger(string fileName) :
-            this(new LoggerOptions() {
-                FileNameFormatter = new LogFileNameFormatter(fileName),
-            }) {
-        }
         public FileLogger(ILoggerOptions options) :
             base(new LoggerOptions(options) { Enabled = false }) {
 
@@ -25,6 +21,12 @@ namespace Gsemac.IO.Logging {
 
             Enabled = options.Enabled;
 
+        }
+        public FileLogger(string fileName) :
+            this(CreateLoggerOptions(fileName)) {
+        }
+        public FileLogger(string fileName, ILoggerOptions options) :
+            this(CreateLoggerOptions(fileName, options)) {
         }
 
         // Protected members
@@ -59,6 +61,25 @@ namespace Gsemac.IO.Logging {
 
             if (string.IsNullOrWhiteSpace(logFilePath))
                 logFilePath = options.FileNameFormatter.GetFileName();
+
+        }
+
+        private static ILoggerOptions CreateLoggerOptions(string fileName) {
+
+            return CreateLoggerOptions(fileName, LoggerOptions.Default);
+
+        }
+        private static ILoggerOptions CreateLoggerOptions(string fileName, ILoggerOptions options) {
+
+            if (fileName is null)
+                throw new ArgumentNullException(nameof(fileName));
+
+            if (options is null)
+                throw new ArgumentNullException(nameof(options));
+
+            return new LoggerOptions(options) {
+                FileNameFormatter = new LogFileNameFormatter(fileName),
+            };
 
         }
 

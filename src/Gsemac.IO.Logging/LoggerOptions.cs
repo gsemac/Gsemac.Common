@@ -1,10 +1,12 @@
-﻿namespace Gsemac.IO.Logging {
+﻿using System;
+
+namespace Gsemac.IO.Logging {
 
     public class LoggerOptions :
         ILoggerOptions {
 
         public bool Enabled { get; set; } = true;
-        public string DirectoryPath { get; set; } = "log";
+        public string DirectoryPath { get; set; } = string.Empty;
         public ILogHeaderCollection Headers { get; set; } = new LogHeaderCollection();
         public bool IgnoreExceptions { get; set; } = true;
         public ILogMessageFormatter MessageFormatter { get; set; } = new LogMessageFormatter();
@@ -15,6 +17,9 @@
 
         public LoggerOptions() { }
         public LoggerOptions(ILoggerOptions options) {
+
+            if (options is null)
+                throw new ArgumentNullException(nameof(options));
 
             Enabled = options.Enabled;
             DirectoryPath = options.DirectoryPath;

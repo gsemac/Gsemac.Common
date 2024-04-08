@@ -7,8 +7,8 @@
 
         public LogFileNameFormatter() {
         }
-        public LogFileNameFormatter(string name) :
-            base(name) {
+        public LogFileNameFormatter(string fileName) :
+            base(fileName) {
         }
 
     }
