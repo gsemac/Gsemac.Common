@@ -1,4 +1,5 @@
 ﻿using Gsemac.Net.Properties;
+using Gsemac.Polyfills.System.Threading;
 using System;
 using System.Net;
 using System.Threading;
@@ -12,6 +13,11 @@ namespace Gsemac.Net.Http.Extensions {
         public static HttpListenerContext GetContext(this HttpListener httpListener, TimeSpan timeout) {
 
             return GetContext(httpListener, timeout, CancellationToken.None);
+
+        }
+        public static HttpListenerContext GetContext(this HttpListener httpListener, CancellationToken cancellationToken) {
+
+            return GetContext(httpListener, TimeoutEx.InfiniteTimeSpan, cancellationToken);
 
         }
         public static HttpListenerContext GetContext(this HttpListener httpListener, TimeSpan timeout, CancellationToken cancellationToken) {
