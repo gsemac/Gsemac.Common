@@ -36,9 +36,9 @@ namespace Gsemac.Net.Http {
 
         }
 
-        public static IEnumerable<Cookie> ParseCookies(string cookieHeader) {
+        public static CookieCollection ParseCookies(string cookieHeader) {
 
-            List<Cookie> cookies = new List<Cookie>();
+            CookieCollection cookies = new CookieCollection();
 
             if (!string.IsNullOrWhiteSpace(cookieHeader)) {
 
@@ -136,12 +136,12 @@ namespace Gsemac.Net.Http {
             return cookies;
 
         }
-        public static IEnumerable<Cookie> ParseCookies(Uri uri, string cookieHeader) {
+        public static CookieCollection ParseCookies(Uri uri, string cookieHeader) {
 
             if (uri is null)
                 throw new ArgumentNullException(nameof(uri));
 
-            IEnumerable<Cookie> cookies = ParseCookies(cookieHeader);
+            CookieCollection cookies = ParseCookies(cookieHeader);
 
             string hostname = Url.GetHostname(uri.AbsoluteUri);
 
