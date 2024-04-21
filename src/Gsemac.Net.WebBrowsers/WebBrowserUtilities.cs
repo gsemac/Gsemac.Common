@@ -208,9 +208,7 @@ namespace Gsemac.Net.WebBrowsers {
 
             string browserExecutablePath = browserInfo?.ExecutablePath ?? "explorer.exe";
 
-            List<string> arguments = new List<string> {
-                $"\"{url}\""
-            };
+            List<string> arguments = new List<string>();
 
             if (browserInfo is object) {
 
@@ -219,15 +217,25 @@ namespace Gsemac.Net.WebBrowsers {
                     case WebBrowserId.Chrome:
                     case WebBrowserId.Edge:
 
+                        arguments.Add($"\"{url}\"");
+
                         if (!string.IsNullOrWhiteSpace(options.UserDataDirectoryPath))
                             arguments.Add($"--user-data-dir=\"{options.UserDataDirectoryPath}\"");
 
                         if (browserProfile is object)
                             arguments.Add($"--profile-directory=\"{browserProfile.Identifier}\"");
 
+                        if (options.PrivateMode)
+                            arguments.Add($"--incognito");
+
                         break;
 
                     case WebBrowserId.Firefox:
+
+                        if (options.PrivateMode)
+                            arguments.Add($"--private-window");
+
+                        arguments.Add($"\"{url}\"");
 
                         if (browserProfile is object) {
 
