@@ -1,4 +1,5 @@
-﻿using Gsemac.Polyfills.System;
+﻿using Gsemac.Polyfills.Properties;
+using Gsemac.Polyfills.System;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -120,8 +121,17 @@ namespace Gsemac.Polyfills.Microsoft.Extensions.DependencyInjection {
 
             }
 
-            if (selectedConstructor is null)
+            if (selectedConstructor is null) {
+
+                // We may not have any constructors if we're erroneously attempting to instantiate an interface type.
+
+                if (!constructors.Any())
+                    throw new ArgumentException(string.Format(ExceptionMessages.CannotInstantiateImplementationTypeForType, instanceType.FullName, instanceType.FullName));
+
                 selectedConstructor = constructors.First();
+
+            }
+
 
             if (!constructorArguments.Any())
                 constructorArguments = GetConstructorArguments(provider, selectedConstructor, parameters);

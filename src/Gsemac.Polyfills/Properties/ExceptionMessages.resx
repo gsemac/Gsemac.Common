@@ -117,6 +117,9 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="CannotInstantiateImplementationTypeForType" xml:space="preserve">
+    <value>Cannot instantiate implementation type '{0}' for service type '{1}'.</value>
+  </data>
   <data name="CannotResolveScopedServiceFromRootProviderWithTypeName" xml:space="preserve">
     <value>Cannot resolve scoped service '{0}' from root provider.</value>
   </data>

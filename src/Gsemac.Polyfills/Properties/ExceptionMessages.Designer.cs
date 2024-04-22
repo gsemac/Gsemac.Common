@@ -61,6 +61,15 @@ namespace Gsemac.Polyfills.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Cannot instantiate implementation type &apos;{0}&apos; for service type &apos;{1}&apos;..
+        /// </summary>
+        internal static string CannotInstantiateImplementationTypeForType {
+            get {
+                return ResourceManager.GetString("CannotInstantiateImplementationTypeForType", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Cannot resolve scoped service &apos;{0}&apos; from root provider..
         /// </summary>
         internal static string CannotResolveScopedServiceFromRootProviderWithTypeName {
