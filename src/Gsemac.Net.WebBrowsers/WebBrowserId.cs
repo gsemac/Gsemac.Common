@@ -2,8 +2,8 @@
 
     public enum WebBrowserId {
         Unknown = 0,
-        Chrome,
-        Edge,
+        GoogleChrome,
+        MicrosoftEdge,
         Firefox,
         InternetExplorer,
         Opera,

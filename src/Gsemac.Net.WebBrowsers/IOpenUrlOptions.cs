@@ -6,7 +6,7 @@
         WebBrowserId WebBrowserId { get; }
         IWebBrowserProfile Profile { get; }
         string UserDataDirectoryPath { get; }
-        bool PrivateMode { get; }
+        bool PrivateWindow { get; }
 
     }
 

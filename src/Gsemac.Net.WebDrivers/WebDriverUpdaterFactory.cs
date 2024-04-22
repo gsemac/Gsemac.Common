@@ -29,10 +29,10 @@ namespace Gsemac.Net.WebDrivers {
 
             switch (webBrowserInfo.Id) {
 
-                case WebBrowserId.Chrome:
+                case WebBrowserId.GoogleChrome:
                     return new ChromeWebDriverUpdater(webRequestFactory, webDriverUpdaterOptions);
 
-                case WebBrowserId.Edge:
+                case WebBrowserId.MicrosoftEdge:
                     return new EdgeWebDriverUpdater(webRequestFactory, webDriverUpdaterOptions);
 
                 case WebBrowserId.Firefox:

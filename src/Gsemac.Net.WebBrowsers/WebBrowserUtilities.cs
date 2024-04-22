@@ -3,7 +3,6 @@ using Gsemac.Net.Extensions;
 using Gsemac.Net.Http.Extensions;
 using Gsemac.Net.Sockets;
 using Gsemac.Net.WebBrowsers.Properties;
-using Gsemac.Text;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -116,7 +115,7 @@ namespace Gsemac.Net.WebBrowsers {
 
         public static string EscapeUriString(string stringToEscape) {
 
-            return EscapeUriString(stringToEscape, WebBrowserId.Chrome);
+            return EscapeUriString(stringToEscape, WebBrowserId.GoogleChrome);
 
         }
         public static string EscapeUriString(string stringToEscape, WebBrowserId webBrowserId) {
@@ -214,8 +213,10 @@ namespace Gsemac.Net.WebBrowsers {
 
                 switch (browserInfo.Id) {
 
-                    case WebBrowserId.Chrome:
-                    case WebBrowserId.Edge:
+                    case WebBrowserId.GoogleChrome:
+                    case WebBrowserId.MicrosoftEdge:
+
+                        // Open the URL in a Chromium-based web browser.
 
                         arguments.Add($"\"{url}\"");
 
@@ -225,14 +226,16 @@ namespace Gsemac.Net.WebBrowsers {
                         if (browserProfile is object)
                             arguments.Add($"--profile-directory=\"{browserProfile.Identifier}\"");
 
-                        if (options.PrivateMode)
-                            arguments.Add($"--incognito");
+                        if (options.PrivateWindow)
+                            arguments.Add(browserInfo.Id == WebBrowserId.MicrosoftEdge ? $"-inprivate" : "--incognito");
 
                         break;
 
                     case WebBrowserId.Firefox:
 
-                        if (options.PrivateMode)
+                        // Open the URL in Firefox.
+
+                        if (options.PrivateWindow)
                             arguments.Add($"--private-window");
 
                         arguments.Add($"\"{url}\"");
@@ -258,6 +261,14 @@ namespace Gsemac.Net.WebBrowsers {
                                 arguments.Add($"-profile \"{profile.DirectoryPath}\"");
 
                         }
+
+                        break;
+
+                    default:
+
+                        // Open the URL in the shell/without any special options.
+
+                        arguments.Add($"\"{url}\"");
 
                         break;
 

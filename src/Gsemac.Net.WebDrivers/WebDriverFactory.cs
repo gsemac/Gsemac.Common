@@ -114,11 +114,11 @@ namespace Gsemac.Net.WebDrivers {
 
                     switch (webBrowserInfo.Id) {
 
-                        case WebBrowserId.Chrome:
+                        case WebBrowserId.GoogleChrome:
                             factoryDict[webBrowserInfo.Id] = new ChromeWebDriverFactory(webRequestFactory, webDriverOptions, webDriverFactoryOptions, logger);
                             break;
 
-                        case WebBrowserId.Edge:
+                        case WebBrowserId.MicrosoftEdge:
                             factoryDict[webBrowserInfo.Id] = new EdgeWebDriverFactory(webRequestFactory, webDriverOptions, webDriverFactoryOptions, logger);
                             break;
 

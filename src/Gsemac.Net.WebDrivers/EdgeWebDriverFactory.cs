@@ -40,7 +40,7 @@ namespace Gsemac.Net.WebDrivers {
             this(webRequestFactory, webDriverOptions, webDriverFactoryOptions, Logger.Null) {
         }
         public EdgeWebDriverFactory(IHttpWebRequestFactory webRequestFactory, IWebDriverOptions webDriverOptions, IWebDriverFactoryOptions webDriverFactoryOptions, ILogger logger) :
-            base(webRequestFactory, webDriverOptions, new WebDriverFactoryOptions(webDriverFactoryOptions) { WebBrowserId = WebBrowserId.Edge }, logger) {
+            base(webRequestFactory, webDriverOptions, new WebDriverFactoryOptions(webDriverFactoryOptions) { WebBrowserId = WebBrowserId.MicrosoftEdge }, logger) {
 
             this.webRequestFactory = webRequestFactory;
             this.webDriverFactoryOptions = webDriverFactoryOptions;

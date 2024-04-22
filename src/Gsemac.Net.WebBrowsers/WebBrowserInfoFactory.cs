@@ -125,10 +125,10 @@ namespace Gsemac.Net.WebBrowsers {
 
             switch (webBrowserId) {
 
-                case WebBrowserId.Chrome:
+                case WebBrowserId.GoogleChrome:
                     return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), @"Google\Chrome\User Data\");
 
-                case WebBrowserId.Edge:
+                case WebBrowserId.MicrosoftEdge:
                     return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), @"Microsoft\Edge\User Data\");
 
                 case WebBrowserId.Firefox:
@@ -162,13 +162,13 @@ namespace Gsemac.Net.WebBrowsers {
                 return WebBrowserId.Firefox;
 
             if (productName.Equals("google chrome", StringComparison.OrdinalIgnoreCase))
-                return WebBrowserId.Chrome;
+                return WebBrowserId.GoogleChrome;
 
             if (productName.Equals("internet explorer", StringComparison.OrdinalIgnoreCase))
                 return WebBrowserId.InternetExplorer;
 
             if (productName.Equals("microsoft edge", StringComparison.OrdinalIgnoreCase))
-                return WebBrowserId.Edge;
+                return WebBrowserId.MicrosoftEdge;
 
             if (productName.EndsWith("opera", StringComparison.OrdinalIgnoreCase))
                 return WebBrowserId.Opera;
@@ -204,8 +204,8 @@ namespace Gsemac.Net.WebBrowsers {
 
             switch (webBrowserId) {
 
-                case WebBrowserId.Chrome:
-                case WebBrowserId.Edge:
+                case WebBrowserId.GoogleChrome:
+                case WebBrowserId.MicrosoftEdge:
                     return new ChromiumProfilesReader(GetUserDataDirectoryPath(webBrowserId));
 
                 case WebBrowserId.Firefox:
@@ -233,11 +233,11 @@ namespace Gsemac.Net.WebBrowsers {
                         switch (progId) {
 
                             case "AppXq0fevzme2pys62n3e0fbqa7peapykr8v":
-                                id = WebBrowserId.Edge;
+                                id = WebBrowserId.MicrosoftEdge;
                                 break;
 
                             case "ChromeHTML":
-                                id = WebBrowserId.Chrome;
+                                id = WebBrowserId.GoogleChrome;
                                 break;
 
                             case "FirefoxURL":
@@ -327,6 +327,7 @@ namespace Gsemac.Net.WebBrowsers {
                 return id;
 
             // Default to Internet Explorer if we can't find the default web browser.
+            // On modern operating systems, this will redirect to Microsoft Edge.
 
             return WebBrowserId.InternetExplorer;
 

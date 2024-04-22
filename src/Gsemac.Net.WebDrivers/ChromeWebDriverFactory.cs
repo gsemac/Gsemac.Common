@@ -42,7 +42,7 @@ namespace Gsemac.Net.WebDrivers {
             this(webRequestFactory, webDriverOptions, webDriverFactoryOptions, Logger.Null) {
         }
         public ChromeWebDriverFactory(IHttpWebRequestFactory webRequestFactory, IWebDriverOptions webDriverOptions, IWebDriverFactoryOptions webDriverFactoryOptions, ILogger logger) :
-            base(webRequestFactory, webDriverOptions, new WebDriverFactoryOptions(webDriverFactoryOptions) { WebBrowserId = WebBrowserId.Chrome }, logger) {
+            base(webRequestFactory, webDriverOptions, new WebDriverFactoryOptions(webDriverFactoryOptions) { WebBrowserId = WebBrowserId.GoogleChrome }, logger) {
 
             this.webRequestFactory = webRequestFactory;
             this.webDriverFactoryOptions = webDriverFactoryOptions;
