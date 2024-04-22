@@ -264,17 +264,14 @@ namespace Gsemac.Net.WebBrowsers {
 
                         break;
 
-                    default:
-
-                        // Open the URL in the shell/without any special options.
-
-                        arguments.Add($"\"{url}\"");
-
-                        break;
-
                 }
 
             }
+
+            // Open the URL in the shell/without any special options.
+
+            if (!arguments.Any())
+                arguments.Add($"\"{url}\"");
 
             using (Process process = new Process()) {
 
