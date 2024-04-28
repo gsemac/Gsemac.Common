@@ -131,6 +131,12 @@ namespace Gsemac.Net {
 
         }
 
+        public static bool IsUrl(string value) {
+
+            return PathUtilities.IsUrl(value);
+
+        }
+
         public static string GetHostname(string url) {
 
             Match hostnameMatch = Regex.Match(url ?? "", @"^(?:[^\s:]+:\/\/|\/\/)?(?<hostname>[^\/:]+)");
