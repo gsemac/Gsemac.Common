@@ -118,6 +118,12 @@ namespace Gsemac.IO.Tests {
 
         }
         [TestMethod]
+        public void TestGetSchemeWithNullString() {
+
+            Assert.AreEqual(string.Empty, PathUtilities.GetScheme(null));
+
+        }
+        [TestMethod]
         public void TestGetSchemeWithInvalidCharacters() {
 
             Assert.AreEqual(string.Empty, PathUtilities.GetScheme(@"inv@lid://stackoverflow.com/"));
@@ -151,6 +157,62 @@ namespace Gsemac.IO.Tests {
         public void TestGetSchemeWithNoAuthority() {
 
             Assert.AreEqual("https", PathUtilities.GetScheme(@"https:"));
+
+        }
+
+        // SetScheme
+
+        [TestMethod]
+        public void TestSetSchemeWithPreExistingScheme() {
+
+            Assert.AreEqual("http://stackoverflow.com", PathUtilities.SetScheme(@"https://stackoverflow.com", "http"));
+
+        }
+        [TestMethod]
+        public void TestSetSchemeWithRelativeScheme() {
+
+            Assert.AreEqual("https://stackoverflow.com", PathUtilities.SetScheme(@"//stackoverflow.com", "https"));
+
+        }
+        [TestMethod]
+        public void TestSetSchemeWithoutPreExistingScheme() {
+
+            Assert.AreEqual("https://stackoverflow.com", PathUtilities.SetScheme(@"stackoverflow.com", "https"));
+
+        }
+        [TestMethod]
+        public void TestSetSchemeWithoutPathBeginningWithDirectorySeparator() {
+
+            // Valid "file://" URIs can begin with a directory separator character.
+            // https://superuser.com/a/352134/1762496
+
+            Assert.AreEqual("file:///path", PathUtilities.SetScheme(@"/path", "file"));
+
+        }
+        [TestMethod]
+        public void TestSetSchemeWithEmptyScheme() {
+
+            // Setting the scheme to an empty string should completely remove the scheme.
+
+            Assert.AreEqual("//stackoverflow.com", PathUtilities.SetScheme(@"https://stackoverflow.com", string.Empty));
+
+        }
+        [TestMethod]
+        public void TestSetSchemeWithNullScheme() {
+
+            Assert.AreEqual("//stackoverflow.com", PathUtilities.SetScheme(@"https://stackoverflow.com", null));
+
+        }
+        [TestMethod]
+        public void TestSetSchemeWithEmptyPath() {
+
+            Assert.AreEqual("https://", PathUtilities.SetScheme(string.Empty, "https"));
+
+        }
+        [TestMethod]
+        public void TestSetSchemeWithNullPath() {
+
+            Assert.AreEqual("https://", PathUtilities.SetScheme(null, "https"));
 
         }
 

@@ -204,12 +204,37 @@ namespace Gsemac.IO {
 
         public static string GetScheme(string path) {
 
-            Match match = Regex.Match(path, @"^([\w][\w+-.]+):");
+            path = path?.Trim() ?? string.Empty;
+
+            Match match = Regex.Match(path, @"^(?<scheme>[\w][\w+-.]+):");
 
             if (match.Success)
-                return match.Groups[1].Value;
+                return match.Groups["scheme"].Value;
 
             return string.Empty;
+
+        }
+        public static string SetScheme(string path, string scheme) {
+
+            path = path?.Trim() ?? string.Empty;
+            string schemePart;
+
+            if (!string.IsNullOrWhiteSpace(scheme)) {
+
+                schemePart = $"{scheme.Trim()}://";
+
+            }
+            else {
+
+                // If the scheme is empty, we'll use a relative scheme.
+
+                schemePart = "//";
+
+            }
+
+            Regex regex = new Regex(@"^(?:[\w][\w+-.]+:)?(?:\/\/)?");
+
+            return regex.Replace(path, schemePart, 1);
 
         }
 
