@@ -2,7 +2,7 @@
 using Newtonsoft.Json;
 using System;
 
-namespace Gsemac.Text.Json {
+namespace Gsemac.Text.Json.Converters {
 
     /// <summary>
     /// Used to prevent circular references when using <see cref="ConreteTypeJsonConverter{ConcreteT}"/>.

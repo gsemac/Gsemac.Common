@@ -1,7 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System;
 
-namespace Gsemac.Text.Json {
+namespace Gsemac.Text.Json.Converters {
 
     /// <summary>
     /// Converts an interface to and from JSON using the given concrete type.

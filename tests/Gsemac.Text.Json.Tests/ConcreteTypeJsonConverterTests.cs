@@ -1,7 +1,9 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Gsemac.Text.Json.Converters;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Newtonsoft.Json;
 
-namespace Gsemac.Text.Json.Tests {
+namespace Gsemac.Text.Json.Tests
+{
 
     [TestClass]
     public class ConcreteTypeJsonConverterTests {
