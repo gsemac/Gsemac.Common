@@ -19,11 +19,26 @@ namespace Gsemac.IO {
                 return true;
 
             }
-            catch (Exception) {
+            catch {
 
                 return false;
 
             }
+
+        }
+        public static bool TryCreateParentDirectory(string path) {
+
+            if (string.IsNullOrWhiteSpace(path))
+                return false;
+
+            string parentDirectoryPath = Path.GetDirectoryName(path);
+
+            // If the path doesn't have a parent directory, there's nothing we need to do.
+
+            if (string.IsNullOrWhiteSpace(parentDirectoryPath))
+                return true;
+
+            return TryCreateDirectory(parentDirectoryPath);
 
         }
         public static bool IsDirectoryEmpty(string directoryPath) {
