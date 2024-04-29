@@ -22,9 +22,19 @@ namespace Gsemac.Win32.Native {
             return ExitWindowsExNative(uFlags, dwReason);
 
         }
+        public static IntPtr GetForegroundWindow() {
+
+            return GetForegroundWindowNative();
+
+        }
         public static int GetScrollPos(IntPtr hWnd, int nBar) {
 
             return GetScrollPosNative(hWnd, nBar);
+
+        }
+        public static bool GetWindowRect(IntPtr hWnd, ref RECT rectangle) {
+
+            return GetWindowRectNative(hWnd, ref rectangle);
 
         }
         public static bool LockWindowUpdate(IntPtr hWndLock) {
@@ -35,6 +45,11 @@ namespace Gsemac.Win32.Native {
         public static bool LockWorkStation() {
 
             return LockWorkStationNative();
+
+        }
+        public static bool MoveWindow(IntPtr hWnd, int x, int y, int nWidth, int nHeight, bool bRepaint) {
+
+            return MoveWindowNative(hWnd, x, y, nWidth, nHeight, bRepaint);
 
         }
         public static bool ReleaseCapture() {
@@ -91,12 +106,18 @@ namespace Gsemac.Win32.Native {
         private static extern bool DestroyIconNative(IntPtr hIcon);
         [DllImport("user32", EntryPoint = "ExitWindowsEx", SetLastError = true)]
         private static extern bool ExitWindowsExNative(uint uFlags, uint dwReason);
+        [DllImport("user32", CharSet = CharSet.Auto, SetLastError = true)]
+        public static extern IntPtr GetForegroundWindowNative();
         [DllImport("user32", EntryPoint = "GetScrollPos", SetLastError = true)]
         private static extern int GetScrollPosNative(IntPtr hWnd, int nBar);
+        [DllImport("user32")]
+        public static extern bool GetWindowRectNative(IntPtr hWnd, ref RECT rectangle);
         [DllImport("user32", EntryPoint = "LockWindowUpdate", SetLastError = true)]
         private static extern bool LockWindowUpdateNative(IntPtr hWndLock);
         [DllImport("user32", EntryPoint = "LockWorkStation", SetLastError = true)]
         private static extern bool LockWorkStationNative();
+        [DllImport("user32", SetLastError = true)]
+        public static extern bool MoveWindowNative(IntPtr hWnd, int x, int y, int nWidth, int nHeight, bool bRepaint);
         [DllImport("user32", EntryPoint = "ReleaseCapture")]
         public static extern bool ReleaseCaptureNative();
         [DllImport("user32", EntryPoint = "ReleaseDC")]
