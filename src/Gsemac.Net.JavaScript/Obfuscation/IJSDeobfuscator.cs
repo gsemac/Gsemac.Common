@@ -2,7 +2,7 @@
 
     public interface IJSDeobfuscator {
 
-        string Deobfuscate(string script);
+        bool TryDeobfuscate(string script, out string result);
 
     }
 

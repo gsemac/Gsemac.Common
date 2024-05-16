@@ -9,7 +9,12 @@
 
         public IJSDeobfuscator Create() {
 
-            return new DeanEdwardsPackerDeobfuscator();
+            return new CompositeJsDeobfuscator(new IJSDeobfuscator[] {
+                new EscapeSequenceJsDeobfucator(),
+                new BracketedMemberAccessJsDeobfuscator(),
+                new DeanEdwardsPackerJsDeobfuscator(),
+                new SoJsonV4JsDeobfuscator(),
+            });
 
         }
 

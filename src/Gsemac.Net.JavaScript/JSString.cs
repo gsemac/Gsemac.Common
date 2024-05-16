@@ -9,6 +9,11 @@
             return char.ConvertFromUtf32(charCode);
 
         }
+        public static string FromCharCode(int charCode) {
+
+            return FromCharCode((ushort)charCode);
+
+        }
 
     }
 

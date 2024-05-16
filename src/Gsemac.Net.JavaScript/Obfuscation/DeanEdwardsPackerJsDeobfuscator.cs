@@ -4,18 +4,31 @@ using System.Text.RegularExpressions;
 
 namespace Gsemac.Net.JavaScript.Obfuscation {
 
-    public class DeanEdwardsPackerDeobfuscator :
+    public sealed class DeanEdwardsPackerJsDeobfuscator :
         IJSDeobfuscator {
 
         // Public members
 
-        public string Deobfuscate(string script) {
+        public bool TryDeobfuscate(string script, out string result) {
 
-            string deobfuscated = Regex.Replace(script, @"\beval\s*\(\s*(?<unpacker>function\s*\((?:\s*[a-z]{1}\s*\,?\s*){6}\s*\).+?{}\))\s*\)",
-                m => Unpack(m.Groups["unpacker"].Value),
+            result = script;
+
+            if (string.IsNullOrWhiteSpace(script))
+                return false;
+
+            bool anyReplaced = false;
+
+            result = Regex.Replace(script, @"\beval\s*\(\s*(?<unpacker>function\s*\((?:\s*[a-z]{1}\s*\,?\s*){6}\s*\).+?{}\))\s*\)",
+                m => {
+
+                    anyReplaced = true;
+
+                    return Unpack(m.Groups["unpacker"].Value);
+
+                },
                 RegexOptions.Singleline);
 
-            return deobfuscated;
+            return anyReplaced;
 
         }
 

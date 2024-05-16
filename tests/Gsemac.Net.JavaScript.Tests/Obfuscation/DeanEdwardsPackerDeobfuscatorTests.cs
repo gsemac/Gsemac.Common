@@ -13,7 +13,7 @@ namespace Gsemac.Net.JavaScript.Obfuscation.Tests {
             string sampleFilePath = Path.Combine(SamplePaths.JavaScriptSamplesDirectoryPath, "PackedWithDeanEdwardsPacker.js");
 
             Assert.AreEqual("alert(\"hello, world!\");",
-                new DeanEdwardsPackerDeobfuscator().Deobfuscate(File.ReadAllText(sampleFilePath)));
+                new DeanEdwardsPackerJsDeobfuscator().Deobfuscate(File.ReadAllText(sampleFilePath)));
 
         }
         [TestMethod]
@@ -22,7 +22,7 @@ namespace Gsemac.Net.JavaScript.Obfuscation.Tests {
             string sampleFilePath = Path.Combine(SamplePaths.JavaScriptSamplesDirectoryPath, "PackedWithDeanEdwardsPackerWithAlternativeArgumentNames.js");
 
             Assert.AreEqual("alert(\"hello, world!\");",
-                new DeanEdwardsPackerDeobfuscator().Deobfuscate(File.ReadAllText(sampleFilePath)));
+                new DeanEdwardsPackerJsDeobfuscator().Deobfuscate(File.ReadAllText(sampleFilePath)));
 
         }
         [TestMethod]
@@ -31,7 +31,7 @@ namespace Gsemac.Net.JavaScript.Obfuscation.Tests {
             string sampleFilePath = Path.Combine(SamplePaths.JavaScriptSamplesDirectoryPath, "PackedWithDeanEdwardsPackerWithExtraWhiteSpace.js");
 
             Assert.AreEqual("alert(\"hello, world!\");",
-                new DeanEdwardsPackerDeobfuscator().Deobfuscate(File.ReadAllText(sampleFilePath)));
+                new DeanEdwardsPackerJsDeobfuscator().Deobfuscate(File.ReadAllText(sampleFilePath)));
 
         }
         [TestMethod]
@@ -40,7 +40,7 @@ namespace Gsemac.Net.JavaScript.Obfuscation.Tests {
             string sampleFilePath = Path.Combine(SamplePaths.JavaScriptSamplesDirectoryPath, "PackedWithDeanEdwardsPackerWithFormatting.js");
 
             Assert.AreEqual("alert(\"hello, world!\");",
-                new DeanEdwardsPackerDeobfuscator().Deobfuscate(File.ReadAllText(sampleFilePath)));
+                new DeanEdwardsPackerJsDeobfuscator().Deobfuscate(File.ReadAllText(sampleFilePath)));
 
         }
 
