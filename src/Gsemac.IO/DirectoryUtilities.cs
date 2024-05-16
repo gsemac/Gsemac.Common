@@ -26,7 +26,7 @@ namespace Gsemac.IO {
             }
 
         }
-        public static bool TryCreateParentDirectory(string path) {
+        public static bool TryCreateFileDirectory(string path) {
 
             if (string.IsNullOrWhiteSpace(path))
                 return false;
