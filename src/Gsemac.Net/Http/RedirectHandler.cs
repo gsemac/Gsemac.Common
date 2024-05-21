@@ -62,8 +62,9 @@ namespace Gsemac.Net.Http {
 
                                 // Create a new web request.
 
-                                // No properties are kept from the original request (including headers) except for the cookies, allowing us to acquire new cookies throughout the redirection.
-                                // Note that if we did copy the headers, we'd also be copying the "Host" header, because it gets set when GetResponse is called in the original request.
+                                // Most properties are dropped from the original request (including headers) except for the cookies, allowing us to acquire new cookies throughout the redirection.
+
+                                // Note that if we did copy all headers, we'd also be copying the "Host" header, because it gets set when GetResponse is called in the original request.
                                 // The previous Host value might not be valid for the new endpoint we're redirecting to, which can cause a 404 error.
 
                                 request = httpWebRequestFactory.Create(locationUri);
@@ -77,6 +78,24 @@ namespace Gsemac.Net.Http {
 
                                 if (ShouldForwardRefererHeader(originatingRequest.RequestUri, locationUri))
                                     request.Referer = originatingRequest.Referer;
+
+                                // Capability-based headers are preserved as they typically don't change across requests.
+
+                                request.Accept = originatingRequest.Accept;
+                                request.UserAgent = originatingRequest.UserAgent;
+
+                                if (originatingRequest.Headers.TryGet(HttpRequestHeader.AcceptEncoding, out string acceptEncodingValue))
+                                    request.Headers.TrySet(HttpRequestHeader.AcceptEncoding, acceptEncodingValue);
+
+                                if (originatingRequest.Headers.TryGet(HttpRequestHeader.AcceptLanguage, out string acceptLanguageValue))
+                                    request.Headers.TrySet(HttpRequestHeader.AcceptLanguage, acceptLanguageValue);
+
+                                // The origin header is preserved if present.
+                                // It's used in CORS requests to indicate the origin of a request, and is typically forwarded to the final destination.
+                                // HttpWebRequest's default redirect implementation also forwards the origin header.
+
+                                if (originatingRequest.Headers.TryGet("Origin", out string originValue))
+                                    request.Headers.TrySet("Origin", originValue);
 
                                 // Set the verb for the new request.
 
