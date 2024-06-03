@@ -309,6 +309,28 @@ namespace Gsemac.IO.Tests {
             Assert.AreEqual(@"dir", PathUtilities.GetParentPath(@"dir\subdir"));
 
         }
+        [TestMethod]
+        public void TestGetParentPathWithLocalFilePath() {
+
+            Assert.AreEqual(@"C:\Users\Admin", PathUtilities.GetParentPath(@"C:\Users\Admin\file.txt"));
+
+        }
+        [TestMethod]
+        public void TestGetParentPathWithLocalDirectoryPath() {
+
+            // Note that Path.GetDirectoryName will return "C:\Users\Admin\" in this case.
+            // A trailing slash is a common convention to distinguish directory paths from file paths.
+            // The trailing slash should be ignored when getting the parent directory.
+
+            Assert.AreEqual(@"C:\Users", PathUtilities.GetParentPath(@"C:\Users\Admin\"));
+
+        }
+        [TestMethod]
+        public void TestGetParentPathWithRootedLocalPath() {
+
+            Assert.AreEqual(string.Empty, PathUtilities.GetParentPath(@"C:\"));
+
+        }
 
         // GetPathSegments
 
