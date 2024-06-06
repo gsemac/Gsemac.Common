@@ -43,6 +43,25 @@ namespace Gsemac.Forms {
             }
 
         }
+        public static SortOrder GetNextSortOrder(SortOrder sortOrder) {
+
+            switch (sortOrder) {
+
+                case SortOrder.Ascending:
+                    return SortOrder.Descending;
+
+                case SortOrder.Descending:
+                    return SortOrder.None;
+
+                case SortOrder.None:
+                    return SortOrder.Ascending;
+
+                default:
+                    return SortOrder.None;
+
+            }
+
+        }
 
         public static void SetHeaderSortingEnabled(ListView listView, bool enabled) {
 
