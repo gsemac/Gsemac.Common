@@ -9,6 +9,7 @@ namespace Gsemac.IO.FileFormats {
         // Public members
 
         public static IFileFormat Mkv => new MkvFileFormat();
+        public static IFileFormat Mov => new MovFileFormat();
         public static IFileFormat Mp4 => new Mp4FileFormat();
         public static IFileFormat WebM => new WebMFileFormat();
 
