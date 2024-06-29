@@ -139,19 +139,19 @@ namespace Gsemac.Net.Tests {
         // Host
 
         [TestMethod]
-        public void TestGetHost() {
+        public void TestHost() {
 
             Assert.AreEqual("stackoverflow.com", new Url("https://stackoverflow.com/").Host);
 
         }
         [TestMethod]
-        public void TestGetHostWithSubdomain() {
+        public void TestHostWithSubdomain() {
 
             Assert.AreEqual("subdomain.stackoverflow.com", new Url("https://subdomain.stackoverflow.com/").Host);
 
         }
         [TestMethod]
-        public void TestGetHostWithPort() {
+        public void TestHostWithPort() {
 
             Assert.AreEqual("stackoverflow.com:443", new Url("https://stackoverflow.com:443/").Host);
 
@@ -180,25 +180,25 @@ namespace Gsemac.Net.Tests {
         // Hostname
 
         [TestMethod]
-        public void TestGetHostname() {
+        public void TestHostname() {
 
             Assert.AreEqual("stackoverflow.com", new Url("https://stackoverflow.com/").Hostname);
 
         }
         [TestMethod]
-        public void TestGetHostnameWithSubdomain() {
+        public void TestHostnameWithSubdomain() {
 
             Assert.AreEqual("subdomain.stackoverflow.com", new Url("https://subdomain.stackoverflow.com/").Hostname);
 
         }
         [TestMethod]
-        public void TestGetHostnameWithPort() {
+        public void TestHostnameWithPort() {
 
             Assert.AreEqual("stackoverflow.com", new Url("https://stackoverflow.com:443/").Hostname);
 
         }
         [TestMethod]
-        public void TestGetHostnameWithFullyQualifiedDomainName() {
+        public void TestHostnameWithFullyQualifiedDomainName() {
 
             Assert.AreEqual("stackoverflow.com.", new Url("https://stackoverflow.com./").Hostname);
 
@@ -431,6 +431,84 @@ namespace Gsemac.Net.Tests {
             Url url = new("stackoverflow.com");
 
             Assert.AreEqual("stackoverflow.com", Url.GetDomainName(url.ToString()));
+
+        }
+
+        // GetHostname
+
+        [TestMethod]
+        public void TestGetHostnameWithPort() {
+
+            Assert.AreEqual("stackoverflow.com",
+                Url.GetHostname("https://stackoverflow.com:8080/"));
+
+        }
+        [TestMethod]
+        public void TestGetHostnameWithoutPort() {
+
+            Assert.AreEqual("stackoverflow.com",
+                Url.GetHostname("https://stackoverflow.com/"));
+
+        }
+
+        // GetHost
+
+        [TestMethod]
+        public void TestGetHostWithSubdomain() {
+
+            Assert.AreEqual("www.stackoverflow.com",
+                Url.GetHost("https://www.stackoverflow.com/"));
+
+        }
+        [TestMethod]
+        public void TestGetHostWithoutScheme() {
+
+            Assert.AreEqual("www.stackoverflow.com",
+                Url.GetHost("www.stackoverflow.com"));
+
+        }
+        [TestMethod]
+        public void TestGetHostWithPath() {
+
+            Assert.AreEqual("codegolf.stackexchange.com",
+                Url.GetHost("https://codegolf.stackexchange.com/questions/198550/simple-circular-words"));
+
+        }
+        [TestMethod]
+        public void TestGetHostWithoutSubdomain() {
+
+            Assert.AreEqual("stackoverflow.com",
+                Url.GetHost("https://stackoverflow.com/"));
+
+        }
+        [TestMethod]
+        public void TestGetHostWithPort() {
+
+            Assert.AreEqual("stackoverflow.com:8080",
+                Url.GetHost("https://stackoverflow.com:8080/"));
+
+        }
+        [TestMethod]
+        public void TestGetHostWithCredentials() {
+
+            Assert.AreEqual("example.com:8080",
+                Url.GetHost("https://username:password@example.com:8080/path"));
+
+        }
+        [TestMethod]
+        public void TestGetHostWithIPAddress() {
+
+            Assert.AreEqual("127.0.0.1:8080",
+                Url.GetHost("https://127.0.0.1:8080/path"));
+
+        }
+        [TestMethod]
+        public void TestGetHostWithFullyQualifiedDomainName() {
+
+            // Preserving the dot is the same behavior seen with JavaScript's "Url.host" property.
+
+            Assert.AreEqual("stackoverflow.com.",
+                Url.GetHost("https://stackoverflow.com./"));
 
         }
 

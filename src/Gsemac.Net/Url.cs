@@ -41,7 +41,7 @@ namespace Gsemac.Net {
         }
         public Url(string url) {
 
-            Match match = Regex.Match(url ?? "", @"^(?<scheme>.+?:)?(?:\/\/)?(?<credentials>.+?:.+?@)?(?<host>.+?)?(?<path>\/.*?)?(?<query>\?.+?)?(?<fragment>#.+?)?$");
+            Match match = Regex.Match(url ?? string.Empty, @"^(?<scheme>.+?:)?(?:\/\/)?(?<credentials>.+?:.+?@)?(?<host>.+?)?(?<path>\/.*?)?(?<query>\?.+?)?(?<fragment>#.+?)?$");
 
             if (!match.Success)
                 throw new FormatException(Properties.ExceptionMessages.MalformedUrl);
@@ -132,27 +132,21 @@ namespace Gsemac.Net {
         }
 
         public static bool IsUrl(string value) {
-
             return PathUtilities.IsUrl(value);
-
         }
 
-        public static string GetHostname(string url) {
-
-            Match hostnameMatch = Regex.Match(url ?? "", @"^(?:[^\s:]+:\/\/|\/\/)?(?<hostname>[^\/:]+)");
-
-            if (hostnameMatch.Success)
-                return hostnameMatch.Groups[1].Value.TrimEnd('.'); // trim trailing period from fully-qualified domain name
-
-            return string.Empty;
-
-        }
         public static string GetDomainName(string url) {
 
             if (string.IsNullOrWhiteSpace(url))
                 return string.Empty;
 
             string hostname = GetHostname(url);
+
+            // Trim trailing periods from fully-qualified domain names.
+
+            if (!string.IsNullOrWhiteSpace(hostname))
+                hostname = hostname.TrimEnd('.');
+
             string[] parts = hostname.Split('.');
             string domain = hostname;
 
@@ -189,6 +183,31 @@ namespace Gsemac.Net {
             return domain;
 
         }
+        public static string GetHostname(string url) {
+
+            // Returns the same value as GetHost, but with the port number removed.
+
+            if (string.IsNullOrWhiteSpace(url))
+                return string.Empty;
+
+            return GetHost(url)
+                .Split(':')
+                .FirstOrDefault() ?? string.Empty;
+
+        }
+        public static string GetHost(string url) {
+
+            if (string.IsNullOrWhiteSpace(url))
+                return string.Empty;
+
+            Match hostMatch = Regex.Match(url ?? string.Empty, @"^(?:[^\s:]+:\/\/|\/\/)?(?:.+?:.+?@)?(?<hostname>[^\/]+)");
+
+            if (!hostMatch.Success)
+                return string.Empty;
+
+            return hostMatch.Groups["hostname"].Value;
+
+        }
 
         public static string GetQueryParameter(string url, string parameter) {
 
@@ -217,10 +236,12 @@ namespace Gsemac.Net {
         }
         public static string StripQueryParameters(string url) {
 
+            if (string.IsNullOrWhiteSpace(url))
+                return url;
+
             return Regex.Replace(url, @"\?.+?(?=#|$)", string.Empty);
 
         }
-
         public static string StripFragment(string url) {
 
             if (string.IsNullOrWhiteSpace(url))
