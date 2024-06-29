@@ -200,12 +200,41 @@ namespace Gsemac.Net {
             if (string.IsNullOrWhiteSpace(url))
                 return string.Empty;
 
-            Match hostMatch = Regex.Match(url ?? string.Empty, @"^(?:[^\s:]+:\/\/|\/\/)?(?:.+?:.+?@)?(?<hostname>[^\/]+)");
+            return GetOrigin(url)
+                .Split("//")
+                .LastOrDefault() ?? string.Empty;
 
-            if (!hostMatch.Success)
+        }
+        public static string GetOrigin(string url) {
+
+            // The origin is composed of the scheme, host, and port (if present).
+            // Other information like user credentials is not included.
+
+            if (string.IsNullOrWhiteSpace(url))
                 return string.Empty;
 
-            return hostMatch.Groups["hostname"].Value;
+            Match match = Regex.Match(url ?? string.Empty, @"^(?:(?<scheme>[^\s:]+:)\/\/|\/\/)?(?:.+?:.+?@)?(?<hostname>[^\/]+)");
+
+            if (!match.Success)
+                return string.Empty;
+
+            return $"{match.Groups["scheme"].Value}//{match.Groups["hostname"].Value}";
+
+        }
+        public static string GetScheme(string url) {
+
+            // The trailing colon is included in the scheme, similar to JavaScript's "Url.protocol" property.
+            // https://developer.mozilla.org/en-US/docs/Web/API/URL/protocol
+
+            if (string.IsNullOrWhiteSpace(url))
+                return string.Empty;
+
+            string scheme = PathUtilities.GetScheme(url);
+
+            if (string.IsNullOrWhiteSpace(scheme))
+                return string.Empty;
+
+            return scheme + ":";
 
         }
 

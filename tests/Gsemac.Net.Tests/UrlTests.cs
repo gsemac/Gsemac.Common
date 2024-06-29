@@ -512,6 +512,70 @@ namespace Gsemac.Net.Tests {
 
         }
 
+        // GetOrigin
+
+        [TestMethod]
+        public void TestGetOriginWithTrailingDirectorySeparator() {
+
+            Assert.AreEqual("https://www.stackoverflow.com",
+                Url.GetOrigin("https://www.stackoverflow.com/"));
+
+        }
+        [TestMethod]
+        public void TestGetOriginWithPath() {
+
+            Assert.AreEqual("https://www.stackoverflow.com",
+                Url.GetOrigin("https://www.stackoverflow.com/path"));
+
+        }
+        [TestMethod]
+        public void TestGetOriginWithoutPath() {
+
+            Assert.AreEqual("https://www.stackoverflow.com",
+                Url.GetOrigin("https://www.stackoverflow.com"));
+
+        }
+        [TestMethod]
+        public void TestGetOriginWithPort() {
+
+            Assert.AreEqual("https://stackoverflow.com:8080",
+                Url.GetOrigin("https://stackoverflow.com:8080/"));
+
+        }
+        [TestMethod]
+        public void TestGetOriginWithCredentials() {
+
+            // Credentials are not considered part of the origin.
+
+            Assert.AreEqual("https://example.com:8080",
+                Url.GetOrigin("https://username:password@example.com:8080/path"));
+
+        }
+        [TestMethod]
+        public void TestGetOriginWithEmptyString() {
+
+            Assert.AreEqual(string.Empty,
+                Url.GetOrigin(string.Empty));
+
+        }
+
+        // GetScheme
+
+        [TestMethod]
+        public void TestGetSchemeWithScheme() {
+
+            Assert.AreEqual("https:",
+                Url.GetScheme("https://www.stackoverflow.com/"));
+
+        }
+        [TestMethod]
+        public void TestGetSchemeWithoutScheme() {
+
+            Assert.AreEqual(string.Empty,
+                Url.GetScheme("www.stackoverflow.com/"));
+
+        }
+
         // Combine
 
         [TestMethod]
