@@ -126,6 +126,9 @@
   <data name="ContentLengthMustBeGreaterThanOrEqualToZero" xml:space="preserve">
     <value>The Content-Length value must be greater than or equal to zero.</value>
   </data>
+  <data name="DestinationUrlCannotBeEmpty" xml:space="preserve">
+    <value>The destination URL cannot be empty.</value>
+  </data>
   <data name="DnsMessageIdMismatch" xml:space="preserve">
     <value>The DNS response ID did not match the request.</value>
   </data>
@@ -197,6 +200,9 @@
   </data>
   <data name="SchemeContainsInvalidCharacters" xml:space="preserve">
     <value>The scheme contains invalid characters.</value>
+  </data>
+  <data name="SourceUrlCannotBeEmpty" xml:space="preserve">
+    <value>The source URL cannot be empty.</value>
   </data>
   <data name="TheRemoteServerReturnedAnErrorWithStatusCode" xml:space="preserve">
     <value>The remote server returned an error: {0}.</value>

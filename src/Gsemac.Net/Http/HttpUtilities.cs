@@ -454,13 +454,157 @@ namespace Gsemac.Net.Http {
 
         }
 
-        // Private members
+        public static string GetReferer(string sourceUrl, string destinationUrl) {
 
-        private static string GetFirstHeaderName(WebHeaderCollection headers) {
+            // The "strict-origin-when-cross-origin" is the default policy used by major web browsers.
+            // https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Referrer-Policy#strict-origin-when-cross-origin
 
-            return headers.AllKeys.Single();
+            return GetReferer(sourceUrl, destinationUrl, ReferrerPolicy.StrictOriginWhenCrossOrigin);
 
         }
+        public static string GetReferer(string sourceUrl, string destinationUrl, ReferrerPolicy referrerPolicy) {
+
+            if (sourceUrl is null)
+                throw new ArgumentNullException(nameof(sourceUrl));
+
+            if (destinationUrl is null)
+                throw new ArgumentNullException(nameof(destinationUrl));
+
+            if (string.IsNullOrWhiteSpace(sourceUrl))
+                throw new ArgumentException(ExceptionMessages.SourceUrlCannotBeEmpty, nameof(sourceUrl));
+
+            if (string.IsNullOrWhiteSpace(destinationUrl))
+                throw new ArgumentException(ExceptionMessages.DestinationUrlCannotBeEmpty, nameof(destinationUrl));
+
+            // If the URL is a relative URL, assume it's relative to the source URL.
+            // By combining it with the source URL, we'll have a full, rooted URL to work with.
+
+            destinationUrl = Url.Combine(sourceUrl, destinationUrl);
+
+            switch (referrerPolicy) {
+
+                case ReferrerPolicy.NoReferrer:
+                    return string.Empty;
+
+                case ReferrerPolicy.NoReferrerWhenDowngrade: {
+
+                        // Send the full URL in the referer.
+                        // Only send the referer when going to an equal or more-secure protocol.
+
+                        string sourceScheme = PathUtilities.GetScheme(sourceUrl);
+                        string destinationScheme = PathUtilities.GetScheme(destinationUrl);
+
+                        if (sourceScheme.Equals(destinationScheme, StringComparison.OrdinalIgnoreCase))
+                            return sourceUrl;
+
+                        if (sourceScheme.Equals("http", StringComparison.OrdinalIgnoreCase) && destinationScheme.Equals("https", StringComparison.OrdinalIgnoreCase))
+                            return sourceUrl;
+
+                        return string.Empty;
+
+                    }
+
+                case ReferrerPolicy.Origin: {
+
+                        // Send only the origin in the referer.
+                        // The referer is always sent.
+
+                        string sourceOrigin = Url.GetOrigin(sourceUrl);
+
+                        if (string.IsNullOrWhiteSpace(sourceOrigin))
+                            return string.Empty;
+
+                        return $"{sourceOrigin}/";
+
+                    }
+
+                case ReferrerPolicy.OriginWhenCrossOrigin: {
+
+                        // Send the full URL in the referer for same-origin requests, and send only the origin for cross-origin requests.
+
+                        string sourceOrigin = Url.GetOrigin(sourceUrl);
+                        string destinationOrigin = Url.GetOrigin(destinationUrl);
+
+                        if (sourceOrigin.Equals(destinationOrigin, StringComparison.OrdinalIgnoreCase))
+                            return sourceUrl;
+
+                        return sourceOrigin;
+
+                    }
+
+                case ReferrerPolicy.SameOrigin: {
+
+                        // Send the full URL in the referer for same-origin requests.
+                        // The referer is not sent for cross-origin requests.
+
+                        string sourceOrigin = Url.GetOrigin(sourceUrl);
+                        string destinationOrigin = Url.GetOrigin(destinationUrl);
+
+                        if (sourceOrigin.Equals(destinationOrigin, StringComparison.OrdinalIgnoreCase))
+                            return sourceUrl;
+
+                        return string.Empty;
+
+                    }
+
+                case ReferrerPolicy.StrictOrigin: {
+
+                        // Send only the origin in the referer.
+                        // The referer is only sent when the protocol remains the same.
+
+                        string sourceOrigin = Url.GetOrigin(sourceUrl);
+
+                        if (string.IsNullOrWhiteSpace(sourceOrigin))
+                            return string.Empty;
+
+                        string sourceScheme = PathUtilities.GetScheme(sourceUrl);
+                        string destinationScheme = PathUtilities.GetScheme(destinationUrl);
+
+                        if (sourceScheme.Equals(destinationScheme, StringComparison.OrdinalIgnoreCase))
+                            return $"{sourceOrigin}/";
+
+                        return string.Empty;
+
+                    }
+
+                case ReferrerPolicy.StrictOriginWhenCrossOrigin: {
+
+                        // Send the full URL in the referer for same-origin requests, and send only the origin for cross-origin requests.
+                        // For cross-origin requests, the referer is only sent when the protocol remains the same.
+
+                        string sourceOrigin = Url.GetOrigin(sourceUrl);
+                        string destinationOrigin = Url.GetOrigin(destinationUrl);
+
+                        if (sourceOrigin.Equals(destinationOrigin, StringComparison.OrdinalIgnoreCase))
+                            return sourceUrl;
+
+                        string sourceScheme = PathUtilities.GetScheme(sourceUrl);
+                        string destinationScheme = PathUtilities.GetScheme(destinationUrl);
+
+                        if (!string.IsNullOrWhiteSpace(sourceOrigin) && sourceScheme.Equals(destinationScheme, StringComparison.OrdinalIgnoreCase))
+                            return $"{sourceOrigin}/";
+
+                        return string.Empty;
+
+                    }
+
+                case ReferrerPolicy.UnsafeUrl: {
+
+                        // Always send the full URL in the referer.
+
+                        return sourceUrl;
+
+                    }
+
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(referrerPolicy));
+
+            }
+
+        }
+
+        // Private members
+
         private static string GetAcceptEncodingString(DecompressionMethodsEx decompressionMethods) {
 
             List<string> methodStrings = new List<string>();
@@ -475,6 +619,11 @@ namespace Gsemac.Net.Http {
                 methodStrings.Add("br");
 
             return string.Join(", ", methodStrings);
+
+        }
+        private static string GetFirstHeaderName(WebHeaderCollection headers) {
+
+            return headers.AllKeys.Single();
 
         }
 

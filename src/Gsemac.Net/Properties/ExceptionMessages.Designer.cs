@@ -88,6 +88,15 @@ namespace Gsemac.Net.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The destination URL cannot be empty..
+        /// </summary>
+        internal static string DestinationUrlCannotBeEmpty {
+            get {
+                return ResourceManager.GetString("DestinationUrlCannotBeEmpty", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The DNS response ID did not match the request..
         /// </summary>
         internal static string DnsMessageIdMismatch {
@@ -300,6 +309,15 @@ namespace Gsemac.Net.Properties {
         internal static string SchemeContainsInvalidCharacters {
             get {
                 return ResourceManager.GetString("SchemeContainsInvalidCharacters", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The source URL cannot be empty..
+        /// </summary>
+        internal static string SourceUrlCannotBeEmpty {
+            get {
+                return ResourceManager.GetString("SourceUrlCannotBeEmpty", resourceCulture);
             }
         }
         

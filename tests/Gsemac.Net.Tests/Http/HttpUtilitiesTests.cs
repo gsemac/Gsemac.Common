@@ -220,6 +220,59 @@ namespace Gsemac.Net.Http.Tests {
 
         }
 
+        // GetReferer
+
+        [TestMethod]
+        public void TestGetRefererWithStrictOriginWhenCrossOriginPolicyWithSameOrigin() {
+
+            string sourceUrl = "https://example.com/path1";
+            string destinationUrl = "https://example.com/path2";
+
+            Assert.AreEqual("https://example.com/path1",
+                HttpUtilities.GetReferer(sourceUrl, destinationUrl));
+
+        }
+        [TestMethod]
+        public void TestGetRefererWithStrictOriginWhenCrossOriginPolicyWithCrossOrigin() {
+
+            string sourceUrl = "https://example1.com/path1";
+            string destinationUrl = "https://example2.com/path2";
+
+            Assert.AreEqual("https://example1.com/",
+                HttpUtilities.GetReferer(sourceUrl, destinationUrl));
+
+        }
+        [TestMethod]
+        public void TestGetRefererWithStrictOriginWhenCrossOriginPolicyWithCrossOriginWithDifferentProtocols() {
+
+            string sourceUrl = "https://example1.com/path1";
+            string destinationUrl = "http://example2.com/path2";
+
+            Assert.AreEqual(string.Empty,
+                HttpUtilities.GetReferer(sourceUrl, destinationUrl));
+
+        }
+        [TestMethod]
+        public void TestGetRefererWithRelativeProtocol() {
+
+            string sourceUrl = "https://example.com/path1";
+            string destinationUrl = "//example.com/path2";
+
+            Assert.AreEqual("https://example.com/path1",
+                HttpUtilities.GetReferer(sourceUrl, destinationUrl));
+
+        }
+        [TestMethod]
+        public void TestGetRefererWithRelativePath() {
+
+            string sourceUrl = "https://example.com/path1";
+            string destinationUrl = "/path2";
+
+            Assert.AreEqual("https://example.com/path1",
+                HttpUtilities.GetReferer(sourceUrl, destinationUrl));
+
+        }
+
     }
 
 }
