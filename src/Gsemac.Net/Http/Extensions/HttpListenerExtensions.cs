@@ -32,11 +32,15 @@ namespace Gsemac.Net.Http.Extensions {
                 IAsyncResult asyncResult = httpListener.BeginGetContext(result => {
 
                     // A request has been received, so retrieve the context.
+                    // Avoid the call to EndGetContext if cancellation is requested, because the listener might already be closed.
 
-                    if (result is object)
+                    if (result is object && !cancellationToken.IsCancellationRequested) {
+
                         context = httpListener.EndGetContext(result);
 
-                    resetEvent.Set();
+                        resetEvent.Set();
+
+                    }
 
                 }, null);
 
@@ -65,6 +69,9 @@ namespace Gsemac.Net.Http.Extensions {
 
                     if (operationTimedOut)
                         throw new TimeoutException(ExceptionMessages.HttpListenerTimedOut);
+
+                    if (operationCancelled)
+                        throw new OperationCanceledException(cancellationToken);
 
                 }
 
