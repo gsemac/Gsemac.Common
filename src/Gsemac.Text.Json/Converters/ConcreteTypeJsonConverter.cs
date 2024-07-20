@@ -7,7 +7,7 @@ namespace Gsemac.Text.Json.Converters {
     /// Converts an interface to and from JSON using the given concrete type.
     /// </summary>
     /// <typeparam name="ConcreteT">The concrete type used to create an instance of the interface.</typeparam>
-    public sealed class ConreteTypeJsonConverter<ConcreteT> :
+    public sealed class ConcreteTypeJsonConverter<ConcreteT> :
         JsonConverter {
 
         // Public members

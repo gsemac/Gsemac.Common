@@ -25,7 +25,7 @@ namespace Gsemac.Text.Json.Tests
 
         // Test classes
 
-        [JsonConverter(typeof(ConreteTypeJsonConverter<TestClass>))]
+        [JsonConverter(typeof(ConcreteTypeJsonConverter<TestClass>))]
         internal interface ITestInterface {
 
             string Field { get; set; }

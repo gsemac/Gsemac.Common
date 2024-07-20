@@ -5,7 +5,7 @@ using System;
 namespace Gsemac.Text.Json.Converters {
 
     /// <summary>
-    /// Used to prevent circular references when using <see cref="ConreteTypeJsonConverter{ConcreteT}"/>.
+    /// Used to prevent circular references when using <see cref="ConcreteTypeJsonConverter{ConcreteT}"/>.
     /// </summary>
     public sealed class NoJsonConverter :
         JsonConverter {
