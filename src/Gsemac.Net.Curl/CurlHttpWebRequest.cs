@@ -11,6 +11,8 @@ using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 
+using DecompressionMethods = Gsemac.Polyfills.System.Net.DecompressionMethods;
+
 namespace Gsemac.Net.Curl {
 
     public class CurlHttpWebRequest :
@@ -56,7 +58,7 @@ namespace Gsemac.Net.Curl {
                         LibCurl.EasySetOpt(easyHandle, CurlOption.MaxRedirs, MaximumAutomaticRedirections);
                         LibCurl.EasySetOpt(easyHandle, CurlOption.Timeout, base.Timeout);
 
-                        if (AutomaticDecompression != DecompressionMethods.None)
+                        if ((DecompressionMethods)AutomaticDecompression != DecompressionMethods.None)
                             LibCurl.EasySetOpt(easyHandle, CurlOption.AcceptEncoding, GetAcceptEncoding());
 
                         if (File.Exists(options.CABundlePath))
@@ -138,12 +140,16 @@ namespace Gsemac.Net.Curl {
         private string GetAcceptEncoding() {
 
             List<string> decompressionMethodStrs = new List<string>();
+            DecompressionMethods decompressionMethods = (DecompressionMethods)AutomaticDecompression;
 
-            if (AutomaticDecompression.HasFlag(DecompressionMethods.GZip))
+            if (decompressionMethods.HasFlag(DecompressionMethods.GZip))
                 decompressionMethodStrs.Add("gzip");
 
-            if (AutomaticDecompression.HasFlag(DecompressionMethods.Deflate))
+            if (decompressionMethods.HasFlag(DecompressionMethods.Deflate))
                 decompressionMethodStrs.Add("deflate");
+
+            if (decompressionMethods.HasFlag(DecompressionMethods.Brotli))
+                decompressionMethodStrs.Add("br");
 
             return string.Join(", ", decompressionMethodStrs);
 
@@ -207,13 +213,17 @@ namespace Gsemac.Net.Curl {
             foreach (IHttpHeader header in headers)
                 headersList.Append($"{header.Name}: {header.Value}");
 
-            // Adding the Accept-Encoding header manually ensures that it's below the Accept header.
-            // See See https://sansec.io/research/http-header-order-is-important
+            if (!Headers.TryGet(HttpRequestHeader.AcceptEncoding, out _) && AutomaticDecompression != System.Net.DecompressionMethods.None) {
 
-            string acceptEncoding = GetAcceptEncoding();
+                // Adding the Accept-Encoding header manually ensures that it's below the Accept header.
+                // See See https://sansec.io/research/http-header-order-is-important
 
-            if (!string.IsNullOrWhiteSpace(acceptEncoding))
-                headersList.Append($"Accept-Encoding: {acceptEncoding}");
+                string acceptEncoding = GetAcceptEncoding();
+
+                if (!string.IsNullOrWhiteSpace(acceptEncoding))
+                    headersList.Append($"Accept-Encoding: {acceptEncoding}");
+
+            }
 
             // Remove default headers unless they were added manually by the user.
 
