@@ -1,5 +1,6 @@
 ﻿using Gsemac.IO;
 using Gsemac.Net.Http;
+using Gsemac.Net.Http.Headers;
 using System;
 using System.ComponentModel;
 using System.IO;
@@ -13,81 +14,97 @@ namespace Gsemac.Net.Extensions {
         // Public members
 
         public static string DownloadFile(this WebClient client, Uri address) {
-
             return DownloadFile(new WebClientAdapter(client), address);
-
+        }
+        public static string DownloadFile(this WebClient client, string address) {
+            return DownloadFile(new WebClientAdapter(client), address);
+        }
+        public static void DownloadFileAsync(this WebClient client, Uri address) {
+            DownloadFileAsync(new WebClientAdapter(client), address);
         }
         public static string DownloadFile(this IWebClient client, Uri address) {
 
-            string filename = GetFilenameFromUri(address);
+            if (client is null)
+                throw new ArgumentNullException(nameof(client));
 
-            client.DownloadFile(address, filename);
+            if (address is null)
+                throw new ArgumentNullException(nameof(address));
 
-            return filename;
+            // We can either determine the file name from the URL, or the "content-disposition" header.
 
-        }
-        public static string DownloadFile(this WebClient client, string address) {
+            string fileName = GetFilenameFromUri(address);
 
-            return DownloadFile(new WebClientAdapter(client), address);
+            using (Stream requestStream = client.OpenRead(address)) {
+
+                if (client.ResponseHeaders.TryGet("Content-Disposition", out string contentDispositionStr) &&
+                    ContentDispositionHeaderValue.TryParse(contentDispositionStr, out ContentDispositionHeaderValue contentDispositionHeader) &&
+                    !string.IsNullOrWhiteSpace(contentDispositionHeader.FileName)) {
+
+                    // Any directory information in the file name parameter should be ignored-- It should be treated as a terminal component only.
+                    // https://www.w3.org/Protocols/rfc2616/rfc2616-sec19.html#sec19.5.1
+
+                    fileName = PathUtilities.SanitizePath(contentDispositionHeader.FileName, new SanitizePathOptions() {
+                        StripInvalidFileNameChars = true,
+                    });
+
+                }
+
+                using (FileStream outputStream = File.OpenWrite(fileName))
+                    requestStream.CopyTo(outputStream);
+
+            }
+
+            return fileName;
 
         }
         public static string DownloadFile(this IWebClient client, string address) {
-
             return DownloadFile(client, new Uri(address));
-
-        }
-        public static void DownloadFileAsync(this WebClient client, Uri address) {
-
-            DownloadFileAsync(new WebClientAdapter(client), address);
-
         }
         public static void DownloadFileAsync(this IWebClient client, Uri address) {
-
             client.DownloadFileAsync(address, GetFilenameFromUri(address));
-
         }
 
-        public static void DownloadFileSync(this WebClient client, Uri address, string filename) {
+        public static void DownloadFileSync(this WebClient client, Uri address, string fileName) {
 
-            DownloadFileSync(new WebClientAdapter(client), address, filename);
-
-        }
-        public static void DownloadFileSync(this WebClient client, Uri address, string filename, CancellationToken cancellationToken) {
-
-            DownloadFileSync(new WebClientAdapter(client), address, filename, cancellationToken);
+            DownloadFileSync(new WebClientAdapter(client), address, fileName);
 
         }
-        public static void DownloadFileSync(this IWebClient client, Uri address, string filename) {
+        public static void DownloadFileSync(this WebClient client, Uri address, string fileName, CancellationToken cancellationToken) {
 
-            DownloadFileSync(client, address, filename, CancellationToken.None);
+            DownloadFileSync(new WebClientAdapter(client), address, fileName, cancellationToken);
 
         }
-        public static void DownloadFileSync(this IWebClient client, Uri address, string filename, CancellationToken cancellationToken) {
+        public static void DownloadFileSync(this WebClient client, string address, string fileName) {
+
+            DownloadFileSync(new WebClientAdapter(client), address, fileName);
+
+        }
+        public static void DownloadFileSync(this WebClient client, string address, string fileName, CancellationToken cancellationToken) {
+
+            DownloadFileSync(new WebClientAdapter(client), address, fileName, cancellationToken);
+
+        }
+        public static void DownloadFileSync(this IWebClient client, Uri address, string fileName) {
+
+            DownloadFileSync(client, address, fileName, CancellationToken.None);
+
+        }
+        public static void DownloadFileSync(this IWebClient client, Uri address, string fileName, CancellationToken cancellationToken) {
 
             if (cancellationToken.IsCancellationRequested)
                 throw new WebException(Properties.ExceptionMessages.RequestCanceled, WebExceptionStatus.RequestCanceled);
 
-            DownloadFileSyncInternal(client, address, filename, cancellationToken);
+            DownloadFileSyncInternal(client, address, fileName, cancellationToken);
 
         }
-        public static void DownloadFileSync(this WebClient client, string address, string filename) {
+        public static void DownloadFileSync(this IWebClient client, string address, string fileName) {
 
-            DownloadFileSync(new WebClientAdapter(client), address, filename);
-
-        }
-        public static void DownloadFileSync(this WebClient client, string address, string filename, CancellationToken cancellationToken) {
-
-            DownloadFileSync(new WebClientAdapter(client), address, filename, cancellationToken);
+            DownloadFileSync(client, new Uri(address), fileName);
 
         }
-        public static void DownloadFileSync(this IWebClient client, string address, string filename) {
+        public static void DownloadFileSync(this IWebClient client, string address, string fileName, CancellationToken cancellationToken) {
 
-            DownloadFileSync(client, new Uri(address), filename);
-
-        }
-        public static void DownloadFileSync(this IWebClient client, string address, string filename, CancellationToken cancellationToken) {
-
-            DownloadFileSync(client, new Uri(address), filename, cancellationToken);
+            DownloadFileSync(client, new Uri(address), fileName, cancellationToken);
 
         }
 
@@ -114,7 +131,13 @@ namespace Gsemac.Net.Extensions {
 
         // Private members
 
-        private static void DownloadFileSyncInternal(IWebClient client, Uri address, string filename, CancellationToken cancellationToken) {
+        private static void DownloadFileSyncInternal(IWebClient client, Uri address, string fileName, CancellationToken cancellationToken) {
+
+            if (client is null)
+                throw new ArgumentNullException(nameof(client));
+
+            if (address is null)
+                throw new ArgumentNullException(nameof(address));
 
             if (cancellationToken.IsCancellationRequested)
                 throw new WebException(Properties.ExceptionMessages.RequestCanceled, WebExceptionStatus.RequestCanceled);
@@ -162,7 +185,7 @@ namespace Gsemac.Net.Extensions {
 
                         // Initiate the asynchronous download process and wait for its completion.
 
-                        client.DownloadFileAsync(address, filename, mutex);
+                        client.DownloadFileAsync(address, fileName, mutex);
 
                         Monitor.Wait(mutex);
 
@@ -190,8 +213,8 @@ namespace Gsemac.Net.Extensions {
                 // The DownloadFile method deletes partially-downloaded files if the download is not successful.
                 // https://referencesource.microsoft.com/#system/net/System/Net/webclient.cs,416
 
-                if (downloadCancelled && File.Exists(filename))
-                    FileUtilities.TryDelete(filename);
+                if (downloadCancelled && File.Exists(fileName))
+                    FileUtilities.TryDelete(fileName);
 
                 throw new WebException(Properties.ExceptionMessages.RequestCanceled, WebExceptionStatus.RequestCanceled);
 
@@ -201,8 +224,11 @@ namespace Gsemac.Net.Extensions {
 
         private static string GetFilenameFromUri(Uri address) {
 
+            if (address is null)
+                throw new ArgumentNullException(nameof(address));
+
             return PathUtilities.SanitizePath(PathUtilities.GetFileName(address.AbsoluteUri), new SanitizePathOptions() {
-                StripInvalidFilenameChars = true,
+                StripInvalidFileNameChars = true,
             });
 
         }
