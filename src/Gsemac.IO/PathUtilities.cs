@@ -940,7 +940,7 @@ namespace Gsemac.IO {
             if (options.StripInvalidPathChars)
                 invalidCharacters = invalidCharacters.Concat(Path.GetInvalidPathChars());
 
-            if (options.StripInvalidFilenameChars)
+            if (options.StripInvalidFileNameChars)
                 invalidCharacters = invalidCharacters.Concat(Path.GetInvalidFileNameChars());
 
             if (options.PreserveDirectoryStructure) {

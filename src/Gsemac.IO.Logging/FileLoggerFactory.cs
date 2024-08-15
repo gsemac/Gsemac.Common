@@ -27,7 +27,7 @@ namespace Gsemac.IO.Logging {
         public override ILogger Create(string name) {
 
             name = PathUtilities.SanitizePath(name, new SanitizePathOptions() {
-                StripInvalidFilenameChars = true,
+                StripInvalidFileNameChars = true,
             });
 
             return new FileLogger(new LoggerOptions(options) {

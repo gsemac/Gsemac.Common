@@ -8,7 +8,7 @@ namespace Gsemac.IO {
         // Public members
 
         public bool StripInvalidPathChars { get; set; }
-        public bool StripInvalidFilenameChars { get; set; }
+        public bool StripInvalidFileNameChars { get; set; }
         public bool PreserveDirectoryStructure { get; set; }
         public bool StripRepeatedDirectorySeparators { get; set; }
         public bool NormalizeDirectorySeparators { get; set; }
@@ -20,7 +20,7 @@ namespace Gsemac.IO {
         public static SanitizePathOptions Default => CreateDefault();
         public static SanitizePathOptions StripInvalidChars => new SanitizePathOptions() {
             StripInvalidPathChars = true,
-            StripInvalidFilenameChars = true,
+            StripInvalidFileNameChars = true,
         };
 
         public SanitizePathOptions() { }
@@ -30,7 +30,7 @@ namespace Gsemac.IO {
                 throw new ArgumentNullException(nameof(options));
 
             StripInvalidPathChars = options.StripInvalidPathChars;
-            StripInvalidFilenameChars = options.StripInvalidFilenameChars;
+            StripInvalidFileNameChars = options.StripInvalidFileNameChars;
             PreserveDirectoryStructure = options.PreserveDirectoryStructure;
             StripRepeatedDirectorySeparators = options.StripRepeatedDirectorySeparators;
             NormalizeDirectorySeparators = options.NormalizeDirectorySeparators;
@@ -54,7 +54,7 @@ namespace Gsemac.IO {
             if (useEquivalentValidPathChars) {
 
                 StripInvalidPathChars = true;
-                StripInvalidFilenameChars = true;
+                StripInvalidFileNameChars = true;
 
             }
 
@@ -64,7 +64,7 @@ namespace Gsemac.IO {
 
             return new SanitizePathOptions() {
                 StripInvalidPathChars = true,
-                StripInvalidFilenameChars = true,
+                StripInvalidFileNameChars = true,
                 PreserveDirectoryStructure = true,
                 NormalizeDirectorySeparators = true,
             };

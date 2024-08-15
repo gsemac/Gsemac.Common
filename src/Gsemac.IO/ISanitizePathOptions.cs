@@ -3,7 +3,7 @@
     public interface ISanitizePathOptions {
 
         bool StripInvalidPathChars { get; }
-        bool StripInvalidFilenameChars { get; }
+        bool StripInvalidFileNameChars { get; }
         bool PreserveDirectoryStructure { get; }
         bool StripRepeatedDirectorySeparators { get; }
         bool NormalizeDirectorySeparators { get; }
