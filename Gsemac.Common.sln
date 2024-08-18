@@ -93,7 +93,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Gsemac.Reflection.Plugins",
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Gsemac.IO.Compression.Tests", "tests\Gsemac.IO.Compression.Tests\Gsemac.IO.Compression.Tests.csproj", "{C08E21E3-C602-468A-8179-25CB774C6159}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gsemac.Net.WebBrowsers.Tests", "tests\Gsemac.Net.WebBrowsers.Tests\Gsemac.Net.WebBrowsers.Tests.csproj", "{FF2D5B50-5944-4C9E-8349-A57FD904913C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Gsemac.Net.WebBrowsers.Tests", "tests\Gsemac.Net.WebBrowsers.Tests\Gsemac.Net.WebBrowsers.Tests.csproj", "{FF2D5B50-5944-4C9E-8349-A57FD904913C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
