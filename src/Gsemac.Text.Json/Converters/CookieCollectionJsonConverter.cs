@@ -29,12 +29,23 @@ namespace Gsemac.Text.Json.Converters {
             CookieCollection result = hasExistingValue ? existingValue : new CookieCollection();
             CookieJsonConverter cookieJsonConverter = new CookieJsonConverter();
 
-            while (reader.TokenType != JsonToken.EndArray && reader.TokenType != JsonToken.EndObject) {
+            // The CookieCollection object is represented as an array of objects, each of which represents an individual cookie.
 
-                Cookie cookie = cookieJsonConverter.ReadJson(reader, typeof(Cookie), null, false, serializer);
+            while (reader.TokenType != JsonToken.None && reader.TokenType != JsonToken.EndArray && reader.TokenType != JsonToken.EndObject) {
 
-                if (cookie is object)
-                    result.Add(cookie);
+                if (reader.TokenType == JsonToken.StartObject) {
+
+                    Cookie cookie = cookieJsonConverter.ReadJson(reader, typeof(Cookie), null, false, serializer);
+
+                    if (cookie is object)
+                        result.Add(cookie);
+
+                }
+                else {
+
+                    reader.Read();
+
+                }
 
             }
 
