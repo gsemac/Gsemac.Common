@@ -7,7 +7,7 @@ using System.Reflection;
 
 namespace Gsemac.Reflection {
 
-    public class PropertyDictionary :
+    public sealed class PropertyDictionary :
         IPropertyDictionary {
 
         // Public members
@@ -55,6 +55,9 @@ namespace Gsemac.Reflection {
         }
         public bool TryGetValue(string key, out object value) {
 
+            if (key is null)
+                throw new ArgumentNullException(nameof(key));
+
             lock (propertyCacheMutex) {
 
                 RebuildPropertyCacheForKey(key);
@@ -62,6 +65,33 @@ namespace Gsemac.Reflection {
                 if (propertyCache.TryGetValue(key, out var objectProperty) && objectProperty.Object is object) {
 
                     value = GetPropertyValue(objectProperty);
+
+                    return true;
+
+                }
+                else {
+
+                    value = null;
+
+                    return false;
+
+                }
+
+            }
+
+        }
+        public bool TryGetPropertyInfo(string key, out PropertyInfo value) {
+
+            if (key is null)
+                throw new ArgumentNullException(nameof(key));
+
+            lock (propertyCacheMutex) {
+
+                RebuildPropertyCacheForKey(key);
+
+                if (propertyCache.TryGetValue(key, out var objectProperty) && objectProperty.Object is object) {
+
+                    value = objectProperty.Property;
 
                     return true;
 
@@ -147,29 +177,19 @@ namespace Gsemac.Reflection {
 
         }
         void ICollection<KeyValuePair<string, object>>.Add(KeyValuePair<string, object> item) {
-
             throw new NotSupportedException();
-
         }
         bool IDictionary<string, object>.Remove(string key) {
-
             throw new NotSupportedException();
-
         }
         bool ICollection<KeyValuePair<string, object>>.Remove(KeyValuePair<string, object> item) {
-
             throw new NotSupportedException();
-
         }
         void ICollection<KeyValuePair<string, object>>.Clear() {
-
             throw new NotSupportedException();
-
         }
         IEnumerator IEnumerable.GetEnumerator() {
-
             return GetEnumerator();
-
         }
 
         // Private members
