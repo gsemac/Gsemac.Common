@@ -216,4 +216,7 @@
   <data name="WebResponseWasNotAnInstanceOfHttpWebResponse" xml:space="preserve">
     <value>`WebResponse` is not an instance of `HttpWebResponse`.</value>
   </data>
+  <data name="InvalidHttpReferrerPolicyHeader" xml:space="preserve">
+    <value>The string '{0}' is not a valid HTTP referrer-policy header.</value>
+  </data>
 </root>

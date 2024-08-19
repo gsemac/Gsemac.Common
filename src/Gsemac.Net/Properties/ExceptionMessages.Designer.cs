@@ -232,6 +232,15 @@ namespace Gsemac.Net.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The string &apos;{0}&apos; is not a valid HTTP referrer-policy header..
+        /// </summary>
+        internal static string InvalidHttpReferrerPolicyHeader {
+            get {
+                return ResourceManager.GetString("InvalidHttpReferrerPolicyHeader", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The string &apos;{0}&apos; is not a valid HTTP refresh header..
         /// </summary>
         internal static string InvalidHttpRefreshHeaderWithString {
