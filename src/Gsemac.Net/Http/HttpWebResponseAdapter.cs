@@ -33,6 +33,10 @@ namespace Gsemac.Net.Http {
 
         }
 
+        // Internal members
+
+        internal WebResponse InnerWebResponse => httpWebResponse;
+
         // Private members
 
         private readonly HttpWebResponse httpWebResponse;

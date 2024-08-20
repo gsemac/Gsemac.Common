@@ -57,6 +57,10 @@ namespace Gsemac.Net.Http {
 
         }
 
+        // Internal members
+
+        internal WebResponse InnerWebResponse => (WebResponse)innerHttpWebResponse;
+
         // Protected members
 
         protected HttpWebResponseDecoratorBase(IHttpWebResponse innerHttpWebResponse) {

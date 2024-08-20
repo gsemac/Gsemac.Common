@@ -7,7 +7,8 @@ using System.Threading.Tasks;
 
 namespace Gsemac.Net.Curl {
 
-    internal class CurlHttpWebResponse :
+    [ResponseStreamAlreadyDecompressed]
+    internal sealed class CurlHttpWebResponse :
         CurlHttpWebResponseBase {
 
         // Public members
@@ -34,7 +35,7 @@ namespace Gsemac.Net.Curl {
 
             if (!isClosed) {
 
-                // Cancel the cURL reading thread.
+                // Cancel the Curl reading thread.
 
                 cancellationTokenSource.Cancel();
                 cancellationTokenSource.Dispose();

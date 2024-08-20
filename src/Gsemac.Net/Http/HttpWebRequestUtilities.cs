@@ -401,10 +401,13 @@ namespace Gsemac.Net.Http {
 
         internal static WebRequest GetInnermostWebRequest(WebRequest webRequest) {
 
-            WebRequest result = webRequest;
-            bool exitLoop = false;
+            if (webRequest is null)
+                throw new ArgumentNullException(nameof(webRequest));
 
-            while (!exitLoop && result is object) {
+            WebRequest result = webRequest;
+            bool resultFound = false;
+
+            while (!resultFound && result is object) {
 
                 switch (result) {
 
@@ -417,7 +420,38 @@ namespace Gsemac.Net.Http {
                         break;
 
                     default:
-                        exitLoop = true;
+                        resultFound = true;
+                        break;
+
+                }
+
+            }
+
+            return result;
+
+        }
+        internal static WebResponse GetInnermostWebResponse(WebResponse webResponse) {
+
+            if (webResponse is null)
+                throw new ArgumentNullException(nameof(webResponse));
+
+            WebResponse result = webResponse;
+            bool resultFound = false;
+
+            while (!resultFound && result is object) {
+
+                switch (result) {
+
+                    case HttpWebResponseAdapter httpWebResponseAdapter:
+                        result = httpWebResponseAdapter.InnerWebResponse;
+                        break;
+
+                    case HttpWebResponseDecoratorBase httpWebResponseDecoratorBase:
+                        result = httpWebResponseDecoratorBase.InnerWebResponse;
+                        break;
+
+                    default:
+                        resultFound = true;
                         break;
 
                 }

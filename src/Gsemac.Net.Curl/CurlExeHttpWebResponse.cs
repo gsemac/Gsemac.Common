@@ -3,7 +3,8 @@ using System;
 
 namespace Gsemac.Net.Curl {
 
-    internal class CurlExeHttpWebResponse :
+    [ResponseStreamAlreadyDecompressed]
+    internal sealed class CurlExeHttpWebResponse :
         CurlHttpWebResponseBase {
 
         // Public members
