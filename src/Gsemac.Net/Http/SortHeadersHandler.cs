@@ -25,14 +25,14 @@ namespace Gsemac.Net.Http {
 
         // Protected members
 
-        protected internal override WebResponse Send(WebRequest request, CancellationToken cancellationToken) {
+        protected internal override WebResponse GetResponse(WebRequest request, CancellationToken cancellationToken) {
 
             if (request is null)
                 throw new ArgumentNullException(nameof(request));
 
             SetWebHeaderCollection(request);
 
-            return base.Send(request, cancellationToken);
+            return base.GetResponse(request, cancellationToken);
 
         }
 

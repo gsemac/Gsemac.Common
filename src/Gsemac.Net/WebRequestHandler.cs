@@ -21,7 +21,10 @@ namespace Gsemac.Net {
 
         // Protected members
 
-        protected internal virtual WebResponse Send(WebRequest request, CancellationToken cancellationToken) {
+        protected internal virtual WebResponse GetResponse(WebRequest request, CancellationToken cancellationToken) {
+
+            if (request is null)
+                throw new ArgumentNullException(nameof(request));
 
             if (cancellationToken.IsCancellationRequested)
                 throw new TaskCanceledException();
@@ -29,9 +32,28 @@ namespace Gsemac.Net {
             return request.GetResponse();
 
         }
-        protected internal virtual Task<WebResponse> SendAsync(WebRequest request, CancellationToken cancellationToken) {
+        protected internal virtual Task<WebResponse> GetResponseAsync(WebRequest request, CancellationToken cancellationToken) {
 
-            return TaskEx.Run(() => Send(request, cancellationToken));
+            if (request is null)
+                throw new ArgumentNullException(nameof(request));
+
+            return TaskEx.Run(() => GetResponse(request, cancellationToken));
+
+        }
+        protected internal virtual IAsyncResult BeginGetResponse(WebRequest request, AsyncCallback callback, object state) {
+
+            if (request is null)
+                throw new ArgumentNullException(nameof(request));
+
+            return request.BeginGetResponse(callback, state);
+
+        }
+        protected internal virtual WebResponse EndGetResponse(WebRequest request, IAsyncResult asyncResult) {
+
+            if (request is null)
+                throw new ArgumentNullException(nameof(request));
+
+            return request.EndGetResponse(asyncResult);
 
         }
 

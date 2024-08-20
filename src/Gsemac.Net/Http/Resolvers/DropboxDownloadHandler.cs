@@ -26,7 +26,7 @@ namespace Gsemac.Net.Http.Resolvers {
 
         // Protected members
 
-        protected override IHttpWebResponse Send(IHttpWebRequest request, CancellationToken cancellationToken) {
+        protected override IHttpWebResponse GetResponse(IHttpWebRequest request, CancellationToken cancellationToken) {
 
             if (request is null)
                 throw new ArgumentNullException(nameof(request));
@@ -53,7 +53,7 @@ namespace Gsemac.Net.Http.Resolvers {
 
                 // Pass the request through normally.
 
-                return base.Send(request, cancellationToken);
+                return base.GetResponse(request, cancellationToken);
 
             }
 
@@ -67,7 +67,7 @@ namespace Gsemac.Net.Http.Resolvers {
 
             // Make a GET request to the download page to acquire the necessary cookies to access the download URL.
 
-            IHttpWebResponse response = base.Send(request, cancellationToken);
+            IHttpWebResponse response = base.GetResponse(request, cancellationToken);
 
             response.Close();
 
@@ -104,7 +104,7 @@ namespace Gsemac.Net.Http.Resolvers {
 
             // Get the final download URL.
 
-            response = base.Send(postRequest, cancellationToken);
+            response = base.GetResponse(postRequest, cancellationToken);
 
             string directDownloadUrl;
 
@@ -119,7 +119,7 @@ namespace Gsemac.Net.Http.Resolvers {
 
             downloadRequest.CookieContainer = request.CookieContainer;
 
-            return base.Send(downloadRequest, cancellationToken);
+            return base.GetResponse(downloadRequest, cancellationToken);
 
         }
         private IHttpWebResponse ResolveDropboxUserContentUrl(IHttpWebRequest request, CancellationToken cancellationToken) {
@@ -135,7 +135,7 @@ namespace Gsemac.Net.Http.Resolvers {
 
                 request.AllowAutoRedirect = false;
 
-                IHttpWebResponse response = base.Send(request, cancellationToken);
+                IHttpWebResponse response = base.GetResponse(request, cancellationToken);
 
                 if (HttpUtilities.IsRedirectStatusCode(response.StatusCode) && response.Headers.TryGet(HttpResponseHeader.Location, out string locationHeaderValue)) {
 
@@ -152,7 +152,7 @@ namespace Gsemac.Net.Http.Resolvers {
 
                     try {
 
-                        response = base.Send(redirectRequest, cancellationToken);
+                        response = base.GetResponse(redirectRequest, cancellationToken);
 
                         using (StreamReader sr = new StreamReader(response.GetResponseStream(), Encoding.UTF8))
                             speedbumpPageContent = sr.ReadToEnd();
@@ -172,7 +172,7 @@ namespace Gsemac.Net.Http.Resolvers {
 
                     downloadRequest.CookieContainer = request.CookieContainer;
 
-                    return base.Send(downloadRequest, cancellationToken);
+                    return base.GetResponse(downloadRequest, cancellationToken);
 
                 }
                 else {

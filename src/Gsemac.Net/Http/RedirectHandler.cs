@@ -28,7 +28,7 @@ namespace Gsemac.Net.Http {
 
         // Protected members
 
-        protected override IHttpWebResponse Send(IHttpWebRequest request, CancellationToken cancellationToken) {
+        protected override IHttpWebResponse GetResponse(IHttpWebRequest request, CancellationToken cancellationToken) {
 
             if (request is null)
                 throw new ArgumentNullException(nameof(request));
@@ -36,7 +36,7 @@ namespace Gsemac.Net.Http {
             // If redirects are not to be handled, simply pass down the request.
 
             if (!request.AllowAutoRedirect || request.MaximumAutomaticRedirections <= 0)
-                return base.Send(request, cancellationToken);
+                return base.GetResponse(request, cancellationToken);
 
             int maximumRedirections = request.MaximumAutomaticRedirections;
 
@@ -48,7 +48,7 @@ namespace Gsemac.Net.Http {
 
                 for (int redirections = 0; redirections < maximumRedirections; ++redirections) {
 
-                    response = base.Send(request, cancellationToken);
+                    response = base.GetResponse(request, cancellationToken);
 
                     IHttpWebRequest originatingRequest = request;
 

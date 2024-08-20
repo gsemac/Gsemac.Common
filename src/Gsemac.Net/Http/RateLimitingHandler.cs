@@ -45,7 +45,7 @@ namespace Gsemac.Net.Http {
 
         // Protected members
 
-        protected override IHttpWebResponse Send(IHttpWebRequest request, CancellationToken cancellationToken) {
+        protected override IHttpWebResponse GetResponse(IHttpWebRequest request, CancellationToken cancellationToken) {
 
             if (request is null)
                 throw new ArgumentNullException(nameof(request));
@@ -104,7 +104,7 @@ namespace Gsemac.Net.Http {
 
             try {
 
-                return base.Send(request, cancellationToken);
+                return base.GetResponse(request, cancellationToken);
 
             }
             catch (WebException ex) {

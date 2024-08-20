@@ -1,5 +1,6 @@
 ﻿using Gsemac.Net.Extensions;
 using Gsemac.Polyfills.System.Threading.Tasks;
+using System;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
@@ -18,47 +19,41 @@ namespace Gsemac.Net.Http {
             base(innerHandler) {
         }
 
-        protected virtual IHttpWebResponse Send(IHttpWebRequest request, CancellationToken cancellationToken) {
+        protected virtual IHttpWebResponse GetResponse(IHttpWebRequest request, CancellationToken cancellationToken) {
 
-            return (IHttpWebResponse)base.Send((WebRequest)request, cancellationToken);
+            if (request is null)
+                throw new ArgumentNullException(nameof(request));
 
-        }
-        protected virtual Task<IHttpWebResponse> SendAsync(IHttpWebRequest request, CancellationToken cancellationToken) {
-
-            return TaskEx.Run(() => Send(request, cancellationToken));
+            return (IHttpWebResponse)base.GetResponse((WebRequest)request, cancellationToken);
 
         }
+        protected virtual Task<IHttpWebResponse> GetResponseAsync(IHttpWebRequest request, CancellationToken cancellationToken) {
 
-        protected sealed internal override WebResponse Send(WebRequest request, CancellationToken cancellationToken) {
+            if (request is null)
+                throw new ArgumentNullException(nameof(request));
+
+            return TaskEx.Run(() => GetResponse(request, cancellationToken), cancellationToken);
+
+        }
+
+        protected sealed internal override WebResponse GetResponse(WebRequest request, CancellationToken cancellationToken) {
 
             IHttpWebRequest httpWebRequest = request.AsHttpWebRequest();
 
-            if (httpWebRequest is null) {
+            if (httpWebRequest is object)
+                return base.GetResponse(request, cancellationToken);
 
-                return base.Send(request, cancellationToken);
-
-            }
-            else {
-
-                return (WebResponse)Send(httpWebRequest, cancellationToken);
-
-            }
+            return (WebResponse)GetResponse(httpWebRequest, cancellationToken);
 
         }
-        protected sealed internal override Task<WebResponse> SendAsync(WebRequest request, CancellationToken cancellationToken) {
+        protected sealed internal override Task<WebResponse> GetResponseAsync(WebRequest request, CancellationToken cancellationToken) {
 
             IHttpWebRequest httpWebRequest = request.AsHttpWebRequest();
 
-            if (httpWebRequest is null) {
+            if (httpWebRequest is object)
+                return base.GetResponseAsync(request, cancellationToken);
 
-                return base.SendAsync(request, cancellationToken);
-
-            }
-            else {
-
-                return SendAsync(httpWebRequest, cancellationToken).ContinueWith(t => (WebResponse)t.Result);
-
-            }
+            return GetResponseAsync(httpWebRequest, cancellationToken).ContinueWith(t => (WebResponse)t.Result);
 
         }
 

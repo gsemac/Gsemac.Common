@@ -93,7 +93,18 @@ namespace Gsemac.Net {
         }
         protected override WebResponse GetWebResponse(WebRequest request) {
 
-            return webRequestHandler.Send(request, CancellationToken.None);
+            if (request is null)
+                throw new ArgumentNullException(nameof(request));
+
+            return webRequestHandler.GetResponse(request, CancellationToken.None);
+
+        }
+        protected override WebResponse GetWebResponse(WebRequest request, IAsyncResult result) {
+
+            if (request is null)
+                throw new ArgumentNullException(nameof(request));
+
+            return webRequestHandler.EndGetResponse(request, result);
 
         }
 

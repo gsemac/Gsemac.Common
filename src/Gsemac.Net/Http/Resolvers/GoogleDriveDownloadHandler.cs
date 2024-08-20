@@ -26,7 +26,7 @@ namespace Gsemac.Net.Http.Resolvers {
 
         // Protected members
 
-        protected override IHttpWebResponse Send(IHttpWebRequest request, CancellationToken cancellationToken) {
+        protected override IHttpWebResponse GetResponse(IHttpWebRequest request, CancellationToken cancellationToken) {
 
             if (request is null)
                 throw new ArgumentNullException(nameof(request));
@@ -46,7 +46,7 @@ namespace Gsemac.Net.Http.Resolvers {
 
                 // Pass the request through normally.
 
-                return base.Send(request, cancellationToken);
+                return base.GetResponse(request, cancellationToken);
 
             }
 
@@ -81,13 +81,13 @@ namespace Gsemac.Net.Http.Resolvers {
             // If we can't get a direct download URL, send the request through normally.
 
             if (string.IsNullOrWhiteSpace(fileId))
-                return base.Send(request, cancellationToken);
+                return base.GetResponse(request, cancellationToken);
 
             IHttpWebRequest downloadRequest = httpWebRequestFactory.Create(downloadUrl);
 
             downloadRequest.AllowAutoRedirect = false;
 
-            IHttpWebResponse downloadResponse = base.Send(downloadRequest, cancellationToken);
+            IHttpWebResponse downloadResponse = base.GetResponse(downloadRequest, cancellationToken);
 
             if (downloadResponse.Cookies.Cast<Cookie>().Any(c => c.Name.Contains("download_warning", StringComparison.OrdinalIgnoreCase)) && string.IsNullOrWhiteSpace(confirmationCode)) {
 

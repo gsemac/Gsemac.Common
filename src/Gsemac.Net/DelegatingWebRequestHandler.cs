@@ -23,20 +23,36 @@ namespace Gsemac.Net {
 
         }
 
-        protected internal override WebResponse Send(WebRequest request, CancellationToken cancellationToken) {
+        protected internal override WebResponse GetResponse(WebRequest request, CancellationToken cancellationToken) {
 
             if (InnerHandler is null)
                 throw new Exception(Properties.ExceptionMessages.InnerHandlerHasNotBeenSet);
 
-            return InnerHandler.Send(request, cancellationToken);
+            return InnerHandler.GetResponse(request, cancellationToken);
 
         }
-        protected internal override Task<WebResponse> SendAsync(WebRequest request, CancellationToken cancellationToken) {
+        protected internal override Task<WebResponse> GetResponseAsync(WebRequest request, CancellationToken cancellationToken) {
 
             if (InnerHandler is null)
                 throw new Exception(Properties.ExceptionMessages.InnerHandlerHasNotBeenSet);
 
-            return InnerHandler.SendAsync(request, cancellationToken);
+            return InnerHandler.GetResponseAsync(request, cancellationToken);
+
+        }
+        protected internal override IAsyncResult BeginGetResponse(WebRequest request, AsyncCallback callback, object state) {
+
+            if (InnerHandler is null)
+                throw new Exception(Properties.ExceptionMessages.InnerHandlerHasNotBeenSet);
+
+            return InnerHandler.BeginGetResponse(request, callback, state);
+
+        }
+        protected internal override WebResponse EndGetResponse(WebRequest request, IAsyncResult asyncResult) {
+
+            if (InnerHandler is null)
+                throw new Exception(Properties.ExceptionMessages.InnerHandlerHasNotBeenSet);
+
+            return InnerHandler.EndGetResponse(request, asyncResult);
 
         }
 

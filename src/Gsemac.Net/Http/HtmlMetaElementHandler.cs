@@ -13,12 +13,12 @@ namespace Gsemac.Net.Http {
 
         // Protected members
 
-        protected override IHttpWebResponse Send(IHttpWebRequest request, CancellationToken cancellationToken) {
+        protected override IHttpWebResponse GetResponse(IHttpWebRequest request, CancellationToken cancellationToken) {
 
             if (request is null)
                 throw new ArgumentNullException(nameof(request));
 
-            IHttpWebResponse response = base.Send(request, cancellationToken);
+            IHttpWebResponse response = base.GetResponse(request, cancellationToken);
 
             // If the response is HTML content, read the contents of the "head" element.
             // We will analyze the "meta" elements inside and update the response object accordingly.
