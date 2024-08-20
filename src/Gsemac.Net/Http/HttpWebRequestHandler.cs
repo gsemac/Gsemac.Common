@@ -36,14 +36,15 @@ namespace Gsemac.Net.Http {
 
         }
 
+
         protected sealed internal override WebResponse GetResponse(WebRequest request, CancellationToken cancellationToken) {
 
             IHttpWebRequest httpWebRequest = request.AsHttpWebRequest();
 
             if (httpWebRequest is object)
-                return base.GetResponse(request, cancellationToken);
+                return (WebResponse)GetResponse(httpWebRequest, cancellationToken);
 
-            return (WebResponse)GetResponse(httpWebRequest, cancellationToken);
+            return base.GetResponse(request, cancellationToken);
 
         }
         protected sealed internal override Task<WebResponse> GetResponseAsync(WebRequest request, CancellationToken cancellationToken) {
@@ -51,9 +52,9 @@ namespace Gsemac.Net.Http {
             IHttpWebRequest httpWebRequest = request.AsHttpWebRequest();
 
             if (httpWebRequest is object)
-                return base.GetResponseAsync(request, cancellationToken);
+                return GetResponseAsync(httpWebRequest, cancellationToken).ContinueWith(t => (WebResponse)t.Result);
 
-            return GetResponseAsync(httpWebRequest, cancellationToken).ContinueWith(t => (WebResponse)t.Result);
+            return base.GetResponseAsync(request, cancellationToken);
 
         }
 
