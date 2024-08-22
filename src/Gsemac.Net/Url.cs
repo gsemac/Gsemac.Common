@@ -159,7 +159,24 @@ namespace Gsemac.Net {
             }
             else if (parts.Length > 2) {
 
-                string suffix = GetPublicSuffixList().Where(x => hostname.EndsWith(x)).FirstOrDefault();
+                // Try smaller suffix candidates until we get a match.
+
+                IPublicSuffixList suffixList = GetPublicSuffixList();
+                string suffix = string.Empty;
+
+                for (int i = 1; i < parts.Length; ++i) {
+
+                    string suffixCandidate = $".{string.Join(".", parts.Skip(i))}";
+
+                    if (suffixList.Contains(suffixCandidate)) {
+
+                        suffix = suffixCandidate;
+
+                        break;
+
+                    }
+
+                }
 
                 if (string.IsNullOrEmpty(suffix)) {
 
@@ -543,7 +560,7 @@ namespace Gsemac.Net {
 
         }
 
-        private static IEnumerable<string> GetPublicSuffixList() {
+        private static IPublicSuffixList GetPublicSuffixList() {
 
             // To determine the suffix, we use the Public Suffix List:
             // https://publicsuffix.org/list/public_suffix_list.dat

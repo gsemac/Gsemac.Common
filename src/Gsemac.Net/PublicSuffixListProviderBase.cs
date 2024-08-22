@@ -12,10 +12,8 @@ namespace Gsemac.Net {
         public TimeSpan TimeToLive { get; set; } = default;
         public bool FallbackEnabled { get; set; } = true;
 
-        public virtual IEnumerable<string> GetList() {
-
+        public virtual IPublicSuffixList GetList() {
             return new ResourcePublicSuffixListProvider().GetList();
-
         }
 
         // Protected members
@@ -29,7 +27,8 @@ namespace Gsemac.Net {
                 .Split(new[] { '\n' }, StringSplitOptions.None)
                 .Where(x => !string.IsNullOrWhiteSpace(x) && !x.StartsWith("//"))
                 .Select(x => '.' + x.TrimStart('*', '!', '.').Trim())
-                .OrderByDescending(x => x.Length);
+                .OrderByDescending(x => x.Length)
+                .ToArray();
 
             return suffixes;
 

@@ -12,7 +12,7 @@ namespace Gsemac.Net {
 
         // Public members
 
-        public override IEnumerable<string> GetList() {
+        public override IPublicSuffixList GetList() {
 
             return cache.Value;
 
@@ -22,11 +22,11 @@ namespace Gsemac.Net {
 
         // The same cache will be used for instances because it never changes.
 
-        private static readonly Lazy<IEnumerable<string>> cache = new Lazy<IEnumerable<string>>(GetListInternal);
+        private static readonly Lazy<IPublicSuffixList> cache = new Lazy<IPublicSuffixList>(GetListInternal);
 
-        private static IEnumerable<string> GetListInternal() {
+        private static IPublicSuffixList GetListInternal() {
 
-            return ParseList(Encoding.UTF8.GetString(Properties.Resources.public_suffix_list));
+            return new PublicSuffixList(ParseList(Encoding.UTF8.GetString(Properties.Resources.public_suffix_list)));
 
         }
 

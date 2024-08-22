@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 
 namespace Gsemac.Net {
 
@@ -8,7 +7,7 @@ namespace Gsemac.Net {
         TimeSpan TimeToLive { get; set; }
         bool FallbackEnabled { get; set; }
 
-        IEnumerable<string> GetList();
+        IPublicSuffixList GetList();
 
     }
 

@@ -433,6 +433,10 @@ namespace Gsemac.Net.Tests {
             Assert.AreEqual("stackoverflow.com", Url.GetDomainName(url.ToString()));
 
         }
+        [TestMethod]
+        public void TestGetDomainNameDomainWithInvalidTld() {
+            Assert.AreEqual("domain.faketld", Url.GetDomainName("subomain.domain.faketld"));
+        }
 
         // GetHostname
 

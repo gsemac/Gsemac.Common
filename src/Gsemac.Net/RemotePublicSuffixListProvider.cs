@@ -2,7 +2,6 @@
 using Gsemac.Net.Http;
 using Gsemac.Net.Http.Extensions;
 using System;
-using System.Collections.Generic;
 using System.Net;
 
 namespace Gsemac.Net {
@@ -49,7 +48,7 @@ namespace Gsemac.Net {
 
         }
 
-        public override IEnumerable<string> GetList() {
+        public override IPublicSuffixList GetList() {
 
             lock (mutex) {
 
@@ -75,12 +74,12 @@ namespace Gsemac.Net {
         private readonly IHttpWebRequestFactory httpWebRequestFactory;
         private readonly ILogger logger;
         private readonly object mutex = new object();
-        private IEnumerable<string> cache;
+        private IPublicSuffixList cache;
         private DateTimeOffset cacheLastUpdated;
 
         private static readonly Uri DefaultPublicSuffixListUri = new Uri("https://publicsuffix.org/list/public_suffix_list.dat");
 
-        private IEnumerable<string> GetListInternal() {
+        private IPublicSuffixList GetListInternal() {
 
             try {
 
@@ -88,7 +87,7 @@ namespace Gsemac.Net {
 
                     string publicSuffixListStr = webClient.DownloadString(uri);
 
-                    return ParseList(publicSuffixListStr);
+                    return new PublicSuffixList(ParseList(publicSuffixListStr));
 
                 }
 

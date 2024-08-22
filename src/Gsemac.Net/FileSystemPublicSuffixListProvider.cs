@@ -2,7 +2,6 @@
 using Gsemac.IO.Logging;
 using Gsemac.Reflection;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -36,7 +35,7 @@ namespace Gsemac.Net {
 
         }
 
-        public override IEnumerable<string> GetList() {
+        public override IPublicSuffixList GetList() {
 
             lock (mutex) {
 
@@ -61,16 +60,16 @@ namespace Gsemac.Net {
         private readonly IFileSystemAssemblyResolver resolver;
         private readonly ILogger logger;
         private readonly object mutex = new object();
-        private IEnumerable<string> cache;
+        private IPublicSuffixList cache;
         private DateTimeOffset cacheLastUpdated;
 
-        private IEnumerable<string> GetListInternal() {
+        private IPublicSuffixList GetListInternal() {
 
             IFileSystemAssemblyResolver resolver = this.resolver ??
                 GetDefaultResolver();
 
             if (resolver is null)
-                return Enumerable.Empty<string>();
+                return new PublicSuffixList(Enumerable.Empty<string>());
 
             // We need a resolver where "AddExtension" is false so we can look for the desired file name explicitly.
             // This is probably not the ideal mechanism for looking up the list, but it works for now. 
@@ -87,7 +86,7 @@ namespace Gsemac.Net {
                 using (Stream stream = fileStream)
                 using (StreamReader sr = new StreamReader(stream, Encoding.UTF8)) {
 
-                    return ParseList(sr.ReadToEnd());
+                    return new PublicSuffixList(ParseList(sr.ReadToEnd()));
 
                 }
 
