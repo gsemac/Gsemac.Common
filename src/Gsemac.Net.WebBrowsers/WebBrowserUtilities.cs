@@ -213,6 +213,7 @@ namespace Gsemac.Net.WebBrowsers {
 
                 switch (browserInfo.Id) {
 
+                    case WebBrowserId.Brave:
                     case WebBrowserId.GoogleChrome:
                     case WebBrowserId.MicrosoftEdge:
 

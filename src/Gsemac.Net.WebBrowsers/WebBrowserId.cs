@@ -2,6 +2,7 @@
 
     public enum WebBrowserId {
         Unknown = 0,
+        Brave,
         GoogleChrome,
         MicrosoftEdge,
         Firefox,

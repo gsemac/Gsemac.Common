@@ -48,7 +48,9 @@ namespace Gsemac.Net.WebBrowsers {
 
             // Prefer newer, 64-bit executables.
 
-            return GetInstalledWebBrowsers(options)
+            var installedWebBrowsers = GetInstalledWebBrowsers(options);
+
+            return installedWebBrowsers
                 .Where(info => info.Id == browserId)
                 .OrderByDescending(info => info.Version)
                 .ThenByDescending(info => info.Is64Bit)
@@ -97,11 +99,12 @@ namespace Gsemac.Net.WebBrowsers {
             .Distinct();
 
             IEnumerable<string> webBrowserExecutablePaths = new string[]{
-                @"Google\Chrome\Application\chrome.exe", // Google Chrome, Windows 8.1+
+                @"BraveSoftware\Brave-Browser\Application\brave.exe",
                 @"Google\Application\chrome.exe", // Google Chrome, Windows 7
-                @"Microsoft\Edge\Application\msedge.exe", // Microsoft Edge
-                @"Microsoft.MicrosoftEdge_8wekyb3d8bbwe\MicrosoftEdge.exe", // EdgeHTML
+                @"Google\Chrome\Application\chrome.exe", // Google Chrome, Windows 8.1+
                 @"Internet Explorer\iexplore.exe",
+                @"Microsoft.MicrosoftEdge_8wekyb3d8bbwe\MicrosoftEdge.exe", // EdgeHTML
+                @"Microsoft\Edge\Application\msedge.exe", // Microsoft Edge
                 @"Mozilla Firefox\firefox.exe",
                 @"Opera\launcher.exe",
                 @"Vivaldi\Application\vivaldi.exe",
@@ -124,6 +127,9 @@ namespace Gsemac.Net.WebBrowsers {
         private static string GetUserDataDirectoryPath(WebBrowserId webBrowserId) {
 
             switch (webBrowserId) {
+
+                case WebBrowserId.Brave:
+                    return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), @"BraveSoftware\Brave-Browser\User Data\");
 
                 case WebBrowserId.GoogleChrome:
                     return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), @"Google\Chrome\User Data\");
@@ -157,6 +163,9 @@ namespace Gsemac.Net.WebBrowsers {
 
             if (string.IsNullOrWhiteSpace(productName))
                 return WebBrowserId.Unknown;
+
+            if (productName.Equals("brave browser", StringComparison.OrdinalIgnoreCase))
+                return WebBrowserId.Brave;
 
             if (productName.Equals("firefox", StringComparison.OrdinalIgnoreCase))
                 return WebBrowserId.Firefox;
@@ -204,6 +213,7 @@ namespace Gsemac.Net.WebBrowsers {
 
             switch (webBrowserId) {
 
+                case WebBrowserId.Brave:
                 case WebBrowserId.GoogleChrome:
                 case WebBrowserId.MicrosoftEdge:
                     return new ChromiumProfilesReader(GetUserDataDirectoryPath(webBrowserId));
@@ -234,6 +244,10 @@ namespace Gsemac.Net.WebBrowsers {
 
                             case "AppXq0fevzme2pys62n3e0fbqa7peapykr8v":
                                 id = WebBrowserId.MicrosoftEdge;
+                                break;
+
+                            case "BraveHTML":
+                                id = WebBrowserId.Brave;
                                 break;
 
                             case "ChromeHTML":
