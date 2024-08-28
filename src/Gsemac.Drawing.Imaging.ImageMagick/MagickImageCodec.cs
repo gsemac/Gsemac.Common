@@ -143,14 +143,35 @@ namespace Gsemac.Drawing.Imaging {
             if (options is null)
                 throw new ArgumentNullException(nameof(options));
 
-            foreach (IMagickImage image in images)
+            MagickFormat outputFormat = imageFormat is object ?
+                GetMagickFormatForFileExtension(imageFormat.Extensions.FirstOrDefault()) :
+                MagickFormat.Unknown;
+
+            foreach (IMagickImage image in images) {
+
+#if NETFRAMEWORK
+
+                // Magick.NET-Q16-AnyCPU <= 8.6.1 (and possibly newer) has a bug where encoding JXL images with quality != 100 causes a memory access violation.
+                // The following issue might be related: https://github.com/dlemstra/Magick.NET/issues/1130
+                // We want to avoid modifying the image quality for JXL images.
+
+                if (outputFormat == MagickFormat.Jxl) {
+
+                    image.Quality = 100;
+
+                    continue;
+
+                }
+
+#endif
+
                 image.Quality = options.Quality;
 
-            if (imageFormat is object) {
+            }
 
-                MagickFormat format = GetMagickFormatForFileExtension(imageFormat.Extensions.FirstOrDefault());
+            if (outputFormat != MagickFormat.Unknown) {
 
-                images.Write(stream, format);
+                images.Write(stream, outputFormat);
 
             }
             else {
