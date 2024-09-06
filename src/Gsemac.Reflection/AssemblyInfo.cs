@@ -12,7 +12,7 @@ namespace Gsemac.Reflection {
 
         public string Description => GetDescription();
         public string Directory => GetDirectory();
-        public string Filename => GetFilename();
+        public string Filename => GetFileName();
         public string Location => GetLocation();
         public string Name => GetName();
         public string ProductName => GetProductName();
@@ -62,7 +62,7 @@ namespace Gsemac.Reflection {
             return System.IO.Path.GetDirectoryName(Location);
 
         }
-        private string GetFilename() {
+        private string GetFileName() {
 
             return System.IO.Path.GetFileName(Location);
 
@@ -84,7 +84,12 @@ namespace Gsemac.Reflection {
         }
         private Version GetProductVersion() {
 
-            return fileVersionInfo.Value?.ProductVersion is null ? Version : Version.Parse(fileVersionInfo.Value.ProductVersion);
+            string productVersionStr = fileVersionInfo.Value?.ProductVersion;
+
+            if (!string.IsNullOrWhiteSpace(productVersionStr) && Version.TryParse(productVersionStr, out Version parsedProductVersion))
+                return parsedProductVersion;
+
+            return Version;
 
         }
         private Version GetVersion() {
