@@ -5,7 +5,7 @@ namespace Gsemac.Reflection {
     public interface IAssemblyInfo {
 
         string Location { get; }
-        string Filename { get; }
+        string FileName { get; }
         string Directory { get; }
 
         string Name { get; }

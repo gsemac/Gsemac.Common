@@ -12,7 +12,7 @@ namespace Gsemac.Reflection {
 
         public string Description => GetDescription();
         public string Directory => GetDirectory();
-        public string Filename => GetFileName();
+        public string FileName => GetFileName();
         public string Location => GetLocation();
         public string Name => GetName();
         public string ProductName => GetProductName();
