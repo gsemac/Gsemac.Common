@@ -71,6 +71,7 @@ namespace Gsemac.Net.Http {
 
                                 request.AllowAutoRedirect = false;
                                 request.CookieContainer = originatingRequest.CookieContainer;
+                                request.Proxy = originatingRequest.Proxy;
 
                                 // Do not forward the referer when redirecting to less-secure destinations (HTTPS → HTTP).
                                 // https://smerity.com/articles/2013/where_did_all_the_http_referrers_go.html
