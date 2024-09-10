@@ -165,6 +165,22 @@ namespace Gsemac.Net.Http {
             return cookies;
 
         }
+        public static string NormalizeCookieDomain(string domain) {
+
+            if (string.IsNullOrWhiteSpace(domain))
+                return string.Empty;
+
+            domain = domain.Trim();
+
+            // Per RFC 6265, web browsers ignore the leading dot, and we can therefore omit it.
+            // For legacy applications implementing RFC 2109, the dot should NOT be stripped.
+
+            if (domain.StartsWith("."))
+                domain = domain.Substring(1);
+
+            return domain;
+
+        }
 
         public static bool IsRedirectStatusCode(HttpStatusCode statusCode) {
 
