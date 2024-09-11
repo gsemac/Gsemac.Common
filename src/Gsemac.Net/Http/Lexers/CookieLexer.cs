@@ -138,22 +138,43 @@ namespace Gsemac.Net.Http.Lexers {
         private bool ReadAttributeValue(Queue<CookieLexerToken> tokens, bool isExpiresAttribute) {
 
             // Values are allowed to be empty.
-            // Only the "expires" attribute is allowed to contain commas.
 
             Reader.SkipWhiteSpace();
 
-            char[] separators = isExpiresAttribute ?
-                new[] {
-                    AttributeSeparator,
-                } :
-                new[] {
+            string value;
+
+            if (isExpiresAttribute) {
+
+                // The "expires" attribute is allowed to contain AT MOST one comma (cookie delimiter) as part of the date.
+                // e.g. "Date: Wed, 21 Oct 2015 07:28:00 GMT"
+
+                bool commaConsumed = false;
+
+                value = Reader.ReadUntil(nextChar => {
+
+                    bool stopReading = nextChar == AttributeSeparator ||
+                        (nextChar == CookieSeparator && commaConsumed);
+
+                    if (nextChar == ',')
+                        commaConsumed = true;
+
+                    return stopReading;
+
+                }, new ReadLineOptions() {
+                    ConsumeDelimiter = false,
+                }).Trim();
+
+            }
+            else {
+
+                value = Reader.ReadLine(new[] {
                     AttributeSeparator,
                     CookieSeparator,
-                };
+                }, new ReadLineOptions() {
+                    ConsumeDelimiter = false,
+                }).Trim();
 
-            string value = Reader.ReadLine(separators, new ReadLineOptions() {
-                ConsumeDelimiter = false,
-            }).Trim();
+            }
 
             tokens.Enqueue(new CookieLexerToken(CookieLexerTokenType.AttributeValue, value));
 

@@ -109,6 +109,15 @@ namespace Gsemac.Net.Http.Tests {
 
         }
         [TestMethod]
+        public void TestParseCookiesWithMultipleCookiesWithMultipleCookiesAndExpiresAttribute() {
+
+            CookieCollection cookies =
+                HttpUtilities.ParseCookies("name1=value1; domain=example.com; path=/; expires=Fri, 11 Oct 2024 03:52:28 GMT,name2=value2; path=/; HttpOnly");
+
+            Assert.AreEqual(2, cookies.Count);
+
+        }
+        [TestMethod]
         public void TestParseCookiesWithMultipleCookiesWithAttributes() {
 
             Cookie[] cookies = HttpUtilities.ParseCookies("Name1=Value1; path=/,Name2=Value2; expires=Sat, 29-Apr-2023 08:39:22 GMT; path=/; domain=www.example.com,Name3=Value3; expires=Thu, 18-Apr-2024 08:39:22 GMT; path=/; domain=.example.com")
