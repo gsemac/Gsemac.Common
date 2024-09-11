@@ -37,9 +37,17 @@ namespace Gsemac.Polyfills.System.Net {
 
                 var item = domainTable[key]; // System.Net.PathList
 
-                PropertyInfo valuesPropertyInfo = item.GetType().GetProperty("Values");
+                PropertyInfo valuesPropertyInfo = item.GetType().GetProperty("Values", BindingFlags.NonPublic | BindingFlags.GetProperty | BindingFlags.Instance);
 
-                if (valuesPropertyInfo is object && valuesPropertyInfo.GetGetMethod().Invoke(item, null) is ICollection items) {
+                if (valuesPropertyInfo is null)
+                    continue;
+
+                MethodInfo valuesPropertyGetMethodInfo = valuesPropertyInfo.GetGetMethod(nonPublic: true);
+
+                if (valuesPropertyGetMethodInfo is null)
+                    continue;
+
+                if (valuesPropertyInfo is object && valuesPropertyGetMethodInfo.Invoke(item, null) is ICollection items) {
 
                     foreach (CookieCollection cookieCollection in items) {
 
