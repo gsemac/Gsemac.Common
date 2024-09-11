@@ -97,6 +97,20 @@ namespace Gsemac.IO.Extensions {
             if (options is null)
                 throw new ArgumentNullException(nameof(options));
 
+            return reader.ReadUntil(nextChar => delimiters.Any(c => c == nextChar), options);
+
+        }
+        public static string ReadUntil(this TextReader reader, Func<char, bool> predicate, IReadLineOptions options) {
+
+            if (reader is null)
+                throw new ArgumentNullException(nameof(reader));
+
+            if (predicate is null)
+                throw new ArgumentNullException(nameof(predicate));
+
+            if (options is null)
+                throw new ArgumentNullException(nameof(options));
+
             StringBuilder resultBuilder = new StringBuilder();
 
             bool insideEscapeSequence = false;
@@ -109,7 +123,7 @@ namespace Gsemac.IO.Extensions {
                 bool nextCharIsEscaped = insideEscapeSequence && options.AllowEscapedDelimiters;
                 bool nextCharIsNewLine = nextChar.IsNewLine();
 
-                if (!nextCharIsEscaped && (delimiters.Any(c => c == nextChar) || nextCharIsNewLine && options.BreakOnNewLine)) {
+                if (!nextCharIsEscaped && (predicate(nextChar) || nextCharIsNewLine && options.BreakOnNewLine)) {
 
                     if (options.ConsumeDelimiter) {
 
