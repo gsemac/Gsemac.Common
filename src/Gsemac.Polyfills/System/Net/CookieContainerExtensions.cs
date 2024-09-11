@@ -37,7 +37,10 @@ namespace Gsemac.Polyfills.System.Net {
 
                 var item = domainTable[key]; // System.Net.PathList
 
-                PropertyInfo valuesPropertyInfo = item.GetType().GetProperty("Values", BindingFlags.NonPublic | BindingFlags.GetProperty | BindingFlags.Instance);
+                // The "Values" property is public in .NET Framework 4.0, but is changed to internal in newer versions.
+
+                PropertyInfo valuesPropertyInfo = item.GetType().GetProperty("Values",
+                  BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.GetProperty | BindingFlags.Instance);
 
                 if (valuesPropertyInfo is null)
                     continue;
