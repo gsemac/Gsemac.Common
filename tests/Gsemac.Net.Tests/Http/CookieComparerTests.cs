@@ -79,6 +79,16 @@ namespace Gsemac.Net.Http.Tests {
 
         }
         [TestMethod]
+        public void TestEqualsWithCookiesWithEqualDomainsWithDot() {
+
+            Cookie x = new("name", "value", "/", ".example.com");
+            Cookie y = new("name", "value", "/", "example.com");
+
+            Assert.IsTrue(new CookieComparer().Equals(x, y));
+            Assert.IsTrue(new CookieComparer().Equals(y, x));
+
+        }
+        [TestMethod]
         public void TestEqualsWithCookiesWithNamesInDifferentCase() {
 
             // Name comparisons are case-sensitive.

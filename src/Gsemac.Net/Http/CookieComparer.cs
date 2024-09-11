@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Gsemac.Core;
+using System;
 using System.Collections.Generic;
 using System.Net;
 
@@ -10,39 +11,55 @@ namespace Gsemac.Net.Http {
 
         public int Compare(Cookie x, Cookie y) {
 
+            // Cookies are sorted by domain > name > path > timestamp.
+
             int nullityComparisonResult = CompareNullity(x, y);
 
             if (nullityComparisonResult != 0)
                 return nullityComparisonResult;
-
-            int nameComparisonResult = CompareNames(x, y);
-
-            if (nameComparisonResult != 0)
-                return nameComparisonResult;
 
             int domainComparisonResult = CompareDomains(x, y);
 
             if (domainComparisonResult != 0)
                 return domainComparisonResult;
 
+            int nameComparisonResult = CompareNames(x, y);
+
+            if (nameComparisonResult != 0)
+                return nameComparisonResult;
+
             int pathComparisonResult = ComparePaths(x, y);
 
             if (pathComparisonResult != 0)
                 return pathComparisonResult;
 
-            return 0;
+            return x.TimeStamp.CompareTo(y.TimeStamp);
 
         }
         public bool Equals(Cookie x, Cookie y) {
-            return Compare(x, y) == 0;
+            return GetHashCode(x).Equals(GetHashCode(y));
         }
 
         public int GetHashCode(Cookie obj) {
-            return EqualityComparer<Cookie>.Default.GetHashCode(obj);
+
+            // Two cookies are considered equal if they have the same name, domain, and path.
+
+            if (obj is null)
+                return EqualityComparer<Cookie>.Default.GetHashCode(obj);
+
+            return new HashCodeBuilder()
+                .WithValue(StringComparer.OrdinalIgnoreCase.GetHashCode(NormalizeDomain(obj.Domain)))
+                .WithValue(StringComparer.Ordinal.GetHashCode(obj.Name))
+                .WithValue(StringComparer.OrdinalIgnoreCase.GetHashCode(obj.Path))
+                .GetHashCode();
+
         }
 
         // Private members
 
+        private static string NormalizeDomain(string domain) {
+            return HttpUtilities.NormalizeCookieDomain(domain);
+        }
         private static int CompareNullity(Cookie x, Cookie y) {
 
             if (x is null && y is null)
@@ -72,8 +89,8 @@ namespace Gsemac.Net.Http {
             // Per RFC 6265, the leading dot is ignored when comparing domains.
             // Domain comparisons are also not case-sensitive.
 
-            string domainX = x?.Domain?.TrimStart('.') ?? string.Empty;
-            string domainY = y?.Domain?.TrimStart('.') ?? string.Empty;
+            string domainX = NormalizeDomain(x.Domain);
+            string domainY = NormalizeDomain(y.Domain);
 
             return StringComparer.OrdinalIgnoreCase.Compare(domainX, domainY);
 
