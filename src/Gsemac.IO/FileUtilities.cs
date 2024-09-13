@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using System.Security.Cryptography;
 using System.Threading;
 
@@ -102,6 +103,37 @@ namespace Gsemac.IO {
                 return string.Format("{0:0." + fractionPartFormatting + "} {1}", adjustedBytes, suffixes[order]);
 
             }
+
+        }
+
+        public static bool Exists(string filePath) {
+            return File.Exists(filePath);
+        }
+        public static bool Exists(string filePath, bool ignoreFileExension) {
+
+            if (string.IsNullOrWhiteSpace(filePath))
+                return false;
+
+            if (!ignoreFileExension)
+                return Exists(filePath);
+
+            if (File.Exists(filePath))
+                return true;
+
+            string fullFilePath = Path.GetFullPath(filePath);
+            string parentDirectoryPath = Path.GetDirectoryName(fullFilePath);
+            string fileName = Path.GetFileNameWithoutExtension(fullFilePath);
+
+            if (string.IsNullOrWhiteSpace(parentDirectoryPath) || !Directory.Exists(parentDirectoryPath))
+                return false;
+
+            DirectoryInfo parentDirectoryInfo = new DirectoryInfo(parentDirectoryPath);
+
+            string foundFilePath = parentDirectoryInfo
+                .EnumerateFiles($"{fileName}.*", SearchOption.TopDirectoryOnly)
+                .FirstOrDefault().FullName ?? string.Empty;
+
+            return !string.IsNullOrWhiteSpace(foundFilePath);
 
         }
 
