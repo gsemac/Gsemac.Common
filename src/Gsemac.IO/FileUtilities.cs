@@ -131,7 +131,7 @@ namespace Gsemac.IO {
 
             string foundFilePath = parentDirectoryInfo
                 .EnumerateFiles($"{fileName}.*", SearchOption.TopDirectoryOnly)
-                .FirstOrDefault().FullName ?? string.Empty;
+                .FirstOrDefault()?.FullName ?? string.Empty;
 
             return !string.IsNullOrWhiteSpace(foundFilePath);
 
