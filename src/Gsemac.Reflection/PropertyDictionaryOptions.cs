@@ -2,12 +2,17 @@
 
 namespace Gsemac.Reflection {
 
-    [Flags]
-    public enum PropertyDictionaryOptions {
-        None = 0,
-        SkipReadOnlyProperties = 1,
-        IncludeNestedProperties = 2,
-        Default = None,
+    public sealed class PropertyDictionaryOptions :
+        IPropertyDictionaryOptions {
+
+        // Public members
+
+        public bool SkipReadOnlyProperties { get; set; } = false;
+        public bool IncludeNestedProperties { get; set; } = false;
+        public StringComparer StringComparer { get; } = StringComparer.Ordinal;
+
+        public static PropertyDictionaryOptions Default => new PropertyDictionaryOptions();
+
     }
 
 }

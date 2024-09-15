@@ -22,7 +22,13 @@ namespace Gsemac.Reflection {
         public int Count => Keys.Count;
         public bool IsReadOnly => false;
 
-        public PropertyDictionary(object obj, PropertyDictionaryOptions options = PropertyDictionaryOptions.Default) {
+        public PropertyDictionary(object obj) :
+            this(obj, PropertyDictionaryOptions.Default) {
+        }
+        public PropertyDictionary(object obj, IPropertyDictionaryOptions options) {
+
+            if (options is null)
+                throw new ArgumentNullException(nameof(options));
 
             baseObject = obj;
             this.options = options;
@@ -215,7 +221,7 @@ namespace Gsemac.Reflection {
         }
 
         private readonly object baseObject;
-        private readonly PropertyDictionaryOptions options;
+        private readonly IPropertyDictionaryOptions options;
         private readonly object propertyCacheMutex = new object();
         private IDictionary<string, ObjectPropertyPair> propertyCache;
         private int propertyCacheDepth = 0;
@@ -259,14 +265,14 @@ namespace Gsemac.Reflection {
 
         }
 
-        private static IDictionary<string, ObjectPropertyPair> CreatePropertyCache(object obj, Type type, int maxDepth, PropertyDictionaryOptions options) {
+        private static IDictionary<string, ObjectPropertyPair> CreatePropertyCache(object obj, Type type, int maxDepth, IPropertyDictionaryOptions options) {
+
+            IDictionary<string, ObjectPropertyPair> propertyCache = new Dictionary<string, ObjectPropertyPair>(options.StringComparer ?? StringComparer.Ordinal);
+
+            if (maxDepth <= 0 || obj is null)
+                return propertyCache;
 
             BindingFlags bindingFlags = BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static | BindingFlags.DeclaredOnly;
-
-            IDictionary<string, ObjectPropertyPair> propertyCache = new Dictionary<string, ObjectPropertyPair>();
-
-            if (maxDepth <= 0)
-                return propertyCache;
 
             foreach (PropertyInfo propertyInfo in type.GetProperties(bindingFlags)) {
 
@@ -275,10 +281,10 @@ namespace Gsemac.Reflection {
 
                 bool propertyTypeIsObject = !propertyType.IsBuiltIn();
 
-                if (propertyInfo.CanWrite || !options.HasFlag(PropertyDictionaryOptions.SkipReadOnlyProperties))
+                if (propertyInfo.CanWrite || !options.SkipReadOnlyProperties)
                     propertyCache[propertyKey] = new ObjectPropertyPair(obj, propertyInfo);
 
-                if (propertyTypeIsObject && options.HasFlag(PropertyDictionaryOptions.IncludeNestedProperties)) {
+                if (propertyTypeIsObject && options.IncludeNestedProperties) {
 
                     var childPropertyDict = CreatePropertyCache(obj is null ? null : propertyInfo.GetValue(obj, null), propertyType, maxDepth - 1, options);
 
