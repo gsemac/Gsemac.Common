@@ -9,9 +9,9 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 
-namespace Gsemac.IO.Compression.Winrar {
+namespace Gsemac.IO.Compression.WinRar {
 
-    internal sealed class WinrarExeArchive :
+    internal sealed class WinRarExeArchive :
         DeferredCreationArchiveBase {
 
         // Public members
@@ -25,7 +25,7 @@ namespace Gsemac.IO.Compression.Winrar {
             set => compressionLevel = value;
         }
 
-        public WinrarExeArchive(Stream stream, string winrarDirectoryPath, IFileFormat archiveFormat, IArchiveOptions options) :
+        public WinRarExeArchive(Stream stream, string winrarDirectoryPath, IFileFormat archiveFormat, IArchiveOptions options) :
             base(options) {
 
             if (stream is null)
@@ -261,7 +261,7 @@ namespace Gsemac.IO.Compression.Winrar {
         }
         private string GetWinrarExecutablePath() {
 
-            string executablePath = WinrarUtilities.GetWinrarExecutablePath(winrarDirectoryPath);
+            string executablePath = WinRarUtilities.GetWinRarExecutablePath(winrarDirectoryPath);
 
             if (!File.Exists(executablePath))
                 throw new FileNotFoundException(Properties.ExceptionMessages.WinrarExecutableNotFound, executablePath);

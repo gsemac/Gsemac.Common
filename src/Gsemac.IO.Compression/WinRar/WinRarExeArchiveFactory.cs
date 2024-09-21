@@ -6,19 +6,19 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
-namespace Gsemac.IO.Compression.Winrar {
+namespace Gsemac.IO.Compression.WinRar {
 
-    [RequiresWinrarExe]
-    public class WinrarExeArchiveFactory :
+    [RequiresWinRarExe]
+    public class WinRarExeArchiveFactory :
         PluginBase,
         IArchiveFactory {
 
         // Public members
 
-        public WinrarExeArchiveFactory() :
-            this(WinrarExeArchiveFactoryOptions.Default) {
+        public WinRarExeArchiveFactory() :
+            this(WinRarExeArchiveFactoryOptions.Default) {
         }
-        public WinrarExeArchiveFactory(IWinrarExeArchiveFactoryOptions options) {
+        public WinRarExeArchiveFactory(IWinRarExeArchiveFactoryOptions options) {
 
             if (options is null)
                 throw new ArgumentNullException(nameof(options));
@@ -32,8 +32,8 @@ namespace Gsemac.IO.Compression.Winrar {
             // While WinRAR supports numerous archive formats, the command-line programs ("Rar.exe" and "UnRAR.exe") only support RAR archives.
             // As well, only the former is capable of writing to archives.
 
-            bool canWrite = WinrarUtilities.GetWinrarExecutablePath(options.WinrarDirectoryPath)
-                .EndsWith(WinrarUtilities.WinrarExecutableFileName);
+            bool canWrite = WinRarUtilities.GetWinRarExecutablePath(options.WinRarDirectoryPath)
+                .EndsWith(WinRarUtilities.WinRarExecutableFileName);
 
             return new IFileFormat[] {
                 ArchiveFormat.Rar,
@@ -58,13 +58,13 @@ namespace Gsemac.IO.Compression.Winrar {
             if (!this.IsSupportedFileFormat(archiveFormat))
                 throw new UnsupportedFileFormatException(archiveFormat);
 
-            return new WinrarExeArchive(stream, options.WinrarDirectoryPath, archiveFormat, archiveOptions);
+            return new WinRarExeArchive(stream, options.WinRarDirectoryPath, archiveFormat, archiveOptions);
 
         }
 
         // Private members
 
-        private readonly IWinrarExeArchiveFactoryOptions options;
+        private readonly IWinRarExeArchiveFactoryOptions options;
 
     }
 
