@@ -10,7 +10,9 @@ namespace Gsemac.Reflection.Tests {
         [TestMethod]
         public void TestSetPropertyValueWithClassWithRecursiveProperties() {
 
-            IPropertyDictionary dict = new PropertyDictionary(new ClassWithRecursiveProperties(), PropertyDictionaryOptions.IncludeNestedProperties);
+            IPropertyDictionary dict = new PropertyDictionary(new ClassWithRecursiveProperties(), new PropertyDictionaryOptions {
+                IncludeNestedProperties = true,
+            });
 
             dict["A.X"] = 5;
 
@@ -29,7 +31,9 @@ namespace Gsemac.Reflection.Tests {
         [TestMethod]
         public void TestUpdateObjectPropertyValue() {
 
-            IPropertyDictionary dict = new PropertyDictionary(new ClassWithRecursiveProperties(), PropertyDictionaryOptions.IncludeNestedProperties);
+            IPropertyDictionary dict = new PropertyDictionary(new ClassWithRecursiveProperties(), new PropertyDictionaryOptions {
+                IncludeNestedProperties = true,
+            });
 
             dict["B"] = new ClassWithRecursiveProperties() {
                 A = new ClassWithProperties() {
@@ -46,7 +50,9 @@ namespace Gsemac.Reflection.Tests {
         [TestMethod]
         public void TestContainsKeyWithClassWithRecursiveProperties() {
 
-            IPropertyDictionary dict = new PropertyDictionary(new ClassWithRecursiveProperties(), PropertyDictionaryOptions.IncludeNestedProperties);
+            IPropertyDictionary dict = new PropertyDictionary(new ClassWithRecursiveProperties(), new PropertyDictionaryOptions {
+                IncludeNestedProperties = true,
+            });
 
             Assert.IsTrue(dict.ContainsKey("B.B.B"));
 
