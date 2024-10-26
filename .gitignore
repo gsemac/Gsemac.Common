@@ -345,3 +345,4 @@ healthchecksdb
 # Ignore test projects.
 ConsoleApp*/
 WindowsFormsApp*/
+WinFormsApp*/
