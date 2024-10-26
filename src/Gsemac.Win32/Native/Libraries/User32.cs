@@ -72,6 +72,11 @@ namespace Gsemac.Win32.Native {
             return SendMessageNative(hWnd, wMsg, wParam, ref lParam);
 
         }
+        public static IntPtr SendMessage(IntPtr hWnd, int wMsg, IntPtr wParam, string lParam) {
+
+            return SendMessageNative(hWnd, wMsg, wParam, lParam);
+
+        }
         public static bool SetForegroundWindow(IntPtr hWnd) {
 
             return SetForegroundWindowNative(hWnd);
@@ -124,6 +129,8 @@ namespace Gsemac.Win32.Native {
         private static extern IntPtr ReleaseDCNative(IntPtr hWnd, IntPtr hdc);
         [DllImport("user32", EntryPoint = "SendMessage", SetLastError = true)]
         private static extern IntPtr SendMessageNative(IntPtr hWnd, int wMsg, IntPtr wParam, IntPtr lParam);
+        [DllImport("user32", EntryPoint = "SendMessage", CharSet = CharSet.Unicode, SetLastError = true)]
+        private static extern IntPtr SendMessageNative(IntPtr hWnd, int wMsg, IntPtr wParam, string lParam);
         [DllImport("user32", EntryPoint = "SetForegroundWindow", SetLastError = true)]
         private static extern bool SetForegroundWindowNative(IntPtr hWnd);
         [DllImport("user32", EntryPoint = "SetProcessDPIAware", SetLastError = true)]
