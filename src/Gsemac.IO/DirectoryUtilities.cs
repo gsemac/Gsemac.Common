@@ -6,7 +6,7 @@ using System.Linq;
 namespace Gsemac.IO {
 
     public static class DirectoryUtilities {
-
+        
         // Public members
 
         public static bool TryCreateDirectory(string directoryPath) {
@@ -49,7 +49,7 @@ namespace Gsemac.IO {
             return !Directory.EnumerateFileSystemEntries(directoryPath).Any();
 
         }
-        public static bool HasSubdirectories(string directoryPath) {
+        public static bool ContainsDirectories(string directoryPath) {
 
             if (string.IsNullOrWhiteSpace(directoryPath) || !Directory.Exists(directoryPath))
                 return false;
@@ -85,6 +85,17 @@ namespace Gsemac.IO {
                 return false;
 
             }
+
+        }
+        public static int GetFileCount(string directoryPath) {
+            return GetFileCount(directoryPath, SearchOption.TopDirectoryOnly);
+        }
+        public static int GetFileCount(string directoryPath, SearchOption searchOption) {
+
+            if (!Directory.Exists(directoryPath))
+                return 0;
+
+            return Directory.EnumerateFiles(directoryPath, "*", searchOption).Count();
 
         }
 
