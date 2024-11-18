@@ -1,6 +1,4 @@
 ﻿using System;
-using System.IO;
-using System.Linq;
 
 namespace Gsemac.Net.Curl {
 
@@ -8,13 +6,13 @@ namespace Gsemac.Net.Curl {
 
         // Public members
 
-        public static bool IsInitialized => globalInitRefCount > 0;
-
         public static CurlCode GlobalInit(CurlGlobal flags = CurlGlobal.Default) {
 
             lock (globalInitMutex) {
 
-                // curl_global_init is reference counted, but I do manual reference counting in order to implement IsInitialized.
+                // Note that "curl_global_init" is already reference counted since version 7.19.0.
+                // However, I ran into an issue where repeated calls to "curl_global_cleanup" would cause a crash.
+                // We'll do manual reference counting just to be safe.
 
                 ++globalInitRefCount;
 

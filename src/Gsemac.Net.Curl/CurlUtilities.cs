@@ -14,11 +14,44 @@ namespace Gsemac.Net.Curl {
         public static string CurlExecutablePath => curlExecutablePath.Value;
         public static string LibCurlPath => libCurlPath.Value;
 
+        public static void InitializeCurl() {
+
+            lock (globalInitMutex) {
+
+                if (isInitialized)
+                    return;
+
+                LibCurl.GlobalInit();
+
+                isInitialized = true;
+
+            }
+
+        }
+        public static void DeinitializeCurl() {
+
+            lock (globalInitMutex) {
+
+                if (isInitialized) {
+
+                    LibCurl.GlobalCleanup();
+
+                    isInitialized = false;
+
+                }
+
+            }
+
+        }
+
+        // Private members
+
         private static readonly Lazy<string> caBundlePath = new Lazy<string>(() => ResolveFile("curl-ca-bundle.crt"));
         private static readonly Lazy<string> curlExecutablePath = new Lazy<string>(() => ResolveFile("curl.exe"));
         private static readonly Lazy<string> libCurlPath = new Lazy<string>(() => ResolveFile(Environment.Is64BitProcess ? "libcurl-x64.dll" : "libcurl.dll"));
 
-        // Private members
+        private static readonly object globalInitMutex = new object();
+        private static bool isInitialized = false;
 
         private static IEnumerable<IFileSystemAssemblyResolver> GetAssemblyResolvers() {
 
@@ -36,9 +69,9 @@ namespace Gsemac.Net.Curl {
             };
 
         }
-        private static string ResolveFile(string filename) {
+        private static string ResolveFile(string fileName) {
 
-            return GetAssemblyResolvers().Select(resolver => resolver.GetAssemblyPath(filename))
+            return GetAssemblyResolvers().Select(resolver => resolver.GetAssemblyPath(fileName))
                 .Where(path => File.Exists(path))
                 .FirstOrDefault();
 
