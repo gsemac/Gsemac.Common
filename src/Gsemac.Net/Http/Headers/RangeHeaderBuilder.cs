@@ -75,7 +75,10 @@ namespace Gsemac.Net.Http.Headers {
 
         private string GetRangeSpecifier(string range) {
 
-            Match rangeSpecifierMatch = Regex.Match(@"^([^=]+?)=", range);
+            if (string.IsNullOrWhiteSpace(range))
+                return string.Empty;
+
+            Match rangeSpecifierMatch = Regex.Match(range, @"^([^=]+?)=");
 
             if (rangeSpecifierMatch.Success)
                 return rangeSpecifierMatch.Groups[1].Value;

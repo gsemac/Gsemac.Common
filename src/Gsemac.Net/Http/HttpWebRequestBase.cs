@@ -136,7 +136,7 @@ namespace Gsemac.Net.Http {
         public void AddRange(long range) => AddRange("bytes", range);
         public void AddRange(string rangeSpecifier, long from, long to) {
 
-            Headers[HttpRequestHeader.Range] = new RangeHeaderBuilder(Headers[HttpRequestHeader.Range])
+            Headers[HttpRequestHeader.Range] = CreateRangeHeaderBuilder()
                 .AddRange(rangeSpecifier, from, to)
                 .ToString();
 
@@ -144,7 +144,7 @@ namespace Gsemac.Net.Http {
         public void AddRange(string rangeSpecifier, int range) => AddRange(rangeSpecifier, (long)range);
         public void AddRange(string rangeSpecifier, long range) {
 
-            Headers[HttpRequestHeader.Range] = new RangeHeaderBuilder(Headers[HttpRequestHeader.Range])
+            Headers[HttpRequestHeader.Range] = CreateRangeHeaderBuilder()
                 .AddRange(rangeSpecifier, range)
                 .ToString();
 
@@ -239,6 +239,15 @@ namespace Gsemac.Net.Http {
                 Headers[header] = date.ToUniversalTime().ToString("r");
 
             }
+
+        }
+        private IRangeHeaderBuilder CreateRangeHeaderBuilder() {
+
+            string existingRangeHeader = Headers[HttpRequestHeader.Range];
+
+            return string.IsNullOrWhiteSpace(existingRangeHeader) ?
+                new RangeHeaderBuilder() :
+                new RangeHeaderBuilder(existingRangeHeader);
 
         }
 
