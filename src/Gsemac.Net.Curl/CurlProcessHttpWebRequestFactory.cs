@@ -5,8 +5,8 @@ using System;
 
 namespace Gsemac.Net.Curl {
 
-    public class CurlProcessHttpWebRequestFactory :
-        IHttpWebRequestFactory {
+    public sealed class CurlProcessHttpWebRequestFactory :
+        ICurlHttpWebRequestFactory {
 
         // Public members
 

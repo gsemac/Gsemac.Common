@@ -11,7 +11,7 @@
         public CurlWebClient(ICurlWebRequestOptions curlOptions) :
            base(new CurlHttpWebRequestFactory(curlOptions)) {
         }
-        public CurlWebClient(CurlHttpWebRequestFactory webRequestFactory) :
+        public CurlWebClient(ICurlHttpWebRequestFactory webRequestFactory) :
             base(webRequestFactory) {
         }
 

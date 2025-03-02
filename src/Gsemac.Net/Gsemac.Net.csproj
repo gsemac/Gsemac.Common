@@ -55,4 +55,10 @@
 		</Compile>
 	</ItemGroup>
 
+	<ItemGroup>
+		<AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
+			<_Parameter1>Gsemac.Net.Curl</_Parameter1>
+		</AssemblyAttribute>
+	</ItemGroup>
+
 </Project>
