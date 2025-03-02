@@ -1,5 +1,6 @@
 ﻿using Gsemac.IO;
 using Gsemac.IO.Extensions;
+using Gsemac.Net.Curl.Native;
 using Gsemac.Net.Extensions;
 using Gsemac.Net.Http;
 using Gsemac.Net.Http.Headers;

@@ -19,10 +19,10 @@ namespace Gsemac.IO.Compression.Tests.IntegrationTests {
 
         [TestMethod]
         [DataRow(null, "archive.zip")]
-        [DataRow(typeof(SevenZipExeArchiveFactory), "archive.7z")]
-        [DataRow(typeof(SevenZipExeArchiveFactory), "archive.zip")]
+        [DataRow(typeof(SevenZipProcessArchiveFactory), "archive.7z")]
+        [DataRow(typeof(SevenZipProcessArchiveFactory), "archive.zip")]
         [DataRow(typeof(SystemIOCompressionArchiveFactory), "archive.zip")]
-        [DataRow(typeof(WinRarExeArchiveFactory), "archive.rar")]
+        [DataRow(typeof(WinRarProcessArchiveFactory), "archive.rar")]
         [DataRow(typeof(ZipStorerArchiveFactory), "archive.zip")]
         public void TestReadingEntriesFromArchive(Type archiveFactoryType, string archiveFilePath) {
 
@@ -41,10 +41,10 @@ namespace Gsemac.IO.Compression.Tests.IntegrationTests {
         }
         [TestMethod]
         [DataRow(null, "archive.zip")]
-        [DataRow(typeof(SevenZipExeArchiveFactory), "archive.7z")]
-        [DataRow(typeof(SevenZipExeArchiveFactory), "archive.zip")]
+        [DataRow(typeof(SevenZipProcessArchiveFactory), "archive.7z")]
+        [DataRow(typeof(SevenZipProcessArchiveFactory), "archive.zip")]
         [DataRow(typeof(SystemIOCompressionArchiveFactory), "archive.zip")]
-        [DataRow(typeof(WinRarExeArchiveFactory), "archive.rar")]
+        [DataRow(typeof(WinRarProcessArchiveFactory), "archive.rar")]
         [DataRow(typeof(ZipStorerArchiveFactory), "archive.zip")]
         public void TestReadingEntriesFromArchivePreservesArchiveIntegrity(Type archiveFactoryType, string archiveFilePath) {
 
@@ -76,10 +76,10 @@ namespace Gsemac.IO.Compression.Tests.IntegrationTests {
 
         [TestMethod]
         [DataRow(null, "archive.zip")]
-        [DataRow(typeof(SevenZipExeArchiveFactory), "archive.7z")]
-        [DataRow(typeof(SevenZipExeArchiveFactory), "archive.zip")]
+        [DataRow(typeof(SevenZipProcessArchiveFactory), "archive.7z")]
+        [DataRow(typeof(SevenZipProcessArchiveFactory), "archive.zip")]
         [DataRow(typeof(SystemIOCompressionArchiveFactory), "archive.zip")]
-        [DataRow(typeof(WinRarExeArchiveFactory), "archive.rar")]
+        [DataRow(typeof(WinRarProcessArchiveFactory), "archive.rar")]
         [DataRow(typeof(ZipStorerArchiveFactory), "archive.zip")]
         public void TestAddingEntriesToNewArchive(Type archiveFactoryType, string archiveFilePath) {
 
@@ -137,10 +137,10 @@ namespace Gsemac.IO.Compression.Tests.IntegrationTests {
         }
         [TestMethod]
         [DataRow(null, "archive.zip")]
-        [DataRow(typeof(SevenZipExeArchiveFactory), "archive.7z")]
-        [DataRow(typeof(SevenZipExeArchiveFactory), "archive.zip")]
+        [DataRow(typeof(SevenZipProcessArchiveFactory), "archive.7z")]
+        [DataRow(typeof(SevenZipProcessArchiveFactory), "archive.zip")]
         [DataRow(typeof(SystemIOCompressionArchiveFactory), "archive.zip")]
-        [DataRow(typeof(WinRarExeArchiveFactory), "archive.rar")]
+        [DataRow(typeof(WinRarProcessArchiveFactory), "archive.rar")]
         [DataRow(typeof(ZipStorerArchiveFactory), "archive.zip")]
         public void TestAddingEntriesWithSubDirectoriesToNewArchive(Type archiveFactoryType, string archiveFilePath) {
 
@@ -208,10 +208,10 @@ namespace Gsemac.IO.Compression.Tests.IntegrationTests {
         }
         [TestMethod]
         [DataRow(null, "archive.zip")]
-        [DataRow(typeof(SevenZipExeArchiveFactory), "archive.7z")]
-        [DataRow(typeof(SevenZipExeArchiveFactory), "archive.zip")]
+        [DataRow(typeof(SevenZipProcessArchiveFactory), "archive.7z")]
+        [DataRow(typeof(SevenZipProcessArchiveFactory), "archive.zip")]
         [DataRow(typeof(SystemIOCompressionArchiveFactory), "archive.zip")]
-        [DataRow(typeof(WinRarExeArchiveFactory), "archive.rar")]
+        [DataRow(typeof(WinRarProcessArchiveFactory), "archive.rar")]
         [DataRow(typeof(ZipStorerArchiveFactory), "archive.zip")]
         public void TestAddingEntriesWithUtf8CharactersToNewArchive(Type archiveFactoryType, string archiveFilePath) {
 
@@ -269,10 +269,10 @@ namespace Gsemac.IO.Compression.Tests.IntegrationTests {
         }
         [TestMethod]
         [DataRow(null, "archive.zip")]
-        [DataRow(typeof(SevenZipExeArchiveFactory), "archive.7z")]
-        [DataRow(typeof(SevenZipExeArchiveFactory), "archive.zip")]
+        [DataRow(typeof(SevenZipProcessArchiveFactory), "archive.7z")]
+        [DataRow(typeof(SevenZipProcessArchiveFactory), "archive.zip")]
         [DataRow(typeof(SystemIOCompressionArchiveFactory), "archive.zip")]
-        [DataRow(typeof(WinRarExeArchiveFactory), "archive.rar")]
+        [DataRow(typeof(WinRarProcessArchiveFactory), "archive.rar")]
         [DataRow(typeof(ZipStorerArchiveFactory), "archive.zip")]
         public void TestAddingEntriesToExistingArchive(Type archiveFactoryType, string archiveFilePath) {
 
@@ -333,10 +333,10 @@ namespace Gsemac.IO.Compression.Tests.IntegrationTests {
         }
         [TestMethod]
         [DataRow(null, "archive.zip")]
-        [DataRow(typeof(SevenZipExeArchiveFactory), "archive.7z")]
-        [DataRow(typeof(SevenZipExeArchiveFactory), "archive.zip")]
+        [DataRow(typeof(SevenZipProcessArchiveFactory), "archive.7z")]
+        [DataRow(typeof(SevenZipProcessArchiveFactory), "archive.zip")]
         [DataRow(typeof(SystemIOCompressionArchiveFactory), "archive.zip")]
-        [DataRow(typeof(WinRarExeArchiveFactory), "archive.rar")]
+        [DataRow(typeof(WinRarProcessArchiveFactory), "archive.rar")]
         [DataRow(typeof(ZipStorerArchiveFactory), "archive.zip")]
         public void TestOverwritingEntriesInExistingArchive(Type archiveFactoryType, string archiveFilePath) {
 
@@ -402,10 +402,10 @@ namespace Gsemac.IO.Compression.Tests.IntegrationTests {
         }
         [TestMethod]
         [DataRow(null, "archive.zip")]
-        [DataRow(typeof(SevenZipExeArchiveFactory), "archive.7z")]
-        [DataRow(typeof(SevenZipExeArchiveFactory), "archive.zip")]
+        [DataRow(typeof(SevenZipProcessArchiveFactory), "archive.7z")]
+        [DataRow(typeof(SevenZipProcessArchiveFactory), "archive.zip")]
         [DataRow(typeof(SystemIOCompressionArchiveFactory), "archive.zip")]
-        [DataRow(typeof(WinRarExeArchiveFactory), "archive.rar")]
+        [DataRow(typeof(WinRarProcessArchiveFactory), "archive.rar")]
         [DataRow(typeof(ZipStorerArchiveFactory), "archive.zip")]
         public void TestDeletingEntriesFromNewArchive(Type archiveFactoryType, string archiveFilePath) {
 
@@ -472,10 +472,10 @@ namespace Gsemac.IO.Compression.Tests.IntegrationTests {
         }
         [TestMethod]
         [DataRow(null, "archive.zip")]
-        [DataRow(typeof(SevenZipExeArchiveFactory), "archive.7z")]
-        [DataRow(typeof(SevenZipExeArchiveFactory), "archive.zip")]
+        [DataRow(typeof(SevenZipProcessArchiveFactory), "archive.7z")]
+        [DataRow(typeof(SevenZipProcessArchiveFactory), "archive.zip")]
         [DataRow(typeof(SystemIOCompressionArchiveFactory), "archive.zip")]
-        [DataRow(typeof(WinRarExeArchiveFactory), "archive.rar")]
+        [DataRow(typeof(WinRarProcessArchiveFactory), "archive.rar")]
         [DataRow(typeof(ZipStorerArchiveFactory), "archive.zip")]
         public void TestDeletingEntriesFromExistingArchive(Type archiveFactoryType, string archiveFilePath) {
 

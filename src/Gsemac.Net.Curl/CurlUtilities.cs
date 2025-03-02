@@ -1,4 +1,5 @@
-﻿using Gsemac.Reflection;
+﻿using Gsemac.Net.Curl.Native;
+using Gsemac.Reflection;
 using System;
 using System.Collections.Generic;
 using System.IO;

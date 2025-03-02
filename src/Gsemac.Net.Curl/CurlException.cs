@@ -1,4 +1,5 @@
-﻿using Gsemac.Net.Curl.Properties;
+﻿using Gsemac.Net.Curl.Native;
+using Gsemac.Net.Curl.Properties;
 using System;
 using System.Text;
 
