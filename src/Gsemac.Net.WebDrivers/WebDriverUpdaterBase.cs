@@ -186,7 +186,7 @@ namespace Gsemac.Net.WebDrivers {
 
                     logger.Info($"Extracting {filePathInArchive}");
 
-                    ArchiveUtilities.ExtractFile(downloadFilePath, filePathInArchive, webDriverExecutablePath);
+                    Archive.ExtractFile(downloadFilePath, filePathInArchive, webDriverExecutablePath);
 
                 }
                 catch (Exception ex) {

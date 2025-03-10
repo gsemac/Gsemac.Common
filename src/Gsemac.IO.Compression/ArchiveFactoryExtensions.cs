@@ -18,7 +18,7 @@ namespace Gsemac.IO.Compression {
             return archiveFactory.Open(stream, GetArchiveOptionsFromStream(stream));
 
         }
-        public static IArchive Open(this IArchiveFactory archiveFactory, Stream stream, IArchiveOptions archiveOptions) {
+        public static IArchive Open(this IArchiveFactory archiveFactory, Stream stream, IArchiveOptions options) {
 
             if (archiveFactory is null)
                 throw new ArgumentNullException(nameof(archiveFactory));
@@ -26,15 +26,15 @@ namespace Gsemac.IO.Compression {
             if (stream is null)
                 throw new ArgumentNullException(nameof(stream));
 
-            if (archiveOptions is null)
-                archiveOptions = GetArchiveOptionsFromStream(stream);
+            if (options is null)
+                options = GetArchiveOptionsFromStream(stream);
 
             stream = FileFormatFactory.Default.FromStream(stream, out IFileFormat archiveFormat);
 
-            return archiveFactory.Open(stream, archiveFormat, archiveOptions: archiveOptions);
+            return archiveFactory.Open(stream, archiveFormat, archiveOptions: options);
 
         }
-        public static IArchive Open(this IArchiveFactory archiveFactory, Stream stream, IFileFormat archiveFormat) {
+        public static IArchive Open(this IArchiveFactory archiveFactory, Stream stream, IFileFormat format) {
 
             if (archiveFactory is null)
                 throw new ArgumentNullException(nameof(archiveFactory));
@@ -42,10 +42,10 @@ namespace Gsemac.IO.Compression {
             if (stream is null)
                 throw new ArgumentNullException(nameof(stream));
 
-            if (archiveFormat is null)
-                stream = FileFormatFactory.Default.FromStream(stream, out archiveFormat);
+            if (format is null)
+                stream = FileFormatFactory.Default.FromStream(stream, out format);
 
-            return archiveFactory.Open(stream, archiveFormat, ArchiveOptions.Default);
+            return archiveFactory.Open(stream, format, ArchiveOptions.Default);
 
         }
 
@@ -54,7 +54,7 @@ namespace Gsemac.IO.Compression {
             if (archiveFactory is null)
                 throw new ArgumentNullException(nameof(archiveFactory));
 
-            return archiveFactory.Open(filePath, archiveOptions: null);
+            return archiveFactory.Open(filePath, options: null);
 
         }
         public static IArchive Open(this IArchiveFactory archiveFactory, string filePath, FileAccess fileAccess) {
@@ -67,29 +67,29 @@ namespace Gsemac.IO.Compression {
             });
 
         }
-        public static IArchive Open(this IArchiveFactory archiveFactory, string filePath, IArchiveOptions archiveOptions) {
+        public static IArchive Open(this IArchiveFactory archiveFactory, string filePath, IArchiveOptions options) {
 
             if (archiveFactory is null)
                 throw new ArgumentNullException(nameof(archiveFactory));
 
-            return archiveFactory.Open(filePath, null, archiveOptions);
+            return archiveFactory.Open(filePath, null, options);
 
         }
-        public static IArchive Open(this IArchiveFactory archiveFactory, string filePath, IFileFormat archiveFormat, IArchiveOptions archiveOptions) {
+        public static IArchive Open(this IArchiveFactory archiveFactory, string filePath, IFileFormat format, IArchiveOptions options) {
 
             if (archiveFactory is null)
                 throw new ArgumentNullException(nameof(archiveFactory));
 
-            if (archiveFormat is null)
-                archiveFormat = FileFormatFactory.Default.FromFileExtension(filePath);
+            if (format is null)
+                format = FileFormatFactory.Default.FromFileExtension(filePath);
 
-            FileAccess fileAccess = archiveOptions?.FileAccess ?? FileAccess.ReadWrite;
+            FileAccess fileAccess = options?.FileAccess ?? FileAccess.ReadWrite;
             FileMode fileMode = fileAccess == FileAccess.Read ? FileMode.Open : FileMode.OpenOrCreate;
             FileStream fileStream = new FileStream(filePath, fileMode, fileAccess);
 
             try {
 
-                return archiveFactory.Open(fileStream, archiveFormat, archiveOptions);
+                return archiveFactory.Open(fileStream, format, options);
 
             }
             catch {
