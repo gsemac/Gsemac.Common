@@ -484,7 +484,10 @@ namespace Gsemac.Forms {
             // Set the colors to their defaults before attempting to apply the stored colors.
             // This is so we can avoid changing the colors if they are already the defaults, which makes sure the ToolStripRenderer appears correctly.
 
-            control.BackColor = default;
+            // DataGrid is a special case where we can't set BackColor to default (Color.Empty).
+            // This is because it will throw an exception if we try to set BackColor to a color with transparency (ForeColor is unaffected).
+
+            control.BackColor = control is DataGrid ? SystemColors.Window : default;
             control.ForeColor = default;
 
             if (visualState.BackColor != control.BackColor)
