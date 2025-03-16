@@ -4,21 +4,19 @@ using System;
 
 namespace Gsemac.Net.Http {
 
-    internal sealed class RateLimitingRulePattern :
+    internal sealed class RateLimitRulePattern :
         IPatternMatcher {
 
         // Public members
 
-        public RateLimitingRulePattern(string pattern) {
-
+        public RateLimitRulePattern(string pattern) {
             this.pattern = pattern ?? string.Empty;
-
         }
 
         public bool IsMatch(string input) {
 
             // We will match all paths at the depth of the given endpoint and below.
-            // The scheme is ignored unless the endpoint pattern includes a scheme.
+            // The scheme is ignored unless the pattern includes a scheme.
 
             // "//example.com/" should match requests to "https://example.com/some/path"
             // "example.com/" should match requests to "https://example.com/some/path"
@@ -53,9 +51,11 @@ namespace Gsemac.Net.Http {
 
         }
         public IPatternMatch Match(string input) {
-
             throw new NotImplementedException();
+        }
 
+        public override string ToString() {
+            return pattern;
         }
 
         // Private members

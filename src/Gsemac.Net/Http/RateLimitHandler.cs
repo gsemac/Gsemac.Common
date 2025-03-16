@@ -11,25 +11,25 @@ using System.Threading;
 
 namespace Gsemac.Net.Http {
 
-    public class RateLimitingHandler :
+    public sealed class RateLimitHandler :
         HttpWebRequestHandler {
 
         // Public members
 
-        public bool AllowAutoRateLimit { get; set; } = false;
-        public TimeSpan MaximumDelayBetweenRequests { get; set; } = TimeSpan.MaxValue;
-        public ICollection<IRateLimitingRule> Rules => GetWrappedRules();
+        public bool AdaptiveRateLimitingEnabled { get; set; } = false;
+        public TimeSpan MaxDelayBetweenRequests { get; set; } = TimeSpan.MaxValue;
+        public ICollection<IRateLimitRule> Rules => GetWrappedRules();
 
-        public RateLimitingHandler() :
-            this(Enumerable.Empty<IRateLimitingRule>()) {
+        public RateLimitHandler() :
+            this(Enumerable.Empty<IRateLimitRule>()) {
         }
-        public RateLimitingHandler(ILogger logger) :
-           this(Enumerable.Empty<IRateLimitingRule>(), logger) {
+        public RateLimitHandler(ILogger logger) :
+           this(Enumerable.Empty<IRateLimitRule>(), logger) {
         }
-        public RateLimitingHandler(IEnumerable<IRateLimitingRule> rules) :
+        public RateLimitHandler(IEnumerable<IRateLimitRule> rules) :
             this(rules, Logger.Null) {
         }
-        public RateLimitingHandler(IEnumerable<IRateLimitingRule> rules, ILogger logger) {
+        public RateLimitHandler(IEnumerable<IRateLimitRule> rules, ILogger logger) {
 
             if (rules is null)
                 throw new ArgumentNullException(nameof(rules));
@@ -37,7 +37,7 @@ namespace Gsemac.Net.Http {
             if (logger is null)
                 throw new ArgumentNullException(nameof(logger));
 
-            this.logger = new NamedLogger(logger, nameof(RateLimitingHandler));
+            this.logger = new NamedLogger(logger, nameof(RateLimitHandler));
 
             this.rules.AddRange(rules.Select(rule => new RateLimitingRuleInfo(rule)));
 
@@ -109,7 +109,7 @@ namespace Gsemac.Net.Http {
             }
             catch (WebException ex) {
 
-                if (AllowAutoRateLimit && ex.Response is object && new HttpWebResponseAdapter(ex.Response).StatusCode == (HttpStatusCode)429) {
+                if (AdaptiveRateLimitingEnabled && ex.Response is object && new HttpWebResponseAdapter(ex.Response).StatusCode == (HttpStatusCode)429) {
 
                     // The server responded with "429 Too Many Requests".
 
@@ -122,7 +122,7 @@ namespace Gsemac.Net.Http {
                         matchingRules = GetMatchingRules(request.RequestUri).Where(info => !info.IsUserDefined);
 
                         // Only update rules if another request didn't beat us to it.
-                        // If there wasn't a rule defined before we entered the block, but now there is, it's already been initialized by another requset.
+                        // If there wasn't a rule defined before we entered the block, but now there is, it's already been initialized by another request.
 
                         bool autoRuleInitializedByDifferentRequest = !isAutoRuleAlreadyDefined && matchingRules.Any();
 
@@ -136,9 +136,9 @@ namespace Gsemac.Net.Http {
                                 string throttledEndpoint = request.RequestUri.GetLeftPart(UriPartial.Authority).TrimEnd('/') + "/";
 
                                 IPatternMatcher newRulePattern = new WildcardPattern(throttledEndpoint + "*");
-                                IRateLimitingRule newRule = new RateLimitingRule(newRulePattern, InitialAutomaticDelay);
+                                IRateLimitRule newRule = new RateLimitRule(newRulePattern, InitialAutomaticDelay);
 
-                                logger.Info($"Got status code 429, throttling ({newRule.TimePeriod.TotalMilliseconds:#.#}ms): {newRule.Pattern}");
+                                logger.Info($"Got status code 429, throttling ({newRule.TimeWindow.TotalMilliseconds:#.#}ms): {newRule.Pattern}");
 
                                 rules.Add(new RateLimitingRuleInfo(newRule) {
                                     IsUserDefined = false,
@@ -151,11 +151,11 @@ namespace Gsemac.Net.Http {
 
                                 foreach (RateLimitingRuleInfo autoRuleInfo in matchingRules) {
 
-                                    TimeSpan newDelay = ClampDelay(TimeSpan.FromMilliseconds(autoRuleInfo.Rule.TimePeriod.TotalMilliseconds * AutomaticDelayMultiplier), requestTimeout);
+                                    TimeSpan newDelay = ClampDelay(TimeSpan.FromMilliseconds(autoRuleInfo.Rule.TimeWindow.TotalMilliseconds * AutomaticDelayMultiplier), requestTimeout);
 
                                     logger.Info($"Got status code 429, throttling ({newDelay.TotalMilliseconds:#.#}ms): {autoRuleInfo.Rule.Pattern}");
 
-                                    autoRuleInfo.Rule = new RateLimitingRule(autoRuleInfo.Rule.Pattern, newDelay);
+                                    autoRuleInfo.Rule = new RateLimitRule(autoRuleInfo.Rule.Pattern, newDelay);
 
                                 }
 
@@ -168,7 +168,7 @@ namespace Gsemac.Net.Http {
                 }
 
                 // We will allow the exception to propagate without retrying the request.
-                // It's up to the client to retry the request with the new rate limit (e.g. with Retry.
+                // It's up to the client to retry the request with the new rate limit (e.g. with RetryHandler).
 
                 throw;
 
@@ -182,11 +182,11 @@ namespace Gsemac.Net.Http {
 
             // Public members
 
-            public IRateLimitingRule Rule { get; set; }
+            public IRateLimitRule Rule { get; set; }
             public DateTimeOffset LastRequestTime { get; set; } = DateTimeOffset.MinValue;
             public bool IsUserDefined { get; set; } = true;
 
-            public RateLimitingRuleInfo(IRateLimitingRule rule) {
+            public RateLimitingRuleInfo(IRateLimitRule rule) {
 
                 if (rule is null)
                     throw new ArgumentNullException(nameof(rule));
@@ -206,10 +206,10 @@ namespace Gsemac.Net.Http {
         private readonly ILogger logger;
         private static readonly Random randomSource = new Random();
 
-        private ICollection<IRateLimitingRule> GetWrappedRules() {
+        private ICollection<IRateLimitRule> GetWrappedRules() {
 
-            return new ConcurrentCollectionDecorator<IRateLimitingRule>(
-                new MappedCollectionDecorator<RateLimitingRuleInfo, IRateLimitingRule>(rules,
+            return new ConcurrentCollectionDecorator<IRateLimitRule>(
+                new MappedCollectionDecorator<RateLimitingRuleInfo, IRateLimitRule>(rules,
                 i => i.Rule,
                 i => new RateLimitingRuleInfo(i)), rulesMutex);
 
@@ -232,7 +232,7 @@ namespace Gsemac.Net.Http {
 
             return new[] {
                 delay,
-                MaximumDelayBetweenRequests,
+                MaxDelayBetweenRequests,
                 maximumTimeout
             }.Min();
 
@@ -244,7 +244,7 @@ namespace Gsemac.Net.Http {
 
             TimeSpan maxDelay = matchingRules
                 .Select(info => info.Rule)
-                .Select(rule => TimeSpan.FromMilliseconds(Math.Ceiling(rule.TimePeriod.TotalMilliseconds / rule.RequestsPerTimePeriod)))
+                .Select(rule => TimeSpan.FromMilliseconds(Math.Ceiling(rule.TimeWindow.TotalMilliseconds / rule.MaxRequests)))
                 .Max();
 
             return ClampDelay(maxDelay, maximumTimeout);

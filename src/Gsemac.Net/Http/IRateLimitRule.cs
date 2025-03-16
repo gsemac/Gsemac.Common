@@ -3,11 +3,11 @@ using System;
 
 namespace Gsemac.Net.Http {
 
-    public interface IRateLimitingRule {
+    public interface IRateLimitRule {
 
         IPatternMatcher Pattern { get; }
-        int RequestsPerTimePeriod { get; }
-        TimeSpan TimePeriod { get; }
+        int MaxRequests { get; }
+        TimeSpan TimeWindow { get; }
 
     }
 
