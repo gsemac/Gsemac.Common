@@ -17,7 +17,7 @@ namespace Gsemac.Data.ValueConversion.Tests {
         [TestMethod]
         public void TestConvertWithInvalidConversionThrowsException() {
 
-            Assert.ThrowsException<ArgumentException>(() => new TypeCastValueConverter<int>().Convert("hello"));
+            Assert.Throws<ArgumentException>(() => new TypeCastValueConverter<int>().Convert("hello"));
 
         }
 

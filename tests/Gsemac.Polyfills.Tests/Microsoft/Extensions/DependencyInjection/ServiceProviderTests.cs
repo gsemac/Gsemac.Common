@@ -92,7 +92,7 @@ namespace Gsemac.Polyfills.Microsoft.Extensions.DependencyInjection.Tests {
                 .AddTransient<MyServiceWithDependencies>()
                 .BuildServiceProvider();
 
-            Assert.ThrowsException<InvalidOperationException>(() => serviceProvider.GetService<MyServiceWithDependencies>());
+            Assert.Throws<InvalidOperationException>(() => serviceProvider.GetService<MyServiceWithDependencies>());
 
         }
         [TestMethod]
@@ -112,7 +112,7 @@ namespace Gsemac.Polyfills.Microsoft.Extensions.DependencyInjection.Tests {
                 .AddTransient<MyServiceWithMultipleConstructorsAndOptionalDependencies>()
                 .BuildServiceProvider();
 
-            Assert.IsTrue(serviceProvider.GetService<MyServiceWithMultipleConstructorsAndOptionalDependencies>().InvokedConstructorId == 2);
+            Assert.AreEqual(2, serviceProvider.GetService<MyServiceWithMultipleConstructorsAndOptionalDependencies>().InvokedConstructorId);
 
         }
         [TestMethod]
@@ -121,7 +121,7 @@ namespace Gsemac.Polyfills.Microsoft.Extensions.DependencyInjection.Tests {
             IServiceProvider serviceProvider = new ServiceCollection()
                 .BuildServiceProvider();
 
-            Assert.IsTrue(serviceProvider.GetService<MyServiceWithNoDependencies>() is null);
+            Assert.IsNull(serviceProvider.GetService<MyServiceWithNoDependencies>());
 
         }
         [TestMethod]
@@ -147,28 +147,23 @@ namespace Gsemac.Polyfills.Microsoft.Extensions.DependencyInjection.Tests {
         }
         [TestMethod]
         public void TestGetSingletonWithManualInstantiation() {
-
-            MyServiceWithNoDependencies myService = new();
+            var myService = new MyServiceWithNoDependencies();
 
             IServiceProvider serviceProvider = new ServiceCollection()
                 .AddSingleton<IMyService>(myService)
                 .BuildServiceProvider();
 
             Assert.IsTrue(serviceProvider.GetService<IMyService>().Equals(myService));
-
         }
         [TestMethod]
         public void TestGetSingletonWithFactoryFunctionIsInstantiatedOnlyOnce() {
-
             int instantiations = 0;
 
             IServiceProvider serviceProvider = new ServiceCollection()
                 .AddSingleton<IMyService>((sp) => {
-
                     ++instantiations;
 
                     return new MyServiceWithNoDependencies();
-
                 })
                 .BuildServiceProvider();
 
@@ -176,8 +171,7 @@ namespace Gsemac.Polyfills.Microsoft.Extensions.DependencyInjection.Tests {
             serviceProvider.GetRequiredService<IMyService>();
             serviceProvider.GetRequiredService<IMyService>();
 
-            Assert.AreEqual(instantiations, 1);
-
+            Assert.AreEqual(1, instantiations);
         }
         [TestMethod]
         public void TestGetTransientService() {
@@ -191,20 +185,18 @@ namespace Gsemac.Polyfills.Microsoft.Extensions.DependencyInjection.Tests {
         }
         [TestMethod]
         public void TestGetScopedService() {
-
             IServiceProvider serviceProvider = new ServiceCollection()
                 .AddScoped<IMyService, MyServiceWithNoDependencies>()
                 .BuildServiceProvider();
 
             IMyService rootScopedService = serviceProvider.GetService<IMyService>();
 
-            using IServiceScope scope = serviceProvider.CreateScope();
+            using (IServiceScope scope = serviceProvider.CreateScope()) {
+                IMyService scopedService = scope.ServiceProvider.GetService<IMyService>();
 
-            IMyService scopedService = scope.ServiceProvider.GetService<IMyService>();
-
-            Assert.IsTrue(scopedService.Equals(scope.ServiceProvider.GetService<IMyService>()));
-            Assert.IsFalse(rootScopedService.Equals(scopedService));
-
+                Assert.IsTrue(scopedService.Equals(scope.ServiceProvider.GetService<IMyService>()));
+                Assert.IsFalse(rootScopedService.Equals(scopedService));
+            }
         }
         [TestMethod]
         public void TestGetScopedServiceFromRootServiceProvider() {
@@ -223,7 +215,7 @@ namespace Gsemac.Polyfills.Microsoft.Extensions.DependencyInjection.Tests {
                 .AddScoped<IMyService, MyServiceWithNoDependencies>()
                 .BuildServiceProvider(new ServiceProviderOptions() { ValidateScopes = true });
 
-            Assert.ThrowsException<InvalidOperationException>(() => serviceProvider.GetService<IMyService>());
+            Assert.Throws<InvalidOperationException>(() => serviceProvider.GetService<IMyService>());
 
         }
 
@@ -274,12 +266,11 @@ namespace Gsemac.Polyfills.Microsoft.Extensions.DependencyInjection.Tests {
         }
         [TestMethod]
         public void TestGetServicesReturnsServicesInRegistrationOrder() {
-
             // Services should be returned in the same order that they were registered.
             // https://stackoverflow.com/q/67940999
 
-            MyServiceWithNoDependencies myService1 = new();
-            MyServiceWithDependencies myService2 = new(myService1);
+            var myService1 = new MyServiceWithNoDependencies();
+            var myService2 = new MyServiceWithDependencies(myService1);
 
             IServiceProvider serviceProvider = new ServiceCollection()
                 .AddSingleton<IMyService>(myService1)
@@ -295,9 +286,9 @@ namespace Gsemac.Polyfills.Microsoft.Extensions.DependencyInjection.Tests {
 
             Assert.AreEqual(expectedObjects.Count(), actualObjects.Count());
 
-            Assert.IsTrue(expectedObjects.Zip(serviceProvider.GetServices<IMyService>())
-                .All(pair => ReferenceEquals(pair.First, pair.Second)));
-
+            Assert.IsTrue(expectedObjects
+                .Zip(actualObjects, (expected, actual) => ReferenceEquals(expected, actual))
+                .All(result => result));
         }
         [TestMethod]
         public void TestGetServicesWithRegisteredServiceProviderDoesNotReturnRootServiceProvider() {
@@ -313,7 +304,7 @@ namespace Gsemac.Polyfills.Microsoft.Extensions.DependencyInjection.Tests {
 
             IEnumerable<IServiceProvider> instances = serviceProvider2.GetServices<IServiceProvider>();
 
-            Assert.IsTrue(instances.Count() == 1);
+            Assert.AreEqual(1, instances.Count());
             Assert.IsTrue(ReferenceEquals(instances.First(), serviceProvider1));
 
         }
@@ -326,7 +317,7 @@ namespace Gsemac.Polyfills.Microsoft.Extensions.DependencyInjection.Tests {
             IServiceProvider serviceProvider = new ServiceCollection()
                 .BuildServiceProvider();
 
-            Assert.ThrowsException<InvalidOperationException>(() => serviceProvider.GetRequiredService<MyServiceWithDependencies>());
+            Assert.Throws<InvalidOperationException>(() => serviceProvider.GetRequiredService<MyServiceWithDependencies>());
 
         }
 

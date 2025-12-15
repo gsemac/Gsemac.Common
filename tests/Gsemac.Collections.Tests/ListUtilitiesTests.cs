@@ -60,7 +60,7 @@ namespace Gsemac.Collections.Tests {
         [TestMethod]
         public void TestMoveThrowsExceptionWithNegativeDestinationIndex() {
 
-            Assert.ThrowsException<ArgumentOutOfRangeException>(() => {
+            Assert.Throws<ArgumentOutOfRangeException>(() => {
 
                 ListUtilities.Move(new List<int>() { 1, 2, 3 }, 0, -1);
 
@@ -70,7 +70,7 @@ namespace Gsemac.Collections.Tests {
         [TestMethod]
         public void TestMoveThrowsExceptionWithNegativeSourceIndex() {
 
-            Assert.ThrowsException<ArgumentOutOfRangeException>(() => {
+            Assert.Throws<ArgumentOutOfRangeException>(() => {
 
                 ListUtilities.Move(new List<int>() { 1, 2, 3 }, -1, 0);
 
@@ -80,7 +80,7 @@ namespace Gsemac.Collections.Tests {
         [TestMethod]
         public void TestMoveThrowsExceptionWithDestinationIndexGreaterThanListSize() {
 
-            Assert.ThrowsException<ArgumentOutOfRangeException>(() => {
+            Assert.Throws<ArgumentOutOfRangeException>(() => {
 
                 ListUtilities.Move(new List<int>() { 1, 2, 3 }, 3, 0);
 
@@ -90,7 +90,7 @@ namespace Gsemac.Collections.Tests {
         [TestMethod]
         public void TestMoveThrowsExceptionWithSourceIndexGreaterThanListSize() {
 
-            Assert.ThrowsException<ArgumentOutOfRangeException>(() => {
+            Assert.Throws<ArgumentOutOfRangeException>(() => {
 
                 ListUtilities.Move(new List<int>() { 1, 2, 3 }, 0, 3);
 

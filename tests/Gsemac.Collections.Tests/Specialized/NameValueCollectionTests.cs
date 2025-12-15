@@ -12,7 +12,7 @@ namespace Gsemac.Collections.Specialized.Tests {
                 { null, "test" }
             };
 
-            Assert.AreEqual(items[null], "test");
+            Assert.AreEqual("test", items[null]);
 
         }
 

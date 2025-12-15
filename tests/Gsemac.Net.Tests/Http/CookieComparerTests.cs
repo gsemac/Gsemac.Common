@@ -14,8 +14,8 @@ namespace Gsemac.Net.Http.Tests {
             Cookie x = null;
             Cookie y = new("name", "value", "/", "example.com");
 
-            Assert.IsTrue(new CookieComparer().Compare(x, y) < 0);
-            Assert.IsTrue(new CookieComparer().Compare(y, x) > 0);
+            Assert.IsLessThan(0, new CookieComparer().Compare(x, y));
+            Assert.IsGreaterThan(0, new CookieComparer().Compare(y, x));
 
         }
         [TestMethod]
@@ -24,8 +24,8 @@ namespace Gsemac.Net.Http.Tests {
             Cookie x = new("name", "value", "/zzz/", "example.com");
             Cookie y = new("name", "value", "/a/", "example.com");
 
-            Assert.IsTrue(new CookieComparer().Compare(x, y) < 0);
-            Assert.IsTrue(new CookieComparer().Compare(y, x) > 0);
+            Assert.IsLessThan(0, new CookieComparer().Compare(x, y));
+            Assert.IsGreaterThan(0, new CookieComparer().Compare(y, x));
 
         }
 

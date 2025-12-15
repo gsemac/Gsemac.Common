@@ -39,7 +39,7 @@ namespace Gsemac.Drawing.Imaging.WebP.Tests {
 
                 Assert.AreEqual(TimeSpan.Zero, image.AnimationDelay);
                 Assert.AreEqual(1, image.FrameCount);
-                Assert.IsTrue(image.AnimationIterations <= 1);
+                Assert.IsLessThanOrEqualTo(1, image.AnimationIterations);
 
             }
 
@@ -49,7 +49,7 @@ namespace Gsemac.Drawing.Imaging.WebP.Tests {
 
             // Animaed WebP images are are currently unsupported by WebPWrapper.
 
-            Assert.ThrowsException<FileFormatException>(() => ImageFromFile("animated.webp"));
+            Assert.Throws<FileFormatException>(() => ImageFromFile("animated.webp"));
 
         }
 

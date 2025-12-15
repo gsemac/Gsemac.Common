@@ -42,7 +42,7 @@ namespace Gsemac.Collections.Tests {
 
             CircularBuffer<char> queue = new();
 
-            Assert.ThrowsException<IndexOutOfRangeException>(() => queue[5]);
+            Assert.Throws<IndexOutOfRangeException>(() => queue[5]);
 
         }
 

@@ -13,7 +13,7 @@ namespace Gsemac.Text.Ini.Tests {
             string input = @"C:\path\[name=]";
             string escaped = IniUtilities.Escape(input);
 
-            Assert.AreEqual(escaped, @"C:\\path\\\[name\=\]");
+            Assert.AreEqual(@"C:\\path\\\[name\=\]", escaped);
 
         }
         [TestMethod]
@@ -26,7 +26,7 @@ namespace Gsemac.Text.Ini.Tests {
                 NameValueSeparator = ":",
             });
 
-            Assert.AreEqual(escaped, @"key\:value \# comment");
+            Assert.AreEqual(@"key\:value \# comment", escaped);
 
         }
 

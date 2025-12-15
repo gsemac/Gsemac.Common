@@ -13,7 +13,7 @@ namespace Gsemac.Text.Ini.Tests {
 
             IIniProperty property = new IniPropertyCollection()[string.Empty];
 
-            Assert.IsTrue(property is null);
+            Assert.IsNull(property);
 
         }
         [TestMethod]
@@ -21,7 +21,7 @@ namespace Gsemac.Text.Ini.Tests {
 
             IIniProperty property = new IniPropertyCollection()[null];
 
-            Assert.IsTrue(property is null);
+            Assert.IsNull(property);
 
         }
         [TestMethod]

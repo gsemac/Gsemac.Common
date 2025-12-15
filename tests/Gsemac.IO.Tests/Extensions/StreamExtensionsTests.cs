@@ -11,14 +11,14 @@ namespace Gsemac.IO.Extensions.Tests {
         [TestMethod]
         public void TestToArrayWithNullStream() {
 
-            Assert.ThrowsException<ArgumentNullException>(() => ((Stream)null).ToArray());
+            Assert.Throws<ArgumentNullException>(() => ((Stream)null).ToArray());
 
         }
         [TestMethod]
         public void TestToArrayWithEmptyStream() {
 
             using (Stream ms = new MemoryStream())
-                Assert.AreEqual(0, ms.ToArray().Length);
+                Assert.IsEmpty(ms.ToArray());
 
         }
         [TestMethod]

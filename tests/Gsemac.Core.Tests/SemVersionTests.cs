@@ -38,7 +38,7 @@ namespace Gsemac.Core.Tests {
         [TestMethod]
         public void TestParseSemVersionWithMajorAndStrict() {
 
-            Assert.ThrowsException<FormatException>(() => SemVersion.Parse("1"));
+            Assert.Throws<FormatException>(() => SemVersion.Parse("1"));
 
         }
         [TestMethod]
@@ -50,7 +50,7 @@ namespace Gsemac.Core.Tests {
         [TestMethod]
         public void TestParseSemVersionWithMoreThanThreeNumbersAndStrict() {
 
-            Assert.ThrowsException<FormatException>(() => SemVersion.Parse("1.2.3.4"));
+            Assert.Throws<FormatException>(() => SemVersion.Parse("1.2.3.4"));
 
         }
         [TestMethod]
@@ -69,14 +69,14 @@ namespace Gsemac.Core.Tests {
         [TestMethod]
         public void TestParseSemVersionThrowsWithTooFewNumbers() {
 
-            Assert.ThrowsException<FormatException>(() => SemVersion.Parse("1"));
-            Assert.ThrowsException<FormatException>(() => SemVersion.Parse("1.2"));
+            Assert.Throws<FormatException>(() => SemVersion.Parse("1"));
+            Assert.Throws<FormatException>(() => SemVersion.Parse("1.2"));
 
         }
         [TestMethod]
         public void TestParseSemVersionThrowsWithTooManyNumbers() {
 
-            Assert.ThrowsException<FormatException>(() => SemVersion.Parse("1.2.3.4"));
+            Assert.Throws<FormatException>(() => SemVersion.Parse("1.2.3.4"));
 
         }
 

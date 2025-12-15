@@ -188,7 +188,7 @@ namespace Gsemac.IO.Extensions.Tests {
 
             using TextReader reader = CreateReader("hello world");
 
-            Assert.ThrowsException<ArgumentException>(() => reader.ReadLine(new[] {
+            Assert.Throws<ArgumentException>(() => reader.ReadLine(new[] {
                 "orl",
             }, new ReadLineOptions() {
                 ConsumeDelimiter = false,

@@ -149,19 +149,19 @@ namespace Gsemac.Core.Tests {
         [TestMethod]
         public void TestRangeWithSmallerMinimumIsOrderedFirst() {
 
-            Assert.IsTrue(Range.Create(1, 5).CompareTo(Range.Create(0, 3)) > 0);
+            Assert.IsGreaterThan(0, Range.Create(1, 5).CompareTo(Range.Create(0, 3)));
 
         }
         [TestMethod]
         public void TestRangeWithEqualMinimumAndSmallerMaximumIsOrderedFirst() {
 
-            Assert.IsTrue(Range.Create(1, 5).CompareTo(Range.Create(1, 3)) > 0);
+            Assert.IsGreaterThan(0, Range.Create(1, 5).CompareTo(Range.Create(1, 3)));
 
         }
         [TestMethod]
         public void TestRangesWithSameStartAndEndValuesAreEqual() {
 
-            Assert.IsTrue(Range.Create(1, 5).CompareTo(Range.Create(1, 5)) == 0);
+            Assert.AreEqual(0, Range.Create(1, 5).CompareTo(Range.Create(1, 5)));
 
         }
 

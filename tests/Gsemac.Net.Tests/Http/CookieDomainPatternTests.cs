@@ -111,7 +111,7 @@ namespace Gsemac.Net.Http.Tests {
         [TestMethod]
         public void TestIsMatchWithTldPatternAndTld() {
 
-            Assert.ThrowsException<ArgumentException>(() => new CookieDomainPattern(".com").IsMatch(".com"));
+            Assert.Throws<ArgumentException>(() => new CookieDomainPattern(".com").IsMatch(".com"));
 
         }
 

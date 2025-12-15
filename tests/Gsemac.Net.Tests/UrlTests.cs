@@ -55,7 +55,7 @@ namespace Gsemac.Net.Tests {
         [TestMethod]
         public void TestSetSchemeWithInvalidCharacters() {
 
-            Assert.ThrowsException<ArgumentException>(() => new Url("https://stackoverflow.com/").Scheme = "ht%$tps:");
+            Assert.Throws<ArgumentException>(() => new Url("https://stackoverflow.com/").Scheme = "ht%$tps:");
 
         }
 
@@ -225,7 +225,7 @@ namespace Gsemac.Net.Tests {
         [TestMethod]
         public void TestGetPortWithoutPort() {
 
-            Assert.AreEqual(null, new Url("https://stackoverflow.com/").Port);
+            Assert.IsNull(new Url("https://stackoverflow.com/").Port);
 
         }
         [TestMethod]

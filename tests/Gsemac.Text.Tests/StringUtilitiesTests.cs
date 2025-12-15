@@ -45,7 +45,7 @@ namespace Gsemac.Text.Tests {
         [TestMethod]
         public void TestBeforeWithNullString() {
 
-            Assert.AreEqual(null, StringUtilities.Before(null, ", "));
+            Assert.IsNull(StringUtilities.Before(null, ", "));
 
         }
         [TestMethod]
@@ -90,7 +90,7 @@ namespace Gsemac.Text.Tests {
         [TestMethod]
         public void TestAfterWithNullString() {
 
-            Assert.AreEqual(null, StringUtilities.After(null, ", "));
+            Assert.IsNull(StringUtilities.After(null, ", "));
 
         }
         [TestMethod]
@@ -132,7 +132,7 @@ namespace Gsemac.Text.Tests {
         [TestMethod]
         public void TestReverseWithNullString() {
 
-            Assert.AreEqual(null, StringUtilities.Reverse(null));
+            Assert.IsNull(StringUtilities.Reverse(null));
 
         }
 
@@ -326,13 +326,13 @@ namespace Gsemac.Text.Tests {
         [TestMethod]
         public void TestReplaceFirstWithNullString() {
 
-            Assert.AreEqual(null, StringUtilities.ReplaceFirst(null, "hello", "goodbye"));
+            Assert.IsNull(StringUtilities.ReplaceFirst(null, "hello", "goodbye"));
 
         }
         [TestMethod]
         public void TestReplaceFirstWithNullSubstring() {
 
-            Assert.ThrowsException<ArgumentException>(() => StringUtilities.ReplaceFirst("", null, ""));
+            Assert.Throws<ArgumentException>(() => StringUtilities.ReplaceFirst("", null, ""));
 
         }
         [TestMethod]
@@ -359,13 +359,13 @@ namespace Gsemac.Text.Tests {
         [TestMethod]
         public void TestReplaceLastWithNullString() {
 
-            Assert.AreEqual(null, StringUtilities.ReplaceLast(null, "world", "everyone"));
+            Assert.IsNull(StringUtilities.ReplaceLast(null, "world", "everyone"));
 
         }
         [TestMethod]
         public void TestReplaceLastWithNullSubstring() {
 
-            Assert.ThrowsException<ArgumentException>(() => StringUtilities.ReplaceLast("", null, ""));
+            Assert.Throws<ArgumentException>(() => StringUtilities.ReplaceLast("", null, ""));
 
         }
         [TestMethod]
@@ -386,7 +386,7 @@ namespace Gsemac.Text.Tests {
         [TestMethod]
         public void TestNormalizeWhiteSpaceWithNullString() {
 
-            Assert.AreEqual(null, StringUtilities.NormalizeWhiteSpace(null));
+            Assert.IsNull(StringUtilities.NormalizeWhiteSpace(null));
 
         }
         [TestMethod]
@@ -414,7 +414,7 @@ namespace Gsemac.Text.Tests {
         [TestMethod]
         public void TestNormalizeLineBreaksWithNullString() {
 
-            Assert.AreEqual(null, StringUtilities.NormalizeLineBreaks(null));
+            Assert.IsNull(StringUtilities.NormalizeLineBreaks(null));
 
         }
         [TestMethod]
@@ -449,7 +449,7 @@ namespace Gsemac.Text.Tests {
         [TestMethod]
         public void TestTrimStartWithNullString() {
 
-            Assert.AreEqual(null, StringUtilities.TrimStart(null, "hello"));
+            Assert.IsNull(StringUtilities.TrimStart(null, "hello"));
 
         }
         [TestMethod]
@@ -476,7 +476,7 @@ namespace Gsemac.Text.Tests {
         [TestMethod]
         public void TestTrimEndWithNullString() {
 
-            Assert.AreEqual(null, StringUtilities.TrimEnd(null, "world"));
+            Assert.IsNull(StringUtilities.TrimEnd(null, "world"));
 
         }
         [TestMethod]
@@ -503,7 +503,7 @@ namespace Gsemac.Text.Tests {
         [TestMethod]
         public void TestTrimOrDefaultWithNullString() {
 
-            Assert.AreEqual(null, StringUtilities.TrimOrDefault(null));
+            Assert.IsNull(StringUtilities.TrimOrDefault(null));
 
         }
 

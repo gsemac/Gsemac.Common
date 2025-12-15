@@ -67,7 +67,7 @@ namespace Gsemac.Net.Http.Tests {
 
             IHttpHeader header = HttpHeader.Parse("Name:");
 
-            Assert.AreEqual(header.Name, "Name");
+            Assert.AreEqual("Name", header.Name);
             Assert.AreEqual(string.Empty, header.Value);
 
         }

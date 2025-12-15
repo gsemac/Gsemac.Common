@@ -79,7 +79,7 @@ namespace Gsemac.Net.Extensions.Tests {
 
             IWebProxy proxy = new WebProxy();
 
-            Assert.AreEqual(true, proxy.IsEmpty());
+            Assert.IsTrue(proxy.IsEmpty());
 
         }
         [TestMethod]
@@ -87,7 +87,7 @@ namespace Gsemac.Net.Extensions.Tests {
 
             IWebProxy proxy = new WebProxy("127.0.0.1:80");
 
-            Assert.AreEqual(false, proxy.IsEmpty());
+            Assert.IsFalse(proxy.IsEmpty());
 
         }
 

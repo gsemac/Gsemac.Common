@@ -56,7 +56,7 @@ namespace Gsemac.Text.Ini.Tests {
 
             property.Value = "4";
 
-            Assert.AreEqual(1, property.Values.Count);
+            Assert.HasCount(1, property.Values);
             Assert.AreEqual("4", property.Values.First());
 
         }
@@ -66,7 +66,7 @@ namespace Gsemac.Text.Ini.Tests {
 
             IIniProperty property = new IniProperty("key");
 
-            Assert.AreEqual(0, property.Values.Count);
+            Assert.IsEmpty(property.Values);
 
         }
         [TestMethod]
@@ -74,7 +74,7 @@ namespace Gsemac.Text.Ini.Tests {
 
             IIniProperty property = new IniProperty("key", string.Empty);
 
-            Assert.AreEqual(0, property.Values.Count);
+            Assert.IsEmpty(property.Values);
 
         }
         [TestMethod]
@@ -82,7 +82,7 @@ namespace Gsemac.Text.Ini.Tests {
 
             IIniProperty property = new IniProperty("key", null);
 
-            Assert.AreEqual(0, property.Values.Count);
+            Assert.IsEmpty(property.Values);
 
         }
 

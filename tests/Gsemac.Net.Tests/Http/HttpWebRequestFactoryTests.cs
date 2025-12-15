@@ -16,7 +16,7 @@ namespace Gsemac.Net.Http.Tests {
 
             IHttpWebRequest webRequest = HttpWebRequestFactory.Default.Create("http://127.0.0.1/");
 
-            Assert.AreEqual(null, webRequest.CookieContainer);
+            Assert.IsNull(webRequest.CookieContainer);
 
         }
         [TestMethod]

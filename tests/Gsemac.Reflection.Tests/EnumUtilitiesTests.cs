@@ -11,7 +11,7 @@ namespace Gsemac.Reflection.Tests {
         [TestMethod]
         public void TestParseWithNonEnumType() {
 
-            Assert.ThrowsException<ArgumentException>(() => EnumUtilities.Parse("blah", typeof(int)));
+            Assert.Throws<ArgumentException>(() => EnumUtilities.Parse("blah", typeof(int)));
 
         }
 
@@ -20,7 +20,7 @@ namespace Gsemac.Reflection.Tests {
         [TestMethod]
         public void TestTryParseWithNonEnumType() {
 
-            Assert.ThrowsException<ArgumentException>(() => EnumUtilities.Parse("blah", typeof(int)));
+            Assert.Throws<ArgumentException>(() => EnumUtilities.Parse("blah", typeof(int)));
 
         }
 

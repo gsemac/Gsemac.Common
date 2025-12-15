@@ -6,15 +6,12 @@ using System.IO;
 using System.Linq;
 
 namespace Gsemac.Net.GitHub.Tests.IntegrationTests {
-
     [TestClass, TestCategory("Integration")]
     public class GitHubWebClientIntegrationTests {
-
         // GetRepository
 
         [TestMethod]
         public void TestGetRepositoryReturnsCorrectMetadata() {
-
             IRepository repositoryInfo = new GitHubWebClient()
                 .GetRepository(GitHubUrls.GitHubRepositoryUrl);
 
@@ -25,16 +22,13 @@ namespace Gsemac.Net.GitHub.Tests.IntegrationTests {
 
             Assert.AreEqual($"{GitHubUrls.GitHubRepositoryUrl}/releases", repositoryInfo.ReleasesUrl);
             Assert.AreEqual($"{GitHubUrls.GitHubRepositoryUrl}/archive/{repositoryInfo.DefaultBranchName}.zip", repositoryInfo.ArchiveUrl);
-
         }
 
         // GetReleases
 
         [TestMethod]
         public void TestGetReleasesContainsReleaseWithCorrectMetadata() {
-
             // We'll look for the presence of a specific release, and verify its metadata.
-
             const string releaseTag = "v2.2.10";
 
             IRelease release = new GitHubWebClient()
@@ -47,12 +41,10 @@ namespace Gsemac.Net.GitHub.Tests.IntegrationTests {
             Assert.AreEqual("v2.2.10", release.Title);
             Assert.AreEqual(DateTimeOffset.Parse("2022-10-22T13:41:37Z"), release.Published);
 
-            Assert.IsTrue(!string.IsNullOrWhiteSpace(release.Description));
-
+            Assert.IsFalse(string.IsNullOrWhiteSpace(release.Description));
         }
         [TestMethod]
         public void TestReleaseHasReleaseAssets() {
-
             const string releaseTag = "v2.2.10";
 
             IRelease release = new GitHubWebClient()
@@ -66,14 +58,12 @@ namespace Gsemac.Net.GitHub.Tests.IntegrationTests {
             Assert.IsTrue(release.Assets.Where(asset => asset.Name.Equals("flaresolverr-v2.2.10-windows-x64.zip", StringComparison.OrdinalIgnoreCase)).Any());
             Assert.IsTrue(release.Assets.Where(asset => asset.Name.Equals("Source code (zip)", StringComparison.OrdinalIgnoreCase)).Any());
             Assert.IsTrue(release.Assets.Where(asset => asset.Name.Equals("Source code (tar.gz)", StringComparison.OrdinalIgnoreCase)).Any());
-
         }
 
         // GetFiles
 
         [TestMethod]
         public void TestGetFilesReturnsCorrectMetadata() {
-
             IEnumerable<IFileNode> files = new GitHubWebClient()
                 .GetFiles(GitHubUrls.GitHubDirectoryUrl, SearchOption.TopDirectoryOnly);
 
@@ -94,18 +84,12 @@ namespace Gsemac.Net.GitHub.Tests.IntegrationTests {
             // Make sure that we were able to read the last-modified date.
 
             Assert.IsTrue(files.Any(file => !file.LastModified.Equals(default)));
-
         }
 
         [ClassInitialize]
         public static void ClassInit(TestContext _) {
-
             // We need to enable TLS 1.2 support in order to access GitHub.
-
             ServicePointManagerUtilities.SetSecurityProtocolEnabled(ServicePointManagerUtilities.Net45SecurityProtocols, enabled: true);
-
         }
-
     }
-
 }

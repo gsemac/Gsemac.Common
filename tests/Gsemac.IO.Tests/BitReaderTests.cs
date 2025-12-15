@@ -144,7 +144,7 @@ namespace Gsemac.IO.Tests {
 
                 byte[] buffer = reader.ReadBytes(2);
 
-                Assert.AreEqual(2, buffer.Length);
+                Assert.HasCount(2, buffer);
                 Assert.AreEqual(0b01100000, buffer[0]);
                 Assert.AreEqual(0b01001110, buffer[1]);
 
@@ -162,7 +162,7 @@ namespace Gsemac.IO.Tests {
 
                 byte[] buffer = reader.ReadBytes(128);
 
-                Assert.AreEqual(2, buffer.Length);
+                Assert.HasCount(2, buffer);
                 Assert.AreEqual(0b01100000, buffer[0]);
                 Assert.AreEqual(0b01001110, buffer[1]);
 

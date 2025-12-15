@@ -64,7 +64,7 @@ namespace Gsemac.Net.Http.Tests {
             Cookie cookie = HttpUtilities.ParseCookies("Name=Value;Domain=.example.com;HttpOnly")
                 .FirstOrDefault();
 
-            Assert.AreEqual(true, cookie.HttpOnly);
+            Assert.IsTrue(cookie.HttpOnly);
 
         }
         [TestMethod]
@@ -73,7 +73,7 @@ namespace Gsemac.Net.Http.Tests {
             Cookie cookie = HttpUtilities.ParseCookies("Name=Value;Domain=.example.com;Secure")
                 .FirstOrDefault();
 
-            Assert.AreEqual(true, cookie.Secure);
+            Assert.IsTrue(cookie.Secure);
 
         }
         [TestMethod]
@@ -114,7 +114,7 @@ namespace Gsemac.Net.Http.Tests {
             CookieCollection cookies =
                 HttpUtilities.ParseCookies("name1=value1; domain=example.com; path=/; expires=Fri, 11 Oct 2024 03:52:28 GMT,name2=value2; path=/; HttpOnly");
 
-            Assert.AreEqual(2, cookies.Count);
+            Assert.HasCount(2, cookies);
 
         }
         [TestMethod]
@@ -157,7 +157,7 @@ namespace Gsemac.Net.Http.Tests {
                 .FirstOrDefault();
 
             Assert.AreEqual(".example.com", cookie.Domain);
-            Assert.AreEqual(true, cookie.Secure);
+            Assert.IsTrue(cookie.Secure);
 
         }
         [TestMethod]

@@ -2,27 +2,24 @@
 using System;
 
 namespace Gsemac.Polyfills.Microsoft.Extensions.DependencyInjection.Tests {
-
     [TestClass]
     public class ActivatorUtilitiesTests {
-
         // CreateFactory
 
         [TestMethod]
         public void TestCreateFactoryWithServiceProvider() {
-
-            using ServiceProvider s = new ServiceCollection()
+            using (ServiceProvider serviceProvider = new ServiceCollection()
                 .AddSingleton<MyServiceWithNoDependencies>()
                 .AddSingleton<MyServiceWithDependencies>()
-                .BuildServiceProvider();
+                .BuildServiceProvider()) {
 
-            var objectFactory = ActivatorUtilities.CreateFactory(typeof(MyServiceWithMultipleConstructorsAndOptionalDependencies),
-                new[] { typeof(MyServiceWithNoDependencies), typeof(MyServiceWithDependencies) });
+                var objectFactory = ActivatorUtilities.CreateFactory(typeof(MyServiceWithMultipleConstructorsAndOptionalDependencies),
+                    new[] { typeof(MyServiceWithNoDependencies), typeof(MyServiceWithDependencies) });
 
-            MyServiceWithMultipleConstructorsAndOptionalDependencies service = (MyServiceWithMultipleConstructorsAndOptionalDependencies)objectFactory(s, null);
+                MyServiceWithMultipleConstructorsAndOptionalDependencies service = (MyServiceWithMultipleConstructorsAndOptionalDependencies)objectFactory(serviceProvider, null);
 
-            Assert.AreEqual(2, service.InvokedConstructorId);
-
+                Assert.AreEqual(2, service.InvokedConstructorId);
+            }
         }
         [TestMethod]
         public void TestCreateFactoryWithParameterArray() {
@@ -41,7 +38,7 @@ namespace Gsemac.Polyfills.Microsoft.Extensions.DependencyInjection.Tests {
         [TestMethod]
         public void TestCreateFactoryThrowsWithNoSuitableConstuctor() {
 
-            Assert.ThrowsException<InvalidOperationException>(() => ActivatorUtilities.CreateFactory(typeof(MyServiceWithMultipleConstructorsAndOptionalDependencies), new[] { typeof(object) }));
+            Assert.Throws<InvalidOperationException>(() => ActivatorUtilities.CreateFactory(typeof(MyServiceWithMultipleConstructorsAndOptionalDependencies), new[] { typeof(object) }));
 
         }
 
@@ -49,38 +46,32 @@ namespace Gsemac.Polyfills.Microsoft.Extensions.DependencyInjection.Tests {
 
         [TestMethod]
         public void TestCreateInstanceWithMultipleInvokableConstructors() {
-
-            using ServiceProvider s = new ServiceCollection()
+            using (ServiceProvider serviceProvider = new ServiceCollection()
                 .AddSingleton<MyServiceWithNoDependencies>()
                 .AddSingleton<MyServiceWithDependencies>()
-                .BuildServiceProvider();
+                .BuildServiceProvider()) {
 
-            Assert.AreEqual(2, ActivatorUtilities.CreateInstance<MyServiceWithMultipleConstructorsAndDependencies>(s, null).InvokedConstructorId);
-
+                Assert.AreEqual(2, ActivatorUtilities.CreateInstance<MyServiceWithMultipleConstructorsAndDependencies>(serviceProvider, null).InvokedConstructorId);
+            }
         }
         [TestMethod]
         public void TestCreateInstanceWithMultipleInvokableConstructorsAndDependencyPassedByArray() {
-
-            using ServiceProvider s = new ServiceCollection()
+            using (ServiceProvider serviceProvider = new ServiceCollection()
                 .AddSingleton<MyServiceWithNoDependencies>()
-                .BuildServiceProvider();
+                .BuildServiceProvider()) {
 
-            MyServiceWithDependencies dependency = new(new MyServiceWithNoDependencies());
+                var dependency = new MyServiceWithDependencies(new MyServiceWithNoDependencies());
 
-            Assert.AreEqual(2, ActivatorUtilities.CreateInstance<MyServiceWithMultipleConstructorsAndDependencies>(s, new[] { dependency }).InvokedConstructorId);
-
+                Assert.AreEqual(2, ActivatorUtilities.CreateInstance<MyServiceWithMultipleConstructorsAndDependencies>(serviceProvider, new[] { dependency }).InvokedConstructorId);
+            }
         }
         [TestMethod]
         public void TestCreateInstancePrioritizesParameterArray() {
-
-            using ServiceProvider s = new ServiceCollection()
+            using (ServiceProvider serviceProvider = new ServiceCollection()
                 .AddSingleton("bad")
-                .BuildServiceProvider();
-
-            Assert.AreEqual("good", ActivatorUtilities.CreateInstance<MyServiceWithDependencies>(s, new[] { "good" }).Name);
-
+                .BuildServiceProvider()) {
+                Assert.AreEqual("good", ActivatorUtilities.CreateInstance<MyServiceWithDependencies>(serviceProvider, new[] { "good" }).Name);
+            }
         }
-
     }
-
 }

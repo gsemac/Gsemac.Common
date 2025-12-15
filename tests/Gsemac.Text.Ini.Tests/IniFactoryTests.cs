@@ -18,7 +18,7 @@ namespace Gsemac.Text.Ini.Tests
 
             IIni ini = IniFactory.Default.Parse(ReadAllText("IniWithGlobalProperties.ini"));
 
-            Assert.AreEqual(3, ini.Global.Properties.Count);
+            Assert.HasCount(3, ini.Global.Properties);
 
             Assert.AreEqual("value1", ini.GetValue("key1"));
             Assert.AreEqual("value2", ini.GetValue("key2"));
@@ -30,7 +30,7 @@ namespace Gsemac.Text.Ini.Tests
 
             IIni ini = IniFactory.Default.Parse(ReadAllText("IniWithSections.ini"));
 
-            Assert.AreEqual(2, ini.Sections.Count);
+            Assert.HasCount(2, ini.Sections);
 
             Assert.AreEqual("value1", ini.GetValue("section1", "key1"));
             Assert.AreEqual("value2", ini.GetValue("section1", "key2"));
@@ -54,7 +54,7 @@ namespace Gsemac.Text.Ini.Tests
                 TrimWhiteSpace = true,
             });
 
-            Assert.AreEqual(2, ini.Sections.Count);
+            Assert.HasCount(2, ini.Sections);
 
             Assert.IsTrue(ini.Sections.Contains("section1"));
             Assert.IsTrue(ini.Sections.Contains("section2"));
@@ -74,7 +74,7 @@ namespace Gsemac.Text.Ini.Tests
                 TrimWhiteSpace = false,
             });
 
-            Assert.AreEqual(2, ini.Sections.Count);
+            Assert.HasCount(2, ini.Sections);
 
             Assert.IsTrue(ini.Sections.Contains("section1"));
             Assert.IsTrue(ini.Sections.Contains("section2"));
@@ -90,7 +90,7 @@ namespace Gsemac.Text.Ini.Tests
 
             IIni ini = IniFactory.Default.Parse(ReadAllText("IniWithUnixLineSeparators.ini"));
 
-            Assert.AreEqual(2, ini.Sections.Count);
+            Assert.HasCount(2, ini.Sections);
 
             Assert.IsTrue(ini.Sections.Contains("section1"));
             Assert.IsTrue(ini.Sections.Contains("section2"));
@@ -138,7 +138,7 @@ namespace Gsemac.Text.Ini.Tests
 
             string sectionName = "section[]";
 
-            Assert.AreEqual(4, ini.Sections[sectionName].Properties.Count);
+            Assert.HasCount(4, ini.Sections[sectionName].Properties);
 
             Assert.AreEqual("value1", ini.GetValue(sectionName, "key1="));
             Assert.AreEqual("val;ue2", ini.GetValue(sectionName, "key2"));
@@ -173,7 +173,7 @@ namespace Gsemac.Text.Ini.Tests
 
             IIni ini = IniFactory.Default.Parse("[section]]]]");
 
-            Assert.AreEqual(1, ini.Sections.Count);
+            Assert.HasCount(1, ini.Sections);
             Assert.IsTrue(ini.Sections.Contains("section]]]"));
 
         }
@@ -184,7 +184,7 @@ namespace Gsemac.Text.Ini.Tests
                 EnableInlineComments = true,
             });
 
-            Assert.AreEqual(1, ini.Sections.Count);
+            Assert.HasCount(1, ini.Sections);
             Assert.IsTrue(ini.Sections.Contains("section]]]"));
 
         }
@@ -193,7 +193,7 @@ namespace Gsemac.Text.Ini.Tests
 
             IIni ini = IniFactory.Default.Parse("[section=value");
 
-            Assert.AreEqual(0, ini.Sections.Count);
+            Assert.IsEmpty(ini.Sections);
             Assert.AreEqual("value", ini.GetValue("[section"));
 
         }
@@ -231,7 +231,7 @@ namespace Gsemac.Text.Ini.Tests
 
             IIni ini = IniFactory.Default.Parse(ReadAllText("IniWithEmptyProperties.ini"));
 
-            Assert.AreEqual(3, ini.Global.Properties.Count);
+            Assert.HasCount(3, ini.Global.Properties);
 
             Assert.AreEqual(string.Empty, ini.GetValue("key1"));
             Assert.AreEqual(string.Empty, ini.GetValue("key2"));
@@ -244,8 +244,8 @@ namespace Gsemac.Text.Ini.Tests
 
             IIni ini = IniFactory.Default.Parse(ReadAllText("IniWithDuplicateSections.ini"));
 
-            Assert.AreEqual(1, ini.Sections.Count);
-            Assert.AreEqual(2, ini.Sections.First().Properties.Count);
+            Assert.HasCount(1, ini.Sections);
+            Assert.HasCount(2, ini.Sections.First().Properties);
 
             Assert.AreEqual("value1", ini.Sections.First()["key1"]);
             Assert.AreEqual("value2", ini.Sections.First()["key2"]);

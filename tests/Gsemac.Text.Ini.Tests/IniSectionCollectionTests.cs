@@ -49,10 +49,10 @@ namespace Gsemac.Text.Ini.Tests {
 
             IIniSection transientSection = items["section_name"];
 
-            Assert.AreEqual(0, items.Count);
+            Assert.IsEmpty(items);
 
             Assert.IsFalse(items.Contains(transientSection.Name));
-            Assert.IsFalse(items.Contains(transientSection));
+            Assert.DoesNotContain(transientSection, items);
 
         }
         [TestMethod]
@@ -64,7 +64,7 @@ namespace Gsemac.Text.Ini.Tests {
 
             items["section"]["key"] = "value";
 
-            Assert.AreEqual(1, items.Count);
+            Assert.HasCount(1, items);
 
             Assert.IsTrue(items["section"] is object);
 

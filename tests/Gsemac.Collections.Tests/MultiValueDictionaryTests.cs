@@ -14,7 +14,7 @@ namespace Gsemac.Collections.Tests {
                 { 1, 2 }
             };
 
-            Assert.AreEqual(1, dict[1].Count);
+            Assert.HasCount(1, dict[1]);
             Assert.AreEqual(2, dict[1].First());
 
         }
@@ -26,7 +26,7 @@ namespace Gsemac.Collections.Tests {
                 { 1, 3 }
             };
 
-            Assert.AreEqual(2, dict[1].Count);
+            Assert.HasCount(2, dict[1]);
             Assert.AreEqual(2, dict[1].First());
             Assert.AreEqual(3, dict[1].Skip(1).First());
 
@@ -36,7 +36,7 @@ namespace Gsemac.Collections.Tests {
 
             MultiValueDictionary<int, int> dict = new MultiValueDictionary<int, int>();
 
-            Assert.ThrowsException<KeyNotFoundException>(() => dict[1]);
+            Assert.Throws<KeyNotFoundException>(() => dict[1]);
 
         }
 

@@ -31,7 +31,7 @@ namespace Gsemac.Core.Tests {
         [TestMethod]
         public void TestParseMsVersionWithMajorAndStrict() {
 
-            Assert.ThrowsException<FormatException>(() => MSVersion.Parse("1"));
+            Assert.Throws<FormatException>(() => MSVersion.Parse("1"));
 
         }
         [TestMethod]
@@ -43,7 +43,7 @@ namespace Gsemac.Core.Tests {
         [TestMethod]
         public void TestParseMsVersionWithMoreThanFourNumbersAndStrict() {
 
-            Assert.ThrowsException<FormatException>(() => MSVersion.Parse("1.2.3.4.5"));
+            Assert.Throws<FormatException>(() => MSVersion.Parse("1.2.3.4.5"));
 
         }
         [TestMethod]
@@ -56,13 +56,13 @@ namespace Gsemac.Core.Tests {
         [TestMethod]
         public void TestParseMsVersionThrowsWithTooFewNumbers() {
 
-            Assert.ThrowsException<FormatException>(() => MSVersion.Parse("1"));
+            Assert.Throws<FormatException>(() => MSVersion.Parse("1"));
 
         }
         [TestMethod]
         public void TestParseMsVersionThrowsWithTooManyNumbers() {
 
-            Assert.ThrowsException<FormatException>(() => MSVersion.Parse("1.2.3.4.5"));
+            Assert.Throws<FormatException>(() => MSVersion.Parse("1.2.3.4.5"));
 
         }
 
