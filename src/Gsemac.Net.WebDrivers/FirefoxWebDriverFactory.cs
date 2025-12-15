@@ -52,7 +52,6 @@ namespace Gsemac.Net.WebDrivers {
         // Protected members
 
         protected override IWebDriver GetWebDriver(IWebBrowserInfo webBrowserInfo, IWebDriverOptions webDriverOptions) {
-
             string webDriverDirectoryPath = Path.GetDirectoryName(webDriverOptions.WebDriverExecutablePath);
 
             FirefoxDriverService driverService = FirefoxDriverService.CreateDefaultService(webDriverDirectoryPath);
@@ -60,7 +59,11 @@ namespace Gsemac.Net.WebDrivers {
             ConfigureDriverService(driverService);
 
             FirefoxOptions driverOptions = new FirefoxOptions {
-                BrowserExecutableLocation = webBrowserInfo.ExecutablePath
+#if SELENIUM4_OR_GREATER
+                BinaryLocation = webBrowserInfo.ExecutablePath,
+#else
+                BrowserExecutableLocation = webBrowserInfo.ExecutablePath,
+#endif
             };
 
             ConfigureDriverOptions(driverOptions, webDriverOptions);
@@ -70,7 +73,6 @@ namespace Gsemac.Net.WebDrivers {
             ConfigureDriver(driver, webDriverOptions);
 
             return driver;
-
         }
         protected override string GetWebDriverExecutablePath() {
 

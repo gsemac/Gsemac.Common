@@ -133,17 +133,12 @@ namespace Gsemac.Drawing.Imaging {
         // Protected members
 
         protected override void Dispose(bool disposing) {
-
             if (!disposedValue) {
-
                 if (disposing) {
-
                     images.Dispose();
-
                 }
 
                 disposedValue = true;
-
             }
         }
 
@@ -153,7 +148,6 @@ namespace Gsemac.Drawing.Imaging {
         private bool disposedValue = false;
 
         private MagickImage(MagickImageCollection images, IFileFormat imageFormat, IImageCodec codec) {
-
             // This constructor is used when cloning the image.
 
             if (images is null)
@@ -166,38 +160,40 @@ namespace Gsemac.Drawing.Imaging {
 
             Format = imageFormat;
             Codec = codec;
-
         }
 
         private int GetWidth() {
-
-            return images.FirstOrDefault()?.Width ?? 0;
-
+            var width = images.FirstOrDefault()?.Width ?? 0;
+#if MAGICKNET14_OR_GREATER
+            // Magick.NET updated this API to return a uint instead of an int.
+            return (int)width;
+#else
+            return width;
+#endif
         }
         private int GetHeight() {
-
-            return images.FirstOrDefault()?.Height ?? 0;
-
+            var height = images.FirstOrDefault()?.Height ?? 0;
+#if MAGICKNET14_OR_GREATER
+            // Magick.NET updated this API to return a uint instead of an int.
+            return (int)height;
+#else
+            return height;
+#endif
         }
 
         private static TimeSpan GetAnimationDelay(MagickImageCollection images) {
-
             if (images.Count <= 0)
                 return TimeSpan.Zero;
 
             return TimeSpan.FromMilliseconds(images.First().AnimationDelay * 10);
-
         }
         private static int GetAnimationIterations(MagickImageCollection images) {
-
             if (images.Count <= 0)
                 return 0;
 
-            return images.First().AnimationIterations;
-
+            return (int)images.First().AnimationIterations;
         }
         private static int GetFrameCount(MagickImageCollection images) {
-
             int frameCount = images.Count;
 
             // If we have multiple frames but no animation, set the frame count to 1.
@@ -207,9 +203,6 @@ namespace Gsemac.Drawing.Imaging {
                 frameCount = Math.Min(frameCount, 1);
 
             return frameCount;
-
         }
-
     }
-
 }

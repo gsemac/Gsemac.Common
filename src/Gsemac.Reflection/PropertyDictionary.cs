@@ -266,16 +266,15 @@ namespace Gsemac.Reflection {
         }
 
         private static IDictionary<string, ObjectPropertyPair> CreatePropertyCache(object obj, Type type, int maxDepth, IPropertyDictionaryOptions options) {
-
             IDictionary<string, ObjectPropertyPair> propertyCache = new Dictionary<string, ObjectPropertyPair>(options.StringComparer ?? StringComparer.Ordinal);
 
             if (maxDepth <= 0 || obj is null)
                 return propertyCache;
 
             BindingFlags bindingFlags = BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static | BindingFlags.DeclaredOnly;
+            PropertyInfo[] properties = type.GetProperties(bindingFlags);
 
-            foreach (PropertyInfo propertyInfo in type.GetProperties(bindingFlags)) {
-
+            foreach (PropertyInfo propertyInfo in properties) {
                 string propertyKey = propertyInfo.Name;
                 Type propertyType = propertyInfo.PropertyType;
 
@@ -285,18 +284,14 @@ namespace Gsemac.Reflection {
                     propertyCache[propertyKey] = new ObjectPropertyPair(obj, propertyInfo);
 
                 if (propertyTypeIsObject && options.IncludeNestedProperties) {
-
                     var childPropertyDict = CreatePropertyCache(obj is null ? null : propertyInfo.GetValue(obj, null), propertyType, maxDepth - 1, options);
 
                     foreach (string key in childPropertyDict.Keys)
                         propertyCache[$"{propertyKey}.{key}"] = childPropertyDict[key];
-
                 }
-
             }
 
             return propertyCache;
-
         }
 
         private object GetPropertyValue(string key) {
