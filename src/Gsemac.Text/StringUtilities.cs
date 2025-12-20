@@ -107,31 +107,23 @@ namespace Gsemac.Text {
             return string.Empty;
 
         }
-        public static string BetweenLast(string input, string leftSubstring, string rightSubstring, StringComparison comparisonType = StringComparison.CurrentCulture) {
-
-            if (string.IsNullOrEmpty(input) || string.IsNullOrEmpty(leftSubstring) || string.IsNullOrEmpty(rightSubstring))
-                return input;
-
-            leftSubstring = Regex.Escape(leftSubstring);
-            rightSubstring = Regex.Escape(rightSubstring);
-
-            RegexOptions regexOptions = RegexOptions.RightToLeft | RegexOptions.Singleline;
-
-            if (comparisonType == StringComparison.InvariantCultureIgnoreCase || comparisonType == StringComparison.Ordinal || comparisonType == StringComparison.OrdinalIgnoreCase)
-                regexOptions |= RegexOptions.CultureInvariant;
-
-            if (comparisonType == StringComparison.CurrentCultureIgnoreCase || comparisonType == StringComparison.InvariantCultureIgnoreCase || comparisonType == StringComparison.InvariantCultureIgnoreCase)
-                regexOptions |= RegexOptions.IgnoreCase;
-
-            Regex regex = new Regex(string.Format("{0}(.*?){1}", leftSubstring, rightSubstring), regexOptions);
-
-            Match match = regex.Match(input);
-
-            if (match.Success)
-                return match.Groups[1].Value;
-            else
+        public static string BetweenLast(string input, string left, string right, StringComparison comparison = StringComparison.CurrentCulture) {
+            if (string.IsNullOrEmpty(input) || string.IsNullOrEmpty(left) || string.IsNullOrEmpty(right))
                 return string.Empty;
 
+            int startIndex = input.LastIndexOf(left, comparison);
+            while (startIndex != -1) {
+                // Find the first instance of the second substring after the starting substring.
+                // This will give us the string between the first instance of the pair of delimiters.
+                int endIndex = input.IndexOf(right, startIndex + left.Length, comparison);
+                if (endIndex != -1)
+                    return input.Substring(startIndex + left.Length, endIndex - (startIndex + left.Length));
+
+                // No instance of the end substring was found-- Check backwards for a new starting point.
+                startIndex = input.LastIndexOf(left, startIndex - 1, comparison);
+            }
+
+            return string.Empty;
         }
         public static IEnumerable<string> BetweenMany(string input, string leftSubstring, string rightSubstring) {
 

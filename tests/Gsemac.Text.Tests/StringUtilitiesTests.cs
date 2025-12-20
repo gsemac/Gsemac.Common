@@ -100,6 +100,40 @@ namespace Gsemac.Text.Tests {
 
         }
 
+        // BetweenLast
+
+        [TestMethod]
+        public void TestBetweenLastWithUniqueSubstrings() {
+            Assert.AreEqual("o, W", StringUtilities.BetweenLast("Hello, World!", "Hell", "orl"));
+        }
+        [TestMethod]
+        public void TestBetweenLastWithNonUnqiueSubstrings() {
+            Assert.AreEqual("d", StringUtilities.BetweenLast("Hello, World!", "l", "!"));
+        }
+        [TestMethod]
+        public void TestBetweenLastWithNonUniqueEndSubstring() {
+            // This result might seem a bit unintuitive.
+            // The function should return the substring between the last instance of the given pair.
+            // This means the nearest end substring to the start substring is used.
+            Assert.AreEqual(", ", StringUtilities.BetweenLast("Hello, World! World! World!", "Hello", "World!"));
+        }
+        [TestMethod]
+        public void TestBetweenLastWithNonUniqueStartSubstring() {
+            Assert.AreEqual(" ", StringUtilities.BetweenLast("Hello, Hello, World! Hello,", "Hello,", "World!"));
+        }
+        [TestMethod]
+        public void TestBetweenLastWithEqualSubstrings() {
+            Assert.AreEqual("B", StringUtilities.BetweenLast("A1CA2CABA3", "A", "A"));
+        }
+        [TestMethod]
+        public void TestBetweenLastWithMisorderedSubstrings() {
+            Assert.AreEqual(string.Empty, StringUtilities.BetweenLast("ABCEFG", "E", "ABC"));
+        }
+        [TestMethod]
+        public void TestBetweenLastWithSubstringsAtStartAndEnd() {
+            Assert.AreEqual("ello, World", StringUtilities.BetweenLast("Hello, World!", "H", "!"));
+        }
+
         // Count
 
         [TestMethod]
